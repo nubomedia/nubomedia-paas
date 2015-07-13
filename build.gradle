@@ -1,0 +1,53 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
+plugins {
+    id 'net.researchgate.release' version '2.0.2'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+apply plugin: "java"
+apply plugin: 'maven'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    apply plugin: "java"
+    apply plugin: 'maven'
+    apply plugin: "jacoco"
+
+    test { finalizedBy jacocoTestReport }
+
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+    
+    dependencies {
+        compile 'org.project.openbaton:catalogue:0.5-SNAPSHOT'
+        compile 'commons-io:commons-io:2.4'
+        compile 'com.mashape.unirest:unirest-java:1.4.5'
+        compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+        compile 'com.google.code.gson:gson:2.3.1'
+
+        testCompile 'junit:junit:4.12'
+    }
+}
+
+// tag::wrapper[]
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
+// end::wrapper[]
