@@ -25,7 +25,7 @@ public class SdkTest {
 
     @Test
     public void createTest() throws SDKException {
-        NFVORequestor requestor = new NFVORequestor("1");
+        NFVORequestor requestor = new NFVORequestor("admin","admin","1");
 
         VimInstance vimInstance = createVimInstance();
 
