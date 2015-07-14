@@ -1,14 +1,13 @@
 package org.project.openbaton.sdk.api.util;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+
+import com.google.gson.*;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpStatus;
-import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -21,10 +20,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 
 /**
  * OpenBaton api request request abstraction for all requester. Shares common data and methods.
@@ -41,27 +43,33 @@ public abstract class RestRequest {
     private String authStr = "openbatonOSClient" + ":" + "secret";
     private String encoding = Base64.encodeBase64String(authStr.getBytes());
     private final String provider;
-    private String  token = null;
-    private String  bearerToken = null;
+    private String token = null;
+    private String bearerToken = null;
 
     /**
-	 * Create a request with a given url path
-	 *
-	 */
-	public RestRequest(String username, String password, final String nfvoIp, String nfvoPort, String path, String version) {
-		this.baseUrl = "http://" + nfvoIp + ":" + nfvoPort + "/api/v" + version + path;
+     * Create a request with a given url path
+     */
+    public RestRequest(String username, String password, final String nfvoIp, String nfvoPort, String path, String version) {
+        this.baseUrl = "http://" + nfvoIp + ":" + nfvoPort + "/api/v" + version + path;
         this.provider = "http://" + nfvoIp + ":" + nfvoPort + "/oauth/token";
         this.username = username;
         this.password = password;
-        this.mapper = new Gson();
+
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+            public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                return new Date(json.getAsJsonPrimitive().getAsLong());
+            }
+        });
+        this.mapper = builder.create();
+
     }
 
     /**
      * Executes a http post with to a given url, while serializing the object content as json
      * and returning the response
      *
-     * @param object
-     * 				the object content to be serialized as json
+     * @param object the object content to be serialized as json
      * @return a string containing the response content
      */
     public Serializable requestPost(final Serializable object) throws SDKException {
@@ -76,7 +84,7 @@ public abstract class RestRequest {
             jsonResponse = Unirest.post(this.baseUrl)
                     .header("accept", "application/json")
                     .header("Content-Type", "application/json")
-                    .header("Authorization",bearerToken.replaceAll("\"",""))
+                    .header("Authorization", bearerToken.replaceAll("\"", ""))
                     .body(fileJSONNode)
                     .asJson();
 //            check response status
@@ -100,16 +108,15 @@ public abstract class RestRequest {
             e.printStackTrace();
             throw new SDKException("Could not get token");
         } catch (SDKException e) {
-            if (jsonResponse.getStatus() == HttpStatus.SC_UNAUTHORIZED){
+            if (jsonResponse.getStatus() == HttpStatus.SC_UNAUTHORIZED) {
                 token = null;
                 return requestPost(object);
-            }
-            else throw new SDKException("Status is " + jsonResponse.getStatus());
+            } else throw new SDKException("Status is " + jsonResponse.getStatus());
         }
     }
 
     private void checkToken() throws IOException, net.minidev.json.parser.ParseException {
-        if (token == null){
+        if (token == null) {
             getAccessToken();
         }
     }
@@ -121,8 +128,7 @@ public abstract class RestRequest {
     /**
      * Executes a http delete with to a given id
      *
-     * @param id
-     * 				the id path used for the api request
+     * @param id the id path used for the api request
      */
     public void requestDelete(final String id) throws SDKException {
         HttpResponse<JsonNode> jsonResponse = null;
@@ -158,8 +164,7 @@ public abstract class RestRequest {
     /**
      * Executes a http get with to a given id
      *
-     * @param id
-     * 				the id path used for the api request
+     * @param id the id path used for the api request
      * @return a string containing he response content
      */
     public Object requestGet(final String id, Class type) throws SDKException {
@@ -171,10 +176,8 @@ public abstract class RestRequest {
      * Executes a http get with to a given id, and possible executed an http (accept) status check of the response if an httpStatus is delivered.
      * If httpStatus is null, no check will be executed.
      *
-     * @param url
-     * 				the id path used for the api request
-     * @param httpStatus
-     * 	            the http status to be checked.
+     * @param url        the id path used for the api request
+     * @param httpStatus the http status to be checked.
      * @param type
      * @return a string containing the response content
      */
@@ -207,13 +210,11 @@ public abstract class RestRequest {
         } catch (UnirestException e) {
             // catch request exceptions here
             throw new SDKException("Could not http-get properly");
-        } catch (SDKException e){
-            if (jsonResponse.getStatus() == HttpStatus.SC_UNAUTHORIZED){
+        } catch (SDKException e) {
+            if (jsonResponse.getStatus() == HttpStatus.SC_UNAUTHORIZED) {
                 token = null;
-                return requestGetWithStatus(url,httpStatus,type);
-            }
-
-            else{
+                return requestGetWithStatus(url, httpStatus, type);
+            } else {
                 e.printStackTrace();
                 throw new SDKException("Could not authorize");
             }
@@ -223,8 +224,7 @@ public abstract class RestRequest {
     /**
      * Executes a http get with to a given url, in contrast to the normal get it uses an http (accept) status check of the response
      *
-     * @param url
-     * 				the url path used for the api request
+     * @param url the url path used for the api request
      * @return a string containing the response content
      */
     public Object requestGetWithStatusAccepted(final String url, Class type) throws SDKException {
@@ -235,14 +235,12 @@ public abstract class RestRequest {
      * Executes a http put with to a given id, while serializing the object content as json
      * and returning the response
      *
-     * @param id
-     * 				the id path used for the api request
-     * @param object
-     * 				the object content to be serialized as json
+     * @param id     the id path used for the api request
+     * @param object the object content to be serialized as json
      * @return a string containing the response content
      */
     public Serializable requestPut(final String id, final Serializable object) throws SDKException {
-            HttpResponse<JsonNode> jsonResponse = null;
+        HttpResponse<JsonNode> jsonResponse = null;
         try {
             JsonNode fileJSONNode = getJsonNode(object);
             try {
@@ -256,7 +254,7 @@ public abstract class RestRequest {
             jsonResponse = Unirest.put(this.baseUrl + "/" + id)
                     .header("accept", "application/json")
                     .header("Content-Type", "application/json")
-                    .header("Authorization",bearerToken.replaceAll("\"",""))
+                    .header("Authorization", bearerToken.replaceAll("\"", ""))
                     .body(fileJSONNode)
                     .asJson();
 
@@ -274,7 +272,7 @@ public abstract class RestRequest {
             throw new SDKException("Could not http-put or the api response was wrong or open the object properly");
         } catch (SDKException e) {
             // catch request exceptions here
-            if (jsonResponse.getStatus() == HttpStatus.SC_UNAUTHORIZED){
+            if (jsonResponse.getStatus() == HttpStatus.SC_UNAUTHORIZED) {
                 token = null;
                 return requestPut(id, object);
             }
@@ -285,10 +283,8 @@ public abstract class RestRequest {
     /**
      * Check wether a json repsonse has the right http status. If not, an SDKException is thrown.
      *
-     * @param jsonResponse
-     * 				the http json response
-     * @param httpStatus
-     * 				the (desired) http status of the repsonse
+     * @param jsonResponse the http json response
+     * @param httpStatus   the (desired) http status of the repsonse
      */
     private void checkStatus(HttpResponse<JsonNode> jsonResponse, final int httpStatus) throws SDKException {
         if (jsonResponse.getStatus() != httpStatus) {
@@ -311,10 +307,10 @@ public abstract class RestRequest {
         httpPost.setEntity(new UrlEncodedFormEntity(parametersBody, StandardCharsets.UTF_8));
 
         org.apache.http.HttpResponse response = null;
-            response = httpClient.execute(httpPost);
+        response = httpClient.execute(httpPost);
 
         String responseString = null;
-            responseString = EntityUtils.toString(response.getEntity());
+        responseString = EntityUtils.toString(response.getEntity());
         int statusCode = response.getStatusLine().getStatusCode();
         log.error(statusCode + ": " + responseString);
 
