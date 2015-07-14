@@ -1,6 +1,6 @@
 package org.project.openbaton.sdk.api.util;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.util.Date;
 
 /**
  * OpenBaton api request request abstraction for all requester. Shares common data and methods.
@@ -34,14 +36,13 @@ public abstract class RestRequest {
 		this.baseUrl = "http://" + nfvoIp + ":" + nfvoPort + "/api/v" + version + path;
         this.username = username;
         this.password = password;
-        this.mapper = new Gson();
-//        mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//        mapper.configure(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-//        mapper.configure(DeserializationConfig.Feature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-//        mapper.configure(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-//        mapper.configure(DeserializationConfig.Feature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-//        mapper.configure(DeserializationConfig.Feature.USE_JAVA_ARRAY_FOR_JSON_ARRAY, true);
-
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+            public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                return new Date(json.getAsJsonPrimitive().getAsLong());
+            }
+        });
+        this.mapper = builder.create();
     }
 
     /**
