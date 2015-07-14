@@ -1,13 +1,6 @@
 package org.project.openbaton.sdk;
 
-import org.project.openbaton.common.catalogue.mano.descriptor.NetworkServiceDescriptor;
-import org.project.openbaton.common.catalogue.mano.descriptor.VNFForwardingGraphDescriptor;
-import org.project.openbaton.common.catalogue.mano.descriptor.VirtualLinkDescriptor;
-import org.project.openbaton.common.catalogue.mano.record.NetworkServiceRecord;
-import org.project.openbaton.common.catalogue.nfvo.Configuration;
-import org.project.openbaton.common.catalogue.nfvo.NFVImage;
-import org.project.openbaton.common.catalogue.nfvo.VimInstance;
-import org.project.openbaton.sdk.api.util.AbstractRestAgent;
+import org.project.openbaton.sdk.api.rest.*;
 
 /**
  * OpenBaton api requestor. Can be extended with security features to provide instances only only to granted requestors.
@@ -41,7 +34,7 @@ public final class NFVORequestor {
 	 *
 	 * @return configurationRequest: The (final) static configuration requester
 	 */
-	public AbstractRestAgent<Configuration> getConfigurationAgent() {
+	public ConfigurationRestRequest getConfigurationAgent() {
 		return factory.getConfigurationAgent();
 	}
 
@@ -50,7 +43,7 @@ public final class NFVORequestor {
 	 *
 	 * @return image: The (final) static image requester
 	 */
-	public AbstractRestAgent<NFVImage> getImageAgent() {
+	public ImageRestAgent getImageAgent() {
 		return factory.getImageAgent();
 	}
 
@@ -59,7 +52,7 @@ public final class NFVORequestor {
 	 *
 	 * @return networkServiceDescriptorRequest: The (final) static networkServiceDescriptor requester
 	 */
-	public AbstractRestAgent<NetworkServiceDescriptor> getNetworkServiceDescriptorAgent() {
+	public NetworkServiceDescriptorRestAgent getNetworkServiceDescriptorAgent() {
 		return factory.getNetworkServiceDescriptorAgent();
 	}
 	/**
@@ -68,7 +61,7 @@ public final class NFVORequestor {
 	 * @return networkServiceRecordRequest: The (final) static networkServiceRecord requester
 	 */
 
-	public AbstractRestAgent<NetworkServiceRecord> getNetworkServiceRecordAgent() {
+	public NetworkServiceRecordRestAgent getNetworkServiceRecordAgent() {
 		return factory.getNetworkServiceRecordAgent();
 	}
 
@@ -77,7 +70,7 @@ public final class NFVORequestor {
 	 *
 	 * @return vimInstanceRequest: The (final) static vimInstance requester
 	 */
-	public AbstractRestAgent<VimInstance> getVimInstanceAgent() {
+	public VimInstanceRestAgent getVimInstanceAgent() {
 		return factory.getVimInstanceAgent();
 	}
 
@@ -86,7 +79,7 @@ public final class NFVORequestor {
 	 *
 	 * @return virtualLinkRequest: The (final) static virtualLink requester
 	 */
-	public AbstractRestAgent<VirtualLinkDescriptor> getVirtualLinkAgent() {
+	public VirtualLinkRestAgent getVirtualLinkAgent() {
 		return factory.getVirtualLinkAgent();
 	}
 
@@ -95,7 +88,7 @@ public final class NFVORequestor {
 	 *
 	 * @return vNFFGRequest: The (final) static vNFFG requester
 	 */
-	public AbstractRestAgent<VNFForwardingGraphDescriptor> getVNFFGAgent() {
+	public VNFFGRestAgent getVNFFGAgent() {
 		return factory.getVNFForwardingGraphAgent();
 	}
 

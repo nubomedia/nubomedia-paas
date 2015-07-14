@@ -29,11 +29,11 @@ public abstract class RestRequest {
     private String password;
 
     /**
-	 * Create a request with a given url path
-	 *
-	 */
-	public RestRequest(String username, String password, final String nfvoIp, String nfvoPort, String path, String version) {
-		this.baseUrl = "http://" + nfvoIp + ":" + nfvoPort + "/api/v" + version + path;
+     * Create a request with a given url path
+     *
+     */
+    public RestRequest(String username, String password, final String nfvoIp, String nfvoPort, String path, String version) {
+        this.baseUrl = "http://" + nfvoIp + ":" + nfvoPort + "/api/v" + version + path;
         this.username = username;
         this.password = password;
         GsonBuilder builder = new GsonBuilder();

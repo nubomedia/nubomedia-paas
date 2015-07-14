@@ -1,6 +1,7 @@
 package org.project.openbaton.sdk.api.rest;
 
 import org.project.openbaton.common.catalogue.mano.record.NetworkServiceRecord;
+import org.project.openbaton.sdk.api.annotations.Help;
 import org.project.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 
@@ -21,6 +22,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 		super(username, password, nfvoIp, nfvoPort, path, version, NetworkServiceRecord.class);
 	}
 
+	@Help(help = "Create NetworkServiceRecord from NetworkServiceDescriptor id")
 	public String create(final String id) throws SDKException {
 		throw new SDKException("NOT IMPLEMENTED");
 	}
@@ -28,6 +30,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
+	@Help(help = "Get all the VirtualNetworkFunctionRecords of NetworkServiceRecord with specific id")
 	public String getVirtualNetworkFunctionRecords(final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfrecords";
 //		return requestGetWithStatusAccepted(url);
@@ -37,6 +40,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
+	@Help(help = "Get the VirtualNetworkFunctionRecord of NetworkServiceRecord with specific id")
 	public String getVirtualNetworkFunctionRecord(final String id, final String id_vnf) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfrecords" + "/" + id_vnf;
 //		return requestGetWithStatusAccepted(url);
@@ -46,6 +50,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
+	@Help(help = "I dont know...")
 	public void deleteVirtualNetworkFunctionDescriptor(final String id, final String id_vnf) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfrecords" + "/" + id_vnf;
 //		requestDelete(url);
@@ -54,7 +59,8 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
-	public String postVNFR(final File networkServiceRecord, final String id) throws SDKException {
+	@Help(help = "create VirtualNetworkFunctionRecord")
+	public String createVNFR(final File networkServiceRecord, final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfrecords" + "/";
 //		return requestPost(url, networkServiceRecord);
 		return null;
@@ -63,6 +69,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
+	@Help(help = "I don't know..")
 	public String updateVNF(final File networkServiceRecord, final String id, final String id_vnf) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfrecords" + "/" + id_vnf;
 //		return requestPut(url, networkServiceRecord);
@@ -72,6 +79,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
+	@Help(help = "Get all the VirtualNetworkFunctionRecord dependencies of NetworkServiceRecord with specific id")
 	public String getVNFDependencies(final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies";
 //		return requestGetWithStatusAccepted(url);
@@ -81,6 +89,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
+	@Help(help = "Get the VirtualNetworkFunctionRecord Dependency of a NetworkServiceRecord with specific id")
 	public String getVNFDependency(final String id, final String id_vnfr) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies" + "/" + id_vnfr;
 //		return requestGetWithStatusAccepted(url);
@@ -90,6 +99,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
+	@Help(help = "Delete the VirtualNetworkFunctionRecord Dependency of a NetworkServiceRecord with specific id")
 	public void deleteVNFDependency(final String id, final String id_vnfd) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies" + "/" + id_vnfd;
 //		requestDelete(url);
@@ -98,6 +108,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
+	@Help(help = "Create the VirtualNetworkFunctionRecord Dependency of a NetworkServiceRecord with specific id")
 	public String postVNFDependency(final File vnfDependency, final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies" + "/";
 //		return requestPost(url, vnfDependency);
@@ -107,6 +118,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
+	@Help(help = "I don't know")
 	public String updateVNFD(final File vnfDependency, final String id, final String id_vnfd) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies" + "/" + id_vnfd;
 		return null;
@@ -121,6 +133,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 * @return Set<PhysicalNetworkFunctionRecord>: The Set of
 	 *         PhysicalNetworkFunctionRecord into NSD
 	 */
+	@Help(help = "Get all the PhysicalNetworkFunctionRecords of a specific NetworkServiceRecord with id")
 	public String getPhysicalNetworkFunctionRecords(final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/pnfrecords";
 		return null;
@@ -137,6 +150,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 * @return PhysicalNetworkFunctionRecord: The PhysicalNetworkFunctionRecord
 	 *         selected
 	 */
+	@Help(help = "Get the PhysicalNetworkFunctionRecord of a NetworkServiceRecord with specific id")
 	public String getPhysicalNetworkFunctionRecord(final String id, final String id_pnf) throws SDKException {
 //		String url = this.url + "/" + id + "/pnfrecords" + "/" + id_pnf;
 //		return requestGetWithStatusAccepted(url);
@@ -151,6 +165,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 * @param id_pnf
 	 *            : The PhysicalNetworkFunctionRecord id
 	 */
+	@Help(help = "Delete the PhysicalNetworkFunctionRecord of a NetworkServiceRecord with specific id")
 	public void deletePhysicalNetworkFunctionRecord(final String id, final String id_pnf) throws SDKException {
 //		String url = this.url + "/" + id + "/pnfrecords" + "/" + id_pnf;
 //		requestDelete(url);
@@ -166,6 +181,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 * @return PhysicalNetworkFunctionRecord: The PhysicalNetworkFunctionRecord
 	 *         stored
 	 */
+	@Help(help = "Create the PhysicalNetworkFunctionRecord of a NetworkServiceRecord with specific id")
 	public String postPhysicalNetworkFunctionRecord(final File physicalNetworkFunctionRecord, final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/pnfrecords" + "/";
 //		return requestPost(url, physicalNetworkFunctionRecord);
@@ -182,6 +198,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 * @return PhysicalNetworkFunctionRecord: The PhysicalNetworkFunctionRecord
 	 *         edited
 	 */
+	@Help(help = "Update the PhysicalNetworkFunctionRecord of a NetworkServiceRecord with specific id")
 	public String updatePNFD(final File physicalNetworkFunctionRecord, final String id, final String id_pnf) throws SDKException {
 //		String url = this.url + "/" + id + "/pnfrecords" + "/" + id_pnf;
 //		return requestPut(url, physicalNetworkFunctionRecord);
