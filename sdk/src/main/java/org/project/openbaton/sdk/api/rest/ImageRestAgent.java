@@ -1,6 +1,6 @@
 package org.project.openbaton.sdk.api.rest;
 
-import org.project.openbaton.common.catalogue.nfvo.NFVImage;
+import org.project.openbaton.catalogue.nfvo.NFVImage;
 
 /**
  * OpenBaton image-related api requester.

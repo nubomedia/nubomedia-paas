@@ -1,12 +1,12 @@
 package org.project.openbaton.sdk;
 
-import org.project.openbaton.common.catalogue.mano.descriptor.NetworkServiceDescriptor;
-import org.project.openbaton.common.catalogue.mano.descriptor.VNFForwardingGraphDescriptor;
-import org.project.openbaton.common.catalogue.mano.descriptor.VirtualLinkDescriptor;
-import org.project.openbaton.common.catalogue.mano.record.NetworkServiceRecord;
-import org.project.openbaton.common.catalogue.nfvo.Configuration;
-import org.project.openbaton.common.catalogue.nfvo.NFVImage;
-import org.project.openbaton.common.catalogue.nfvo.VimInstance;
+import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
+import org.project.openbaton.catalogue.mano.descriptor.VNFForwardingGraphDescriptor;
+import org.project.openbaton.catalogue.mano.descriptor.VirtualLinkDescriptor;
+import org.project.openbaton.catalogue.mano.record.NetworkServiceRecord;
+import org.project.openbaton.catalogue.nfvo.Configuration;
+import org.project.openbaton.catalogue.nfvo.NFVImage;
+import org.project.openbaton.catalogue.nfvo.VimInstance;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 
 /**

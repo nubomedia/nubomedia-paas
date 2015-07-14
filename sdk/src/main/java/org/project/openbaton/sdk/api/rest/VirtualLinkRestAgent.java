@@ -1,6 +1,6 @@
 package org.project.openbaton.sdk.api.rest;
 
-import org.project.openbaton.common.catalogue.mano.descriptor.VirtualLinkDescriptor;
+import org.project.openbaton.catalogue.mano.descriptor.VirtualLinkDescriptor;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 
 /**

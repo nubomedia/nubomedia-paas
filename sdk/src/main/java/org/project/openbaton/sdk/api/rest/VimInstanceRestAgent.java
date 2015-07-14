@@ -1,6 +1,6 @@
 package org.project.openbaton.sdk.api.rest;
 
-import org.project.openbaton.common.catalogue.nfvo.VimInstance;
+import org.project.openbaton.catalogue.nfvo.VimInstance;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 
 /**

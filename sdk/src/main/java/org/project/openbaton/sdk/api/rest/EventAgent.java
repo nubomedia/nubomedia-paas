@@ -1,6 +1,6 @@
 package org.project.openbaton.sdk.api.rest;
 
-import org.project.openbaton.common.catalogue.nfvo.EventEndpoint;
+import org.project.openbaton.catalogue.nfvo.EventEndpoint;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 
 public class EventAgent extends AbstractRestAgent<EventEndpoint>{
