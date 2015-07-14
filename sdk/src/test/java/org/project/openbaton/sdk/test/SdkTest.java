@@ -1,11 +1,11 @@
 package org.project.openbaton.sdk.test;
 
 import org.junit.Test;
-import org.project.openbaton.common.catalogue.mano.common.DeploymentFlavour;
-import org.project.openbaton.common.catalogue.nfvo.NFVImage;
-import org.project.openbaton.common.catalogue.nfvo.Network;
-import org.project.openbaton.common.catalogue.nfvo.Subnet;
-import org.project.openbaton.common.catalogue.nfvo.VimInstance;
+import org.project.openbaton.catalogue.mano.common.DeploymentFlavour;
+import org.project.openbaton.catalogue.nfvo.NFVImage;
+import org.project.openbaton.catalogue.nfvo.Network;
+import org.project.openbaton.catalogue.nfvo.Subnet;
+import org.project.openbaton.catalogue.nfvo.VimInstance;
 import org.project.openbaton.sdk.NFVORequestor;
 import org.project.openbaton.sdk.api.exception.SDKException;
 import org.slf4j.Logger;

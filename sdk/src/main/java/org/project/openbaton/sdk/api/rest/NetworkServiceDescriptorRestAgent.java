@@ -1,6 +1,7 @@
 package org.project.openbaton.sdk.api.rest;
 
 import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
+import org.project.openbaton.sdk.api.annotations.Help;
 import org.project.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 
@@ -29,6 +30,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @return List<VirtualNetworkFunctionDescriptor>: The List of
 	 *         VirtualNetworkFunctionDescriptor into NSD
 	 */
+	@Help(help = "Get all the VirtualNetworkFunctionDescriptors of a NetworkServiceDescriptor with specific id")
 	public String getVirtualNetworkFunctionDescriptors(final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdescriptors";
 //		return requestGetWithStatusAccepted(url);
@@ -45,6 +47,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @return List<VirtualNetworkFunctionDescriptor>: The List of
 	 *         VirtualNetworkFunctionDescriptor into NSD
 	 */
+	@Help(help = "Get the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
 	public String getVirtualNetworkFunctionDescriptor(final String id, final String id_vfn) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdescriptors" + "/" + id_vfn;
 //		return requestGetWithStatusAccepted(url);
@@ -59,6 +62,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @param id_vfn
 	 *            : The id of the VNF Descriptor
 	 */
+	@Help(help = "Delete the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
 	public void deleteVirtualNetworkFunctionDescriptors(final String id, final String id_vfn) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdescriptors" + "/" + id_vfn;
 //		requestDelete(url);
@@ -72,7 +76,8 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @param id
 	 *            : The id of the networkServiceDescriptor the vnfd shall be created at
 	 */
-	public String postVNFD(final File virtualNetworkFunctionDescriptor, final String id) throws SDKException {
+	@Help(help = "create the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
+	public String createVNFD(final File virtualNetworkFunctionDescriptor, final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdescriptors" + "/";
 //		return requestPost(url, virtualNetworkFunctionDescriptor);
 		return null;
@@ -89,6 +94,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The id of the VNF Descriptor
 	 * @return List<VirtualNetworkFunctionDescriptor>: The updated virtualNetworkFunctionDescriptor
 	 */
+	@Help(help = "Update the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
 	public String updateVNF(final File virtualNetworkFunctionDescriptor, final String id, final String id_vfn) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdescriptors" + "/" + id_vfn;
 //		return requestPut(url, virtualNetworkFunctionDescriptor);
@@ -102,6 +108,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The id of the networkServiceDescriptor
 	 * @return List<VNFDependency>:  The List of VNFDependency into NSD
 	 */
+	@Help(help = "Get all the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
 	public String getVNFDependencies(final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies";
 //		return requestGetWithStatusAccepted(url);
@@ -117,6 +124,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The VNFDependencies id
 	 * @return VNFDependency:  The List of VNFDependency into NSD
 	 */
+	@Help(help = "get the VirtualNetworkFunctionDescriptor dependency of a NetworkServiceDescriptor with specific id")
 	public String getVNFDependency(final String id, final String id_vnfd) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies" + "/" + id_vnfd;
 //		return requestGetWithStatusAccepted(url);
@@ -131,6 +139,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @param id_vnfd
 	 *            : The id of the VNFDependency
 	 */
+	@Help(help = "Delete the VirtualNetworkFunctionDescriptor dependency of a NetworkServiceDescriptor with specific id")
 	public void deleteVNFDependency(final String id, final String id_vnfd) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies" + "/" + id_vnfd;
 //		requestDelete(url);
@@ -144,7 +153,8 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @param id
 	 *            : The id of the networkServiceDescriptor
 	 */
-	public String postVNFDependency(final File vnfDependency, final String id) throws SDKException {
+	@Help(help = "Create the VirtualNetworkFunctionDescriptor dependency of a NetworkServiceDescriptor with specific id")
+	public String createVNFDependency(final File vnfDependency, final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies" + "/";
 //		return requestPost(url, vnfDependency);
 		return null;
@@ -161,6 +171,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The id of the VNFDependency
 	 * @return The updated VNFDependency
 	 */
+	@Help(help = "Update the VirtualNetworkFunctionDescriptor dependency of a NetworkServiceDescriptor with specific id")
 	public String updateVNFD(final File vnfDependency, final String id, final String id_vnfd) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies" + "/" + id_vnfd;
 //		return requestPut(url, vnfDependency);
@@ -176,6 +187,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *         PhysicalNetworkFunctionDescriptor into NSD
 	 *
 	 */
+	@Help(help = "Get all the PhysicalNetworkFunctionDescriptors of a NetworkServiceDescriptor with specific id")
 	public String getPhysicalNetworkFunctionDescriptors(final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/pnfdescriptors";
 //		return requestGetWithStatusAccepted(url);
@@ -193,6 +205,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *         PhysicalNetworkFunctionDescriptor selected
 	 *
 	 */
+	@Help(help = "Get the PhysicalNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
 	public String getPhysicalNetworkFunctionDescriptor(final String id, final String id_pnf) throws SDKException {
 //		String url = this.url + "/" + id + "/pnfdescriptors" + "/" + id_pnf;
 //		return requestGetWithStatusAccepted(url);
@@ -207,6 +220,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @param id_pnf
 	 *            : The PhysicalNetworkFunctionDescriptor id
 	 */
+	@Help(help = "Delete the PhysicalNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
 	public void deletePhysicalNetworkFunctionDescriptor(final String id, final String id_pnf) throws SDKException {
 //		String url = this.url + "/" + id + "/pnfdescriptors" + "/" + id_pnf;
 //		requestDelete(url);
@@ -223,7 +237,8 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The PhysicalNetworkFunctionDescriptor id
 	 * @return PhysicalNetworkFunctionDescriptor: The PhysicalNetworkFunctionDescriptor stored
 	 */
-	public String postPhysicalNetworkFunctionDescriptor(final File pnf, final String id, final String id_pnf) throws SDKException {
+	@Help(help = "Create the PhysicalNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
+	public String createPhysicalNetworkFunctionDescriptor(final File pnf, final String id, final String id_pnf) throws SDKException {
 //		String url = this.url + "/" + id + "/pnfdescriptors" + "/" + id_pnf;
 //		return requestPost(url, pnf);
 		return null;
@@ -242,6 +257,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *         PhysicalNetworkFunctionDescriptor edited
 	 * @
 	 */
+	@Help(help = "Update the PhysicalNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
 	public String updatePNFD(final File pnf, final String id, final String id_pnf) throws SDKException {
 //		String url = this.url + "/" + id + "/pnfdescriptors" + "/" + id_pnf;
 //		return requestPut(url, pnf);
@@ -256,6 +272,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @return Security: The Security of PhysicalNetworkFunctionDescriptor into
 	 *         NSD
 	 */
+	@Help(help = "Get all the Security of a NetworkServiceDescriptor with specific id")
 	public String getSecurities(final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/security";
 //		return requestGetWithStatusAccepted(url);
@@ -271,6 +288,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The Security id
 	 * @return Security: The Security selected by id_s
 	 */
+	@Help(help = "Get the Security of a NetworkServiceDescriptor with specific id")
 	public String getSecurity(final String id, final String id_s) throws SDKException {
 //		String url = this.url + "/" + id + "/security" + "/" + id_s;
 //		return requestGetWithStatusAccepted(url);
@@ -286,6 +304,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The Security id
 	 * @
 	 */
+	@Help(help = "Delete the Security of a NetworkServiceDescriptor with specific id")
 	public void deleteSecurity(final String id, final String id_s) throws SDKException {
 //		String url = this.url + "/" + id + "/security" + "/" + id_s;
 //		requestDelete(url);
@@ -300,7 +319,8 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The id of NSD
 	 * @return Security: The Security stored
 	 */
-	public String postSecurity(final File security, final String id) throws SDKException {
+	@Help(help = "create the Security of a NetworkServiceDescriptor with specific id")
+	public String createSecurity(final File security, final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/security" + "/";
 //		return requestPost(url, security);
 		return null;
@@ -317,6 +337,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The security id
 	 * @return Security: The Security stored
 	 */
+	@Help(help = "Update the Security of a NetworkServiceDescriptor with specific id")
 	public String updateSecurity(final File security, final String id, final String id_s) throws SDKException {
 //		String url = this.url + "/" + id + "/security" + "/" + id_s;
 //		return requestPut(url, security);
@@ -329,6 +350,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @param networkServiceDescriptor
 	 *            : the networkServiceDescriptor JSON File
 	 */
+	@Help(help = "create NetworkServiceRecord from a NetworkServiceDescriptor")
 	public String createRecord(final File networkServiceDescriptor) throws SDKException {
 //		String url = this.url + "/records";
 //		return requestPost(url, networkServiceDescriptor);

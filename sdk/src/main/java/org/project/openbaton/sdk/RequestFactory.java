@@ -1,15 +1,6 @@
 package org.project.openbaton.sdk;
 
-import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
-import org.project.openbaton.catalogue.mano.descriptor.VNFForwardingGraphDescriptor;
-import org.project.openbaton.catalogue.mano.descriptor.VirtualLinkDescriptor;
-import org.project.openbaton.catalogue.mano.record.NetworkServiceRecord;
-import org.project.openbaton.catalogue.nfvo.Configuration;
-import org.project.openbaton.catalogue.nfvo.EventEndpoint;
-import org.project.openbaton.catalogue.nfvo.NFVImage;
-import org.project.openbaton.catalogue.nfvo.VimInstance;
 import org.project.openbaton.sdk.api.rest.*;
-import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 import org.project.openbaton.sdk.api.util.PropertyReader;
 
 public class RequestFactory {
@@ -21,14 +12,14 @@ public class RequestFactory {
 	private static final PropertyReader propertyReader = new PropertyReader(SDK_PROPERTIES_FILE);
 
 	// create the requester here, maybe shift this to a manager
-	private static AbstractRestAgent<Configuration> configurationRequest = null;
-	private static AbstractRestAgent<NFVImage> imageRequest = null;
-	private static AbstractRestAgent<NetworkServiceDescriptor> networkServiceDescriptorRequest = null;
-	private static AbstractRestAgent<NetworkServiceRecord> networkServiceRecordRequest = null;
-	private static AbstractRestAgent<VimInstance> vimInstanceRequest = null;
-	private static AbstractRestAgent<VirtualLinkDescriptor> virtualLinkRequest = null;
-	private static AbstractRestAgent<VNFForwardingGraphDescriptor> vNFFGRequest = null;
-	private static AbstractRestAgent<EventEndpoint> eventAgent = null;
+	private static ConfigurationRestRequest configurationRequest = null;
+	private static ImageRestAgent imageRequest = null;
+	private static NetworkServiceDescriptorRestAgent networkServiceDescriptorRequest = null;
+	private static NetworkServiceRecordRestAgent networkServiceRecordRequest = null;
+	private static VimInstanceRestAgent vimInstanceRequest = null;
+	private static VirtualLinkRestAgent virtualLinkRequest = null;
+	private static VNFFGRestAgent vNFFGRequest = null;
+	private static EventAgent eventAgent = null;
 	private static String username;
 	private static String password;
 	private final String nfvoPort;
@@ -51,56 +42,56 @@ public class RequestFactory {
 		this.version = version;
     }
 
-    public AbstractRestAgent<Configuration> getConfigurationAgent(){
+    public ConfigurationRestRequest getConfigurationAgent(){
     	if (configurationRequest == null) {
     		configurationRequest = new ConfigurationRestRequest(username, password, nfvoIp, nfvoPort, propertyReader.getRestConfigurationUrl(), version);
     	}
     	return configurationRequest;
     }
 
-    public AbstractRestAgent<NFVImage> getImageAgent(){
-    	if (networkServiceDescriptorRequest == null) {
+    public ImageRestAgent getImageAgent(){
+    	if (imageRequest == null) {
     		imageRequest = new ImageRestAgent(username, password, nfvoIp,nfvoPort,propertyReader.getRestImageUrl(), version);
     	}
     	return imageRequest;
     }
 
-    public AbstractRestAgent<NetworkServiceDescriptor> getNetworkServiceDescriptorAgent(){
-    	if (networkServiceRecordRequest == null) {
+    public NetworkServiceDescriptorRestAgent getNetworkServiceDescriptorAgent(){
+    	if (networkServiceDescriptorRequest == null) {
     		networkServiceDescriptorRequest = new NetworkServiceDescriptorRestAgent(username, password, nfvoIp,nfvoPort,propertyReader.getRestNetworkServiceDescriptorUrl(), version);
     	}
     	return networkServiceDescriptorRequest;
     }
 
-    public AbstractRestAgent<NetworkServiceRecord> getNetworkServiceRecordAgent(){
-    	if (configurationRequest == null) {
+    public NetworkServiceRecordRestAgent getNetworkServiceRecordAgent(){
+    	if (networkServiceRecordRequest == null) {
     		networkServiceRecordRequest = new NetworkServiceRecordRestAgent(username, password, nfvoIp,nfvoPort,propertyReader.getRestNetworkServiceRecordUrl(), version);
     	}
     	return networkServiceRecordRequest;
     }
 
-    public AbstractRestAgent<VimInstance> getVimInstanceAgent(){
+    public VimInstanceRestAgent getVimInstanceAgent(){
     	if (vimInstanceRequest == null) {
     		vimInstanceRequest = new VimInstanceRestAgent(username, password, nfvoIp,nfvoPort,propertyReader.getRestVimInstanceUrl(), version);
     	}
     	return vimInstanceRequest;
     }
 
-    public AbstractRestAgent<VirtualLinkDescriptor> getVirtualLinkAgent(){
+    public VirtualLinkRestAgent getVirtualLinkAgent(){
     	if (virtualLinkRequest == null) {
     		virtualLinkRequest = new VirtualLinkRestAgent(username, password, nfvoIp,nfvoPort,propertyReader.getRestVirtualLinkUrl(), version);
     	}
     	return virtualLinkRequest;
     }
 
-    public AbstractRestAgent<VNFForwardingGraphDescriptor> getVNFForwardingGraphAgent(){
+    public VNFFGRestAgent getVNFForwardingGraphAgent(){
     	if (vNFFGRequest == null) {
     		vNFFGRequest = new VNFFGRestAgent(username, password, nfvoIp,nfvoPort,propertyReader.getRestVNFFGUrl(), version);
     	}
     	return vNFFGRequest;
     }
 
-	public AbstractRestAgent<EventEndpoint> getEventAgent(){
+	public EventAgent getEventAgent(){
 		if (eventAgent == null){
 			eventAgent = new EventAgent(username, password, nfvoIp,nfvoPort,propertyReader.getEventUrl(), version);
 		}
