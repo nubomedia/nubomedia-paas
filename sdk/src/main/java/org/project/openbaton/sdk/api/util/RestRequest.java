@@ -75,7 +75,11 @@ public abstract class RestRequest {
     public Serializable requestPost(final Serializable object) throws SDKException {
         HttpResponse<JsonNode> jsonResponse = null;
         try {
-            JsonNode fileJSONNode = getJsonNode(object);
+            log.debug("Object is: " + object);
+            String fileJSONNode = mapper.toJson(object);
+
+            log.debug("sending: " + fileJSONNode.toString());
+            log.debug("baseUrl: " + baseUrl);
 
             checkToken();
 
@@ -312,7 +316,7 @@ public abstract class RestRequest {
         String responseString = null;
         responseString = EntityUtils.toString(response.getEntity());
         int statusCode = response.getStatusLine().getStatusCode();
-        log.error(statusCode + ": " + responseString);
+        log.debug(statusCode + ": " + responseString);
 
         if (statusCode != 200) {
             ParseComError error = new Gson().fromJson(responseString, ParseComError.class);

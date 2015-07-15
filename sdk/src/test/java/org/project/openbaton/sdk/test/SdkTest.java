@@ -25,14 +25,13 @@ public class SdkTest {
 
     @Test
     public void createTest() throws SDKException {
-        NFVORequestor requestor = new NFVORequestor("admin","admin","1");
+        NFVORequestor requestor = new NFVORequestor("admin","admin","localhost","8080", "1");
 
         VimInstance vimInstance = createVimInstance();
 
-        VimInstance res = requestor.getVimInstanceAgent().create(vimInstance);
+        VimInstance res = (VimInstance) requestor.abstractRestAgent(VimInstance.class,"/datacenters").create(vimInstance);
 
         log.debug(""+res);
-
 
     }
 

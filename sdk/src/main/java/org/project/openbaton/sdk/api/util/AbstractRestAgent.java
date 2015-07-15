@@ -36,7 +36,6 @@ public class AbstractRestAgent<T extends Serializable> extends RestRequest{
      */
     @Help(help = "Create the object of type {#}")
 	public T create (final T object) throws SDKException {
-        log.trace("CLAZZ: " + clazz.getSimpleName());
         return (T) requestPost(object);
 	}
 

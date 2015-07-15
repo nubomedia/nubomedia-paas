@@ -51,6 +51,16 @@ public class NFVOCommandLineInterface {
 
     public static void main(String[] args) {
 
+        log.info("\n" +
+                " _______  _______________   ____________            _________ .____    .___ \n" +
+                " \\      \\ \\_   _____/\\   \\ /   /\\_____  \\           \\_   ___ \\|    |   |   |\n" +
+                " /   |   \\ |    __)   \\   Y   /  /   |   \\   ______ /    \\  \\/|    |   |   |\n" +
+                "/    |    \\|     \\     \\     /  /    |    \\ /_____/ \\     \\___|    |___|   |\n" +
+                "\\____|__  /\\___  /      \\___/   \\_______  /          \\______  /_______ \\___|\n" +
+                "        \\/     \\/                       \\/                  \\/        \\/    ");
+        log.info("Nfvo OpenBaton Command Line Interface");
+        log.info("Log class: { " + log.getClass().getName() + " }");
+
         ConsoleReader reader = getConsoleReader();
         Properties properties = new Properties();
 
@@ -61,7 +71,9 @@ public class NFVOCommandLineInterface {
 
         if(file.exists()){
             try {
+                log.trace("File exists");
                 properties.load(new FileInputStream(file));
+                log.trace("Properties are: " + properties);
             } catch (IOException e) {
                 log.warn("Error reading /etc/openbaton/cli.properties, trying with Environment Variables");
                 readEnvVars(properties);
@@ -153,12 +165,12 @@ public class NFVOCommandLineInterface {
                 if (line.equalsIgnoreCase("")) {
                     continue;
                 }else
-                try {
-                    System.out.println(executeCommand(line));
-                }catch (Exception e){
-                    e.printStackTrace();
-                    log.error("Error while invoking command");
-                }
+                    try {
+                        System.out.println(executeCommand(line));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        log.error("Error while invoking command");
+                    }
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -170,28 +182,52 @@ public class NFVOCommandLineInterface {
         StringTokenizer st = new StringTokenizer(line);
         sb.append(st.nextToken());
         log.debug(sb.toString());
-        Command command = commandList.get(sb.toString());
+        String commandString = sb.toString();
+        Command command = commandList.get(commandString);
+        if (command == null){
+            return "Command: " + commandString + " not found!";
+        }
         log.debug("invoking method: " + command.getMethod().getName() + " with parameters: " + command.getParams());
         List<Object> params = new LinkedList<>();
         for (Type t : command.getParams()){
             if (t.getClass().isPrimitive()){ //for instance an id
                 params.add(st.nextToken());
             }else {// for instance waiting for an obj so passing a file
-                File f = new File(st.nextToken());
+                String pathname = st.nextToken();
+                log.debug("the path is: " + pathname);
+                File f = new File(pathname);
                 Gson gson = new Gson();
-                if (!t.getClass().getName().equals("java.io.Serializable")) {
-                    log.debug("waiting for an object of type " + command.getClass());
-                    params.add(gson.fromJson(new InputStreamReader(new FileInputStream(f)), command.getClass()));
-                }
-                else {
-                    log.debug("waiting for an object of type " + t);
-                    params.add(gson.fromJson(new InputStreamReader(new FileInputStream(f)), t));
-                }
+                FileInputStream fileInputStream = new FileInputStream(f);
+                String file = getString(fileInputStream);
+                log.debug(file);
+                log.debug("waiting for an object of type " + command.getClazz().getName());
+                Object casted = command.getClazz().cast(gson.fromJson(file, command.getClazz()));
+                log.debug("Parameter added is: " + casted);
+                params.add(casted);
             }
         }
-        log.debug("invoking method: " + command.getMethod().getName() + " with parameters: " + params);
-        return command.getMethod().invoke(command.getInstance(), params);
+        String parameters ="";
+        for (Object type : params){
+            parameters += type.getClass().getSimpleName() + " ";
+        }
+        log.debug("invoking method: " + command.getMethod().getName() + " with parameters: " + parameters);
+        return command.getMethod().invoke(command.getInstance(), params.toArray());
     }
+
+    private static String  getString(FileInputStream fileInputStream){
+        StringBuilder builder = new StringBuilder();
+        int ch;
+        try {
+            while((ch = fileInputStream.read()) != -1){
+                builder.append((char)ch);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            exit(333);
+        }
+        return builder.toString();
+    }
+
 
     private static void fillCommands(NFVORequestor nfvo) {
         getMethods(nfvo.getNetworkServiceRecordAgent());
@@ -264,11 +300,11 @@ public class NFVOCommandLineInterface {
 
     private static void readEnvVars(Properties properties) {
         try {
-            properties.put("nfvo-usr", System.getenv().get("nfvo-usr"));
-            properties.put("nfvo-pwd", System.getenv().get("nfvo-pwd"));
-            properties.put("nfvo-ip", System.getenv().get("nfvo-ip"));
-            properties.put("nfvo-port", System.getenv().get("nfvo-port"));
-            properties.put("nfvo-version", System.getenv().get("nfvo-version"));
+            properties.put("nfvo-usr", System.getenv().get("nfvo_usr"));
+            properties.put("nfvo-pwd", System.getenv().get("nfvo_pwd"));
+            properties.put("nfvo-ip", System.getenv().get("nfvo_ip"));
+            properties.put("nfvo-port", System.getenv().get("nfvo_port"));
+            properties.put("nfvo-version", System.getenv().get("nfvo_version"));
         }catch (NullPointerException e){
             return;
         }

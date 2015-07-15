@@ -1,9 +1,10 @@
 package org.project.openbaton.sdk;
 
 import org.project.openbaton.sdk.api.rest.*;
+import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 import org.project.openbaton.sdk.api.util.PropertyReader;
 
-public class RequestFactory {
+public class RequestFactory{
     
     private static RequestFactory instance;
 	
@@ -96,5 +97,9 @@ public class RequestFactory {
 			eventAgent = new EventAgent(username, password, nfvoIp,nfvoPort,propertyReader.getEventUrl(), version);
 		}
 		return eventAgent;
+	}
+
+	public AbstractRestAgent getAbstractAgent(Class clazz, String path) {
+ 		return new AbstractRestAgent(username, password, nfvoIp,nfvoPort,path, version, clazz);
 	}
 }

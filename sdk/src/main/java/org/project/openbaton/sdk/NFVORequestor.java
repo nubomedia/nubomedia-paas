@@ -2,6 +2,7 @@ package org.project.openbaton.sdk;
 
 
 import org.project.openbaton.sdk.api.rest.*;
+import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 
 /**
  * OpenBaton api requestor. Can be extended with security features to provide instances only only to granted requestors.
@@ -91,6 +92,10 @@ public final class NFVORequestor {
 	 */
 	public VNFFGRestAgent getVNFFGAgent() {
 		return factory.getVNFForwardingGraphAgent();
+	}
+
+	public AbstractRestAgent abstractRestAgent(Class clazz, String path){
+		return factory.getAbstractAgent(clazz, path);
 	}
 
 }
