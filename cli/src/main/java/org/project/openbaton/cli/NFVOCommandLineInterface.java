@@ -190,7 +190,8 @@ public class NFVOCommandLineInterface {
         log.debug("invoking method: " + command.getMethod().getName() + " with parameters: " + command.getParams());
         List<Object> params = new LinkedList<>();
         for (Type t : command.getParams()){
-            if (t.getClass().isPrimitive()){ //for instance an id
+            log.debug("type is: " + t.getClass().getName());
+            if (t.equals(String.class)){ //for instance an id
                 params.add(st.nextToken());
             }else {// for instance waiting for an obj so passing a file
                 String pathname = st.nextToken();
