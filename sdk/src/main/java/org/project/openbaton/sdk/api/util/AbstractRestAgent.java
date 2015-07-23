@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by lto on 03/07/15.
@@ -56,8 +55,8 @@ public class AbstractRestAgent<T extends Serializable> extends RestRequest{
      * @return List<Obj>: The list of VNF software images available
      */
     @Help(help = "Find all the objects of type {#}")
-    public List<T> findAll() throws SDKException, ClassNotFoundException {
-        return (List<T>) requestGet(null, clazz);
+    public T[] findAll() throws SDKException, ClassNotFoundException {
+        return (T[]) requestGet(null, clazz);
 	}
 
     /**
