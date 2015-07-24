@@ -128,9 +128,10 @@ public abstract class RestRequest {
     }
 
     private void checkToken() throws IOException, net.minidev.json.parser.ParseException {
-        if (token == null && (this.username != null || this.password != null) &&(!this.username.equals("") || !this.password.equals(""))) {
-            getAccessToken();
-        }
+        if (!(this.username == null || this.password == null))
+            if (token == null && (!this.username.equals("") || !this.password.equals(""))) {
+                getAccessToken();
+            }
     }
 
     private JsonNode getJsonNode(Serializable object) throws IOException {
