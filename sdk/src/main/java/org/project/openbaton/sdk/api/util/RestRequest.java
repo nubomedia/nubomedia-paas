@@ -38,7 +38,7 @@ public abstract class RestRequest {
 
 //	protected final String url;
 
-    private Gson mapper;
+    protected Gson mapper;
     private String username;
     private String password;
     private String authStr = "openbatonOSClient" + ":" + "secret";
@@ -64,6 +64,60 @@ public abstract class RestRequest {
         });
         this.mapper = builder.create();
 
+    }
+
+    /**
+     *
+     * @param id: the id of the object
+     * @return the created object
+     * @throws SDKException
+     */
+    public String requestPost(final String id) throws SDKException {
+        HttpResponse<JsonNode> jsonResponse = null;
+        try {
+
+            log.debug("baseUrl: " + baseUrl);
+            log.debug("id: " + baseUrl + id);
+
+            checkToken();
+
+            // call the api here
+            log.debug("Executing post on: " + this.baseUrl + id);
+            if (token != null)
+                jsonResponse = Unirest.post(this.baseUrl + id)
+                        .header("accept", "application/json")
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", bearerToken.replaceAll("\"", ""))
+                        .asJson();
+            else
+                jsonResponse = Unirest.post(this.baseUrl + id)
+                        .header("accept", "application/json")
+                        .header("Content-Type", "application/json")
+                        .asJson();
+//            check response status
+            checkStatus(jsonResponse, HttpURLConnection.HTTP_CREATED);
+            // return the response of the request
+            String result = jsonResponse.getBody().toString();
+            log.debug("received: " + result);
+
+            return result;
+        } catch (IOException e) {
+            // catch request exceptions here
+            e.printStackTrace();
+            throw new SDKException("Could not http-post or open the object properly");
+        } catch (UnirestException e) {
+            // catch request exceptions here
+            e.printStackTrace();
+            throw new SDKException("Could not http-post or open the object properly");
+        } catch (net.minidev.json.parser.ParseException e) {
+            e.printStackTrace();
+            throw new SDKException("Could not get token");
+        } catch (SDKException e) {
+            if (jsonResponse.getStatus() == HttpStatus.SC_UNAUTHORIZED) {
+                token = null;
+                return requestPost(id);
+            } else throw new SDKException("Status is " + jsonResponse.getStatus());
+        }
     }
 
     /**
