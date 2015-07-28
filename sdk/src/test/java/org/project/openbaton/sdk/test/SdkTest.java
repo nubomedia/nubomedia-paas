@@ -33,7 +33,7 @@ public class SdkTest {
     private Logger log = LoggerFactory.getLogger(this.getClass());
     private VimInstance vimInstance;
     private VimInstance res;
-    private final static String descriptorFileName = "../../descriptors/network_service_descriptors/NetworkServiceDescriptor.json";
+    private final static String descriptorFileName = "/opt/openbaton/descriptors/network_service_descriptors/NetworkServiceDescriptor.json";
     @Test
     public void createTest() throws SDKException, FileNotFoundException {
 
@@ -54,9 +54,10 @@ public class SdkTest {
         NetworkServiceRecord networkServiceRecord = requestor.getNetworkServiceRecordAgent().create(res2.getId());
         log.debug("RECORD: "+networkServiceRecord);
 
-        VirtualNetworkFunctionRecord response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
+        VirtualNetworkFunctionRecord[] response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecords(networkServiceRecord.getId());
 
-        log.debug("Received: " + response.toString());
+        for (VirtualNetworkFunctionRecord virtualNetworkFunctionRecord : response)
+            log.debug("Received: " + virtualNetworkFunctionRecord.toString());
 
     }
 

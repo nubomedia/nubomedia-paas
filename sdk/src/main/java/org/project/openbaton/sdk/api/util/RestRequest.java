@@ -247,6 +247,9 @@ public abstract class RestRequest {
         else return requestGetAll(url, type, null);
     }
 
+    protected Object requestGetAll(String url, Class type) throws SDKException {
+        return requestGetAll(url, type, null);
+    }
     private Object requestGetAll(String url, Class type, final Integer httpStatus) throws SDKException {
         HttpResponse<JsonNode> jsonResponse = null;
         try {
