@@ -23,8 +23,9 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	}
 
 	@Help(help = "Create NetworkServiceRecord from NetworkServiceDescriptor id")
-	public String create(final String id) throws SDKException {
-		throw new SDKException("NOT IMPLEMENTED");
+	public NetworkServiceRecord create(final String id) throws SDKException {
+		String result = this.requestPost(id);
+		return this.mapper.fromJson(result, NetworkServiceRecord.class);
 	}
 
 	/**
