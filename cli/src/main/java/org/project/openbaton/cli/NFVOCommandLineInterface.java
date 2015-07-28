@@ -83,55 +83,12 @@ public class NFVOCommandLineInterface {
             readEnvVars(properties);
         }
 
-        if (properties.get("nfvo-usr") == null){
-            log.warn("nfvo-usr property was not found neither in the file [" + CONFIGURATION_FILE + "] nor in Environment Variables");
-            try {
-                properties.put("nfvo-usr", reader.readLine("nfvo-usr: "));
-            } catch (IOException e) {
-                log.error("Oops, Error while reading from input");
-                exit(990);
-            }
-        }
-        if (properties.get("nfvo-pwd") == null){
-            log.warn("nfvo-pwd property was not found neither in the file [" + CONFIGURATION_FILE + "] nor in Environment Variables");
-            try {
-                properties.put("nfvo-pwd", reader.readLine("nfvo-pwd: ", mask));
-            } catch (IOException e) {
-                log.error("Oops, Error while reading from input");
-                exit(990);
-            }
-        }
-        if (properties.get("nfvo-ip") == null){
-            log.warn("nfvo-ip property was not found neither in the file [" + CONFIGURATION_FILE + "] nor in Environment Variables");
-            try {
-                properties.put("nfvo-ip", reader.readLine("nfvo-ip: "));
-            } catch (IOException e) {
-                log.error("Oops, Error while reading from input");
-                exit(990);
-            }
-        }
-        if (properties.get("nfvo-port") == null){
-            log.warn("nfvo-port property was not found neither in the file [" + CONFIGURATION_FILE + "] nor in Environment Variables");
-            try {
-                properties.put("nfvo-port", reader.readLine("nfvo-port: "));
-            } catch (IOException e) {
-                log.error("Oops, Error while reading from input");
-                exit(990);
-            }
-        }
-        if (properties.get("nfvo-version") == null){
-            log.warn("nfvo-verison property was not found neither in the file [" + CONFIGURATION_FILE + "] nor in Environment Variables");
-            try {
-                String version = reader.readLine("nfvo-version [1]: ");
-                if (version == null || version.equals("")){
-                    version = VERSION;
-                }
-                properties.put("nfvo-version", version);
-            } catch (IOException e) {
-                log.error("Oops, Error while reading from input");
-                exit(990);
-            }
-        }
+        getProperty(reader, properties, "nfvo-usr","");
+        getProperty(reader, properties, "nfvo-pwd","");
+        getProperty(reader, properties, "nfvo-ip","127.0.0.1");
+        getProperty(reader, properties, "nfvo-port","8080");
+        getProperty(reader, properties, "nfvo-version",VERSION);
+
         NFVORequestor nfvo = new NFVORequestor(properties.getProperty("nfvo-usr"), properties.getProperty("nfvo-pwd"), properties.getProperty("nfvo-ip"),properties.getProperty("nfvo-port"),properties.getProperty("nfvo-version"));
 
         fillCommands(nfvo);
@@ -174,6 +131,23 @@ public class NFVOCommandLineInterface {
             }
         } catch (Throwable t) {
             t.printStackTrace();
+        }
+    }
+
+    private static void getProperty(ConsoleReader reader, Properties properties, String property, String defaultProperty) {
+        if (properties.get(property) == null){
+            log.warn(property+" property was not found neither in the file [" + CONFIGURATION_FILE + "] nor in Environment Variables");
+            try {
+                String insertedProperty = reader.readLine(property + "[" + defaultProperty + "]: ");
+                if (insertedProperty == null || insertedProperty.equals("")){
+                    insertedProperty = defaultProperty;
+                }
+                properties.put(property, insertedProperty);
+
+            } catch (IOException e) {
+                log.error("Oops, Error while reading from input");
+                exit(990);
+            }
         }
     }
 
