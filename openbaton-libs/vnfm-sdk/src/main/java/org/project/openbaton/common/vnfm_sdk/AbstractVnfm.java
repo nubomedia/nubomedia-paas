@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -20,6 +22,17 @@ public abstract class AbstractVnfm implements VNFLifecycleManagement {
     protected String endpoint;
     protected Properties properties;
     protected Logger log = LoggerFactory.getLogger(this.getClass());
+    protected VnfmManagerEndpoint vnfmManagerEndpoint;
+
+    @PreDestroy
+    private void shutdown(){
+        this.unregister(vnfmManagerEndpoint);
+    }
+
+    @PostConstruct
+    private void init(){
+        setup();
+    }
 
     public String getType() {
         return type;
@@ -52,7 +65,7 @@ public abstract class AbstractVnfm implements VNFLifecycleManagement {
     public abstract void query();
 
     @Override
-    public abstract void scale();
+    public abstract void scale(VirtualNetworkFunctionRecord virtualNetworkFunctionRecord);
 
     @Override
     public abstract void checkInstantiationFeasibility();
@@ -71,6 +84,8 @@ public abstract class AbstractVnfm implements VNFLifecycleManagement {
 
     @Override
     public abstract void terminate(VirtualNetworkFunctionRecord virtualNetworkFunctionRecord);
+
+    public abstract void handleError(VirtualNetworkFunctionRecord virtualNetworkFunctionRecord);
 
     protected void loadProperties() {
         Resource resource = new ClassPathResource("conf.properties");
@@ -91,18 +106,27 @@ public abstract class AbstractVnfm implements VNFLifecycleManagement {
                 break;
             case ALLOCATE_RESOURCES:
                 break;
+            case SCALE:
+                this.scale(message.getPayload());
+                break;
             case ERROR:
+                handleError(message.getPayload());
                 break;
             case MODIFY:
-                this.modify((VirtualNetworkFunctionRecord) message.getPayload());
+                this.modify(message.getPayload());
                 break;
             case RELEASE_RESOURCES:
-                this.terminate((VirtualNetworkFunctionRecord) message.getPayload());
+                this.terminate(message.getPayload());
                 break;
+            case GRANT_OPERATION:
             case INSTANTIATE:
-                this.instantiate((VirtualNetworkFunctionRecord) message.getPayload());
+                this.instantiate(message.getPayload());
+            case RELEASE_RESOURCES_FINISH:
+                break;
         }
     }
 
     protected abstract void unregister(VnfmManagerEndpoint endpoint);
+
+    protected abstract void setup();
 }
