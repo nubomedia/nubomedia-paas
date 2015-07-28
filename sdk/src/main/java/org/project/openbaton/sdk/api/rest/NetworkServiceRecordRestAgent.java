@@ -1,6 +1,7 @@
 package org.project.openbaton.sdk.api.rest;
 
 import org.project.openbaton.catalogue.mano.record.NetworkServiceRecord;
+import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.project.openbaton.sdk.api.annotations.Help;
 import org.project.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
@@ -24,7 +25,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 
 	@Help(help = "Create NetworkServiceRecord from NetworkServiceDescriptor id")
 	public NetworkServiceRecord create(final String id) throws SDKException {
-		String result = this.requestPost(id);
+		String result = this.requestPost("/"+id);
 		return this.mapper.fromJson(result, NetworkServiceRecord.class);
 	}
 
@@ -42,10 +43,9 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *
 	 */
 	@Help(help = "Get the VirtualNetworkFunctionRecord of NetworkServiceRecord with specific id")
-	public String getVirtualNetworkFunctionRecord(final String id, final String id_vnf) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfrecords" + "/" + id_vnf;
-//		return requestGetWithStatusAccepted(url);
-		return null;
+	public VirtualNetworkFunctionRecord getVirtualNetworkFunctionRecord(final String id, final String id_vnf) throws SDKException {
+		String url = this.baseUrl + "/" + id + "/vnfrecords" + "/" + id_vnf;
+		return (VirtualNetworkFunctionRecord) requestGetWithStatusAccepted(url, VirtualNetworkFunctionRecord.class);
 	}
 
 	/**

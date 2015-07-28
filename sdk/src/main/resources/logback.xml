@@ -8,7 +8,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.project.openbaton.sdk" level="WARN"/>
+    <logger name="org.project.openbaton.sdk" level="DEBUG"/>
     <logger name="org.project.openbaton.cli" level="INFO"/>
 
     <root level="debug">

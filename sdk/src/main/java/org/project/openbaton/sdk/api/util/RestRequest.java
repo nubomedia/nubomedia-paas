@@ -34,7 +34,7 @@ import java.util.List;
  */
 public abstract class RestRequest {
     private Logger log = LoggerFactory.getLogger(this.getClass());
-    private final String baseUrl;
+    protected final String baseUrl;
 
 //	protected final String url;
 
@@ -177,7 +177,8 @@ public abstract class RestRequest {
             if (jsonResponse.getStatus() == HttpStatus.SC_UNAUTHORIZED) {
                 token = null;
                 return requestPost(object);
-            } else throw new SDKException("Status is " + jsonResponse.getStatus());
+            } else
+                throw new SDKException("Status is " + jsonResponse.getStatus());
         }
     }
 

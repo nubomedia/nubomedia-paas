@@ -1,7 +1,14 @@
 package org.project.openbaton.sdk.test;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.Test;
 import org.project.openbaton.catalogue.mano.common.DeploymentFlavour;
+import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
+import org.project.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
+import org.project.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
+import org.project.openbaton.catalogue.mano.record.NetworkServiceRecord;
+import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.project.openbaton.catalogue.nfvo.NFVImage;
 import org.project.openbaton.catalogue.nfvo.Network;
 import org.project.openbaton.catalogue.nfvo.Subnet;
@@ -11,6 +18,8 @@ import org.project.openbaton.sdk.api.exception.SDKException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,22 +31,38 @@ import java.util.List;
 public class SdkTest {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
-
+    private VimInstance vimInstance;
+    private VimInstance res;
+    private final static String descriptorFileName = "../../descriptors/network_service_descriptors/NetworkServiceDescriptor.json";
     @Test
-    public void createTest() throws SDKException {
-        NFVORequestor requestor = new NFVORequestor("admin","admin","localhost","8080", "1");
+    public void createTest() throws SDKException, FileNotFoundException {
 
-        VimInstance vimInstance = createVimInstance();
+        NFVORequestor requestor = new NFVORequestor("1");
 
-        VimInstance res = (VimInstance) requestor.abstractRestAgent(VimInstance.class,"/datacenters").create(vimInstance);
+        vimInstance = createVimInstance();
+        res = (VimInstance) requestor.abstractRestAgent(VimInstance.class,"/datacenters").create(vimInstance);
+        log.debug("Result is: "+res);
 
-        log.debug(""+res);
+//        NetworkServiceDescriptor networkServiceDescriptor = createNetworkServiceDescriptor();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson mapper = gsonBuilder.create();
+        NetworkServiceDescriptor networkServiceDescriptor = mapper.fromJson(new FileReader(descriptorFileName), NetworkServiceDescriptor.class);
+        log.debug("Sending: " + networkServiceDescriptor);
+        NetworkServiceDescriptor res2 = requestor.getNetworkServiceDescriptorAgent().create(networkServiceDescriptor);
+        log.debug("DESCRIPTOR: "+res2);
+
+        NetworkServiceRecord networkServiceRecord = requestor.getNetworkServiceRecordAgent().create(res2.getId());
+        log.debug("RECORD: "+networkServiceRecord);
+
+        VirtualNetworkFunctionRecord response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
+
+        log.debug("Received: " + response.toString());
 
     }
 
     private VimInstance createVimInstance() {
         VimInstance vimInstance = new VimInstance();
-        vimInstance.setName("vim_instance");
+        vimInstance.setName("vim-instance");
         vimInstance.setType("test");
         vimInstance.setNetworks(new HashSet<Network>() {{
             Network network = new Network();
@@ -76,7 +101,40 @@ public class SdkTest {
         return vimInstance;
     }
 
-    public static void main(String[] args) throws SDKException {
+    private NetworkServiceDescriptor createNetworkServiceDescriptor(){
+        NetworkServiceDescriptor networkServiceDescriptor = new NetworkServiceDescriptor();
+        VirtualNetworkFunctionDescriptor vnfd = new VirtualNetworkFunctionDescriptor();
+
+        vnfd.setName("" + Math.random());
+        vnfd.setType("dummy");
+
+        VirtualDeploymentUnit vdu = new VirtualDeploymentUnit();
+        vdu.setVirtual_memory_resource_element("1024");
+        vdu.setVirtual_network_bandwidth_resource("1000000");
+        VimInstance instance = new VimInstance();
+        instance.setId(null);
+        instance.setName(vimInstance.getName());
+        vdu.setVimInstance(instance);
+
+        vdu.setVm_image(new HashSet<String>() {{
+            add("image_name_1");
+        }});
+        vdu.setScale_in_out(3);
+        vdu.setMonitoring_parameter(new HashSet<String>() {{
+            add("cpu_utilization");
+        }});
+        vnfd.setVdu(new HashSet<VirtualDeploymentUnit>());
+        vnfd.getVdu().add(vdu);
+
+        networkServiceDescriptor.setVnfd(new HashSet<VirtualNetworkFunctionDescriptor>());
+        networkServiceDescriptor.getVnfd().add(vnfd);
+
+        networkServiceDescriptor.setVendor("fokus");
+        networkServiceDescriptor.setVersion("1");
+        return networkServiceDescriptor;
+    }
+
+    public static void main(String[] args) throws SDKException, FileNotFoundException {
         new SdkTest().createTest();
     }
 }
