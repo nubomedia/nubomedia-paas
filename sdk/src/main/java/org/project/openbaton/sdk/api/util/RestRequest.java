@@ -203,13 +203,13 @@ public abstract class RestRequest {
         try {
             // call the api here
             checkToken();
-            log.trace("Executing delete on: " + this.baseUrl + "/" + id);
+            log.trace("Executing delete on: " + id);
             if (token != null)
-                jsonResponse = Unirest.delete(this.baseUrl + "/" + id)
+                jsonResponse = Unirest.delete(id)
                     .header("Authorization", bearerToken.replaceAll("\"", ""))
                     .asJson();
             else
-                jsonResponse = Unirest.delete(this.baseUrl + "/" + id).asJson();
+                jsonResponse = Unirest.delete(id).asJson();
 //            check response status
             checkStatus(jsonResponse, HttpURLConnection.HTTP_NO_CONTENT);
 
@@ -231,6 +231,7 @@ public abstract class RestRequest {
             throw new SDKException("Could not get token");
         }
     }
+    
 
     /**
      * Executes a http get with to a given id
