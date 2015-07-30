@@ -54,13 +54,23 @@ public class SdkTest {
         NetworkServiceRecord networkServiceRecord = requestor.getNetworkServiceRecordAgent().create(res2.getId());
         log.debug("RECORD: "+networkServiceRecord);
 
-        VirtualNetworkFunctionRecord[] response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecords(networkServiceRecord.getId());
-
-        for (VirtualNetworkFunctionRecord virtualNetworkFunctionRecord : response)
-            log.debug("Received: " + virtualNetworkFunctionRecord.toString());
+//        VirtualNetworkFunctionRecord[] response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecords(networkServiceRecord.getId());
+//
+//        for (VirtualNetworkFunctionRecord virtualNetworkFunctionRecord : response)
+//            log.debug("Received: " + virtualNetworkFunctionRecord.toString());
         
-        requestor.getNetworkServiceRecordAgent().deleteVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
+//       requestor.getNetworkServiceRecordAgent().deleteVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
 
+        //-CREATE VNFR//
+//        VirtualNetworkFunctionRecord virtualNetworkFunctionRecord = new VirtualNetworkFunctionRecord();
+//        VirtualNetworkFunctionRecord response = requestor.getNetworkServiceRecordAgent().createVNFR(networkServiceRecord.getId(), virtualNetworkFunctionRecord);
+//        log.debug("Received: " + response.toString());
+        
+        //-UPDATE VNFR//
+        //VirtualNetworkFunctionRecord response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
+        //requestor.getNetworkServiceRecordAgent().updateVNFR(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId(), response);
+        
+    
     }
 
     private VimInstance createVimInstance() {

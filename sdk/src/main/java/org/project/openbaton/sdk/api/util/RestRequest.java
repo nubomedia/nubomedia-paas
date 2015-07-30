@@ -128,6 +128,11 @@ public abstract class RestRequest {
      * @return a string containing the response content
      */
     public Serializable requestPost(final Serializable object) throws SDKException {
+    	return requestPost("",object);
+    }
+    
+    
+    public Serializable requestPost(final String id,final Serializable object) throws SDKException {
         HttpResponse<JsonNode> jsonResponse = null;
         try {
             log.debug("Object is: " + object);
@@ -203,13 +208,13 @@ public abstract class RestRequest {
         try {
             // call the api here
             checkToken();
-            log.trace("Executing delete on: " + id);
+            log.trace("Executing delete on: " + this.baseUrl + "/" + id);
             if (token != null)
-                jsonResponse = Unirest.delete(id)
+                jsonResponse = Unirest.delete(this.baseUrl + "/" + id)
                     .header("Authorization", bearerToken.replaceAll("\"", ""))
                     .asJson();
             else
-                jsonResponse = Unirest.delete(id).asJson();
+                jsonResponse = Unirest.delete(this.baseUrl + "/" + id).asJson();
 //            check response status
             checkStatus(jsonResponse, HttpURLConnection.HTTP_NO_CONTENT);
 
@@ -264,14 +269,14 @@ public abstract class RestRequest {
                 e.printStackTrace();
                 throw new SDKException("Could not get token");
             }
-            log.debug("Executing get on: " + url);
+            log.debug("Executing get on: " + this.baseUrl + "/" + url);
 
             if (token != null)
-                jsonResponse = Unirest.get(url)
+                jsonResponse = Unirest.get(this.baseUrl + "/" + url)
                         .header("Authorization", bearerToken.replaceAll("\"", ""))
                         .asJson();
             else
-                jsonResponse = Unirest.get(url).asJson();
+                jsonResponse = Unirest.get(this.baseUrl + "/" + url).asJson();
 
             // check response status
             if (httpStatus != null) {
@@ -322,14 +327,14 @@ public abstract class RestRequest {
                 e.printStackTrace();
                 throw new SDKException("Could not get token");
             }
-            log.debug("Executing get on: " + url);
+            log.debug("Executing get on: " + this.baseUrl + "/" +url);
 
             if (token != null)
-                jsonResponse = Unirest.get(url)
+                jsonResponse = Unirest.get(this.baseUrl + "/" +url)
                     .header("Authorization", bearerToken.replaceAll("\"", ""))
                     .asJson();
             else
-                jsonResponse = Unirest.get(url).asJson();
+                jsonResponse = Unirest.get(this.baseUrl + "/" +url).asJson();
 
             // check response status
             if (httpStatus != null) {
