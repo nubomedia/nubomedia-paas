@@ -94,8 +94,11 @@ public final class NFVORequestor {
 		return factory.getVNFForwardingGraphAgent();
 	}
 
+	public EventAgent getEventAgent() {
+		return factory.getEventAgent();
+	}
+
 	public AbstractRestAgent abstractRestAgent(Class clazz, String path){
 		return factory.getAbstractAgent(clazz, path);
 	}
-
 }
