@@ -203,13 +203,13 @@ public abstract class RestRequest {
         try {
             // call the api here
             checkToken();
-            log.trace("Executing delete on: " + id);
+            log.trace("Executing delete on: " + this.baseUrl + "/" + id);
             if (token != null)
                 jsonResponse = Unirest.delete(id)
                     .header("Authorization", bearerToken.replaceAll("\"", ""))
                     .asJson();
             else
-                jsonResponse = Unirest.delete(id).asJson();
+                jsonResponse = Unirest.delete(this.baseUrl + "/" + id).asJson();
 //            check response status
             checkStatus(jsonResponse, HttpURLConnection.HTTP_NO_CONTENT);
 
