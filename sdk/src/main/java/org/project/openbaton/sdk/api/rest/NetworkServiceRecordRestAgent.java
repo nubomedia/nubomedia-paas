@@ -61,9 +61,8 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 */
 	@Help(help = "create VirtualNetworkFunctionRecord")
 	public VirtualNetworkFunctionRecord createVNFR(final String networkServiceRecord_id, final VirtualNetworkFunctionRecord virtualNetworkFunctionRecord) throws SDKException {
-		//String url = this.baseUrl + "/" + networkServiceRecord_id + "/vnfrecords";
-		//return (VirtualNetworkFunctionRecord) requestPost(url,virtualNetworkFunctionRecord);
-		return null;
+		String url = networkServiceRecord_id + "/vnfrecords";
+		return (VirtualNetworkFunctionRecord) requestPost(url,virtualNetworkFunctionRecord);
 	}
 
 	/**

@@ -139,21 +139,21 @@ public abstract class RestRequest {
             String fileJSONNode = mapper.toJson(object);
 
             log.debug("sending: " + fileJSONNode.toString());
-            log.debug("baseUrl: " + baseUrl);
+            log.debug("baseUrl: " + baseUrl + "/" +id);
 
             checkToken();
 
             // call the api here
-            log.debug("Executing post on: " + this.baseUrl);
+            log.debug("Executing post on: " + this.baseUrl + "/" +id);
             if (token != null)
-                jsonResponse = Unirest.post(this.baseUrl)
+                jsonResponse = Unirest.post(this.baseUrl + "/" +id)
                     .header("accept", "application/json")
                     .header("Content-Type", "application/json")
                     .header("Authorization", bearerToken.replaceAll("\"", ""))
                     .body(fileJSONNode)
                     .asJson();
             else
-                jsonResponse = Unirest.post(this.baseUrl)
+                jsonResponse = Unirest.post(this.baseUrl + "/" +id)
                         .header("accept", "application/json")
                         .header("Content-Type", "application/json")
                         .body(fileJSONNode)
