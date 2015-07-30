@@ -118,11 +118,10 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
-	@Help(help = "I don't know")
-	public String updateVNFD(final File vnfDependency, final String id, final String id_vnfd) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdependencies" + "/" + id_vnfd;
-		return null;
-//		return requestPut(url, vnfDependency);
+	@Help(help = "Update the VirtualNetworkFunctionRecord Dependency of a NetworkServiceRecord with specific id")
+	public VNFRecordDependency updateVNFDependency(final String networkServiceRecord_id, final String id_vnfd,final VNFRecordDependency vnfDependency) throws SDKException {
+		String url = networkServiceRecord_id + "/vnfdependencies" + "/" + id_vnfd;
+		return (VNFRecordDependency) requestPut(url, vnfDependency);
 	}
 
 	/**

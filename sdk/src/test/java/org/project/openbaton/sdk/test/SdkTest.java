@@ -74,11 +74,17 @@ public class SdkTest {
         //requestor.getNetworkServiceRecordAgent().updateVNFR(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId(), response);
  
         //requestor.getNetworkServiceRecordAgent().deleteVNFDependency(networkServiceRecord.getId(), networkServiceRecord.getVnf_dependency().iterator().next().getId());
-//        VNFRecordDependency vnfDependency = createVNFDependency();
+        VNFRecordDependency vnfDependency = createVNFDependency();
 //        
 //        
 //        VNFRecordDependency res = requestor.getNetworkServiceRecordAgent().postVNFDependency(networkServiceRecord.getId(), vnfDependency);
 //        log.debug("POST_VNFD: " + res.toString());
+        
+         VNFRecordDependency res = requestor.getNetworkServiceRecordAgent().updateVNFDependency(networkServiceRecord.getId(), networkServiceRecord.getVnf_dependency().iterator().next().getId(), vnfDependency);
+         log.debug("UPDAPTE_VNFD: " + res.toString());
+        
+        
+        
     }
     
     private VNFRecordDependency createVNFDependency(){
