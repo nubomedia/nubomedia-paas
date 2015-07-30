@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import org.junit.Test;
 import org.project.openbaton.catalogue.mano.common.DeploymentFlavour;
 import org.project.openbaton.catalogue.mano.common.VNFDependency;
+import org.project.openbaton.catalogue.mano.common.VNFRecordDependency;
 import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
@@ -56,10 +57,10 @@ public class SdkTest {
         NetworkServiceRecord networkServiceRecord = requestor.getNetworkServiceRecordAgent().create(res2.getId());
         log.debug("RECORD: "+networkServiceRecord);
 
-//        VirtualNetworkFunctionRecord[] response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecords(networkServiceRecord.getId());
+        VirtualNetworkFunctionRecord[] response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecords(networkServiceRecord.getId());
 //
-//        for (VirtualNetworkFunctionRecord virtualNetworkFunctionRecord : response)
-//            log.debug("Received: " + virtualNetworkFunctionRecord.toString());
+        for (VirtualNetworkFunctionRecord virtualNetworkFunctionRecord : response)
+            log.debug("Received: " + virtualNetworkFunctionRecord.toString());
         
 //       requestor.getNetworkServiceRecordAgent().deleteVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
 
@@ -72,10 +73,29 @@ public class SdkTest {
         //VirtualNetworkFunctionRecord response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
         //requestor.getNetworkServiceRecordAgent().updateVNFR(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId(), response);
  
-        VNFDependency response = requestor.getNetworkServiceRecordAgent().getVNFDependency(networkServiceRecord.getId(), networkServiceRecord.getVnf_dependency().iterator().next().getId());
-        log.debug("GET_VNFD: "+response.toString());
-        
+        //requestor.getNetworkServiceRecordAgent().deleteVNFDependency(networkServiceRecord.getId(), networkServiceRecord.getVnf_dependency().iterator().next().getId());
+//        VNFRecordDependency vnfDependency = createVNFDependency();
+//        
+//        
+//        VNFRecordDependency res = requestor.getNetworkServiceRecordAgent().postVNFDependency(networkServiceRecord.getId(), vnfDependency);
+//        log.debug("POST_VNFD: " + res.toString());
+    }
     
+    private VNFRecordDependency createVNFDependency(){
+    	VirtualNetworkFunctionRecord source = new VirtualNetworkFunctionRecord();
+    	source.setName("vnf-dummy-2");
+    	
+    	VirtualNetworkFunctionRecord target = new VirtualNetworkFunctionRecord();
+    	target.setName("vnf-dummy-1");
+    	
+    	VNFRecordDependency vnfDependency = new VNFRecordDependency();
+    	
+    	vnfDependency.setSource(source);
+    	vnfDependency.setTarget(target);
+    	
+    	
+		return vnfDependency;
+    	
     }
 
     private VimInstance createVimInstance() {

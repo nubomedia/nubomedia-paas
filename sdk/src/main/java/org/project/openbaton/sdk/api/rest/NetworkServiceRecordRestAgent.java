@@ -1,6 +1,7 @@
 package org.project.openbaton.sdk.api.rest;
 
 import org.project.openbaton.catalogue.mano.common.VNFDependency;
+import org.project.openbaton.catalogue.mano.common.VNFRecordDependency;
 import org.project.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.project.openbaton.sdk.api.annotations.Help;
@@ -58,7 +59,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	}
 
 	/**
-	 * TODO
+	 * TODO (check the orchestrator)
 	 */
 	@Help(help = "create VirtualNetworkFunctionRecord")
 	public VirtualNetworkFunctionRecord createVNFR(final String networkServiceRecord_id, final VirtualNetworkFunctionRecord virtualNetworkFunctionRecord) throws SDKException {
@@ -67,7 +68,7 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	}
 
 	/**
-	 *
+	 * TODO (check the orchestrator)
 	 */
 	@Help(help = "update VirtualNetworkFunctionRecord")
 	public String updateVNFR(final String networkServiceRecord_id,final String id_vnfr,final VirtualNetworkFunctionRecord virtualNetworkFunctionRecord) throws SDKException {
@@ -80,10 +81,10 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *
 	 */
 	@Help(help = "Get all the VirtualNetworkFunctionRecord dependencies of NetworkServiceRecord with specific id")
-	public String getVNFDependencies(final String id) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdependencies";
-//		return requestGetWithStatusAccepted(url);
-		return null;
+	public VNFDependency[] getVNFDependencies(final String networkServiceRecord_id) throws SDKException {
+		String url =  networkServiceRecord_id + "/vnfdependencies";
+		return (VNFDependency[]) requestGetAll(url,VNFDependency.class);
+		
 	}
 
 	/**
@@ -99,19 +100,19 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *
 	 */
 	@Help(help = "Delete the VirtualNetworkFunctionRecord Dependency of a NetworkServiceRecord with specific id")
-	public void deleteVNFDependency(final String id, final String id_vnfd) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdependencies" + "/" + id_vnfd;
-//		requestDelete(url);
+	public void deleteVNFDependency(final String networkServiceRecord_id, final String id_vnfd) throws SDKException {
+		String url = networkServiceRecord_id + "/vnfdependencies" + "/" + id_vnfd;
+		requestDelete(url);
 	}
 
 	/**
-	 *
+	 *TODO (check the orchestrator)
 	 */
 	@Help(help = "Create the VirtualNetworkFunctionRecord Dependency of a NetworkServiceRecord with specific id")
-	public String postVNFDependency(final File vnfDependency, final String id) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdependencies" + "/";
-//		return requestPost(url, vnfDependency);
-		return null;
+	public VNFRecordDependency postVNFDependency(final String networkServiceRecord_id, final VNFRecordDependency vnfDependency) throws SDKException {
+		String url =  networkServiceRecord_id + "/vnfdependencies" + "/";
+		return (VNFRecordDependency) requestPost(url, vnfDependency);
+		
 	}
 
 	/**
