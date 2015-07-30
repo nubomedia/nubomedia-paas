@@ -1,5 +1,6 @@
 package org.project.openbaton.sdk.api.rest;
 
+import org.project.openbaton.catalogue.mano.common.VNFDependency;
 import org.project.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.project.openbaton.sdk.api.annotations.Help;
@@ -89,10 +90,9 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *
 	 */
 	@Help(help = "Get the VirtualNetworkFunctionRecord Dependency of a NetworkServiceRecord with specific id")
-	public String getVNFDependency(final String id, final String id_vnfr) throws SDKException {
-		//String url = this.baseUrl + "/" + id + "/vnfdependencies" + "/" + id_vnfr;
-		//return requestGetWithStatusAccepted(url);
-		return null;
+	public VNFDependency getVNFDependency(final String networkServiceRecord_id, final String id_vnfd) throws SDKException {
+		String url = networkServiceRecord_id + "/vnfdependencies" + "/" + id_vnfd;
+		return (VNFDependency) requestGetWithStatusAccepted(url,VNFDependency.class);
 	}
 
 	/**
