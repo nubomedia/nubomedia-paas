@@ -66,4 +66,5 @@ public class VNFRecordDependency implements Serializable{
     public void setTarget(VirtualNetworkFunctionRecord target) {
         this.target = target;
     }
+    
 }

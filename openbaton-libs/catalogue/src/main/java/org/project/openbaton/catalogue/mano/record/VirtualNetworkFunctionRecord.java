@@ -142,7 +142,6 @@ public class VirtualNetworkFunctionRecord implements Serializable{
     private String type;
 
     public VirtualNetworkFunctionRecord() {
-        this.lifecycle_event = new HashSet<LifecycleEvent>();
     }
 
     public Set<AutoScalePolicy> getAuto_scale_policy() {

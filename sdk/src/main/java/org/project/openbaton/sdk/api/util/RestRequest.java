@@ -136,6 +136,7 @@ public abstract class RestRequest {
         HttpResponse<JsonNode> jsonResponse = null;
         try {
             log.debug("Object is: " + object);
+         
             String fileJSONNode = mapper.toJson(object);
 
             log.debug("sending: " + fileJSONNode.toString());
