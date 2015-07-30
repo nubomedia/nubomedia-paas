@@ -2,8 +2,10 @@ package org.project.openbaton.sdk.test;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import org.junit.Test;
 import org.project.openbaton.catalogue.mano.common.DeploymentFlavour;
+import org.project.openbaton.catalogue.mano.common.VNFDependency;
 import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
@@ -33,7 +35,7 @@ public class SdkTest {
     private Logger log = LoggerFactory.getLogger(this.getClass());
     private VimInstance vimInstance;
     private VimInstance res;
-    private final static String descriptorFileName = "../../descriptors/network_service_descriptors/NetworkServiceDescriptor.json";
+    private final static String descriptorFileName = "../../descriptors/network_service_descriptors/NetworkServiceDescriptor-with-dependencies.json";
     @Test
     public void createTest() throws SDKException, FileNotFoundException {
 
@@ -54,13 +56,26 @@ public class SdkTest {
         NetworkServiceRecord networkServiceRecord = requestor.getNetworkServiceRecordAgent().create(res2.getId());
         log.debug("RECORD: "+networkServiceRecord);
 
-        VirtualNetworkFunctionRecord[] response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecords(networkServiceRecord.getId());
-
-        for (VirtualNetworkFunctionRecord virtualNetworkFunctionRecord : response)
-            log.debug("Received: " + virtualNetworkFunctionRecord.toString());
+//        VirtualNetworkFunctionRecord[] response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecords(networkServiceRecord.getId());
+//
+//        for (VirtualNetworkFunctionRecord virtualNetworkFunctionRecord : response)
+//            log.debug("Received: " + virtualNetworkFunctionRecord.toString());
         
-        requestor.getNetworkServiceRecordAgent().deleteVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
+//       requestor.getNetworkServiceRecordAgent().deleteVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
 
+        //-CREATE VNFR//
+//       VirtualNetworkFunctionRecord virtualNetworkFunctionRecord = new VirtualNetworkFunctionRecord();
+//       VirtualNetworkFunctionRecord response = requestor.getNetworkServiceRecordAgent().createVNFR(networkServiceRecord.getId(), virtualNetworkFunctionRecord);
+//        log.debug("Received: " + response.toString());
+        
+        //-UPDATE VNFR//
+        //VirtualNetworkFunctionRecord response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
+        //requestor.getNetworkServiceRecordAgent().updateVNFR(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId(), response);
+ 
+        VNFDependency response = requestor.getNetworkServiceRecordAgent().getVNFDependency(networkServiceRecord.getId(), networkServiceRecord.getVnf_dependency().iterator().next().getId());
+        log.debug("GET_VNFD: "+response.toString());
+        
+    
     }
 
     private VimInstance createVimInstance() {

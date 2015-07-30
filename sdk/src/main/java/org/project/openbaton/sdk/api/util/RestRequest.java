@@ -128,27 +128,32 @@ public abstract class RestRequest {
      * @return a string containing the response content
      */
     public Serializable requestPost(final Serializable object) throws SDKException {
+    	return requestPost("",object);
+    }
+    
+    
+    public Serializable requestPost(final String id,final Serializable object) throws SDKException {
         HttpResponse<JsonNode> jsonResponse = null;
         try {
             log.debug("Object is: " + object);
             String fileJSONNode = mapper.toJson(object);
 
             log.debug("sending: " + fileJSONNode.toString());
-            log.debug("baseUrl: " + baseUrl);
+            log.debug("baseUrl: " + baseUrl + "/" +id);
 
             checkToken();
 
             // call the api here
-            log.debug("Executing post on: " + this.baseUrl);
+            log.debug("Executing post on: " + this.baseUrl + "/" +id);
             if (token != null)
-                jsonResponse = Unirest.post(this.baseUrl)
+                jsonResponse = Unirest.post(this.baseUrl + "/" +id)
                     .header("accept", "application/json")
                     .header("Content-Type", "application/json")
                     .header("Authorization", bearerToken.replaceAll("\"", ""))
                     .body(fileJSONNode)
                     .asJson();
             else
-                jsonResponse = Unirest.post(this.baseUrl)
+                jsonResponse = Unirest.post(this.baseUrl + "/" +id)
                         .header("accept", "application/json")
                         .header("Content-Type", "application/json")
                         .body(fileJSONNode)
@@ -205,7 +210,7 @@ public abstract class RestRequest {
             checkToken();
             log.trace("Executing delete on: " + this.baseUrl + "/" + id);
             if (token != null)
-                jsonResponse = Unirest.delete(id)
+                jsonResponse = Unirest.delete(this.baseUrl + "/" + id)
                     .header("Authorization", bearerToken.replaceAll("\"", ""))
                     .asJson();
             else
@@ -264,14 +269,14 @@ public abstract class RestRequest {
                 e.printStackTrace();
                 throw new SDKException("Could not get token");
             }
-            log.debug("Executing get on: " + url);
+            log.debug("Executing get on: " + this.baseUrl + "/" + url);
 
             if (token != null)
-                jsonResponse = Unirest.get(url)
+                jsonResponse = Unirest.get(this.baseUrl + "/" + url)
                         .header("Authorization", bearerToken.replaceAll("\"", ""))
                         .asJson();
             else
-                jsonResponse = Unirest.get(url).asJson();
+                jsonResponse = Unirest.get(this.baseUrl + "/" + url).asJson();
 
             // check response status
             if (httpStatus != null) {
@@ -322,14 +327,14 @@ public abstract class RestRequest {
                 e.printStackTrace();
                 throw new SDKException("Could not get token");
             }
-            log.debug("Executing get on: " + url);
+            log.debug("Executing get on: " + this.baseUrl + "/" +url);
 
             if (token != null)
-                jsonResponse = Unirest.get(url)
+                jsonResponse = Unirest.get(this.baseUrl + "/" +url)
                     .header("Authorization", bearerToken.replaceAll("\"", ""))
                     .asJson();
             else
-                jsonResponse = Unirest.get(url).asJson();
+                jsonResponse = Unirest.get(this.baseUrl + "/" +url).asJson();
 
             // check response status
             if (httpStatus != null) {
