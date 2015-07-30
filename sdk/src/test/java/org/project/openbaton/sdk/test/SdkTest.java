@@ -72,8 +72,9 @@ public class SdkTest {
         //VirtualNetworkFunctionRecord response = requestor.getNetworkServiceRecordAgent().getVirtualNetworkFunctionRecord(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId());
         //requestor.getNetworkServiceRecordAgent().updateVNFR(networkServiceRecord.getId(), networkServiceRecord.getVnfr().iterator().next().getId(), response);
  
-        VNFDependency response = requestor.getNetworkServiceRecordAgent().getVNFDependency(networkServiceRecord.getId(), networkServiceRecord.getVnf_dependency().iterator().next().getId());
-        log.debug("GET_VNFD: "+response.toString());
+        VNFDependency[] response = requestor.getNetworkServiceRecordAgent().getVNFDependencies(networkServiceRecord.getId());
+        for (VNFDependency VNFDependency : response)
+          log.debug("GET_VNFD: " + VNFDependency.toString());
         
     
     }
