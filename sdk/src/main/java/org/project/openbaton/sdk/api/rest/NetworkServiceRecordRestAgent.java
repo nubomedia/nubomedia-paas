@@ -99,9 +99,9 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *
 	 */
 	@Help(help = "Delete the VirtualNetworkFunctionRecord Dependency of a NetworkServiceRecord with specific id")
-	public void deleteVNFDependency(final String id, final String id_vnfd) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdependencies" + "/" + id_vnfd;
-//		requestDelete(url);
+	public void deleteVNFDependency(final String networkServiceRecord_id, final String id_vnfd) throws SDKException {
+		String url = networkServiceRecord_id + "/vnfdependencies" + "/" + id_vnfd;
+		requestDelete(url);
 	}
 
 	/**
