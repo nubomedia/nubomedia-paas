@@ -208,6 +208,7 @@ public class NFVOCommandLineInterface {
         getMethods(nfvo.getNetworkServiceRecordAgent());
         getMethods(nfvo.getConfigurationAgent());
         getMethods(nfvo.getImageAgent());
+        getMethods(nfvo.getEventAgent());
         getMethods(nfvo.getVNFFGAgent());
         getMethods(nfvo.getVimInstanceAgent());
         getMethods(nfvo.getNetworkServiceDescriptorAgent());
