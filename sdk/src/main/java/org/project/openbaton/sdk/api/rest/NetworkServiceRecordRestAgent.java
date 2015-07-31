@@ -3,6 +3,7 @@ package org.project.openbaton.sdk.api.rest;
 import org.project.openbaton.catalogue.mano.common.VNFDependency;
 import org.project.openbaton.catalogue.mano.common.VNFRecordDependency;
 import org.project.openbaton.catalogue.mano.record.NetworkServiceRecord;
+import org.project.openbaton.catalogue.mano.record.PhysicalNetworkFunctionRecord;
 import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.project.openbaton.sdk.api.annotations.Help;
 import org.project.openbaton.sdk.api.exception.SDKException;
@@ -133,10 +134,9 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *         PhysicalNetworkFunctionRecord into NSD
 	 */
 	@Help(help = "Get all the PhysicalNetworkFunctionRecords of a specific NetworkServiceRecord with id")
-	public String getPhysicalNetworkFunctionRecords(final String id) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfrecords";
-		return null;
-//		return requestGetWithStatusAccepted(url);
+	public PhysicalNetworkFunctionRecord[] getPhysicalNetworkFunctionRecords(final String networkServiceRecord_id) throws SDKException {
+		String url = networkServiceRecord_id + "/pnfrecords";
+		return (PhysicalNetworkFunctionRecord[]) requestGetAll(url, PhysicalNetworkFunctionRecord.class );
 	}
 
 	/**
