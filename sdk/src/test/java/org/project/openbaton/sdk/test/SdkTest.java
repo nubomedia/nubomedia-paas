@@ -84,11 +84,26 @@ public class SdkTest {
 //         VNFRecordDependency res = requestor.getNetworkServiceRecordAgent().updateVNFDependency(networkServiceRecord.getId(), networkServiceRecord.getVnf_dependency().iterator().next().getId(), vnfDependency);
 //         log.debug("UPDAPTE_VNFD: " + res.toString());
         
-           PhysicalNetworkFunctionRecord[] response2 = requestor.getNetworkServiceRecordAgent().getPhysicalNetworkFunctionRecords(networkServiceRecord.getId());
-           for(PhysicalNetworkFunctionRecord physicalNetworkFunctionRecord : response2)
-        	   log.debug("PHYSICAL: " + physicalNetworkFunctionRecord.toString());
+           PhysicalNetworkFunctionRecord physicalNetworkFunctionRecord = createPNFR();
+           PhysicalNetworkFunctionRecord response2 = requestor.getNetworkServiceRecordAgent().postPhysicalNetworkFunctionRecord(networkServiceRecord.getId(),physicalNetworkFunctionRecord);
+           log.debug("PHYSICAL: " + response2.toString());
+           
+//           PhysicalNetworkFunctionRecord[] response3 = requestor.getNetworkServiceRecordAgent().getPhysicalNetworkFunctionRecords(networkServiceRecord.getId());
+//           for(PhysicalNetworkFunctionRecord physicalNetworkFunctionRecord2 : response3)
+//        	   log.debug("PHYSICAL: " + physicalNetworkFunctionRecord2.toString());
         
         
+    }
+    
+    private PhysicalNetworkFunctionRecord createPNFR()
+    { 
+    	PhysicalNetworkFunctionRecord physicalNetworkFunctionRecord = new PhysicalNetworkFunctionRecord();
+    	
+    	physicalNetworkFunctionRecord.setDescription("Warp 2000");
+    	physicalNetworkFunctionRecord.setVendor("fokus");
+    	
+    	
+    	return physicalNetworkFunctionRecord;
     }
     
     private VNFRecordDependency createVNFDependency(){

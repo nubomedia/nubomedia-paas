@@ -181,10 +181,10 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *         stored
 	 */
 	@Help(help = "Create the PhysicalNetworkFunctionRecord of a NetworkServiceRecord with specific id")
-	public String postPhysicalNetworkFunctionRecord(final File physicalNetworkFunctionRecord, final String id) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfrecords" + "/";
-//		return requestPost(url, physicalNetworkFunctionRecord);
-		return null;
+	public PhysicalNetworkFunctionRecord postPhysicalNetworkFunctionRecord(final String networkServiceRecord_id, final PhysicalNetworkFunctionRecord physicalNetworkFunctionRecord) throws SDKException {
+		String url = networkServiceRecord_id + "/pnfrecords" + "/";
+		return (PhysicalNetworkFunctionRecord) requestPost(url, physicalNetworkFunctionRecord);
+		
 	}
 
 	/**
