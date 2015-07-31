@@ -165,9 +165,9 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *            : The PhysicalNetworkFunctionRecord id
 	 */
 	@Help(help = "Delete the PhysicalNetworkFunctionRecord of a NetworkServiceRecord with specific id")
-	public void deletePhysicalNetworkFunctionRecord(final String id, final String id_pnf) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfrecords" + "/" + id_pnf;
-//		requestDelete(url);
+	public void deletePhysicalNetworkFunctionRecord(final String networkServiceRecord_id, final String id_pnf) throws SDKException {
+		String url = networkServiceRecord_id + "/pnfrecords" + "/" + id_pnf;
+		requestDelete(url);
 	}
 
 	/**

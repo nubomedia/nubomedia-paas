@@ -88,9 +88,8 @@ public class SdkTest {
            PhysicalNetworkFunctionRecord response2 = requestor.getNetworkServiceRecordAgent().postPhysicalNetworkFunctionRecord(networkServiceRecord.getId(),physicalNetworkFunctionRecord);
            log.debug("PHYSICAL: " + response2.toString());
            
-          PhysicalNetworkFunctionRecord response3 = requestor.getNetworkServiceRecordAgent().getPhysicalNetworkFunctionRecord(networkServiceRecord.getId(),response2.getId());
-       	  log.debug("GET PHYSICAL: " + response3.toString());
-           
+           requestor.getNetworkServiceRecordAgent().deletePhysicalNetworkFunctionRecord(networkServiceRecord.getId(),response2.getId());
+       	  
            
         
         
