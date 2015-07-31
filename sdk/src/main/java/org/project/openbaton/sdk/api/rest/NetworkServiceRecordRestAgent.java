@@ -3,6 +3,7 @@ package org.project.openbaton.sdk.api.rest;
 import org.project.openbaton.catalogue.mano.common.VNFDependency;
 import org.project.openbaton.catalogue.mano.common.VNFRecordDependency;
 import org.project.openbaton.catalogue.mano.record.NetworkServiceRecord;
+import org.project.openbaton.catalogue.mano.record.PhysicalNetworkFunctionRecord;
 import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.project.openbaton.sdk.api.annotations.Help;
 import org.project.openbaton.sdk.api.exception.SDKException;
@@ -118,11 +119,10 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	/**
 	 *
 	 */
-	@Help(help = "I don't know")
-	public String updateVNFD(final File vnfDependency, final String id, final String id_vnfd) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdependencies" + "/" + id_vnfd;
-		return null;
-//		return requestPut(url, vnfDependency);
+	@Help(help = "Update the VirtualNetworkFunctionRecord Dependency of a NetworkServiceRecord with specific id")
+	public VNFRecordDependency updateVNFDependency(final String networkServiceRecord_id, final String id_vnfd,final VNFRecordDependency vnfDependency) throws SDKException {
+		String url = networkServiceRecord_id + "/vnfdependencies" + "/" + id_vnfd;
+		return (VNFRecordDependency) requestPut(url, vnfDependency);
 	}
 
 	/**
@@ -134,10 +134,9 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *         PhysicalNetworkFunctionRecord into NSD
 	 */
 	@Help(help = "Get all the PhysicalNetworkFunctionRecords of a specific NetworkServiceRecord with id")
-	public String getPhysicalNetworkFunctionRecords(final String id) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfrecords";
-		return null;
-//		return requestGetWithStatusAccepted(url);
+	public PhysicalNetworkFunctionRecord[] getPhysicalNetworkFunctionRecords(final String networkServiceRecord_id) throws SDKException {
+		String url = networkServiceRecord_id + "/pnfrecords";
+		return (PhysicalNetworkFunctionRecord[]) requestGetAll(url, PhysicalNetworkFunctionRecord.class );
 	}
 
 	/**

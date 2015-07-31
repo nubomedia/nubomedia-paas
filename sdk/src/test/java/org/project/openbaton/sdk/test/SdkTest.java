@@ -11,6 +11,7 @@ import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.project.openbaton.catalogue.mano.record.NetworkServiceRecord;
+import org.project.openbaton.catalogue.mano.record.PhysicalNetworkFunctionRecord;
 import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.project.openbaton.catalogue.nfvo.NFVImage;
 import org.project.openbaton.catalogue.nfvo.Network;
@@ -79,6 +80,15 @@ public class SdkTest {
 //        
 //        VNFRecordDependency res = requestor.getNetworkServiceRecordAgent().postVNFDependency(networkServiceRecord.getId(), vnfDependency);
 //        log.debug("POST_VNFD: " + res.toString());
+        
+//         VNFRecordDependency res = requestor.getNetworkServiceRecordAgent().updateVNFDependency(networkServiceRecord.getId(), networkServiceRecord.getVnf_dependency().iterator().next().getId(), vnfDependency);
+//         log.debug("UPDAPTE_VNFD: " + res.toString());
+        
+           PhysicalNetworkFunctionRecord[] response2 = requestor.getNetworkServiceRecordAgent().getPhysicalNetworkFunctionRecords(networkServiceRecord.getId());
+           for(PhysicalNetworkFunctionRecord physicalNetworkFunctionRecord : response2)
+        	   log.debug("PHYSICAL: " + physicalNetworkFunctionRecord.toString());
+        
+        
     }
     
     private VNFRecordDependency createVNFDependency(){
