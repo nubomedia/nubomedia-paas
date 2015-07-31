@@ -188,6 +188,8 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	}
 
 	/**
+	 * TODO (check the orchestrator)
+	 * 
 	 * Edits the PhysicalNetworkFunctionRecord
 	 *
 	 * @param physicalNetworkFunctionRecord
@@ -198,10 +200,10 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *         edited
 	 */
 	@Help(help = "Update the PhysicalNetworkFunctionRecord of a NetworkServiceRecord with specific id")
-	public String updatePNFD(final File physicalNetworkFunctionRecord, final String id, final String id_pnf) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfrecords" + "/" + id_pnf;
-//		return requestPut(url, physicalNetworkFunctionRecord);
-		return null;
+	public PhysicalNetworkFunctionRecord updatePNFD(final String networkServiceRecord_id, final String id_pnf,final PhysicalNetworkFunctionRecord physicalNetworkFunctionRecord) throws SDKException {
+		String url = networkServiceRecord_id + "/pnfrecords" + "/" + id_pnf;
+		return (PhysicalNetworkFunctionRecord) requestPut(url, physicalNetworkFunctionRecord);
+		
 	}
 
 }
