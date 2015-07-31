@@ -150,10 +150,10 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
 	 *         selected
 	 */
 	@Help(help = "Get the PhysicalNetworkFunctionRecord of a NetworkServiceRecord with specific id")
-	public String getPhysicalNetworkFunctionRecord(final String id, final String id_pnf) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfrecords" + "/" + id_pnf;
-//		return requestGetWithStatusAccepted(url);
-		return null;
+	public PhysicalNetworkFunctionRecord getPhysicalNetworkFunctionRecord(final String networkServiceRecord_id, final String id_pnf) throws SDKException {
+		String url = networkServiceRecord_id + "/pnfrecords" + "/" + id_pnf;
+		return (PhysicalNetworkFunctionRecord) requestGetWithStatusAccepted(url,PhysicalNetworkFunctionRecord.class);
+		
 	}
 
 	/**
