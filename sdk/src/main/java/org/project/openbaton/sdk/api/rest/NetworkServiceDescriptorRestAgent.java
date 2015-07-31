@@ -1,6 +1,7 @@
 package org.project.openbaton.sdk.api.rest;
 
 import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
+import org.project.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.project.openbaton.sdk.api.annotations.Help;
 import org.project.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
@@ -31,10 +32,10 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *         VirtualNetworkFunctionDescriptor into NSD
 	 */
 	@Help(help = "Get all the VirtualNetworkFunctionDescriptors of a NetworkServiceDescriptor with specific id")
-	public String getVirtualNetworkFunctionDescriptors(final String id) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdescriptors";
-//		return requestGetWithStatusAccepted(url);
-		return null;
+	public VirtualNetworkFunctionDescriptor[] getVirtualNetworkFunctionDescriptors(final String networkServiceDescriptor_id) throws SDKException {
+		String url = networkServiceDescriptor_id + "/vnfdescriptors";
+		return (VirtualNetworkFunctionDescriptor[]) requestGetAll(url,VirtualNetworkFunctionDescriptor.class);
+		
 	}
 
 	/**
@@ -48,10 +49,10 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *         VirtualNetworkFunctionDescriptor into NSD
 	 */
 	@Help(help = "Get the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
-	public String getVirtualNetworkFunctionDescriptor(final String id, final String id_vfn) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdescriptors" + "/" + id_vfn;
-//		return requestGetWithStatusAccepted(url);
-		return null;
+	public VirtualNetworkFunctionDescriptor getVirtualNetworkFunctionDescriptor(final String networkServiceDescriptor_id, final String id_vfn) throws SDKException {
+		String url = networkServiceDescriptor_id + "/vnfdescriptors" + "/" + id_vfn;
+ 	    return (VirtualNetworkFunctionDescriptor) requestGetWithStatusAccepted(url,VirtualNetworkFunctionDescriptor.class);
+		
 	}
 
 	/**
@@ -63,9 +64,9 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The id of the VNF Descriptor
 	 */
 	@Help(help = "Delete the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
-	public void deleteVirtualNetworkFunctionDescriptors(final String id, final String id_vfn) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdescriptors" + "/" + id_vfn;
-//		requestDelete(url);
+	public void deleteVirtualNetworkFunctionDescriptors(final String networkServiceDescriptor_id, final String id_vfn) throws SDKException {
+		String url = networkServiceDescriptor_id + "/vnfdescriptors" + "/" + id_vfn;
+		requestDelete(url);
 	}
 
 	/**
@@ -77,9 +78,9 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The id of the networkServiceDescriptor the vnfd shall be created at
 	 */
 	@Help(help = "create the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
-	public String createVNFD(final File virtualNetworkFunctionDescriptor, final String id) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdescriptors" + "/";
-//		return requestPost(url, virtualNetworkFunctionDescriptor);
+	public VirtualNetworkFunctionDescriptor createVNFD(final String networkServiceDescriptor_id,final VirtualNetworkFunctionDescriptor virtualNetworkFunctionDescriptor) throws SDKException {
+		//String url = networkServiceDescriptor_id + "/vnfdescriptors" + "/";
+		//return (VirtualNetworkFunctionDescriptor) requestPost(url, virtualNetworkFunctionDescriptor);
 		return null;
 	}
 
@@ -108,7 +109,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The id of the networkServiceDescriptor
 	 * @return List<VNFDependency>:  The List of VNFDependency into NSD
 	 */
-	@Help(help = "Get all the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
+	@Help(help = "Get all the VirtualNetworkFunctionDescriptor Dependency of a NetworkServiceDescriptor with specific id")
 	public String getVNFDependencies(final String id) throws SDKException {
 //		String url = this.url + "/" + id + "/vnfdependencies";
 //		return requestGetWithStatusAccepted(url);
