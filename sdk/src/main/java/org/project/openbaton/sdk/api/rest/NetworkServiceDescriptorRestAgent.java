@@ -79,9 +79,8 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 */
 	@Help(help = "create the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
 	public VirtualNetworkFunctionDescriptor createVNFD(final String networkServiceDescriptor_id,final VirtualNetworkFunctionDescriptor virtualNetworkFunctionDescriptor) throws SDKException {
-		//String url = networkServiceDescriptor_id + "/vnfdescriptors" + "/";
-		//return (VirtualNetworkFunctionDescriptor) requestPost(url, virtualNetworkFunctionDescriptor);
-		return null;
+		String url = networkServiceDescriptor_id + "/vnfdescriptors" + "/";
+		return (VirtualNetworkFunctionDescriptor) requestPost(url, virtualNetworkFunctionDescriptor);
 	}
 
 	/**
@@ -96,10 +95,9 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @return List<VirtualNetworkFunctionDescriptor>: The updated virtualNetworkFunctionDescriptor
 	 */
 	@Help(help = "Update the VirtualNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
-	public String updateVNF(final File virtualNetworkFunctionDescriptor, final String id, final String id_vfn) throws SDKException {
-//		String url = this.url + "/" + id + "/vnfdescriptors" + "/" + id_vfn;
-//		return requestPut(url, virtualNetworkFunctionDescriptor);
-		return null;
+	public VirtualNetworkFunctionDescriptor updateVNFD(final String networkServiceDescriptor_id, final String id_vfn, final VirtualNetworkFunctionDescriptor virtualNetworkFunctionDescriptor) throws SDKException {
+		String url = networkServiceDescriptor_id + "/vnfdescriptors" + "/" + id_vfn;
+		return (VirtualNetworkFunctionDescriptor) requestPut(url, virtualNetworkFunctionDescriptor);
 	}
 
 	/**
