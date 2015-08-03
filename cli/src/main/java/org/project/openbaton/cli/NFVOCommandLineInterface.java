@@ -42,12 +42,29 @@ public class NFVOCommandLineInterface {
         System.out.println("/~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/");
         System.out.println("Usage: java -jar build/libs/neutrino-<$version>.jar");
         System.out.println("Available commands are");
+        String format = "%-80s%s%n";
         for (Object entry : helpCommandList.entrySet()) {
-            System.out.println("\t" + ((Map.Entry)entry).getKey() + ":\t" + ((Map.Entry)entry).getValue());
+            System.out.printf(format, ((Map.Entry)entry).getKey() + ":" ,((Map.Entry)entry).getValue());
         }
         System.out.println("/~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/");
     }
 
+    private static void helpCommand(String command){
+        Command cmd = commandList.get(command);
+        System.out.println();
+        System.out.println("/~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/");
+        System.out.print("Usage: " + command + " ");
+        for (Class c : cmd.getParams()){
+            System.out.print("<" + c.getSimpleName() + ">");
+        }
+        System.out.println();
+        System.out.println();
+        String format = "%-80s%s%n";
+        System.out.println("Where:");
+        for (Class c : cmd.getParams())
+            System.out.printf(format, "<" + c.getSimpleName() + ">  is a: ", c.getName());
+        System.out.println("/~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/");
+    }
 
     public static void main(String[] args) {
 
@@ -115,6 +132,11 @@ public class NFVOCommandLineInterface {
                 }else
                 if (line.equalsIgnoreCase("help")) {
                     usage();
+                }else
+                if (line.startsWith("help ")) {
+                    StringTokenizer st = new StringTokenizer(line, " ");
+                    st.nextToken();
+                    helpCommand(st.nextToken());
                 }else
                 if (line.equalsIgnoreCase("print properties")) {
                     log.info("" + properties.toString());
