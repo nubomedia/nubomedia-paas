@@ -55,13 +55,13 @@ public class SdkTest {
         NetworkServiceDescriptor res2 = requestor.getNetworkServiceDescriptorAgent().create(networkServiceDescriptor);
         log.debug("DESCRIPTOR: "+res2);
         
-//        VirtualNetworkFunctionDescriptor response = requestor.getNetworkServiceDescriptorAgent().getVirtualNetworkFunctionDescriptor(res2.getId(),res2.getVnfd().iterator().next().getId());
-//        log.debug("Received: " + response.toString());
+        VNFDependency  vnfDependency = new VNFDependency();
+        VNFDependency res = requestor.getNetworkServiceDescriptorAgent().createVNFDependency(res2.getId(),vnfDependency);
+        VNFDependency  vnfDependency2 = new VNFDependency();
+        VNFDependency res3 = requestor.getNetworkServiceDescriptorAgent().updateVNFD(res2.getId(),res.getId(),vnfDependency2);
         
-        VNFDependency[] res = requestor.getNetworkServiceDescriptorAgent().getVNFDependencies(res2.getId());
         
-              for (VNFDependency virtualNetworkFunctionRecord : res)
-                    log.debug("Received Dependecy: " + virtualNetworkFunctionRecord.toString());
+        log.debug("Received update: " + res3.toString());
         
          //CREATE//
 //        VirtualNetworkFunctionDescriptor virtualNetworkFunctionDescriptor = createVNFDescriptor();         
