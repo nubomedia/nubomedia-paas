@@ -2,6 +2,7 @@ package org.project.openbaton.sdk.api.rest;
 
 import org.project.openbaton.catalogue.mano.common.VNFDependency;
 import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
+import org.project.openbaton.catalogue.mano.descriptor.PhysicalNetworkFunctionDescriptor;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.project.openbaton.sdk.api.annotations.Help;
 import org.project.openbaton.sdk.api.exception.SDKException;
@@ -188,10 +189,10 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *
 	 */
 	@Help(help = "Get all the PhysicalNetworkFunctionDescriptors of a NetworkServiceDescriptor with specific id")
-	public String getPhysicalNetworkFunctionDescriptors(final String id) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfdescriptors";
-//		return requestGetWithStatusAccepted(url);
-		return null;
+	public PhysicalNetworkFunctionDescriptor[] getPhysicalNetworkFunctionDescriptors(final String networkServiceDescriptor_id) throws SDKException {
+		String url = networkServiceDescriptor_id + "/pnfdescriptors";
+		return (PhysicalNetworkFunctionDescriptor[]) requestGetWithStatusAccepted(url,PhysicalNetworkFunctionDescriptor.class);
+		
 	}
 
 	/**
@@ -206,10 +207,9 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *
 	 */
 	@Help(help = "Get the PhysicalNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
-	public String getPhysicalNetworkFunctionDescriptor(final String id, final String id_pnf) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfdescriptors" + "/" + id_pnf;
-//		return requestGetWithStatusAccepted(url);
-		return null;
+	public PhysicalNetworkFunctionDescriptor getPhysicalNetworkFunctionDescriptor(final String networkServiceDescriptor_id, final String id_pnf) throws SDKException {
+		String url = networkServiceDescriptor_id + "/pnfdescriptors" + "/" + id_pnf;
+		return (PhysicalNetworkFunctionDescriptor) requestGetWithStatusAccepted(url,PhysicalNetworkFunctionDescriptor.class);
 	}
 
 	/**
@@ -221,9 +221,9 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *            : The PhysicalNetworkFunctionDescriptor id
 	 */
 	@Help(help = "Delete the PhysicalNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
-	public void deletePhysicalNetworkFunctionDescriptor(final String id, final String id_pnf) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfdescriptors" + "/" + id_pnf;
-//		requestDelete(url);
+	public void deletePhysicalNetworkFunctionDescriptor(final String networkServiceDescriptor_id, final String id_pnf) throws SDKException {
+		String url = networkServiceDescriptor_id + "/pnfdescriptors" + "/" + id_pnf;
+		requestDelete(url);
 	}
 
 	/**
@@ -238,10 +238,10 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @return PhysicalNetworkFunctionDescriptor: The PhysicalNetworkFunctionDescriptor stored
 	 */
 	@Help(help = "Create the PhysicalNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
-	public String createPhysicalNetworkFunctionDescriptor(final File pnf, final String id, final String id_pnf) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfdescriptors" + "/" + id_pnf;
-//		return requestPost(url, pnf);
-		return null;
+	public PhysicalNetworkFunctionDescriptor createPhysicalNetworkFunctionDescriptor(final String networkServiceDescriptor_id, final PhysicalNetworkFunctionDescriptor physicalNetworkFunctionDescriptor) throws SDKException {
+		String url = networkServiceDescriptor_id + "/pnfdescriptors";
+		return (PhysicalNetworkFunctionDescriptor) requestPost(url, physicalNetworkFunctionDescriptor);
+		
 	}
 
 	/**
@@ -258,10 +258,10 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @
 	 */
 	@Help(help = "Update the PhysicalNetworkFunctionDescriptor of a NetworkServiceDescriptor with specific id")
-	public String updatePNFD(final File pnf, final String id, final String id_pnf) throws SDKException {
-//		String url = this.url + "/" + id + "/pnfdescriptors" + "/" + id_pnf;
-//		return requestPut(url, pnf);
-		return null;
+	public PhysicalNetworkFunctionDescriptor updatePNFD(final String networkServiceDescriptor_id, final String id_pnf,final PhysicalNetworkFunctionDescriptor physicalNetworkFunctionDescriptor ) throws SDKException {
+		String url = networkServiceDescriptor_id + "/pnfdescriptors" + "/" + id_pnf;
+		return (PhysicalNetworkFunctionDescriptor) requestPut(url, physicalNetworkFunctionDescriptor);
+		
 	}
 
 	/**
