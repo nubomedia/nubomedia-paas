@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import org.junit.Test;
 import org.project.openbaton.catalogue.mano.common.DeploymentFlavour;
+import org.project.openbaton.catalogue.mano.common.Security;
 import org.project.openbaton.catalogue.mano.common.VNFDependency;
 import org.project.openbaton.catalogue.mano.common.VNFRecordDependency;
 import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
@@ -56,20 +57,20 @@ public class SdkTest {
         NetworkServiceDescriptor res2 = requestor.getNetworkServiceDescriptorAgent().create(networkServiceDescriptor);
         log.debug("DESCRIPTOR: "+res2);
         
-//        PhysicalNetworkFunctionDescriptor[] response = requestor.getNetworkServiceDescriptorAgent().getPhysicalNetworkFunctionDescriptors(res2.getId());
+        Security  security = new Security();
+        Security res = requestor.getNetworkServiceDescriptorAgent().createSecurity(res2.getId(),security); 
+        Security  security2 = new Security();
+        Security res3 = requestor.getNetworkServiceDescriptorAgent().updateSecurity(res2.getId(),res.getId(),security2);
+        
+        log.debug("Received: " + res3.toString());
+        
+//        PhysicalNetworkFunctionDescriptor origin = new  PhysicalNetworkFunctionDescriptor();
+//        PhysicalNetworkFunctionDescriptor source = requestor.getNetworkServiceDescriptorAgent().createPhysicalNetworkFunctionDescriptor(res2.getId(),origin);
 //        
-//        for (PhysicalNetworkFunctionDescriptor virtualNetworkFunctionRecord : response)
-//         log.debug("Received: " + virtualNetworkFunctionRecord.toString());
+//        PhysicalNetworkFunctionDescriptor response = requestor.getNetworkServiceDescriptorAgent().getPhysicalNetworkFunctionDescriptor(res2.getId(),source.getId());
+//        log.debug("Received: " + response.toString());
         
-        PhysicalNetworkFunctionDescriptor origin = new  PhysicalNetworkFunctionDescriptor();
-        PhysicalNetworkFunctionDescriptor source = requestor.getNetworkServiceDescriptorAgent().createPhysicalNetworkFunctionDescriptor(res2.getId(),origin);
-        
-        PhysicalNetworkFunctionDescriptor response = requestor.getNetworkServiceDescriptorAgent().getPhysicalNetworkFunctionDescriptor(res2.getId(),source.getId());
-        log.debug("Received: " + response.toString());
-        
-        
-        
-        
+      
         
 //        VNFDependency  vnfDependency = new VNFDependency();
 //        VNFDependency res = requestor.getNetworkServiceDescriptorAgent().createVNFDependency(res2.getId(),vnfDependency);

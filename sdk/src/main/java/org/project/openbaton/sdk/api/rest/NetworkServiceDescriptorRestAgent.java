@@ -1,5 +1,6 @@
 package org.project.openbaton.sdk.api.rest;
 
+import org.project.openbaton.catalogue.mano.common.Security;
 import org.project.openbaton.catalogue.mano.common.VNFDependency;
 import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.project.openbaton.catalogue.mano.descriptor.PhysicalNetworkFunctionDescriptor;
@@ -191,7 +192,7 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	@Help(help = "Get all the PhysicalNetworkFunctionDescriptors of a NetworkServiceDescriptor with specific id")
 	public PhysicalNetworkFunctionDescriptor[] getPhysicalNetworkFunctionDescriptors(final String networkServiceDescriptor_id) throws SDKException {
 		String url = networkServiceDescriptor_id + "/pnfdescriptors";
-		return (PhysicalNetworkFunctionDescriptor[]) requestGetWithStatusAccepted(url,PhysicalNetworkFunctionDescriptor.class);
+		return (PhysicalNetworkFunctionDescriptor[]) requestGetAll(url,PhysicalNetworkFunctionDescriptor.class);
 		
 	}
 
@@ -273,27 +274,11 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 *         NSD
 	 */
 	@Help(help = "Get all the Security of a NetworkServiceDescriptor with specific id")
-	public String getSecurities(final String id) throws SDKException {
-//		String url = this.url + "/" + id + "/security";
-//		return requestGetWithStatusAccepted(url);
-		return null;
+	public Security getSecurities(final String networkServiceDescriptor_id) throws SDKException {
+		String url = networkServiceDescriptor_id + "/security";
+		return (Security) requestGetWithStatusAccepted(url,Security.class);
 	}
 
-	/**
-	 * Return the Security with the id_s
-	 *
-	 * @param id
-	 *            : The NSD id
-	 * @param id_s
-	 *            : The Security id
-	 * @return Security: The Security selected by id_s
-	 */
-	@Help(help = "Get the Security of a NetworkServiceDescriptor with specific id")
-	public String getSecurity(final String id, final String id_s) throws SDKException {
-//		String url = this.url + "/" + id + "/security" + "/" + id_s;
-//		return requestGetWithStatusAccepted(url);
-		return null;
-	}
 
 	/**
 	 * Delete the Security with the id_s
@@ -305,9 +290,9 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @
 	 */
 	@Help(help = "Delete the Security of a NetworkServiceDescriptor with specific id")
-	public void deleteSecurity(final String id, final String id_s) throws SDKException {
-//		String url = this.url + "/" + id + "/security" + "/" + id_s;
-//		requestDelete(url);
+	public void deleteSecurity(final String networkServiceDescriptor_id, final String id_s) throws SDKException {
+		String url = networkServiceDescriptor_id + "/security" + "/" + id_s;
+		requestDelete(url);
 	}
 
 	/**
@@ -320,10 +305,10 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @return Security: The Security stored
 	 */
 	@Help(help = "create the Security of a NetworkServiceDescriptor with specific id")
-	public String createSecurity(final File security, final String id) throws SDKException {
-//		String url = this.url + "/" + id + "/security" + "/";
-//		return requestPost(url, security);
-		return null;
+	public Security createSecurity(final String networkServiceDescriptor_id,final Security security) throws SDKException {
+		String url = networkServiceDescriptor_id + "/security" + "/";
+		return (Security) requestPost(url, security);
+		
 	}
 
 	/**
@@ -338,10 +323,10 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 	 * @return Security: The Security stored
 	 */
 	@Help(help = "Update the Security of a NetworkServiceDescriptor with specific id")
-	public String updateSecurity(final File security, final String id, final String id_s) throws SDKException {
-//		String url = this.url + "/" + id + "/security" + "/" + id_s;
-//		return requestPut(url, security);
-		return null;
+	public Security updateSecurity(final String networkServiceDescriptor_id, final String id_s,final Security security) throws SDKException {
+		String url = networkServiceDescriptor_id + "/security" + "/" + id_s;
+		return (Security) requestPut(url, security);
+		
 	}
 
 	/**
