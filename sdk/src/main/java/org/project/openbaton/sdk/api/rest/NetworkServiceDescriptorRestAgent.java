@@ -5,6 +5,7 @@ import org.project.openbaton.catalogue.mano.common.VNFDependency;
 import org.project.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.project.openbaton.catalogue.mano.descriptor.PhysicalNetworkFunctionDescriptor;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
+import org.project.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.project.openbaton.sdk.api.annotations.Help;
 import org.project.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
@@ -329,16 +330,4 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
 		
 	}
 
-	/**
-	 * Create a record into NSD
-	 *
-	 * @param networkServiceDescriptor
-	 *            : the networkServiceDescriptor JSON File
-	 */
-	@Help(help = "create NetworkServiceRecord from a NetworkServiceDescriptor")
-	public String createRecord(final File networkServiceDescriptor) throws SDKException {
-//		String url = this.url + "/records";
-//		return requestPost(url, networkServiceDescriptor);
-		return null;
-	}
 }
