@@ -3,13 +3,14 @@ package org.project.openbaton.catalogue.nfvo;
 import org.project.openbaton.catalogue.util.IdGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
  * Created by lto on 22/07/15.
  */
 @Entity
-public class VNFPackage {
+public class VNFPackage implements Serializable{
 
     @Id
     private String id = IdGenerator.createUUID();
@@ -20,13 +21,46 @@ public class VNFPackage {
 
     private String extId;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private String imageLink;
+    private String scriptsLink;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}, orphanRemoval = true)
     private NFVImage image;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Script> scripts;
 
     public VNFPackage() {
+    }
+
+    @Override
+    public String toString() {
+        return "VNFPackage{" +
+                "id='" + id + '\'' +
+                ", version=" + version +
+                ", name='" + name + '\'' +
+                ", extId='" + extId + '\'' +
+                ", imageLink='" + imageLink + '\'' +
+                ", scriptsLink='" + scriptsLink + '\'' +
+                ", image=" + image +
+                ", scripts=" + scripts +
+                '}';
+    }
+
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
+    }
+
+    public String getScriptsLink() {
+        return scriptsLink;
+    }
+
+    public void setScriptsLink(String scriptsLink) {
+        this.scriptsLink = scriptsLink;
     }
 
     public String getId() {
@@ -67,18 +101,6 @@ public class VNFPackage {
 
     public void setScripts(Set<Script> scripts) {
         this.scripts = scripts;
-    }
-
-    @Override
-    public String toString() {
-        return "VNFPackage{" +
-                "id='" + id + '\'' +
-                ", version=" + version +
-                ", name='" + name + '\'' +
-                ", extId='" + extId + '\'' +
-                ", image=" + image +
-                ", scripts=" + scripts +
-                '}';
     }
 
     public void setImage(NFVImage image) {

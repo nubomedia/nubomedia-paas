@@ -1,12 +1,12 @@
 package org.project.openbaton.common.vnfm_sdk.jms;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
-import org.project.openbaton.catalogue.nfvo.Action;
 import org.project.openbaton.catalogue.nfvo.CoreMessage;
-import org.project.openbaton.catalogue.nfvo.EndpointType;
-import org.project.openbaton.catalogue.nfvo.VnfmManagerEndpoint;
 import org.project.openbaton.common.vnfm_sdk.AbstractVnfm;
+import org.project.openbaton.common.vnfm_sdk.exception.VnfmSdkException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -28,17 +28,7 @@ import java.io.Serializable;
 @SpringBootApplication
 public abstract class AbstractVnfmSpringJMS extends AbstractVnfm implements MessageListener, JmsListenerConfigurer {
 
-    @Autowired
-    protected JmsListenerContainerFactory topicJmsContainerFactory;
-
-    private boolean exit = false;
-
-    protected String SELECTOR;
-
-
-    public void setSELECTOR(String SELECTOR) {
-        this.SELECTOR = SELECTOR;
-    }
+    private Gson parser=new GsonBuilder().setPrettyPrinting().create();
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -85,54 +75,98 @@ public abstract class AbstractVnfmSpringJMS extends AbstractVnfm implements Mess
         this.onAction(msg);
     }
 
-    protected void sendMessageToQueue(String sendToQueueName, final Serializable vduMessage) {
-        log.debug("Sending message: " + vduMessage + " to Queue: " + sendToQueueName);
-        MessageCreator messageCreator = new MessageCreator() {
-            @Override
-            public Message createMessage(Session session) throws JMSException {
-                ObjectMessage objectMessage = session.createObjectMessage(vduMessage);
-                return objectMessage;
-            }
-        };
+
+    protected void sendMessageToQueue(String sendToQueueName, final Serializable message) {
+        log.debug("Sending message: " + message + " to Queue: " + sendToQueueName);
+
+        MessageCreator messageCreator;
+
+        if (message instanceof java.lang.String )
+            messageCreator =getTextMessageCreator((String) message);
+        else
+            messageCreator = getObjectMessageCreator(message);
+
         jmsTemplate.setPubSubDomain(false);
         jmsTemplate.setPubSubNoLocal(false);
         jmsTemplate.send(sendToQueueName, messageCreator);
     }
 
+    private MessageCreator getTextMessageCreator(final String string) {
+        MessageCreator messageCreator = new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                TextMessage objectMessage = session.createTextMessage(string);
+                return objectMessage;
+            }
+        };
+        return messageCreator;
+    }
+
+    private MessageCreator getObjectMessageCreator(final Serializable message) {
+        MessageCreator messageCreator = new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                ObjectMessage objectMessage = session.createObjectMessage(message);
+                return objectMessage;
+            }
+        };
+        return messageCreator;
+    }
+
+    /**
+     * This method should be used for receiving text message from EMS
+     *
+     * resp = {
+     *      'output': out,          // the output of the command
+     *      'err': err,             // the error outputs of the commands
+     *      'status': status        // the exit status of the command
+     * }
+     *
+     * @param queueName
+     * @return
+     * @throws JMSException
+     */
+    protected String receiveTextFromQueue(String queueName) throws JMSException {
+        return ((TextMessage)this.jmsTemplate.receive(queueName)).getText();
+    }
+
     @Override
-    protected void setup() {
-        loadProperties();
-        this.setSELECTOR(this.getEndpoint());
-        log.debug("SELECTOR: " + this.getEndpoint());
+    protected void executeActionOnEMS(String vduHostname, String command) throws JMSException, VnfmSdkException {
+        this.sendMessageToQueue("vnfm-" + vduHostname + "-actions", command);
 
-        vnfmManagerEndpoint = new VnfmManagerEndpoint();
-        vnfmManagerEndpoint.setType(this.type);
-        vnfmManagerEndpoint.setEndpoint(this.endpoint);
-        vnfmManagerEndpoint.setEndpointType(EndpointType.JMS);
+        String response = receiveTextFromQueue(vduHostname + "-vnfm-actions");
 
+        log.debug("Received from EMS (" + vduHostname + "): " + response);
+
+        if(response==null) {
+            throw new NullPointerException("Response from EMS is null");
+        }
+
+        JsonObject jsonObject = parser.fromJson(response,JsonObject.class);
+
+        if(jsonObject.get("status").getAsInt()==0){
+            log.debug("Output from EMS ("+vduHostname+") is: " + jsonObject.get("output").getAsString());
+        }
+        else{
+            log.error(jsonObject.get("err").getAsString());
+            throw new VnfmSdkException("EMS ("+vduHostname+") had the following error: "+jsonObject.get("err").getAsString());
+        }
+    }
+
+    @Override
+    protected void register() {
         log.debug("Registering to queue: vnfm-register");
         sendMessageToQueue("vnfm-register", vnfmManagerEndpoint);
     }
 
     @Override
-    protected void unregister(VnfmManagerEndpoint endpoint) {
-        this.sendMessageToQueue("vnfm-unregister", endpoint);
+    protected void unregister() {
+        this.sendMessageToQueue("vnfm-unregister", vnfmManagerEndpoint);
     }
 
     @Override
-    protected void sendToNfvo(Action action, final VirtualNetworkFunctionRecord virtualNetworkFunctionRecord) {
-        final CoreMessage coreMessage = new CoreMessage();
-        coreMessage.setPayload(virtualNetworkFunctionRecord);
-        coreMessage.setAction(action);
-        MessageCreator messageCreator = new MessageCreator() {
-            @Override
-            public Message createMessage(Session session) throws JMSException {
-                ObjectMessage objectMessage = session.createObjectMessage(coreMessage);
-                return objectMessage;
-            }
-        };
-        log.debug("Sending to vnfm-core-actions message: " + coreMessage);
-        jmsTemplate.send(nfvoQueue, messageCreator);
+    protected void sendToNfvo(final CoreMessage coreMessage) {
+        sendMessageToQueue(nfvoQueue,coreMessage);
     }
 }
 

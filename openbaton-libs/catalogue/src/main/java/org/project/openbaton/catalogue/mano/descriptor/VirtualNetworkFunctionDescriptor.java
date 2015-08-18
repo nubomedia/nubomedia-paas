@@ -6,15 +6,11 @@
 
 package org.project.openbaton.catalogue.mano.descriptor;
 
-import org.project.openbaton.catalogue.mano.common.ConnectionPoint;
-import org.project.openbaton.catalogue.mano.common.NFVEntityDescriptor;
-import org.project.openbaton.catalogue.mano.common.Security;
-import org.project.openbaton.catalogue.mano.common.VNFDeploymentFlavour;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.project.openbaton.catalogue.mano.common.*;
+import org.project.openbaton.catalogue.nfvo.VNFPackage;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.xml.bind.TypeConstraintException;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +32,10 @@ public class VirtualNetworkFunctionDescriptor extends NFVEntityDescriptor {
      * */
      @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<VirtualDeploymentUnit> vdu;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	protected Set<LifecycleEvent> lifecycle_event;
+
     /**
      * Represents the type of network connectivity mandated by the VNF vendor between two or more Connection Point
      * */
@@ -69,29 +69,46 @@ public class VirtualNetworkFunctionDescriptor extends NFVEntityDescriptor {
      * */
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Security> manifest_file_security;
+	@Column(nullable = false)
 	private String type;
+	@JsonIgnore
+	private String endpoint;
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private VNFPackage vnfPackage;
 
 	@Override
 	public String toString() {
 		return "VirtualNetworkFunctionDescriptor{" +
 				"vdu=" + vdu +
+				", lifecycle_event=" + lifecycle_event +
 				", virtual_link=" + virtual_link +
 				", vdu_dependency=" + vdu_dependency +
 				", deployment_flavour=" + deployment_flavour +
 				", manifest_file='" + manifest_file + '\'' +
 				", manifest_file_security=" + manifest_file_security +
 				", type='" + type + '\'' +
+				", endpoint='" + endpoint + '\'' +
+				", vnfPackage=" + vnfPackage +
 				'}';
 	}
 
 	public VirtualNetworkFunctionDescriptor() {
     }
 
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
 	@Override
     public Set<ConnectionPoint> getConnection_point() {
         return connection_point;
     }
 
+	@JsonIgnore
     public Set<VNFDConnectionPoint> getVNFDConnection_point() {
     	Set<VNFDConnectionPoint> res = new HashSet<>();
     	for (ConnectionPoint cp : connection_point)
@@ -162,5 +179,19 @@ public class VirtualNetworkFunctionDescriptor extends NFVEntityDescriptor {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public void setVnfPackage(VNFPackage vnfPackage) {
+		this.vnfPackage = vnfPackage;
+	}
+
+	public VNFPackage getVnfPackage() {
+		return vnfPackage;
+	}
+	public Set<LifecycleEvent> getLifecycle_event() {
+		return lifecycle_event;
+	}
+	public void setLifecycle_event(Set<LifecycleEvent> lifecycle_event) {
+		this.lifecycle_event = lifecycle_event;
 	}
 }

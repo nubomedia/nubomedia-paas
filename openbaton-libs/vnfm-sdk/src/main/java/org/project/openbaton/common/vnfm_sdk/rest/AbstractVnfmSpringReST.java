@@ -1,8 +1,6 @@
 package org.project.openbaton.common.vnfm_sdk.rest;
 
 import com.google.gson.Gson;
-import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
-import org.project.openbaton.catalogue.nfvo.Action;
 import org.project.openbaton.catalogue.nfvo.CoreMessage;
 import org.project.openbaton.catalogue.nfvo.EndpointType;
 import org.project.openbaton.catalogue.nfvo.VnfmManagerEndpoint;
@@ -66,11 +64,11 @@ public abstract class AbstractVnfmSpringReST extends AbstractVnfm {
 
     @PreDestroy
     public void shutdown(){
-        this.unregister(vnfmManagerEndpoint);
+        this.unregister();
     }
 
     @Override
-    protected void unregister(VnfmManagerEndpoint endpoint){
+    protected void unregister(){
         this.post("/admin/v1/vnfm_sdk-unregister", mapper.toJson(endpoint));
     }
 
@@ -90,7 +88,7 @@ public abstract class AbstractVnfmSpringReST extends AbstractVnfm {
         vnfmManagerEndpoint.setEndpointType(EndpointType.REST);
 
         log.debug("Registering to vnfm-register");
-        register(vnfmManagerEndpoint);
+        register();
     }
 
     protected String get(String path) {
@@ -127,7 +125,7 @@ public abstract class AbstractVnfmSpringReST extends AbstractVnfm {
         this.status = status;
     }
 
-    protected void register(VnfmManagerEndpoint endpoint){
+    protected void register(){
         String json = mapper.toJson(endpoint);
         log.debug("post on /admin/v1/vnfm-register with json: " + json);
         this.post("/admin/v1/vnfm-register", mapper.toJson(endpoint));
@@ -148,10 +146,7 @@ public abstract class AbstractVnfmSpringReST extends AbstractVnfm {
     }
 
     @Override
-    protected void sendToNfvo(Action action, VirtualNetworkFunctionRecord virtualNetworkFunctionRecord) {
-        final CoreMessage coreMessage = new CoreMessage();
-        coreMessage.setPayload(virtualNetworkFunctionRecord);
-        coreMessage.setAction(action);
+    protected void sendToNfvo(CoreMessage coreMessage) {
         sendToCore(coreMessage);
     }
 }
