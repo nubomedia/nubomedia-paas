@@ -9,6 +9,9 @@ import org.project.openbaton.sdk.api.annotations.Help;
 import org.project.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * OpenBaton image-related commands api requester.
  */
@@ -33,9 +36,9 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
      *
      */
     @Help(help = "Get all the VirtualNetworkFunctionRecords of NetworkServiceRecord with specific id")
-    public VirtualNetworkFunctionRecord[] getVirtualNetworkFunctionRecords(final String id) throws SDKException {
+    public List<VirtualNetworkFunctionRecord> getVirtualNetworkFunctionRecords(final String id) throws SDKException {
         String url = id + "/vnfrecords";
-        return (VirtualNetworkFunctionRecord[]) requestGetAll(url, VirtualNetworkFunctionRecord.class);
+        return Arrays.asList((VirtualNetworkFunctionRecord[]) requestGetAll(url, VirtualNetworkFunctionRecord.class));
     }
 
     /**
@@ -79,9 +82,9 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
      *
      */
     @Help(help = "Get all the VirtualNetworkFunctionRecord dependencies of NetworkServiceRecord with specific id")
-    public VNFDependency[] getVNFDependencies(final String networkServiceRecord_id) throws SDKException {
+    public List<VNFDependency> getVNFDependencies(final String networkServiceRecord_id) throws SDKException {
         String url = networkServiceRecord_id + "/vnfdependencies";
-        return (VNFDependency[]) requestGetAll(url, VNFDependency.class);
+        return Arrays.asList((VNFDependency[]) requestGetAll(url, VNFDependency.class));
 
     }
 
@@ -130,9 +133,9 @@ public class NetworkServiceRecordRestAgent extends AbstractRestAgent<NetworkServ
      * PhysicalNetworkFunctionRecord into NSD
      */
     @Help(help = "Get all the PhysicalNetworkFunctionRecords of a specific NetworkServiceRecord with id")
-    public PhysicalNetworkFunctionRecord[] getPhysicalNetworkFunctionRecords(final String networkServiceRecord_id) throws SDKException {
+    public List<PhysicalNetworkFunctionRecord> getPhysicalNetworkFunctionRecords(final String networkServiceRecord_id) throws SDKException {
         String url = networkServiceRecord_id + "/pnfrecords";
-        return (PhysicalNetworkFunctionRecord[]) requestGetAll(url, PhysicalNetworkFunctionRecord.class);
+        return Arrays.asList((PhysicalNetworkFunctionRecord[]) requestGetAll(url, PhysicalNetworkFunctionRecord.class));
     }
 
     /**

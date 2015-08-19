@@ -270,14 +270,14 @@ public abstract class RestRequest {
                 e.printStackTrace();
                 throw new SDKException("Could not get token");
             }
-            log.debug("Executing get on: " + this.baseUrl + "/" + url);
+            log.debug("Executing get on: " + url);
 
             if (token != null)
-                jsonResponse = Unirest.get(this.baseUrl + "/" + url)
+                jsonResponse = Unirest.get(url)
                         .header("Authorization", bearerToken.replaceAll("\"", ""))
                         .asJson();
             else
-                jsonResponse = Unirest.get(this.baseUrl + "/" + url).asJson();
+                jsonResponse = Unirest.get(url).asJson();
 
             // check response status
             if (httpStatus != null) {

@@ -9,6 +9,9 @@ import org.project.openbaton.sdk.api.annotations.Help;
 import org.project.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.sdk.api.util.AbstractRestAgent;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * OpenBaton network-service-descriptor-related api requester.
  */
@@ -31,9 +34,9 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
      * VirtualNetworkFunctionDescriptor into NSD
      */
     @Help(help = "Get all the VirtualNetworkFunctionDescriptors of a NetworkServiceDescriptor with specific id")
-    public VirtualNetworkFunctionDescriptor[] getVirtualNetworkFunctionDescriptors(final String networkServiceDescriptor_id) throws SDKException {
+    public List<VirtualNetworkFunctionDescriptor> getVirtualNetworkFunctionDescriptors(final String networkServiceDescriptor_id) throws SDKException {
         String url = networkServiceDescriptor_id + "/vnfdescriptors";
-        return (VirtualNetworkFunctionDescriptor[]) requestGetAll(url, VirtualNetworkFunctionDescriptor.class);
+        return Arrays.asList((VirtualNetworkFunctionDescriptor[]) requestGetAll(url, VirtualNetworkFunctionDescriptor.class));
 
     }
 
@@ -97,9 +100,9 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
      * @return List<VNFDependency>:  The List of VNFDependency into NSD
      */
     @Help(help = "Get all the VirtualNetworkFunctionDescriptor Dependency of a NetworkServiceDescriptor with specific id")
-    public VNFDependency[] getVNFDependencies(final String networkServiceDescriptor_id) throws SDKException {
+    public List<VNFDependency> getVNFDependencies(final String networkServiceDescriptor_id) throws SDKException {
         String url = networkServiceDescriptor_id + "/vnfdependencies";
-        return (VNFDependency[]) requestGetAll(url, VNFDependency.class);
+        return Arrays.asList((VNFDependency[]) requestGetAll(url, VNFDependency.class));
 
     }
 
@@ -165,9 +168,9 @@ public class NetworkServiceDescriptorRestAgent extends AbstractRestAgent<Network
      * PhysicalNetworkFunctionDescriptor into NSD
      */
     @Help(help = "Get all the PhysicalNetworkFunctionDescriptors of a NetworkServiceDescriptor with specific id")
-    public PhysicalNetworkFunctionDescriptor[] getPhysicalNetworkFunctionDescriptors(final String networkServiceDescriptor_id) throws SDKException {
+    public List<PhysicalNetworkFunctionDescriptor> getPhysicalNetworkFunctionDescriptors(final String networkServiceDescriptor_id) throws SDKException {
         String url = networkServiceDescriptor_id + "/pnfdescriptors";
-        return (PhysicalNetworkFunctionDescriptor[]) requestGetAll(url, PhysicalNetworkFunctionDescriptor.class);
+        return Arrays.asList((PhysicalNetworkFunctionDescriptor[]) requestGetAll(url, PhysicalNetworkFunctionDescriptor.class));
 
     }
 
