@@ -183,7 +183,7 @@ public class NFVOCommandLineInterface {
         if (command == null){
             return "Command: " + commandString + " not found!";
         }
-        log.debug("invoking method: " + command.getMethod().getName() + " with parameters: " + command.getParams());
+        log.debug("invoking method: " + command.getMethod().getName() + " with parameters Types: " + command.getParams());
         List<Object> params = new LinkedList<>();
         for (Type t : command.getParams()){
             log.debug("type is: " + t.getClass().getName());
@@ -235,7 +235,6 @@ public class NFVOCommandLineInterface {
         getMethods(nfvo.getVimInstanceAgent());
         getMethods(nfvo.getNetworkServiceDescriptorAgent());
         getMethods(nfvo.getVirtualLinkAgent());
-
     }
 
     private static void getMethods(AbstractRestAgent agent) {
