@@ -9,9 +9,8 @@ package org.project.openbaton.catalogue.mano.descriptor;
 import org.project.openbaton.catalogue.mano.common.AbstractVirtualLink;
 import org.project.openbaton.catalogue.mano.common.Security;
 
-import java.util.Set;
-
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Created by lto on 06/02/15.
@@ -20,7 +19,11 @@ import javax.persistence.*;
  */
 @Entity
 public class VirtualLinkDescriptor extends AbstractVirtualLink {
-	
+
+    /**
+     * Name referenced by VNFCs
+     */
+    private String name;
 	/**
      * Vendor generating this VLD
      * */
@@ -46,6 +49,14 @@ public class VirtualLinkDescriptor extends AbstractVirtualLink {
     private Security vld_security;
 
     public VirtualLinkDescriptor() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getVendor() {

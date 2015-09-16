@@ -26,7 +26,7 @@ public class NetworkServiceDescriptor extends NFVEntityDescriptor {
 	 * is required, for example, when the Network Service is being built
 	 * top-down or instantiating the member VNFs as well.
 	 * */
-	@OneToMany(cascade = { CascadeType.ALL/*CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE */}, fetch = FetchType.EAGER)
+	@OneToMany(cascade = { CascadeType.ALL /*CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE */}, fetch = FetchType.EAGER)
 	private Set<VirtualNetworkFunctionDescriptor> vnfd;
 	/**
 	 * Describe dependencies between VNF. Defined in terms of source and target
@@ -66,7 +66,7 @@ public class NetworkServiceDescriptor extends NFVEntityDescriptor {
 
 	public Set<VirtualNetworkFunctionDescriptor> getVnfd() {
 		if (vnfd == null)
-			vnfd = new HashSet<>();
+			vnfd = new HashSet<VirtualNetworkFunctionDescriptor>();
 		return vnfd;
 	}
 
@@ -76,7 +76,7 @@ public class NetworkServiceDescriptor extends NFVEntityDescriptor {
 
 	public Set<VNFDependency> getVnf_dependency() {
 		if (vnf_dependency == null)
-			vnf_dependency = new HashSet<>();
+			vnf_dependency = new HashSet<VNFDependency>();
 		return vnf_dependency;
 	}
 
@@ -86,7 +86,7 @@ public class NetworkServiceDescriptor extends NFVEntityDescriptor {
 
 	public Set<PhysicalNetworkFunctionDescriptor> getPnfd() {
 		if (pnfd == null)
-			pnfd = new HashSet<>();
+			pnfd = new HashSet<PhysicalNetworkFunctionDescriptor>();
 		return pnfd;
 	}
 
