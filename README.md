@@ -35,12 +35,9 @@ In a text editor, create a file named cli.properties file and add the following 
 <h2>Openbaton Client usage</h2>
     
     openbaton.sh [-c <path of properties file>] command-name [arg-1] [arg-2] [arg-3]
-    <br>
+    
     openbaton.sh [-d #debug mode] command-name [arg-1] [arg-2] [arg-3]
-    <br>
+    
     openbaton.sh command-name [help]
-    <br>
+    
     openbaton.sh help
-
-
-
