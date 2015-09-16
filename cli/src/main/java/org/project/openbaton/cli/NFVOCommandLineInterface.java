@@ -174,8 +174,9 @@ public class NFVOCommandLineInterface {
     }
 
     private static Object executeCommand(String line) throws InvocationTargetException, IllegalAccessException, FileNotFoundException {
+        log.debug("LINE is: " + line);
         StringBuffer sb = new StringBuffer();
-        StringTokenizer st = new StringTokenizer(line);
+        StringTokenizer st = new StringTokenizer(line, " ");
         sb.append(st.nextToken());
         log.debug(sb.toString());
         String commandString = sb.toString();
@@ -186,21 +187,25 @@ public class NFVOCommandLineInterface {
         log.debug("invoking method: " + command.getMethod().getName() + " with parameters Types: " + command.getParams());
         List<Object> params = new LinkedList<>();
         for (Type t : command.getParams()){
-            log.debug("type is: " + t.getClass().getName());
-            if (t.equals(String.class)){ //for instance an id
-                params.add(st.nextToken());
-            }else {// for instance waiting for an obj so passing a file
-                String pathname = st.nextToken();
-                log.debug("the path is: " + pathname);
-                File f = new File(pathname);
-                Gson gson = new Gson();
-                FileInputStream fileInputStream = new FileInputStream(f);
-                String file = getString(fileInputStream);
-                log.debug(file);
-                log.debug("waiting for an object of type " + command.getClazz().getName());
-                Object casted = command.getClazz().cast(gson.fromJson(file, command.getClazz()));
-                log.debug("Parameter added is: " + casted);
-                params.add(casted);
+            try {
+                log.debug("type is: " + t);
+                if (t.equals(String.class)){ //for instance an id
+                    params.add(st.nextToken());
+                }else {// for instance waiting for an obj so passing a file
+                    String pathname = st.nextToken();
+                    log.debug("the path is: " + pathname);
+                    File f = new File(pathname);
+                    Gson gson = new Gson();
+                    FileInputStream fileInputStream = new FileInputStream(f);
+                    String file = getString(fileInputStream);
+                    log.debug(file);
+                    log.debug("waiting for an object of type " + command.getClazz().getName());
+                    Object casted = gson.fromJson(file, t);
+                    log.debug("Parameter added is: " + casted);
+                    params.add(casted);
+                }
+            }catch (java.util.NoSuchElementException e){
+                throw new RuntimeException("Missing one or more parameters!");
             }
         }
         String parameters ="";
