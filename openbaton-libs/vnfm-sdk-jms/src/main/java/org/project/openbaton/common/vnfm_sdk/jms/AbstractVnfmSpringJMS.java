@@ -9,7 +9,9 @@ import org.project.openbaton.catalogue.mano.common.LifecycleEvent;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.project.openbaton.catalogue.mano.record.VNFCInstance;
 import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
-import org.project.openbaton.catalogue.nfvo.CoreMessage;
+import org.project.openbaton.catalogue.nfvo.Action;
+import org.project.openbaton.catalogue.nfvo.messages.Interfaces.NFVMessage;
+import org.project.openbaton.catalogue.nfvo.messages.OrVnfmGenericMessage;
 import org.project.openbaton.common.vnfm_sdk.AbstractVnfm;
 import org.project.openbaton.common.vnfm_sdk.exception.BadFormatException;
 import org.project.openbaton.common.vnfm_sdk.exception.NotFoundException;
@@ -76,9 +78,9 @@ public abstract class AbstractVnfmSpringJMS extends AbstractVnfm implements Mess
 
     @Override
     public void onMessage(Message message) {
-        CoreMessage msg = null;
+        NFVMessage msg = null;
         try {
-            msg = (CoreMessage) ((ObjectMessage) message).getObject();
+            msg = (NFVMessage) ((ObjectMessage) message).getObject();
         } catch (JMSException e) {
             e.printStackTrace();
             System.exit(1);
@@ -95,14 +97,51 @@ public abstract class AbstractVnfmSpringJMS extends AbstractVnfm implements Mess
         }
     }
 
+    @Override
+    protected VirtualNetworkFunctionRecord grantLifecycleOperation(VirtualNetworkFunctionRecord vnfr) throws VnfmSdkException {
+        NFVMessage response;
+        try {
+            response = sendAndReceiveNfvMessage(nfvoQueue, getNfvMessage(Action.GRANT_OPERATION, vnfr));
+        } catch (JMSException e) {
+            throw new VnfmSdkException("Not able to grant operation", e);
+        }
+        log.debug("" + response);
+        if (response.getAction().ordinal() == Action.ERROR.ordinal()) {
+            throw new VnfmSdkException("Not able to grant operation");
+        }
+        OrVnfmGenericMessage orVnfmGenericMessage = (OrVnfmGenericMessage) response;
+        return orVnfmGenericMessage.getVnfr();
+    }
+
+    @Override
+    protected VirtualNetworkFunctionRecord allocateResources(VirtualNetworkFunctionRecord vnfr) throws VnfmSdkException {
+        NFVMessage response;
+        try {
+            response = sendAndReceiveNfvMessage(nfvoQueue, getNfvMessage(Action.ALLOCATE_RESOURCES, vnfr));
+        } catch (JMSException e) {
+            log.error("" + e.getMessage());
+            throw new VnfmSdkException("Not able to allocate Resources", e);
+        }
+        if (response.getAction().ordinal() == Action.ERROR.ordinal()) {
+            throw new VnfmSdkException("Not able to allocate Resources");
+        }
+        OrVnfmGenericMessage orVnfmGenericMessage = (OrVnfmGenericMessage) response;
+        log.debug("Received from ALLOCATE: " + orVnfmGenericMessage.getVnfr());
+        return orVnfmGenericMessage.getVnfr();
+    }
+
+    private NFVMessage sendAndReceiveNfvMessage(String destination, NFVMessage nfvMessage) throws JMSException {
+        Message response = jmsTemplate.sendAndReceive(destination, getObjectMessageCreator(nfvMessage));
+        return (NFVMessage) ((ObjectMessage) response).getObject();
+    }
 
     protected void sendMessageToQueue(String sendToQueueName, final Serializable message) {
         //log.debug("Sending message: " + message + " to Queue: " + sendToQueueName);
 
         MessageCreator messageCreator;
 
-        if (message instanceof java.lang.String )
-            messageCreator =getTextMessageCreator((String) message);
+        if (message instanceof java.lang.String)
+            messageCreator = getTextMessageCreator((String) message);
         else
             messageCreator = getObjectMessageCreator(message);
 
@@ -135,11 +174,11 @@ public abstract class AbstractVnfmSpringJMS extends AbstractVnfm implements Mess
 
     /**
      * This method should be used for receiving text message from EMS
-     *
+     * <p/>
      * resp = {
-     *      'output': out,          // the output of the command
-     *      'err': err,             // the error outputs of the commands
-     *      'status': status        // the exit status of the command
+     * 'output': out,          // the output of the command
+     * 'err': err,             // the error outputs of the commands
+     * 'status': status        // the exit status of the command
      * }
      *
      * @param queueName
@@ -147,7 +186,7 @@ public abstract class AbstractVnfmSpringJMS extends AbstractVnfm implements Mess
      * @throws JMSException
      */
     protected String receiveTextFromQueue(String queueName) throws JMSException {
-        return ((TextMessage)this.jmsTemplate.receive(queueName)).getText();
+        return ((TextMessage) this.jmsTemplate.receive(queueName)).getText();
     }
 
     @Override
@@ -158,39 +197,37 @@ public abstract class AbstractVnfmSpringJMS extends AbstractVnfm implements Mess
 
         log.debug("Received from EMS (" + vduHostname + "): " + response);
 
-        if(response==null) {
+        if (response == null) {
             throw new NullPointerException("Response from EMS is null");
         }
 
-        JsonObject jsonObject = parser.fromJson(response,JsonObject.class);
+        JsonObject jsonObject = parser.fromJson(response, JsonObject.class);
 
-        if(jsonObject.get("status").getAsInt()==0){
+        if (jsonObject.get("status").getAsInt() == 0) {
             try {
-                log.debug("Output from EMS ("+vduHostname+") is: " + jsonObject.get("output"));
-            }catch (Exception e){
+                log.debug("Output from EMS (" + vduHostname + ") is: " + jsonObject.get("output"));
+            } catch (Exception e) {
                 e.printStackTrace();
                 throw e;
             }
-        }
-        else{
+        } else {
             log.error(jsonObject.get("err").getAsString());
-            throw new VnfmSdkException("EMS ("+vduHostname+") had the following error: "+jsonObject.get("err").getAsString());
+            throw new VnfmSdkException("EMS (" + vduHostname + ") had the following error: " + jsonObject.get("err").getAsString());
         }
         return response;
     }
 
-    protected Map<String , String> executeScriptsForEvent(VirtualNetworkFunctionRecord virtualNetworkFunctionRecord, Event event) throws Exception {
+    protected Map<String, String> executeScriptsForEvent(VirtualNetworkFunctionRecord virtualNetworkFunctionRecord, Event event) throws Exception {
         Map<String, String> res = new HashMap<>();
         LifecycleEvent le = getLifecycleEvent(virtualNetworkFunctionRecord.getLifecycle_event_history(), event);
-        if (le != null)
-        {
+        if (le != null) {
             for (String script : le.getLifecycle_events()) {
                 String command = getJsonObject("EXECUTE", script).toString();
                 log.debug("Sending command: " + command);
                 for (VirtualDeploymentUnit vdu : virtualNetworkFunctionRecord.getVdu()) {
                     for (VNFCInstance vnfcInstance : vdu.getVnfc_instance()) {
                         checkEmsStarted(vnfcInstance.getHostname());
-                        res.put(script, executeActionOnEMS(vnfcInstance.getHostname(), command));
+                        res.put(script, /*executeActionOnEMS(vnfcInstance.getHostname(), command)*/"FOO");
                     }
                 }
             }
@@ -206,8 +243,8 @@ public abstract class AbstractVnfmSpringJMS extends AbstractVnfm implements Mess
     }
 
     @Override
-    protected void sendToNfvo(final CoreMessage coreMessage) {
-        sendMessageToQueue(nfvoQueue,coreMessage);
+    protected void sendToNfvo(final NFVMessage nfvMessage) {
+        sendMessageToQueue(nfvoQueue, nfvMessage);
     }
 
     @Override
