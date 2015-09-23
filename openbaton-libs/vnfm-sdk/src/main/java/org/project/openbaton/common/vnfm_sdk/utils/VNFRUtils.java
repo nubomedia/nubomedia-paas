@@ -1,21 +1,15 @@
 package org.project.openbaton.common.vnfm_sdk.utils;
 
-import org.project.openbaton.catalogue.mano.common.AutoScalePolicy;
-import org.project.openbaton.catalogue.mano.common.ConnectionPoint;
-import org.project.openbaton.catalogue.mano.common.DeploymentFlavour;
-import org.project.openbaton.catalogue.mano.common.LifecycleEvent;
+import org.project.openbaton.catalogue.mano.common.*;
 import org.project.openbaton.catalogue.mano.descriptor.*;
-import org.project.openbaton.catalogue.mano.record.Status;
-import org.project.openbaton.catalogue.mano.record.VNFCInstance;
-import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
+import org.project.openbaton.catalogue.mano.record.*;
 import org.project.openbaton.catalogue.nfvo.*;
 import org.project.openbaton.common.vnfm_sdk.exception.BadFormatException;
 import org.project.openbaton.common.vnfm_sdk.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 /**
  * Created by mob on 31.08.15.
@@ -24,12 +18,28 @@ public class VNFRUtils {
 
     private static Logger log = LoggerFactory.getLogger(VNFRUtils.class);
 
-    public static VirtualNetworkFunctionRecord createVirtualNetworkFunctionRecord(VirtualNetworkFunctionDescriptor vnfd, String flavourKey, String nsr_id) throws NotFoundException, BadFormatException {
+    public static VirtualNetworkFunctionRecord createVirtualNetworkFunctionRecord(VirtualNetworkFunctionDescriptor vnfd, String flavourKey, String nsr_id, Set<VirtualLinkRecord> vlr) throws NotFoundException, BadFormatException {
         VirtualNetworkFunctionRecord virtualNetworkFunctionRecord = new VirtualNetworkFunctionRecord();
         virtualNetworkFunctionRecord.setLifecycle_event_history(new HashSet<LifecycleEvent>());
         virtualNetworkFunctionRecord.setParent_ns_id(nsr_id);
         virtualNetworkFunctionRecord.setName(vnfd.getName());
         virtualNetworkFunctionRecord.setType(vnfd.getType());
+        Configuration configuration = new Configuration();
+        if (vnfd.getConfigurations() != null) {
+            configuration.setName(vnfd.getConfigurations().getName());
+        }else
+            configuration.setName(virtualNetworkFunctionRecord.getName());
+
+        configuration.setConfigurationParameters(new HashSet<ConfigurationParameter>());
+        if (vnfd.getConfigurations() != null) {
+            for (ConfigurationParameter configurationParameter: vnfd.getConfigurations().getConfigurationParameters()){
+                ConfigurationParameter cp = new ConfigurationParameter();
+                cp.setConfKey(configurationParameter.getConfKey());
+                cp.setValue(configurationParameter.getValue());
+                configuration.getConfigurationParameters().add(cp);
+            }
+        }
+        virtualNetworkFunctionRecord.setConfigurations(configuration);
         virtualNetworkFunctionRecord.setCyclicDependency(vnfd.hasCyclicDependency());
 
         Configuration requires = new Configuration();
@@ -77,7 +87,6 @@ public class VNFRUtils {
             }
 
             vnfPackage.setImage(vnfd.getVnfPackage().getImage());
-            vnfPackage.setExtId(vnfd.getVnfPackage().getExtId());
             virtualNetworkFunctionRecord.setVnfPackage(vnfPackage);
         }
 
@@ -111,7 +120,7 @@ public class VNFRUtils {
             VirtualDeploymentUnit vdu_new = new VirtualDeploymentUnit();
             HashSet<VNFComponent> vnfComponents = new HashSet<>();
             for (VNFComponent component : virtualDeploymentUnit.getVnfc()) {
-                VNFComponent component_new = new VNFComponent();
+                VNFCInstance component_new = new VNFCInstance();
                 HashSet<VNFDConnectionPoint> connectionPoints = new HashSet<>();
                 for (VNFDConnectionPoint connectionPoint : component.getConnection_point()) {
                     VNFDConnectionPoint connectionPoint_new = new VNFDConnectionPoint();
@@ -119,7 +128,10 @@ public class VNFRUtils {
                     connectionPoint_new.setType(connectionPoint.getType());
                     connectionPoints.add(connectionPoint_new);
                 }
+                component_new.setExposed(component.isExposed());
                 component_new.setConnection_point(connectionPoints);
+                component_new.setFloatingIps(new HashSet<String>());
+                component_new.setIps(new HashSet<Ip>());
                 vnfComponents.add(component_new);
             }
             vdu_new.setVnfc(vnfComponents);
@@ -169,10 +181,11 @@ public class VNFRUtils {
         for (LifecycleEvent lifecycleEvent : vnfd.getLifecycle_event()) {
             LifecycleEvent lifecycleEvent_new = new LifecycleEvent();
             lifecycleEvent_new.setEvent(lifecycleEvent.getEvent());
-            lifecycleEvent_new.setLifecycle_events(new LinkedHashSet<String>());
+            lifecycleEvent_new.setLifecycle_events(new LinkedList<String>());
             for (String event : lifecycleEvent.getLifecycle_events()) {
                 lifecycleEvent_new.getLifecycle_events().add(event);
             }
+            log.debug("Found SCRIPTS for EVENT " + lifecycleEvent_new.getEvent() + ": " + lifecycleEvent_new.getLifecycle_events().size());
             lifecycleEvents.add(lifecycleEvent_new);
         }
         virtualNetworkFunctionRecord.setLifecycle_event(lifecycleEvents);
@@ -181,6 +194,13 @@ public class VNFRUtils {
         for (InternalVirtualLink internalVirtualLink : vnfd.getVirtual_link()) {
             InternalVirtualLink internalVirtualLink_new = new InternalVirtualLink();
             internalVirtualLink_new.setName(internalVirtualLink.getName());
+
+            for (VirtualLinkRecord virtualLinkRecord : vlr){
+                if (virtualLinkRecord.getName().equals(internalVirtualLink_new.getName())){
+                    internalVirtualLink_new.setExtId(virtualLinkRecord.getExtId());
+                }
+            }
+
             internalVirtualLink_new.setLeaf_requirement(internalVirtualLink.getLeaf_requirement());
             internalVirtualLink_new.setRoot_requirement(internalVirtualLink.getRoot_requirement());
             internalVirtualLink_new.setConnection_points_references(new HashSet<String>());

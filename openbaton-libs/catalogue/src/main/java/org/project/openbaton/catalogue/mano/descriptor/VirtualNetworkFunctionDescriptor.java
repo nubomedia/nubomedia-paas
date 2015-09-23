@@ -18,6 +18,7 @@ package org.project.openbaton.catalogue.mano.descriptor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.project.openbaton.catalogue.mano.common.*;
+import org.project.openbaton.catalogue.nfvo.Configuration;
 import org.project.openbaton.catalogue.nfvo.VNFPackage;
 
 import javax.persistence.*;
@@ -27,7 +28,7 @@ import java.util.Set;
 
 /**
  * Created by lto on 05/02/15.
- * <p/>
+ * <p>
  * Based on ETSI GS NFV-MAN 001 V1.1.1 (2014-12)
  */
 @Entity
@@ -35,9 +36,11 @@ public class VirtualNetworkFunctionDescriptor extends NFVEntityDescriptor {
     /**
      * Version of the VNF Descriptor.
      */
-//    private String descriptor_version;
+    //private String descriptor_version;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    protected Set<LifecycleEvent> lifecycle_event;
+    private Set<LifecycleEvent> lifecycle_event;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Configuration configurations;
     /**
      * This describes a set of elements related to a particular VDU
      */
@@ -78,7 +81,7 @@ public class VirtualNetworkFunctionDescriptor extends NFVEntityDescriptor {
     private String type;
     @JsonIgnore
     private String endpoint;
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private VNFPackage vnfPackage;
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> requires;
@@ -88,6 +91,14 @@ public class VirtualNetworkFunctionDescriptor extends NFVEntityDescriptor {
     private boolean cyclicDependency;
 
     public VirtualNetworkFunctionDescriptor() {
+    }
+
+    public Configuration getConfigurations() {
+        return configurations;
+    }
+
+    public void setConfigurations(Configuration configurations) {
+        this.configurations = configurations;
     }
 
     public boolean isCyclicDependency() {
@@ -213,7 +224,6 @@ public class VirtualNetworkFunctionDescriptor extends NFVEntityDescriptor {
     public void setManifest_file_security(Set<Security> manifest_file_security) {
         this.manifest_file_security = manifest_file_security;
     }
-
 
     public String getType() {
         return type;
