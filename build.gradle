@@ -68,7 +68,6 @@ repositories {
 }
 
 dependencies {
-    compile project(':main')
 }
 
 
