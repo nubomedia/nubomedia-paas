@@ -41,3 +41,32 @@ In a text editor, create a file named cli.properties file and add the following 
     openbaton.sh command-name [help]
     
     openbaton.sh help
+    
+
+<h3>For help on a specific swift command, enter:<h3>
+<br>
+<B>$ openbaton.sh COMMAND help<\B>
+<br>
+
+<h3>Vim Instance Subcommands</h3>
+<br>
+<B>create<\B>
+<br>
+  Create the object of type VimInstance
+<br>
+<B>delete<\B>
+<br>
+  Delete the object of type VimInstance passing the id
+<br>
+<B>update<\B>
+<br>
+  Update the object of type VimInstance passing the new object and the id of the old object
+<br>
+<B>findAll<\B>
+<br>
+  Find all the objects of type VimInstance
+<br>
+<B>findById<\B>
+<br>
+  Find the object of type VimInstance through the id
+
