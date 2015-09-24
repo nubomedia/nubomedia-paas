@@ -43,30 +43,39 @@ In a text editor, create a file named cli.properties file and add the following 
     openbaton.sh help
     
 
-<h3>For help on a specific swift command, enter:<h3>
-<br>
-<B>$ openbaton.sh COMMAND help<\B>
-<br>
+<h3>For help on a specific swift command, enter:</h3>
+<B>$ openbaton.sh COMMAND help</B>
 
 <h3>Vim Instance Subcommands</h3>
 <br>
-<B>create<\B>
-<br>
+<B>create</B>
   Create the object of type VimInstance
 <br>
-<B>delete<\B>
-<br>
+<B>delete</B>
   Delete the object of type VimInstance passing the id
 <br>
-<B>update<\B>
-<br>
+<B>update</B>
   Update the object of type VimInstance passing the new object and the id of the old object
 <br>
-<B>findAll<\B>
-<br>
+<B>findAll</B>
   Find all the objects of type VimInstance
 <br>
-<B>findById<\B>
-<br>
+<B>findById</B>
   Find the object of type VimInstance through the id
 
+<h3>Image Subcommands</h3>
+<br>
+<B>create</B>
+  Create the object of type Image
+<br>
+<B>delete</B>
+  Delete the object of type Image passing the id
+<br>
+<B>update</B>
+  Update the object of type Image passing the new object and the id of the old object
+<br>
+<B>findAll</B>
+  Find all the objects of type Image
+<br>
+<B>findById</B>
+  Find the object of type Image through the id
