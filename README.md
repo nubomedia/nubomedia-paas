@@ -68,22 +68,22 @@ In a text editor, create a file named cli.properties file and add the following 
 * **findAll**
   * Find all the objects of type Network Service Descriptor
 * **findById**
-  * Find the object of type VimInstance through the id
+  * Find the object of type Network Service Descriptor through the id
 * **updatePNFD**                                            
   * Update the Physical Network FunctionDescriptor of a Network ServiceDescriptor with specific id
 * **getVNFDependencies**                                  
   * Get all the Virtual Network Function Descriptor Dependency of a Network Service Descriptor with specific id
 * **getVNFDependency**                                      
   * Get the VirtualNetwork Function Descriptor dependency with specific id of a Network Service Descriptor with specific id
-* **NetworkServiceDescriptor-deleteVNFDependency**                                   
+* **deleteVNFDependency**                                   
   * Delete the Virtual Network Function Descriptor dependency of a Network Service Descriptor with specific id
 * **getVirtualNetworkFunctionDescriptors**                  
   * Get all the VirtualNetworkFunctionDescriptors of a NetworkServiceDescriptor with specific id
 * **updateVNFD**                                    
   * Update the VirtualNetwork Function Descriptor of a Network Service Descriptor with specific id
-* **NetworkServiceDescriptor-createVNFDependency**                                   
+* **createVNFDependency**                                   
   * Create the VirtualNetworkFunctionDescriptor dependency of a NetworkServiceDescriptor with specific id
-* **NetworkServiceDescriptor-getVirtualNetworkFunctionDescriptor**                   
+* **getVirtualNetworkFunctionDescriptor**                   
   * Get the VirtualNetworkFunctionDescriptor with specific id of a NetworkServiceDescriptor with specific id
 * **deleteVirtualNetworkFunctionDescriptors**              
   * Delete the Virtual Network Function Descriptor of a Network Service Descriptor with specific id
@@ -105,6 +105,49 @@ In a text editor, create a file named cli.properties file and add the following 
   * Create the Security of a NetworkServiceDescriptor with specific id
 * **updateSecurity**                                       
   * Update the Security of a NetworkServiceDescriptor with specific id
+
+### **Network Service Record Subcommands**
+* **create**
+  * Create the object of type Network Service Record
+* **delete**
+  * Delete the object of type Network Service Record passing the id
+* **update**
+  * Update the object of type Network Service Record passing the new object and the id of the old object
+* **findAll**
+  * Find all the objects of type Network Service Record
+* **findById**
+  * Find the object of type Network Service Record through the id
+* **updateVNFDependency**                                       
+  * Update the Virtual Network Function Record Dependency of a Network Service Record with specific id
+* **getPhysicalNetworkFunctionRecords**                       
+  * Get all the Physical Network Function Records of a specific Network Service Record with id
+* **etPhysicalNetworkFunctionRecord**                          
+  * Get the Physical Network Function Record with specific id of a Network Service Record with specific id
+* **deletePhysicalNetworkFunctionRecord**                      
+  * Delete the Physical Network Function Record of a Network Service Record with specific id
+* **postPhysicalNetworkFunctionRecord**                        
+  * Create the Physical Network Function Record of a Network Service Record with specific id
+* **updatePNFD**                                                
+  * Update the Physical Network Function Record of a Network Service Record with specific id
+* **getVirtualNetworkFunctionRecords**                         
+  * Get all the Virtual Network Function Records of Network Service Record with specific id
+* **getVirtualNetworkFunctionRecord**                           
+  * Get the Virtual Network Function Record with specific id of Network Service Record with specific id
+* **deleteVirtualNetworkFunctionRecord**                        
+  * Delete the Virtual Network Function Record of NetworkS ervice Record with specific id
+* **createVNFR**                                              
+  * create Virtual Network Function Record
+* **updateVNFR**                                              
+  * update Virtual Network Function Record
+* **getVNFDependencies**                                      
+  * Get all the Virtual Network Function Record dependencies of Network Service Record with specific id
+* **getVNFDependency**                                         
+  * Get the VirtualNetworkFunctionRecord Dependency with specific id of a Network Service Record with specific id
+* **deleteVNFDependency**                                      
+  * Delete the Virtual Network Function Record Dependency of a Network Service Record with specific id
+* **postVNFDependency**                                         
+  * Create the Virtual Network Function Record Dependency of a Network Service Record with specific id
+
 
 ### **Event Subcommands**
 * **create**
