@@ -68,6 +68,9 @@ repositories {
 }
 
 dependencies {
+    compile project(':sdk')
+    compile 'org.springframework.boot:spring-boot:' + springBootVersion
+    compile 'org.springframework.boot:spring-boot-autoconfigure:' + springBootVersion
 }
 
 
