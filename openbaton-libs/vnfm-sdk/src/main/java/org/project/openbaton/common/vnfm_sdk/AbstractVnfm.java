@@ -1,17 +1,22 @@
 package org.project.openbaton.common.vnfm_sdk;
 
+import org.project.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.project.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.project.openbaton.catalogue.mano.record.VNFCInstance;
 import org.project.openbaton.catalogue.mano.record.VNFRecordDependency;
 import org.project.openbaton.catalogue.mano.record.VirtualLinkRecord;
 import org.project.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
-import org.project.openbaton.catalogue.nfvo.*;
+import org.project.openbaton.catalogue.nfvo.Action;
+import org.project.openbaton.catalogue.nfvo.ConfigurationParameter;
+import org.project.openbaton.catalogue.nfvo.EndpointType;
+import org.project.openbaton.catalogue.nfvo.VnfmManagerEndpoint;
 import org.project.openbaton.catalogue.nfvo.messages.Interfaces.NFVMessage;
 import org.project.openbaton.catalogue.nfvo.messages.OrVnfmGenericMessage;
 import org.project.openbaton.catalogue.nfvo.messages.OrVnfmInstantiateMessage;
 import org.project.openbaton.common.vnfm_sdk.exception.BadFormatException;
 import org.project.openbaton.common.vnfm_sdk.exception.NotFoundException;
+import org.project.openbaton.common.vnfm_sdk.exception.VnfmSdkException;
 import org.project.openbaton.common.vnfm_sdk.interfaces.VNFLifecycleChangeNotification;
 import org.project.openbaton.common.vnfm_sdk.interfaces.VNFLifecycleManagement;
 import org.project.openbaton.common.vnfm_sdk.utils.VNFRUtils;
@@ -159,14 +164,6 @@ public abstract class AbstractVnfm implements VNFLifecycleManagement, VNFLifecyc
                         virtualNetworkFunctionRecord = instantiate(virtualNetworkFunctionRecord, orVnfmInstantiateMessage.getScripts());
                     nfvMessage = VnfmUtils.getNfvMessage(Action.INSTANTIATE, virtualNetworkFunctionRecord);
                     break;
-                case SCALE_IN_FINISHED:
-                    break;
-                case SCALE_OUT_FINISHED:
-                    break;
-                case SCALE_UP_FINISHED:
-                    break;
-                case SCALE_DOWN_FINISHED:
-                    break;
                 case RELEASE_RESOURCES_FINISH:
                     break;
                 case INSTANTIATE_FINISH:
@@ -183,12 +180,19 @@ public abstract class AbstractVnfm implements VNFLifecycleManagement, VNFLifecyc
 
             log.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             if (nfvMessage != null) {
-                //coreMessage.setDependency(message.getDependency());
                 log.debug("send to NFVO");
                 vnfmHelper.sendToNfvo(nfvMessage);
             }
         } catch (Exception e) {
             log.error("ERROR: ", e);
+            if (e instanceof VnfmSdkException){
+                VnfmSdkException vnfmSdkException = (VnfmSdkException) e;
+                if (vnfmSdkException.getVnfr() != null){
+                    log.debug("sending vnfr with version: " + vnfmSdkException.getVnfr().getHb_version());
+                    vnfmHelper.sendToNfvo(VnfmUtils.getNfvMessage(Action.ERROR, vnfmSdkException.getVnfr()));
+                    return;
+                }
+            }
             vnfmHelper.sendToNfvo(VnfmUtils.getNfvMessage(Action.ERROR, virtualNetworkFunctionRecord));
         }
     }
@@ -281,6 +285,14 @@ public abstract class AbstractVnfm implements VNFLifecycleManagement, VNFLifecyc
     protected VirtualNetworkFunctionRecord createVirtualNetworkFunctionRecord(VirtualNetworkFunctionDescriptor virtualNetworkFunctionDescriptor, String flavourId, String vnfInstanceName, Set<VirtualLinkRecord> virtualLinkRecords, Map<String, String> extension) throws BadFormatException, NotFoundException {
         try {
             VirtualNetworkFunctionRecord virtualNetworkFunctionRecord = VNFRUtils.createVirtualNetworkFunctionRecord(virtualNetworkFunctionDescriptor, flavourId, extension.get("nsr-id"), virtualLinkRecords);
+            for (InternalVirtualLink internalVirtualLink : virtualNetworkFunctionRecord.getVirtual_link()) {
+                for (VirtualLinkRecord virtualLinkRecord : virtualLinkRecords) {
+                    if (internalVirtualLink.getName().equals(virtualLinkRecord.getName())) {
+                        internalVirtualLink.setExtId(virtualLinkRecord.getExtId());
+                        internalVirtualLink.setConnectivity_type(virtualLinkRecord.getConnectivity_type());
+                    }
+                }
+            }
             log.debug("Created VirtualNetworkFunctionRecord: " + virtualNetworkFunctionRecord);
             return virtualNetworkFunctionRecord;
         } catch (NotFoundException e) {
