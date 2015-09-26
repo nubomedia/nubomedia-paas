@@ -10,7 +10,7 @@ public class Source{
     private Git git; //TODO: add other sources and git clone secrets
 
 
-    static class Git{
+    public static class Git{
         String URI;
 
         public Git(String URI) {

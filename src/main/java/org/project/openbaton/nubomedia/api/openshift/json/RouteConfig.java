@@ -3,7 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.json;
 /**
  * Created by maa on 25/09/2015.
  */
-public class RouteConfig implements MessageConfig{
+public class RouteConfig {
 
     private final String kind = "Route";
     private final String  apiVersion = "v1";

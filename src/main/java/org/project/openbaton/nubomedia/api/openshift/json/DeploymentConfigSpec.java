@@ -8,13 +8,12 @@ import java.util.Map;
 public class DeploymentConfigSpec {
 
     private Template template;
-    private DeploymentConfigSpec spec;
     private int replicas;
     private Selector selectors;
     private Trigger[] triggers;
     private Strategy strategy;
 
-    static class Strategy{
+    public static class Strategy{
         String type;
 
         public Strategy(String type) {
@@ -33,9 +32,8 @@ public class DeploymentConfigSpec {
         }
     }
 
-    public DeploymentConfigSpec(Template template, DeploymentConfigSpec spec, int replicas, Selector selectors, Trigger[] triggers, Strategy strategy) {
+    public DeploymentConfigSpec(Template template, int replicas, Selector selectors, Trigger[] triggers, Strategy strategy) {
         this.template = template;
-        this.spec = spec;
         this.replicas = replicas;
         this.selectors = selectors;
         this.triggers = triggers;
@@ -51,14 +49,6 @@ public class DeploymentConfigSpec {
 
     public void setTemplate(Template template) {
         this.template = template;
-    }
-
-    public DeploymentConfigSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(DeploymentConfigSpec spec) {
-        this.spec = spec;
     }
 
     public int getReplicas() {

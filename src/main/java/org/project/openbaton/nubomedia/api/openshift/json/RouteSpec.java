@@ -17,7 +17,7 @@ public class RouteSpec {
         this.status = status;
     }
 
-    static class Status{
+    public static class Status{
         //TODO: add status information in case of status request
     }
 

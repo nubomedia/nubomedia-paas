@@ -9,7 +9,7 @@ public class Container {
     private String image;
     private Port[] ports;
 
-    static class Port{
+    public static class Port{
         String protocol;
         int containerPort;
 

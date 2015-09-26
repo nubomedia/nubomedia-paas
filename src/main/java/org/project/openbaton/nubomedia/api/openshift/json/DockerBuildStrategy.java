@@ -8,7 +8,7 @@ public class DockerBuildStrategy implements BuildStrategy{
     private final String type = "Docker";
     private DockerStrategy dockerStrategy;
 
-    static class DockerStrategy{
+    public static class DockerStrategy{
         BuildElements from;
 
         public DockerStrategy(BuildElements from) {

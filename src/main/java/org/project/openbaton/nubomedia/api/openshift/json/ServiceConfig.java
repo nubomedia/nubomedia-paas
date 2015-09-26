@@ -3,7 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.json;
 /**
  * Created by Carlo on 25/09/2015.
  */
-public class ServiceConfig implements MessageConfig{
+public class ServiceConfig {
 
     private final String kind = "Service";
     private final String apiVersion = "v1";

@@ -7,17 +7,17 @@ public class ServiceSpec {
 
     private Selector selector;
 
-    private ServicePorts ports;
+    private ServicePort[] ports;
 
-    static class ServicePorts{
+    public static class ServicePort{
         String protocol;
         int port;
         int targetPort;
 
-        public ServicePorts() {
+        public ServicePort() {
         }
 
-        public ServicePorts(String protocol, int port, int targetPort) {
+        public ServicePort(String protocol, int port, int targetPort) {
             this.protocol = protocol;
             this.port = port;
             this.targetPort = targetPort;
@@ -51,7 +51,7 @@ public class ServiceSpec {
     public ServiceSpec() {
     }
 
-    public ServiceSpec(Selector selector, ServicePorts ports) {
+    public ServiceSpec(Selector selector, ServicePort[] ports) {
         this.selector = selector;
         this.ports = ports;
     }
@@ -64,11 +64,11 @@ public class ServiceSpec {
         this.selector = selector;
     }
 
-    public ServicePorts getPorts() {
+    public ServicePort[] getPorts() {
         return ports;
     }
 
-    public void setPorts(ServicePorts ports) {
+    public void setPorts(ServicePort[] ports) {
         this.ports = ports;
     }
 }

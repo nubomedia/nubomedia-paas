@@ -1,30 +1,26 @@
 package org.project.openbaton.nubomedia.api.openshift.json;
 
-import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
-
 /**
  * Created by Carlo on 25/09/2015.
  */
-public class BuildConfig implements MessageConfig {
+public class BuildConfig {
 
     private final String kind = "BuildConfig";
     private final String apiVersion = "V1";
     private Metadata metadata;
     private Spec spec;
 
-     static class Spec{
+     public static class Spec{
          Trigger[] triggers; //TODO: add other triggers in class definition
          Source type;
          BuildStrategy bs;
-         Output output;
+         Output to;
 
          public Spec(Trigger[] triggers, Source type, BuildStrategy bs, Output output) {
              this.triggers = triggers;
              this.type = type;
              this.bs = bs;
-             this.output = output;
+             this.to = output;
          }
 
          public Spec() {
@@ -55,17 +51,16 @@ public class BuildConfig implements MessageConfig {
          }
 
          public Output getOutput() {
-             return output;
+             return to;
          }
 
          public void setOutput(Output output) {
-             this.output = output;
+             this.to = output;
          }
      }
 
-    static class Output{
+    public static class Output{
 
-        @SerializedName("to")
         BuildElements ouputElement;
 
         public Output(BuildElements ouputElement) {

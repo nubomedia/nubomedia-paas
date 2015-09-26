@@ -38,7 +38,7 @@ public class SourceBuildStrategy implements BuildStrategy {
         this.forcePull = forcePull;
     }
 
-    static class SourceStrategy{
+    public static class SourceStrategy{
 
         @SerializedName("from")
         BuildElements from;
