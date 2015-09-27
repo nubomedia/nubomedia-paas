@@ -70,6 +70,7 @@ repositories {
 dependencies {
     compile project(':sdk')
     compile project(':catalogue')
+
     compile 'org.springframework.boot:spring-boot:' + springBootVersion
     compile 'org.springframework.boot:spring-boot-autoconfigure:' + springBootVersion
     compile 'org.springframework.boot:spring-boot-starter-web:' + springBootVersion
