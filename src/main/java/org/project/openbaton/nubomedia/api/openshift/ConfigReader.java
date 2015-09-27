@@ -15,7 +15,7 @@ public class ConfigReader {
     public static Config readConfig(){
         Config res = new Config();
         try {
-            BufferedReader bf = new BufferedReader(new FileReader("resources/config.json"));//to be removed soon
+            BufferedReader bf = new BufferedReader(new FileReader("resource/config.json"));//to be removed soon
             String jsonConfig = "",tmp;
             Gson mapper = new Gson();
 

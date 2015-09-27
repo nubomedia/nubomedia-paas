@@ -9,13 +9,12 @@ public class SourceBuildStrategy implements BuildStrategy {
 
     private final String type = "Source";
     private SourceStrategy sourceStrategy;
-    private boolean forcePull;
+
 
     public SourceBuildStrategy(){}
 
-    public SourceBuildStrategy(SourceStrategy sourceStrategy, boolean forcePull) {
+    public SourceBuildStrategy(SourceStrategy sourceStrategy) {
         this.sourceStrategy = sourceStrategy;
-        this.forcePull = forcePull;
     }
 
     public String getType() {
@@ -30,24 +29,26 @@ public class SourceBuildStrategy implements BuildStrategy {
         this.sourceStrategy = sourceStrategy;
     }
 
-    public boolean isForcePull() {
-        return forcePull;
-    }
-
-    public void setForcePull(boolean forcePull) {
-        this.forcePull = forcePull;
-    }
-
     public static class SourceStrategy{
 
         @SerializedName("from")
         BuildElements from;
+        private boolean forcePull;
 
         public SourceStrategy(){
         }
 
-        public SourceStrategy(BuildElements from) {
+        public SourceStrategy(BuildElements from, boolean forcePull){
             this.from = from;
+            this.forcePull = forcePull;
+        }
+
+        public boolean isForcePull() {
+            return forcePull;
+        }
+
+        public void setForcePull(boolean forcePull) {
+            this.forcePull = forcePull;
         }
 
         public BuildElements getFrom() {

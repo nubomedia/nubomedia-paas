@@ -13,8 +13,8 @@ public class MessageBuilderFactory {
     }
 
     public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL){
-        SourceBuildStrategy.SourceStrategy srcstr= new SourceBuildStrategy.SourceStrategy(new BuildElements("dockerImage","nubomedia/appBuilder:v1")); //Hardcoded, must change based on nubomedia meeting decision
-        SourceBuildStrategy strategy = new SourceBuildStrategy(srcstr, false);
+        SourceBuildStrategy.SourceStrategy srcstr= new SourceBuildStrategy.SourceStrategy(new BuildElements("DockerImage","flaviomu/app-builder:v1"),true); //Hardcoded, must change based on nubomedia meeting decision
+        SourceBuildStrategy strategy = new SourceBuildStrategy(srcstr);
         Trigger trigger = new Trigger("ConfigChange"); //To be decided
         BuildMessageBuilder builder = new BuildMessageBuilder(name,strategy,new BuildElements("DockerImage",dockerRepo),gitURL,new Trigger[]{trigger});
 

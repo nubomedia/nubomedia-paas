@@ -5,20 +5,20 @@ package org.project.openbaton.nubomedia.api.openshift.json.request;
  */
 public class Trigger {
 
-    private String name;
+    private String type;
 
     public Trigger(){
     }
 
     public Trigger(String name) {
-        this.name = name;
+        this.type = name;
     }
 
     public String getName() {
-        return name;
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String type) {
+        this.type = type;
     }
 }

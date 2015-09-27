@@ -55,7 +55,7 @@ project.ext {
     /**
      * gradle Related Vars
      */
-    mainClass = 'org.project.openbaton.nfvo.main.Application'
+    mainClass = 'org.project.openbaton.nubomedia.api.Main'
     //------------------------------------------------//
 }
 

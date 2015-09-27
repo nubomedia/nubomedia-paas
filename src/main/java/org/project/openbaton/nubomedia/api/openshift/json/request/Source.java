@@ -11,21 +11,21 @@ public class Source{
 
 
     public static class Git{
-        String URI;
+        String uri;
 
         public Git(String URI) {
-            this.URI = URI;
+            this.uri = URI;
         }
 
         public Git() {
         }
 
         public String getURI() {
-            return URI;
+            return uri;
         }
 
         public void setURI(String URI) {
-            this.URI = URI;
+            this.uri = URI;
         }
     }
 

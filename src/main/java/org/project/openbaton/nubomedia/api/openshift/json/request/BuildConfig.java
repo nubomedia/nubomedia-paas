@@ -1,26 +1,28 @@
 package org.project.openbaton.nubomedia.api.openshift.json.request;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Carlo on 25/09/2015.
  */
 public class BuildConfig {
 
     private final String kind = "BuildConfig";
-    private final String apiVersion = "V1";
+    private final String apiVersion = "v1";
     private Metadata metadata;
     private Spec spec;
 
      public static class Spec{
          Trigger[] triggers; //TODO: add other triggers in class definition
-         Source type;
-         BuildStrategy bs;
-         Output to;
+         Source source;
+         @SerializedName("strategy") BuildStrategy bs;
+         Output output;
 
          public Spec(Trigger[] triggers, Source type, BuildStrategy bs, Output output) {
              this.triggers = triggers;
-             this.type = type;
+             this.source = type;
              this.bs = bs;
-             this.to = output;
+             this.output = output;
          }
 
          public Spec() {
@@ -35,11 +37,11 @@ public class BuildConfig {
          }
 
          public Source getType() {
-             return type;
+             return source;
          }
 
          public void setType(Source type) {
-             this.type = type;
+             this.source = type;
          }
 
          public BuildStrategy getBs() {
@@ -51,31 +53,31 @@ public class BuildConfig {
          }
 
          public Output getOutput() {
-             return to;
+             return output;
          }
 
          public void setOutput(Output output) {
-             this.to = output;
+             this.output = output;
          }
      }
 
     public static class Output{
 
-        BuildElements ouputElement;
+        BuildElements to;
 
         public Output(BuildElements ouputElement) {
-            this.ouputElement = ouputElement;
+            this.to = ouputElement;
         }
 
         public Output() {
         }
 
         public BuildElements getOuputElement() {
-            return ouputElement;
+            return to;
         }
 
         public void setOuputElement(BuildElements ouputElement) {
-            this.ouputElement = ouputElement;
+            this.to = ouputElement;
         }
     }
 
