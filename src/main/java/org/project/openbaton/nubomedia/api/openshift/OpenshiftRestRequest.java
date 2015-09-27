@@ -1,7 +1,8 @@
 package org.project.openbaton.nubomedia.api.openshift;
 
 import com.google.gson.Gson;
-import org.project.openbaton.nubomedia.api.openshift.json.*;
+import org.project.openbaton.nubomedia.api.openshift.json.config.Config;
+import org.project.openbaton.nubomedia.api.openshift.json.request.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
