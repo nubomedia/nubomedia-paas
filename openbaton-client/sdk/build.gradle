@@ -5,7 +5,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.mashape.unirest:unirest-java:1.4.5'
 
-    compile 'org.slf4j:slf4j-simple:1.7.12'
+//    compile 'org.slf4j:slf4j-simple:1.7.12'
 
     testCompile 'com.google.code.gson:gson:2.3.1'
     testCompile "junit:junit:4.12"
