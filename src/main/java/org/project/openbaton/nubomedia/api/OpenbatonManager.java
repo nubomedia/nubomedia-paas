@@ -1,15 +1,22 @@
 package org.project.openbaton.nubomedia.api;
 
 import org.project.openbaton.sdk.NFVORequestor;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Created by lto on 24/09/15.
  */
-public class NubomediaAPI {
+@Service
+public class OpenbatonManager {
 
     private NFVORequestor nfvoRequestor;
 
-    public NubomediaAPI() {
+    @PostConstruct
+    private void init(){
         this.nfvoRequestor = new NFVORequestor("","","","","");
     }
+
+
 }

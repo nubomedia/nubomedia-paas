@@ -33,8 +33,8 @@ public class MessageBuilderFactory {
         return builder.buildMessage();
     }
 
-    public static ServiceConfig getServiceMessage(String name, int[] ports, int[] targerPorts,String[] protocols){
-        ServiceMessageBuilder smb = new ServiceMessageBuilder(name,protocols,ports,targerPorts);
+    public static ServiceConfig getServiceMessage(String name, int[] ports, int[] targetPorts,String[] protocols){
+        ServiceMessageBuilder smb = new ServiceMessageBuilder(name,protocols,ports,targetPorts);
         return smb.buildMessage();
     }
 

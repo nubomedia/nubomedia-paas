@@ -1,9 +1,6 @@
 package org.project.openbaton.nubomedia.api.openshift.json.response;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
@@ -13,6 +10,19 @@ import java.lang.reflect.Type;
 public class StatusDeserializer implements JsonDeserializer<Status>{
     @Override
     public Status deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return null;
+
+        JsonObject obj = json.getAsJsonObject();
+
+        String kind = obj.get("kind").getAsString();
+        String message = "";
+
+        if(obj.has("message")){
+            message = obj.get("message").getAsString();
+        }
+
+        String status = obj.get("status").getAsString();
+        int code = obj.get("code").getAsInt();
+
+        return new Status(kind,status,message,code);
     }
 }

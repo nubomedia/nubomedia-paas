@@ -16,7 +16,7 @@ public class ImageStreamMessageBuilder {
 
     public ImageStreamConfig buildMessage(){
         ImageStreamConfig.ImageStreamStatus status = new ImageStreamConfig.ImageStreamStatus("");
-        Metadata metadata = new Metadata(name + "-stream");
+        Metadata metadata = new Metadata(name);
         return new ImageStreamConfig(metadata,new ImageStreamConfig.ImageStreamSpecification(),status);
     }
 

@@ -19,11 +19,12 @@ public class ServiceMessageBuilder {
         this.name = name;
         this.protocols = protocols;
         this.targetPorts = targetPorts;
+        this.ports = ports;
     }
 
     public ServiceConfig buildMessage() {
         ServiceSpec.ServicePort[] sPorts = new ServiceSpec.ServicePort[ports.length];
-        for(int i = 0; i<= targetPorts.length; i++) {
+        for(int i = 0; i< targetPorts.length; i++) {
             sPorts[i] = new ServiceSpec.ServicePort(protocols[i], ports[i], targetPorts[i]);
         }
         Metadata metadata = new Metadata(name + "-svc");

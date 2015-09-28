@@ -1,0 +1,142 @@
+package org.project.openbaton.nubomedia.api;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
+import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.api.openshift.json.config.Config;
+import org.project.openbaton.nubomedia.api.openshift.json.request.*;
+import org.project.openbaton.nubomedia.api.openshift.json.response.Status;
+import org.project.openbaton.nubomedia.api.openshift.json.response.StatusDeserializer;
+import org.springframework.http.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.PostConstruct;
+
+@Service
+public class OpenshiftRestRequest {
+
+    private RestTemplate template;
+    private Config config;
+    private Gson mapper;
+
+    @PostConstruct
+    private void init(){
+        System.setProperty("javax.net.ssl.trustStore", "resource/openshift-keystore");
+        this.template = new RestTemplate();
+        this.config = ConfigReader.readConfig();
+        this.mapper = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Status.class,new StatusDeserializer()).create();
+    }
+
+    public String buildApplication(String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber){
+        String routeURL="";
+        String dockerRepo = config.getDockerRepo() + "/" + namespace + "/" + appName;
+
+        HttpHeaders header = new HttpHeaders();
+        header.add("Authorization","Bearer " + config.getToken());
+        header.setContentType(MediaType.APPLICATION_JSON);
+
+        //TODO error and json response management, and rewrite this method
+//        if(makeImageStream(appName,namespace, header)==201) {
+//            if (makeBuild(appName, namespace, dockerRepo, gitURL, header) == 201) {
+                if (makeDeployment(appName, dockerRepo, ports, protocols, replicasnumber, namespace, header) == 201) {
+                    if (makeService(appName, namespace, ports, targetPorts, protocols, header) == 201) {
+                        if (makeRoute(appName, namespace, header) == 201) {
+                            routeURL = appName + ".paas.nubomedia.eu";
+                        }
+                    }
+                }
+//            }
+//        }
+        return routeURL;
+    }
+
+    private int makeImageStream(String name,String namespace,HttpHeaders authHeader){
+        ImageStreamConfig message = MessageBuilderFactory.getImageStreamMessage(name);
+        String URL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace + "/imagestreams";
+        HttpEntity<String> imageStreamEntity = new HttpEntity<String>(mapper.toJson(message,ImageStreamConfig.class),authHeader);
+        ResponseEntity response = template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
+        System.out.println(response.toString());
+        return response.getStatusCode().value();
+    }
+
+    private int makeBuild(String name,String namespace,String dockerRepo,String gitURL, HttpHeaders authHeader){
+
+        BuildConfig message = MessageBuilderFactory.getBuilderMessage(name, dockerRepo, gitURL);
+        String URL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace + "/buildconfigs";
+        HttpEntity<String> buildEntity = new HttpEntity<String>(mapper.toJson(message,BuildConfig.class),authHeader);
+        ResponseEntity response = template.exchange(URL, HttpMethod.POST,buildEntity,String.class);
+        System.out.println("Build response: " + response.toString());
+        return response.getStatusCode().value();
+    }
+
+    private int makeDeployment(String name, String dockerRepo, int[] ports,String[] protocols,int repnumbers,String namespace,HttpHeaders authHeader){
+        DeploymentConfig message = MessageBuilderFactory.getDeployMessage(name, dockerRepo, ports, protocols, repnumbers);
+        System.out.println(mapper.toJson(message,DeploymentConfig.class));
+        String URL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace + "/deploymentconfigs";
+        HttpEntity<String> deployEntity = new HttpEntity<String>(mapper.toJson(message,DeploymentConfig.class),authHeader);
+        ResponseEntity response = template.exchange(URL,HttpMethod.POST,deployEntity,String.class);
+        System.out.println("Deployment response: " + response);
+        return response.getStatusCode().value();
+    }
+
+    private int makeService(String name,String namespace,int[] ports,int[] targetPorts,String[] protocols,HttpHeaders authHeader){
+        ServiceConfig message = MessageBuilderFactory.getServiceMessage(name, ports, targetPorts, protocols);
+        String URL = config.getBaseURL() + "/api/v1/namespaces/" + namespace + "/services";
+        HttpEntity<String> serviceEntity = new HttpEntity<String>(mapper.toJson(message,ServiceConfig.class),authHeader);
+        ResponseEntity response = template.exchange(URL,HttpMethod.POST,serviceEntity,String.class);
+        System.out.println("Service response: " + response);
+        return response.getStatusCode().value();
+    }
+
+    private int makeRoute(String name, String namespace, HttpHeaders authHeader){
+        RouteConfig message = MessageBuilderFactory.getRouteMessage(name);
+        String URL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace + "/routes";
+        HttpEntity<String> routeEntity = new HttpEntity<String>(mapper.toJson(message,RouteConfig.class),authHeader);
+        ResponseEntity response = template.exchange(URL,HttpMethod.POST,routeEntity,String.class);
+        System.out.println("Deployment response: " + response);
+        return response.getStatusCode().value();
+    }
+
+    public String deleteApplication(String appName, String namespace){
+
+        HttpHeaders header = new HttpHeaders();
+        header.add("Authorization","Bearer " + config.getToken());
+        HttpEntity<String> deleteEntity = new HttpEntity<String>("",header);
+        String openshiftBaseURL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace;
+        String kubernetsBaseURL = config.getBaseURL() + "/api/v1/namespaces/" + namespace;
+
+        String imageURL = openshiftBaseURL + "/imagestreams/" + appName;
+        int imageStreamStatus = this.deleteResource(imageURL,deleteEntity);
+
+        String buildConfigURL = openshiftBaseURL + "/buildconfig/" + appName + "-bc";
+        int buildConfigStatus = this.deleteResource(buildConfigURL, deleteEntity);
+
+        String deploymentConfigURL = openshiftBaseURL + "/deploymentconfigs/" + appName + "-dc";
+        int deploymentConfigStatus = this.deleteResource(deploymentConfigURL,deleteEntity);
+
+        String serviceConfigURL = kubernetsBaseURL + "/services/" + appName + "-svc";
+        int serviceStatus = this.deleteResource(serviceConfigURL, deleteEntity);
+
+        String routeConfigURL = openshiftBaseURL + "/routes/" + appName + "-route";
+        int routeStatus = this.deleteResource(routeConfigURL, deleteEntity);
+
+        if (imageStreamStatus == 200 &&
+                buildConfigStatus == 200 &&
+                deploymentConfigStatus == 200 &&
+                serviceStatus == 200 &&
+                routeStatus == 200){
+            return "Application " + appName + " from project " + namespace + " succesfully deleted";
+        }
+
+        return "Application not found";
+
+    }
+
+    private int deleteResource(String URL, HttpEntity<String> deleteEntity){
+        ResponseEntity<String> responseEntity = template.exchange(URL,HttpMethod.DELETE,deleteEntity,String.class);
+        return responseEntity.getStatusCode().value();
+    }
+
+}
