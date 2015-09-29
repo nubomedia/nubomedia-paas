@@ -1,0 +1,212 @@
+{
+  "kind": "PodList",
+  "apiVersion": "v1",
+  "metadata": {
+    "selfLink": "/api/v1/namespaces/nubomedia/pods",
+    "resourceVersion": "401222"
+  },
+  "items": [
+    {
+      "metadata": {
+        "name": "demo-app-xsp-dc-1-gpj60",
+        "generateName": "demo-app-xsp-dc-1-",
+        "namespace": "nubomedia",
+        "selfLink": "/api/v1/namespaces/nubomedia/pods/demo-app-xsp-dc-1-gpj60",
+        "uid": "cbfbc10c-6698-11e5-ace7-001a648f9cf6",
+        "resourceVersion": "400772",
+        "creationTimestamp": "2015-09-29T10:56:54Z",
+        "labels": {
+          "deployment": "demo-app-xsp-dc-1",
+          "deploymentconfig": "demo-app-xsp-dc",
+          "name": "demo-app-xsp"
+        },
+        "annotations": {
+          "kubernetes.io/created-by": "{\"kind\":\"SerializedReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"ReplicationController\",\"namespace\":\"nubomedia\",\"name\":\"demo-app-xsp-dc-1\",\"uid\":\"c2493acf-6698-11e5-ace7-001a648f9cf6\",\"apiVersion\":\"v1\",\"resourceVersion\":\"400756\"}}",
+          "openshift.io/deployment-config.latest-version": "1",
+          "openshift.io/deployment-config.name": "demo-app-xsp-dc",
+          "openshift.io/deployment.name": "demo-app-xsp-dc-1",
+          "openshift.io/scc": "restricted"
+        }
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "default-token-chy8t",
+            "secret": {
+              "secretName": "default-token-chy8t"
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "demo-app-xsp-cnt",
+            "image": "172.30.87.129:5000/nubomedia/demo-app-xsp",
+            "ports": [
+              {
+                "containerPort": 7777,
+                "protocol": "TCP"
+              }
+            ],
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "default-token-chy8t",
+                "readOnly": true,
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+              }
+            ],
+            "terminationMessagePath": "/dev/termination-log",
+            "imagePullPolicy": "IfNotPresent",
+            "securityContext": {
+              "privileged": false,
+              "seLinuxOptions": {
+                "level": "s0:c6,c0"
+              },
+              "runAsUser": 1000030000
+            }
+          }
+        ],
+        "restartPolicy": "Always",
+        "dnsPolicy": "ClusterFirst",
+        "host": "openshift",
+        "serviceAccountName": "default",
+        "serviceAccount": "default",
+        "nodeName": "openshift",
+        "imagePullSecrets": [
+          {
+            "name": "default-dockercfg-fl9hi"
+          }
+        ]
+      },
+      "status": {
+        "phase": "Running",
+        "conditions": [
+          {
+            "type": "Ready",
+            "status": "True"
+          }
+        ],
+        "hostIP": "80.96.122.90",
+        "podIP": "172.17.0.131",
+        "startTime": "2015-09-29T10:56:54Z",
+        "containerStatuses": [
+          {
+            "name": "demo-app-xsp-cnt",
+            "state": {
+              "running": {
+                "startedAt": "2015-09-29T10:56:57Z"
+              }
+            },
+            "lastState": {},
+            "ready": true,
+            "restartCount": 0,
+            "image": "172.30.87.129:5000/nubomedia/demo-app-xsp",
+            "imageID": "docker://68aca4db726d1827f82661b7950ea8dc4b6976161cdf7188d43bc43084a1b633",
+            "containerID": "docker://12643125ff168f48283347c4986794b9a7594804fdcf92d90a7356d1ada75290"
+          }
+        ]
+      }
+    },
+    {
+      "metadata": {
+        "name": "demo-app-xsp-dc-1-i6kwc",
+        "generateName": "demo-app-xsp-dc-1-",
+        "namespace": "nubomedia",
+        "selfLink": "/api/v1/namespaces/nubomedia/pods/demo-app-xsp-dc-1-i6kwc",
+        "uid": "c4b939d6-6698-11e5-ace7-001a648f9cf6",
+        "resourceVersion": "400754",
+        "creationTimestamp": "2015-09-29T10:56:42Z",
+        "labels": {
+          "deployment": "demo-app-xsp-dc-1",
+          "deploymentconfig": "demo-app-xsp-dc",
+          "name": "demo-app-xsp"
+        },
+        "annotations": {
+          "kubernetes.io/created-by": "{\"kind\":\"SerializedReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"ReplicationController\",\"namespace\":\"nubomedia\",\"name\":\"demo-app-xsp-dc-1\",\"uid\":\"c2493acf-6698-11e5-ace7-001a648f9cf6\",\"apiVersion\":\"v1\",\"resourceVersion\":\"400737\"}}",
+          "openshift.io/deployment-config.latest-version": "1",
+          "openshift.io/deployment-config.name": "demo-app-xsp-dc",
+          "openshift.io/deployment.name": "demo-app-xsp-dc-1",
+          "openshift.io/scc": "restricted"
+        }
+      },
+      "spec": {
+        "volumes": [
+          {
+            "name": "default-token-chy8t",
+            "secret": {
+              "secretName": "default-token-chy8t"
+            }
+          }
+        ],
+        "containers": [
+          {
+            "name": "demo-app-xsp-cnt",
+            "image": "172.30.87.129:5000/nubomedia/demo-app-xsp",
+            "ports": [
+              {
+                "containerPort": 7777,
+                "protocol": "TCP"
+              }
+            ],
+            "resources": {},
+            "volumeMounts": [
+              {
+                "name": "default-token-chy8t",
+                "readOnly": true,
+                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+              }
+            ],
+            "terminationMessagePath": "/dev/termination-log",
+            "imagePullPolicy": "IfNotPresent",
+            "securityContext": {
+              "privileged": false,
+              "seLinuxOptions": {
+                "level": "s0:c6,c0"
+              },
+              "runAsUser": 1000030000
+            }
+          }
+        ],
+        "restartPolicy": "Always",
+        "dnsPolicy": "ClusterFirst",
+        "host": "openshift",
+        "serviceAccountName": "default",
+        "serviceAccount": "default",
+        "nodeName": "openshift",
+        "imagePullSecrets": [
+          {
+            "name": "default-dockercfg-fl9hi"
+          }
+        ]
+      },
+      "status": {
+        "phase": "Running",
+        "conditions": [
+          {
+            "type": "Ready",
+            "status": "True"
+          }
+        ],
+        "hostIP": "80.96.122.90",
+        "podIP": "172.17.0.130",
+        "startTime": "2015-09-29T10:56:42Z",
+        "containerStatuses": [
+          {
+            "name": "demo-app-xsp-cnt",
+            "state": {
+              "running": {
+                "startedAt": "2015-09-29T10:56:45Z"
+              }
+            },
+            "lastState": {},
+            "ready": true,
+            "restartCount": 0,
+            "image": "172.30.87.129:5000/nubomedia/demo-app-xsp",
+            "imageID": "docker://68aca4db726d1827f82661b7950ea8dc4b6976161cdf7188d43bc43084a1b633",
+            "containerID": "docker://15f9313aaf59ad18a51d4151a43c9773ebdbadb65a6944b32e22512032ed3866"
+          }
+        ]
+      }
+    }
+  ]
+}

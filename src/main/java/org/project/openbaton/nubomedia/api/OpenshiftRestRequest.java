@@ -6,6 +6,8 @@ import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.api.openshift.json.config.Config;
 import org.project.openbaton.nubomedia.api.openshift.json.request.*;
+import org.project.openbaton.nubomedia.api.openshift.json.response.Pods;
+import org.project.openbaton.nubomedia.api.openshift.json.response.PodsDeserializer;
 import org.project.openbaton.nubomedia.api.openshift.json.response.Status;
 import org.project.openbaton.nubomedia.api.openshift.json.response.StatusDeserializer;
 import org.slf4j.Logger;
@@ -33,7 +35,7 @@ public class OpenshiftRestRequest {
         this.log = LoggerFactory.getLogger(this.getClass());
         this.template = new RestTemplate();
         this.config = ConfigReader.readConfig();
-        this.mapper = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Status.class,new StatusDeserializer()).create();
+        this.mapper = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Status.class,new StatusDeserializer()).registerTypeAdapter(Pods.class,new PodsDeserializer()).create();
     }
 
     public String buildApplication(String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber){
@@ -111,7 +113,7 @@ public class OpenshiftRestRequest {
 
         HttpHeaders header = new HttpHeaders();
         header.add("Authorization","Bearer " + config.getToken());
-        HttpEntity<String> deleteEntity = new HttpEntity<String>("",header);
+        HttpEntity<String> requestEntity = new HttpEntity<String>("",header);
         String openshiftBaseURL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace;
         String kubernetsBaseURL = config.getBaseURL() + "/api/v1/namespaces/" + namespace;
 
@@ -121,17 +123,27 @@ public class OpenshiftRestRequest {
 //        String buildConfigURL = openshiftBaseURL + "/buildconfig/" + appName + "-bc";
 //        int buildConfigStatus = this.deleteResource(buildConfigURL, deleteEntity);
 
+        String replicationControllerURL = kubernetsBaseURL + "/replicationcontrollers/" + appName + "-dc-1";
+        int replicationControllerStatus = this.deleteResource(replicationControllerURL,requestEntity);
+
         String deploymentConfigURL = openshiftBaseURL + "/deploymentconfigs/" + appName + "-dc";
-        int deploymentConfigStatus = this.deleteResource(deploymentConfigURL,deleteEntity);
+        int deploymentConfigStatus = this.deleteResource(deploymentConfigURL,requestEntity);
+
+        String podsURL = kubernetsBaseURL + "/pods";
+        Pods pods = this.getPodsList(podsURL, requestEntity);
+        for (String podName : pods.getPodNames()){
+            this.deleteResource(podsURL + "/" + podName, requestEntity);
+        }
 
         String serviceConfigURL = kubernetsBaseURL + "/services/" + appName + "-svc";
-        int serviceStatus = this.deleteResource(serviceConfigURL, deleteEntity);
+        int serviceStatus = this.deleteResource(serviceConfigURL, requestEntity);
 
         String routeConfigURL = openshiftBaseURL + "/routes/" + appName + "-route";
-        int routeStatus = this.deleteResource(routeConfigURL, deleteEntity);
+        int routeStatus = this.deleteResource(routeConfigURL, requestEntity);
 
         if (/*imageStreamStatus == 200 &&
                 buildConfigStatus == 200 &&*/
+                replicationControllerStatus == 200 &&
                 deploymentConfigStatus == 200 &&
                 serviceStatus == 200 &&
                 routeStatus == 200){
@@ -140,6 +152,13 @@ public class OpenshiftRestRequest {
 
         return "Application not found";
 
+    }
+
+    private Pods getPodsList(String podsURL, HttpEntity<String> requestEntity) {
+
+        ResponseEntity<String> pods = template.exchange(podsURL,HttpMethod.GET,requestEntity,String.class);
+        log.debug(pods.getBody());
+        return mapper.fromJson(pods.getBody(),Pods.class);
     }
 
     private int deleteResource(String URL, HttpEntity<String> deleteEntity){
