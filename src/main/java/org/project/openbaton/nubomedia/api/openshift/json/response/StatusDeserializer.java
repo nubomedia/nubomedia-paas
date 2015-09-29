@@ -5,7 +5,7 @@ import com.google.gson.*;
 import java.lang.reflect.Type;
 
 /**
- * Created by Carlo on 27/09/2015.
+ * Created by maa on 27/09/2015.
  */
 public class StatusDeserializer implements JsonDeserializer<Status>{
     @Override

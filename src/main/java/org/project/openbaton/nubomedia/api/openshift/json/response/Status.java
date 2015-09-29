@@ -1,7 +1,7 @@
 package org.project.openbaton.nubomedia.api.openshift.json.response;
 
 /**
- * Created by Carlo on 27/09/2015.
+ * Created by maa on 27/09/2015.
  */
 public class Status {
 

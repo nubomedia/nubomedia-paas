@@ -13,8 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import javax.annotation.PostConstruct;
+
+/**
+ * Created by maa on 27/09/2015.
+ */
 
 @Service
 public class OpenshiftRestRequest {
@@ -78,7 +81,7 @@ public class OpenshiftRestRequest {
     private int makeDeployment(String name, String dockerRepo, int[] ports,String[] protocols,int repnumbers,String namespace,HttpHeaders authHeader){
         log.debug("params arg: " + name + " " + dockerRepo + " " + ports + " " + protocols + " " + repnumbers);
         DeploymentConfig message = MessageBuilderFactory.getDeployMessage(name, dockerRepo, ports, protocols, repnumbers);
-        log.debug(mapper.toJson(message,DeploymentConfig.class));
+        log.debug(mapper.toJson(message, DeploymentConfig.class));
         String URL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace + "/deploymentconfigs";
         HttpEntity<String> deployEntity = new HttpEntity<String>(mapper.toJson(message,DeploymentConfig.class),authHeader);
         ResponseEntity response = template.exchange(URL,HttpMethod.POST,deployEntity,String.class);

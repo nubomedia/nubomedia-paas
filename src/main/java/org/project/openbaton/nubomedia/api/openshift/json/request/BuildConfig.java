@@ -3,7 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.json.request;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Carlo on 25/09/2015.
+ * Created by maa on 25/09/2015.
  */
 public class BuildConfig {
 

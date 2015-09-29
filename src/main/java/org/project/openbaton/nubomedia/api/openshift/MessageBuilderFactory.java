@@ -3,7 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift;
 import org.project.openbaton.nubomedia.api.openshift.json.request.*;
 
 /**
- * Created by Carlo on 26/09/2015.
+ * Created by maa on 26/09/2015.
  */
 public class MessageBuilderFactory {
 

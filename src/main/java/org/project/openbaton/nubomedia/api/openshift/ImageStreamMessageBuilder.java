@@ -4,7 +4,7 @@ import org.project.openbaton.nubomedia.api.openshift.json.request.ImageStreamCon
 import org.project.openbaton.nubomedia.api.openshift.json.request.Metadata;
 
 /**
- * Created by Carlo on 26/09/2015.
+ * Created by maa on 26/09/2015.
  */
 public class ImageStreamMessageBuilder {
 

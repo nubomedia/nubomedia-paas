@@ -1,7 +1,7 @@
 package org.project.openbaton.nubomedia.api.openshift.json.config;
 
 /**
- * Created by Carlo on 26/09/2015.
+ * Created by maa on 26/09/2015.
  */
 public class Config {
     //TODO: add username and password authentication
