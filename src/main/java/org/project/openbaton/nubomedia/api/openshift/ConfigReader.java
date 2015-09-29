@@ -1,36 +1,29 @@
 package org.project.openbaton.nubomedia.api.openshift;
 
-import com.google.gson.Gson;
-import org.project.openbaton.nubomedia.api.openshift.json.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.Properties;
 
 /**
  * Created by maa on 26/09/2015.
  */
 public class ConfigReader {
 
-    public static Config readConfig(){
-        Config res = new Config();
-        try {
-            BufferedReader bf = new BufferedReader(new FileReader("resource/config.json"));//to be removed soon
-            String jsonConfig = "",tmp;
-            Gson mapper = new Gson();
+    private static Logger log = LoggerFactory.getLogger(ConfigReader.class);
 
-            while ((tmp =  bf.readLine()) != null){
-                jsonConfig += tmp;
-            }
+    public static Properties loadProperties() throws IOException {
+        Properties properties = new Properties();
+        File f = new File("/etc/nubomedia/paas.properties");
+        if (!f.exists())
+            properties.load(ConfigReader.class.getResourceAsStream("/paas.properties"));
+        else
+            properties.load(new FileInputStream(f));
 
-            res = mapper.fromJson(jsonConfig,Config.class);
+        log.info("Loaded Properties: " + properties);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return res;
-
+        return properties;
     }
 
 }
