@@ -39,7 +39,7 @@ public class NubomediaAppManager {
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    @RequestMapping(value = "/create",  method = RequestMethod.POST)
+    @RequestMapping(value = "/app",  method = RequestMethod.POST)
     public @ResponseBody NubomediaCreateResponse createApp(@RequestBody NubomediaCreateRequest request) {
 
         NubomediaCreateResponse res = new NubomediaCreateResponse();
@@ -61,12 +61,28 @@ public class NubomediaAppManager {
         return res;
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/app/{id}", method =  RequestMethod.GET)
+    public @ResponseBody Application getApp(@PathVariable("id") int id){
+
+        logger.info("Request status for " + id + " app");
+
+        return applications.get(id);
+
+    }
+
+    @RequestMapping(value = "/app", method = RequestMethod.GET)
+    public @ResponseBody Map<Integer, Application> getApps(){
+        return this.applications;
+    }
+
+    @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
     public @ResponseBody String deleteApp(@PathVariable("id") int id) {
 
         logger.debug("id " + id);
 
         Application app = applications.get(id);
+        applications.remove(id);
+        
         return osmanager.deleteApplication(app.getAppName(), app.getProjectName());
     }
 }
