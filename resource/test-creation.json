@@ -1,0 +1,16 @@
+{
+  "gitURL":"git://github.com/charliemaiors/demo-app-xsp.git",
+  "appName":"demo-app-xsp",
+  "projectName":"nubomedia",
+  "protocols":[
+    "TCP"
+  ],
+  "ports":[
+    7777
+  ],
+  "targetPorts":[
+    7777
+  ],
+  "flavor":"",
+  "replicasNumber":2
+}

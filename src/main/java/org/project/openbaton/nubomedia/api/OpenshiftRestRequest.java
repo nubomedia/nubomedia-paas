@@ -8,6 +8,8 @@ import org.project.openbaton.nubomedia.api.openshift.json.config.Config;
 import org.project.openbaton.nubomedia.api.openshift.json.request.*;
 import org.project.openbaton.nubomedia.api.openshift.json.response.Status;
 import org.project.openbaton.nubomedia.api.openshift.json.response.StatusDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,11 +21,13 @@ public class OpenshiftRestRequest {
 
     private RestTemplate template;
     private Config config;
+    private Logger log;
     private Gson mapper;
 
     @PostConstruct
     private void init(){
         System.setProperty("javax.net.ssl.trustStore", "resource/openshift-keystore");
+        this.log = LoggerFactory.getLogger(this.getClass());
         this.template = new RestTemplate();
         this.config = ConfigReader.readConfig();
         this.mapper = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Status.class,new StatusDeserializer()).create();
@@ -57,7 +61,7 @@ public class OpenshiftRestRequest {
         String URL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace + "/imagestreams";
         HttpEntity<String> imageStreamEntity = new HttpEntity<String>(mapper.toJson(message,ImageStreamConfig.class),authHeader);
         ResponseEntity response = template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
-        System.out.println(response.toString());
+        log.debug(response.toString());
         return response.getStatusCode().value();
     }
 
@@ -67,17 +71,18 @@ public class OpenshiftRestRequest {
         String URL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace + "/buildconfigs";
         HttpEntity<String> buildEntity = new HttpEntity<String>(mapper.toJson(message,BuildConfig.class),authHeader);
         ResponseEntity response = template.exchange(URL, HttpMethod.POST,buildEntity,String.class);
-        System.out.println("Build response: " + response.toString());
+        log.debug("Build response: " + response.toString());
         return response.getStatusCode().value();
     }
 
     private int makeDeployment(String name, String dockerRepo, int[] ports,String[] protocols,int repnumbers,String namespace,HttpHeaders authHeader){
+        log.debug("params arg: " + name + " " + dockerRepo + " " + ports + " " + protocols + " " + repnumbers);
         DeploymentConfig message = MessageBuilderFactory.getDeployMessage(name, dockerRepo, ports, protocols, repnumbers);
-        System.out.println(mapper.toJson(message,DeploymentConfig.class));
+        log.debug(mapper.toJson(message,DeploymentConfig.class));
         String URL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace + "/deploymentconfigs";
         HttpEntity<String> deployEntity = new HttpEntity<String>(mapper.toJson(message,DeploymentConfig.class),authHeader);
         ResponseEntity response = template.exchange(URL,HttpMethod.POST,deployEntity,String.class);
-        System.out.println("Deployment response: " + response);
+        log.debug("Deployment response: " + response);
         return response.getStatusCode().value();
     }
 
@@ -86,7 +91,7 @@ public class OpenshiftRestRequest {
         String URL = config.getBaseURL() + "/api/v1/namespaces/" + namespace + "/services";
         HttpEntity<String> serviceEntity = new HttpEntity<String>(mapper.toJson(message,ServiceConfig.class),authHeader);
         ResponseEntity response = template.exchange(URL,HttpMethod.POST,serviceEntity,String.class);
-        System.out.println("Service response: " + response);
+        log.debug("Service response: " + response);
         return response.getStatusCode().value();
     }
 
@@ -95,7 +100,7 @@ public class OpenshiftRestRequest {
         String URL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace + "/routes";
         HttpEntity<String> routeEntity = new HttpEntity<String>(mapper.toJson(message,RouteConfig.class),authHeader);
         ResponseEntity response = template.exchange(URL,HttpMethod.POST,routeEntity,String.class);
-        System.out.println("Deployment response: " + response);
+        log.debug("Deployment response: " + response);
         return response.getStatusCode().value();
     }
 
@@ -107,11 +112,11 @@ public class OpenshiftRestRequest {
         String openshiftBaseURL = config.getBaseURL() + "/oapi/v1/namespaces/" + namespace;
         String kubernetsBaseURL = config.getBaseURL() + "/api/v1/namespaces/" + namespace;
 
-        String imageURL = openshiftBaseURL + "/imagestreams/" + appName;
-        int imageStreamStatus = this.deleteResource(imageURL,deleteEntity);
-
-        String buildConfigURL = openshiftBaseURL + "/buildconfig/" + appName + "-bc";
-        int buildConfigStatus = this.deleteResource(buildConfigURL, deleteEntity);
+//        String imageURL = openshiftBaseURL + "/imagestreams/" + appName;
+//        int imageStreamStatus = this.deleteResource(imageURL,deleteEntity);
+//
+//        String buildConfigURL = openshiftBaseURL + "/buildconfig/" + appName + "-bc";
+//        int buildConfigStatus = this.deleteResource(buildConfigURL, deleteEntity);
 
         String deploymentConfigURL = openshiftBaseURL + "/deploymentconfigs/" + appName + "-dc";
         int deploymentConfigStatus = this.deleteResource(deploymentConfigURL,deleteEntity);
@@ -122,8 +127,8 @@ public class OpenshiftRestRequest {
         String routeConfigURL = openshiftBaseURL + "/routes/" + appName + "-route";
         int routeStatus = this.deleteResource(routeConfigURL, deleteEntity);
 
-        if (imageStreamStatus == 200 &&
-                buildConfigStatus == 200 &&
+        if (/*imageStreamStatus == 200 &&
+                buildConfigStatus == 200 &&*/
                 deploymentConfigStatus == 200 &&
                 serviceStatus == 200 &&
                 routeStatus == 200){
