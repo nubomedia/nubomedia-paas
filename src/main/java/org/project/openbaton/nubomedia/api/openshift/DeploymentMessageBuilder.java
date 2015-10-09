@@ -1,6 +1,6 @@
 package org.project.openbaton.nubomedia.api.openshift;
 
-import org.project.openbaton.nubomedia.api.openshift.json.request.*;
+import org.project.openbaton.nubomedia.api.openshift.json.*;
 
 /**
  * Created by maa on 25/09/2015.
@@ -23,7 +23,7 @@ public class DeploymentMessageBuilder {
 
     public DeploymentConfig buildMessage(){
 
-        Metadata metadata = new Metadata(name + "-dc");
+        Metadata metadata = new Metadata(name + "-dc","","");
         MetadataDeploy metadeploy = new MetadataDeploy(new MetadataDeploy.Labels(name));
         Selector selector = new Selector(name);
         DeploymentConfigSpec.Strategy strategy = new DeploymentConfigSpec.Strategy(strategyType);

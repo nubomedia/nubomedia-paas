@@ -7,14 +7,16 @@ public class Application {
 
     private String appName;
     private String projectName;
-    private String openBatonID;
     private String route;
+    private String groupID;
+    private int points;
 
-    public Application(String appName, String projectName, String openBatonID, String route) {
+    public Application(String appName, String projectName, String route, String groupID, int points) {
         this.appName = appName;
         this.projectName = projectName;
-        this.openBatonID = openBatonID;
         this.route = route;
+        this.groupID = groupID;
+        this.points = points;
     }
 
     public String getAppName() {
@@ -41,11 +43,20 @@ public class Application {
         this.route = route;
     }
 
-    public String getOpenBatonID() {
-        return openBatonID;
+    public String getGroupID() {
+        return groupID;
     }
 
-    public void setOpenBatonID(String openBatonID) {
-        this.openBatonID = openBatonID;
+    public void setGroupID(String groupID) {
+        this.groupID = groupID;
+    }
+
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

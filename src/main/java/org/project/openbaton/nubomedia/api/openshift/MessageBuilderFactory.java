@@ -1,6 +1,6 @@
 package org.project.openbaton.nubomedia.api.openshift;
 
-import org.project.openbaton.nubomedia.api.openshift.json.request.*;
+import org.project.openbaton.nubomedia.api.openshift.json.*;
 
 /**
  * Created by maa on 26/09/2015.
@@ -12,11 +12,12 @@ public class MessageBuilderFactory {
         return ism.buildMessage();
     }
 
-    public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL) {
-        SourceBuildStrategy.SourceStrategy srcstr = new SourceBuildStrategy.SourceStrategy(new BuildElements("DockerImage", "flaviomu/app-builder:v1"), true); //Hardcoded, must change based on nubomedia meeting decision
-        SourceBuildStrategy strategy = new SourceBuildStrategy(srcstr);
-        Trigger trigger = new Trigger("ConfigChange"); //To be decided
-        BuildMessageBuilder builder = new BuildMessageBuilder(name, strategy, new BuildElements("DockerImage", dockerRepo), gitURL, new Trigger[]{trigger});
+    public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL,String secretName,String mediaServerGID) {
+        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("MEDIA_SERVER_GID",mediaServerGID)},new BuildElements("DockerImage","flaviomu/nubomedia-signaling-plane:v1"));
+        DockerBuildStrategy strategy = new DockerBuildStrategy(ds);
+        Source.SourceSecret secret = new Source.SourceSecret(secretName);
+        Trigger trigger = new Trigger("ConfigChange");
+        BuildMessageBuilder builder = new BuildMessageBuilder(name, strategy, new BuildElements("DockerImage", dockerRepo), gitURL, new Trigger[]{trigger},secret);
 
         return builder.buildMessage();
     }
@@ -41,6 +42,11 @@ public class MessageBuilderFactory {
     public static RouteConfig getRouteMessage(String name) {
         RouteMessageBuilder rmb = new RouteMessageBuilder(name);
         return rmb.buildMessage();
+    }
+
+    public static SecretConfig getSecretMessage(String namespace,String privateKey){
+        SecretKeyMessageBuilder secretKeyMessageBuilder = new SecretKeyMessageBuilder(namespace,privateKey);
+        return secretKeyMessageBuilder.buildMessage();
     }
 
 }

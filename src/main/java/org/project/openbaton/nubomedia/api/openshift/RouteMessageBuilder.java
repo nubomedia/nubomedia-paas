@@ -1,9 +1,9 @@
 package org.project.openbaton.nubomedia.api.openshift;
 
-import org.project.openbaton.nubomedia.api.openshift.json.request.BuildElements;
-import org.project.openbaton.nubomedia.api.openshift.json.request.Metadata;
-import org.project.openbaton.nubomedia.api.openshift.json.request.RouteConfig;
-import org.project.openbaton.nubomedia.api.openshift.json.request.RouteSpec;
+import org.project.openbaton.nubomedia.api.openshift.json.BuildElements;
+import org.project.openbaton.nubomedia.api.openshift.json.Metadata;
+import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
+import org.project.openbaton.nubomedia.api.openshift.json.RouteSpec;
 
 /**
  * Created by maa on 25/09/2015.
@@ -18,7 +18,7 @@ public class RouteMessageBuilder {
 
     public RouteConfig buildMessage() {
 
-        Metadata metadata = new Metadata(name + "-route");
+        Metadata metadata = new Metadata(name + "-route","","");
         BuildElements be = new BuildElements("Service",name+"-svc");
         RouteSpec spec = new RouteSpec(name+".paas.nubomedia.eu",be,new RouteSpec.Status());
 

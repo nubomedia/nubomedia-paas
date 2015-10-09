@@ -1,7 +1,7 @@
 package org.project.openbaton.nubomedia.api.openshift;
 
-import org.project.openbaton.nubomedia.api.openshift.json.request.ImageStreamConfig;
-import org.project.openbaton.nubomedia.api.openshift.json.request.Metadata;
+import org.project.openbaton.nubomedia.api.openshift.json.ImageStreamConfig;
+import org.project.openbaton.nubomedia.api.openshift.json.Metadata;
 
 /**
  * Created by maa on 26/09/2015.
@@ -16,7 +16,7 @@ public class ImageStreamMessageBuilder {
 
     public ImageStreamConfig buildMessage(){
         ImageStreamConfig.ImageStreamStatus status = new ImageStreamConfig.ImageStreamStatus("");
-        Metadata metadata = new Metadata(name);
+        Metadata metadata = new Metadata(name,"","");
         return new ImageStreamConfig(metadata,new ImageStreamConfig.ImageStreamSpecification(),status);
     }
 

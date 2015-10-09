@@ -1,9 +1,9 @@
 package org.project.openbaton.nubomedia.api.openshift;
 
-import org.project.openbaton.nubomedia.api.openshift.json.request.Metadata;
-import org.project.openbaton.nubomedia.api.openshift.json.request.Selector;
-import org.project.openbaton.nubomedia.api.openshift.json.request.ServiceConfig;
-import org.project.openbaton.nubomedia.api.openshift.json.request.ServiceSpec;
+import org.project.openbaton.nubomedia.api.openshift.json.Metadata;
+import org.project.openbaton.nubomedia.api.openshift.json.Selector;
+import org.project.openbaton.nubomedia.api.openshift.json.ServiceConfig;
+import org.project.openbaton.nubomedia.api.openshift.json.ServiceSpec;
 
 /**
  * Created by maa on 25/09/2015.
@@ -23,11 +23,19 @@ public class ServiceMessageBuilder {
     }
 
     public ServiceConfig buildMessage() {
-        ServiceSpec.ServicePort[] sPorts = new ServiceSpec.ServicePort[ports.length];
-        for(int i = 0; i< targetPorts.length; i++) {
-            sPorts[i] = new ServiceSpec.ServicePort(protocols[i], ports[i], targetPorts[i]);
+        ServiceSpec.ServicePort[] sPorts = new ServiceSpec.ServicePort[targetPorts.length];
+
+        if(ports == null){
+            for(int i = 0; i< targetPorts.length; i++) {
+                sPorts[i] = new ServiceSpec.ServicePort(protocols[i], targetPorts[i], targetPorts[i]);
+            }
         }
-        Metadata metadata = new Metadata(name + "-svc");
+        else {
+            for (int i = 0; i < targetPorts.length; i++) {
+                sPorts[i] = new ServiceSpec.ServicePort(protocols[i], ports[i], targetPorts[i]);
+            }
+        }
+        Metadata metadata = new Metadata(name + "-svc","","");
         Selector selector = new Selector(name);
         ServiceSpec spec = new ServiceSpec(selector,sPorts);
 
