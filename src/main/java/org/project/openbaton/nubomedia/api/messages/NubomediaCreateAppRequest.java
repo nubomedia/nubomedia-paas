@@ -13,7 +13,6 @@ public class NubomediaCreateAppRequest {
     private int[] targetPorts;
     private String flavor;
     private int replicasNumber;
-    private String privateKey;
     private String secretName;
 
     public NubomediaCreateAppRequest() {
@@ -81,14 +80,6 @@ public class NubomediaCreateAppRequest {
 
     public void setReplicasNumber(int replicasNumber) {
         this.replicasNumber = replicasNumber;
-    }
-
-    public String getPrivateKey() {
-        return privateKey;
-    }
-
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
     }
 
     public String getSecretName() {

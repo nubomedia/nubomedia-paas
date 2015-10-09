@@ -2,6 +2,7 @@ package org.project.openbaton.nubomedia.api;
 
 
 import com.google.gson.Gson;
+import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
 import org.project.openbaton.nubomedia.api.openshift.beans.*;
 
 import org.project.openbaton.nubomedia.api.openshift.json.ImageStreamConfig;
@@ -12,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
-
+import java.io.IOException;
+import java.util.Properties;
 
 
 /**
@@ -22,8 +24,6 @@ import javax.annotation.PostConstruct;
 @Service
 public class OpenshiftManager {
 
-    
-    @Autowired private PropertyReader config;
     @Autowired private Gson mapper;
     @Autowired private SecretManager secretManager;
     @Autowired private ImageStreamManager imageStreamManager;
@@ -31,16 +31,18 @@ public class OpenshiftManager {
     @Autowired private DeploymentManager deploymentManager;
     @Autowired private ServiceManager serviceManager;
     @Autowired private RouteManager routeManager;
+    private Properties config;
     private Logger logger;
     private String openshiftBaseURL;
     private String kubernetesBaseURL;
 
 
     @PostConstruct
-    private void init(){
+    private void init() throws IOException {
+        this.config = ConfigReader.loadProperties();
         this.logger = LoggerFactory.getLogger(this.getClass());
-        this.openshiftBaseURL = config.getProperties().getProperty("baseURL") + "/oapi/v1/namespaces/";
-        this.kubernetesBaseURL = config.getProperties().getProperty("baseURL") + "/api/v1/namespaces/";
+        this.openshiftBaseURL = config.getProperty("baseURL") + "/oapi/v1/namespaces/";
+        this.kubernetesBaseURL = config.getProperty("baseURL") + "/api/v1/namespaces/";
     }
 
     public void Authenticate(){
@@ -50,7 +52,7 @@ public class OpenshiftManager {
     public String buildApplication(String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber, String secretName, String mediaServerGID){
 
         HttpHeaders creationHeader = new HttpHeaders();
-        creationHeader.add("Authorization","Bearer " + config.getProperties().getProperty("token"));
+        creationHeader.add("Authorization","Bearer " + config.getProperty("token"));
         creationHeader.add("Content-type","application/json");
 
         logger.info("Starting build app " + appName + " in project " + namespace);
@@ -96,7 +98,7 @@ public class OpenshiftManager {
     public HttpStatus deleteApplication(String appName, String namespace){
 
         HttpHeaders deleteHeader = new HttpHeaders();
-        deleteHeader.add("Authorization","Bearer " + config.getProperties().getProperty("token"));
+        deleteHeader.add("Authorization","Bearer " + config.getProperty("token"));
 
         HttpStatus res = imageStreamManager.deleteImageStream(openshiftBaseURL,appName,namespace,deleteHeader);
         if (!res.is2xxSuccessful()) return res;
@@ -104,13 +106,13 @@ public class OpenshiftManager {
         res = buildManager.deleteBuild(openshiftBaseURL, appName, namespace, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
-        res = deploymentManager.deleteDeployment(openshiftBaseURL,appName,namespace,deleteHeader);
+        res = deploymentManager.deleteDeployment(openshiftBaseURL, appName, namespace, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
-        res = deploymentManager.deletePodsRC(kubernetesBaseURL,appName,namespace,deleteHeader);
+        res = deploymentManager.deletePodsRC(kubernetesBaseURL, appName, namespace, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
-        res = serviceManager.deleteService(kubernetesBaseURL,appName,namespace,deleteHeader);
+        res = serviceManager.deleteService(kubernetesBaseURL, appName, namespace, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
         res = routeManager.deleteRoute(openshiftBaseURL,appName,namespace,deleteHeader);
@@ -121,15 +123,15 @@ public class OpenshiftManager {
     public String createSecret (String privateKey, String namespace){
 
         HttpHeaders authHeader = new HttpHeaders();
-        authHeader.add("Authorization","Bearer" + config.getProperties().getProperty("token"));
-        return secretManager.createSecret(namespace, privateKey, authHeader);
+        authHeader.add("Authorization","Bearer " + config.getProperty("token"));
+        return secretManager.createSecret(kubernetesBaseURL, namespace, privateKey, authHeader);
     }
 
     public HttpStatus deleteSecret(String secretName, String namespace){
         HttpHeaders authHeader = new HttpHeaders();
-        authHeader.add("Authorization","Bearer" + config.getProperties().getProperty("token"));
+        authHeader.add("Authorization","Bearer " + config.getProperty("token"));
 
-        HttpStatus entity = secretManager.deleteSecret(secretName,namespace,authHeader);
+        HttpStatus entity = secretManager.deleteSecret(kubernetesBaseURL, secretName,namespace,authHeader);
         return entity;
     }
 

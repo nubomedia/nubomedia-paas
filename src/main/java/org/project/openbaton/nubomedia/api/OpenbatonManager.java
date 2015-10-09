@@ -1,7 +1,7 @@
 package org.project.openbaton.nubomedia.api;
 
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
-import org.project.openbaton.sdk.NFVORequestor;
+import org.openbaton.sdk.NFVORequestor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;

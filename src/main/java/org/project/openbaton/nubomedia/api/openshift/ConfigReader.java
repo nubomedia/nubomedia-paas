@@ -16,11 +16,14 @@ public class ConfigReader {
     public static Properties loadProperties() throws IOException {
         Properties properties = new Properties();
         File f = new File("/etc/nubomedia/paas.properties");
-        if (!f.exists())
+        if (!f.exists()) {
+            log.info("loading default properties file");
             properties.load(ConfigReader.class.getResourceAsStream("/paas.properties"));
-        else
+        }
+        else {
+            log.info("loading properties from " + f.getAbsolutePath());
             properties.load(new FileInputStream(f));
-
+        }
         log.info("Loaded Properties: " + properties);
 
         return properties;

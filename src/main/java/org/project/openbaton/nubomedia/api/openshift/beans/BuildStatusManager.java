@@ -18,7 +18,6 @@ import javax.annotation.PostConstruct;
  */
 
 @Service
-@Scope("session")
 public class BuildStatusManager {
 
     @Autowired private RestTemplate template;

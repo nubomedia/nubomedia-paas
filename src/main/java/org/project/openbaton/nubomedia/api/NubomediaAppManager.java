@@ -51,7 +51,7 @@ public class NubomediaAppManager {
         String mediaServerGID = obmanager.getMediaServerGroupID();
 
         //Openshift Application Creation
-        String route = osmanager.buildApplication(request.getAppName() + appID, request.getProjectName(), request.getGitURL(), request.getPorts(), request.getTargetPorts(), request.getProtocols(), request.getReplicasNumber(), request.getPrivateKey(),mediaServerGID); //to be fixed with secret creation
+        String route = osmanager.buildApplication(request.getAppName() + appID, request.getProjectName(), request.getGitURL(), request.getPorts(), request.getTargetPorts(), request.getProtocols(), request.getReplicasNumber(), request.getSecretName(),mediaServerGID); //to be fixed with secret creation
 
         Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),route,mediaServerGID,request.getGitURL(),request.getTargetPorts(),request.getPorts(),request.getProtocols(),request.getReplicasNumber(),request.getSecretName());
         applications.put(appID, persistApp);
@@ -76,7 +76,7 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
-    public @ResponseBody NubomediaDeleteAppResponse deleteApp(@PathVariable("id") int id) {
+    public @ResponseBody NubomediaDeleteAppResponse deleteApp(@PathVariable("id") UUID id) {
 
         logger.debug("id " + id);
 
@@ -89,7 +89,8 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/secret", method = RequestMethod.POST)
-    public @ResponseBody String createSecret(NubomediaCreateSecretRequest ncsr){
+    public @ResponseBody String createSecret(@RequestBody NubomediaCreateSecretRequest ncsr){
+        logger.debug("Creating new secret for " + ncsr.getProjectName() + " with key " + ncsr.getPrivateKey());
         return osmanager.createSecret(ncsr.getPrivateKey(), ncsr.getProjectName());
     }
 

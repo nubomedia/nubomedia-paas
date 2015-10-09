@@ -1,8 +1,6 @@
 package org.project.openbaton.nubomedia.api.openshift.beans;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.project.openbaton.nubomedia.api.PropertyReader;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.api.openshift.json.BuildConfig;
 import org.slf4j.Logger;

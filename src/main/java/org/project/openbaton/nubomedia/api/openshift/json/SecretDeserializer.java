@@ -15,8 +15,7 @@ public class SecretDeserializer implements JsonDeserializer<SecretConfig> {
     public SecretConfig deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
         //TODO if will be available add other kind of secrets
-        JsonParser parser = new JsonParser();
-        JsonObject jsonAsObj = parser.parse(json.toString()).getAsJsonObject();
+        JsonObject jsonAsObj = json.getAsJsonObject();
         JsonObject metadata = jsonAsObj.get("metadata").getAsJsonObject();
         Metadata metadata1 = new Metadata(metadata.get("name").getAsString(),"","");
         JsonObject data = jsonAsObj.get("data").getAsJsonObject();

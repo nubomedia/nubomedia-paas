@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id 'net.researchgate.release' version '2.1.2'
-    id "nebula.os-package" version "2.2.6"
-
+buildscript {
+    repositories{
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+    }
 }
+apply plugin: 'spring-boot'
 
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 
-apply from: 'openbaton-client/openbaton-libs/gradle/gradle/git.helpers.gradle'
-apply from: 'openbaton-client/openbaton-libs/gradle/gradle/command.line.helper.gradle'
-
+group = 'org.openbaton'
+version = '0.1-SNAPSHOT'
 /**
  * Project settings
  */
@@ -44,12 +47,6 @@ project.ext {
     applicationVersion = version
     applicationVersionDebian = "1";
 
-    applicationRelease = isApplicationRelease()
-    applicationDate = new Date()
-    applicationRevision = getRevision()
-
-    applicationVersionSnapshot = (!applicationRelease) ? "+SNAPSHOT.${asUTC(applicationDate, 'yyyyMMdd')}.git${applicationRevision}" : ""
-    applicationVersionFull = "${applicationVersion}${applicationVersionSnapshot}"
     //------------------------------------------------//
     //------------------------------------------------//
     /**
@@ -59,18 +56,15 @@ project.ext {
     //------------------------------------------------//
 }
 
-apply from: 'openbaton-client/openbaton-libs/gradle/gradle/application.java.gradle'
-apply from: 'openbaton-client/openbaton-libs/gradle/gradle/run.application.java.gradle'
-apply from: 'openbaton-client/openbaton-libs/gradle/gradle/git.release.gradle'
-
 repositories {
     mavenCentral()
+    maven {
+        url "http://193.175.132.176:8081/nexus/content/groups/public"
+    }
 }
-
 dependencies {
-    compile project(':sdk')
-    compile project(':catalogue')
-
+    compile 'org.openbaton:sdk:0.5'
+    compile 'org.springframework.boot:spring-boot-starter-test:' + springBootVersion
     compile 'org.springframework.boot:spring-boot:' + springBootVersion
     compile 'org.springframework.boot:spring-boot-autoconfigure:' + springBootVersion
     compile 'org.springframework.boot:spring-boot-starter-web:' + springBootVersion

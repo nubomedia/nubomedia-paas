@@ -1,8 +1,1 @@
 rootProject.name = 'nubomedia-paas-api'
-
-
-include 'sdk'
-include 'catalogue'
-
-project(':sdk').projectDir = file('openbaton-client/sdk')
-project(':catalogue').projectDir = file('openbaton-client/openbaton-libs/catalogue')
