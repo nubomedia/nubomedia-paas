@@ -14,6 +14,7 @@ public class NubomediaCreateAppRequest {
     private String flavor;
     private int replicasNumber;
     private String privateKey;
+    private String secretName;
 
     public NubomediaCreateAppRequest() {
     }
@@ -88,5 +89,13 @@ public class NubomediaCreateAppRequest {
 
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
+    }
+
+    public String getSecretName() {
+        return secretName;
+    }
+
+    public void setSecretName(String secretName) {
+        this.secretName = secretName;
     }
 }

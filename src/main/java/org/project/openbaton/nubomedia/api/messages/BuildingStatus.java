@@ -6,6 +6,7 @@ package org.project.openbaton.nubomedia.api.messages;
 public enum BuildingStatus {
 
     INITIALIZING,
+    INITIALISED,
     BUILDING,
     RUNNING,
     FAILED,

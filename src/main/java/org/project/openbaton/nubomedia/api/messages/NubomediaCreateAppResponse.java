@@ -1,21 +1,23 @@
 package org.project.openbaton.nubomedia.api.messages;
 
+import java.util.UUID;
+
 /**
  * Created by maa on 28.09.15.
  */
 public class NubomediaCreateAppResponse {
 
-    private int id;
+    private UUID id;
     private String route;
 
     public NubomediaCreateAppResponse() {
     }
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

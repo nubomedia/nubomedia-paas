@@ -1,5 +1,6 @@
 package org.project.openbaton.nubomedia.api;
 
+import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.sdk.NFVORequestor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,14 @@ public class OpenbatonManager {
     @PostConstruct
     private void init(){
         this.nfvoRequestor = new NFVORequestor("","","","","");
+    }
+
+    public String getMediaServerGroupID(){
+        return "";
+    }
+
+    public BuildingStatus getStatus(){
+        return BuildingStatus.INITIALISED;
     }
 
 
