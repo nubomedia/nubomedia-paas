@@ -1,12 +1,14 @@
 package org.project.openbaton.nubomedia.api.messages;
 
 
+import java.util.UUID;
+
 /**
  * Created by maa on 09.10.15.
  */
 public class NubomediaDeleteAppResponse {
 
-    private int appID;
+    private UUID appID;
     private String appName;
     private String nameSpace;
     private int code;
@@ -14,18 +16,18 @@ public class NubomediaDeleteAppResponse {
     public NubomediaDeleteAppResponse() {
     }
 
-    public NubomediaDeleteAppResponse(int appID, String appName, String nameSpace, int deleteStatus) {
+    public NubomediaDeleteAppResponse(UUID appID, String appName, String nameSpace, int deleteStatus) {
         this.appID = appID;
         this.appName = appName;
         this.nameSpace = nameSpace;
         this.code = deleteStatus;
     }
 
-    public int getAppID() {
+    public UUID getAppID() {
         return appID;
     }
 
-    public void setAppID(int appID) {
+    public void setAppID(UUID appID) {
         this.appID = appID;
     }
 
