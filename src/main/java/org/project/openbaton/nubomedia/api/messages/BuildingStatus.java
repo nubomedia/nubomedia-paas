@@ -5,6 +5,7 @@ package org.project.openbaton.nubomedia.api.messages;
  */
 public enum BuildingStatus {
 
+    CREATED,
     INITIALIZING,
     INITIALISED,
     BUILDING,

@@ -51,11 +51,25 @@ public class OutputTypeAdapter extends TypeAdapter<Output> {
                 be = readBuildElement(in);
             }
             if(in.nextName().equals("pushSecret"))
-                secId = new SecretID(in.nextString());
+                secId = this.readSecID(in);
         }
         in.endObject();
 
         return new Output(be,secId);
+    }
+
+    private SecretID readSecID(JsonReader in) throws IOException {
+
+        SecretID res = new SecretID();
+
+        in.beginObject();
+        while (in.hasNext()){
+            if(in.nextName().equals("name"))
+                res.setName(in.nextString());
+        }
+        in.endObject();
+
+        return res;
     }
 
     private BuildElements readBuildElement(JsonReader in) throws IOException {

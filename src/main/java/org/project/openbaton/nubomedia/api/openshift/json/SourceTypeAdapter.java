@@ -1,8 +1,5 @@
 package org.project.openbaton.nubomedia.api.openshift.json;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -50,6 +47,7 @@ public class SourceTypeAdapter extends TypeAdapter<Source> {
         Source.SourceSecret secret = null;
         Source.Git gitrepo = null;
 
+        in.beginObject();
         while (in.hasNext()){
 
             if (in.nextName().equals("type")){
@@ -65,15 +63,15 @@ public class SourceTypeAdapter extends TypeAdapter<Source> {
             }
 
         }
-
+        in.endObject();
         return new Source(type,gitrepo,secret);
     }
 
     private Source.SourceSecret readSecret(JsonReader in) throws IOException {
 
-        in.beginObject();
         String secret = "";
 
+        in.beginObject();
         while (in.hasNext()){
 
             if (in.nextName().equals("name")){
@@ -81,21 +79,22 @@ public class SourceTypeAdapter extends TypeAdapter<Source> {
             }
 
         }
+        in.endObject();
 
         return new Source.SourceSecret(secret);
     }
 
     private Source.Git readGit(JsonReader in) throws IOException {
 
-        in.beginObject();
         String uri = "";
 
+        in.beginObject();
         while(in.hasNext()){
             if(in.nextName().equals("uri")){
                 uri = in.nextString();
             }
         }
-
+        in.endObject();
 
         return new Source.Git(uri);
     }

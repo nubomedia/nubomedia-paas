@@ -8,13 +8,13 @@ public class BuildStatus {
     private String phase;
     private String startTimestamp;
     private String completitionTimestamp;
-    private int duration;
+    private double duration;
     private ConfigBuild config;
 
     public BuildStatus() {
     }
 
-    public BuildStatus(String phase, String startTimestamp, String completitionTimestamp, int duration, ConfigBuild config) {
+    public BuildStatus(String phase, String startTimestamp, String completitionTimestamp, double duration, ConfigBuild config) {
         this.phase = phase;
         this.startTimestamp = startTimestamp;
         this.completitionTimestamp = completitionTimestamp;
@@ -46,11 +46,11 @@ public class BuildStatus {
         this.completitionTimestamp = completitionTimestamp;
     }
 
-    public int getDuration() {
+    public double getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(double duration) {
         this.duration = duration;
     }
 

@@ -2,9 +2,11 @@ package org.project.openbaton.nubomedia.api;
 
 
 import com.google.gson.Gson;
+import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
 import org.project.openbaton.nubomedia.api.openshift.beans.*;
 
+import org.project.openbaton.nubomedia.api.openshift.json.BuildStatus;
 import org.project.openbaton.nubomedia.api.openshift.json.ImageStreamConfig;
 import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
 import org.slf4j.Logger;
@@ -28,6 +30,7 @@ public class OpenshiftManager {
     @Autowired private SecretManager secretManager;
     @Autowired private ImageStreamManager imageStreamManager;
     @Autowired private BuildManager buildManager;
+    @Autowired private BuildStatusManager buildStatusManager;
     @Autowired private DeploymentManager deploymentManager;
     @Autowired private ServiceManager serviceManager;
     @Autowired private RouteManager routeManager;
@@ -100,10 +103,13 @@ public class OpenshiftManager {
         HttpHeaders deleteHeader = new HttpHeaders();
         deleteHeader.add("Authorization","Bearer " + config.getProperty("token"));
 
-        HttpStatus res = imageStreamManager.deleteImageStream(openshiftBaseURL,appName,namespace,deleteHeader);
+        HttpStatus res = imageStreamManager.deleteImageStream(openshiftBaseURL, appName, namespace, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
         res = buildManager.deleteBuild(openshiftBaseURL, appName, namespace, deleteHeader);
+        if (!res.is2xxSuccessful()) return res;
+
+        res= buildStatusManager.deleteBuilds(openshiftBaseURL,appName,namespace,deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
         res = deploymentManager.deleteDeployment(openshiftBaseURL, appName, namespace, deleteHeader);
@@ -133,6 +139,36 @@ public class OpenshiftManager {
 
         HttpStatus entity = secretManager.deleteSecret(kubernetesBaseURL, secretName,namespace,authHeader);
         return entity;
+    }
+
+    public BuildingStatus getStatus (String appName, String namespace){
+
+        BuildingStatus res = BuildingStatus.INITIALISED;
+        HttpHeaders authHeader = new HttpHeaders();
+        authHeader.add("Authorization","Bearer " + config.getProperty("token"));
+
+        BuildStatus status = buildStatusManager.getBuildStatus(openshiftBaseURL, appName, namespace, authHeader);
+
+        switch (status.getPhase()){
+            case "Running":
+                res = BuildingStatus.BUILDING;
+                break;
+            case "Failed":
+                res = BuildingStatus.FAILED;
+                break;
+            case "Complete":
+                res = BuildingStatus.RUNNING;
+                break;
+        }
+
+        return res;
+    }
+
+    public String getBuildLogs(String appName,String namespace){
+
+        HttpHeaders authHeader = new HttpHeaders();
+        authHeader.add("Authorization","Bearer " + config.getProperty("token"));
+        return buildStatusManager.retrieveLogs(openshiftBaseURL,appName,namespace,authHeader);
     }
 
 }

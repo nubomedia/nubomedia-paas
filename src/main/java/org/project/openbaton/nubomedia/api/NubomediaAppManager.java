@@ -73,8 +73,51 @@ public class NubomediaAppManager {
 
         logger.info("Request status for " + id + " app");
 
-        return applications.get(id);
+        if(!applications.containsKey(id)){
+            return null;
+        }
 
+        Application app = applications.get(id);
+
+        switch (app.getStatus()){
+            case CREATED:
+                app.setStatus(obmanager.getStatus());
+                break;
+            case INITIALIZING:
+                app.setStatus(obmanager.getStatus());
+                break;
+            case INITIALISED:
+                app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
+                break;
+            case BUILDING:
+                app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
+                break;
+            case FAILED:
+                app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
+                break;
+            case RUNNING:
+                app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
+                break;
+        }
+
+        return app;
+
+    }
+
+    @RequestMapping(value = "/app/{id}/buildlogs", method = RequestMethod.GET)
+    public @ResponseBody NubomediaBuildLogs getBuildLogs(@PathVariable("id") String id){
+
+        NubomediaBuildLogs res = new NubomediaBuildLogs();
+
+        if(!applications.containsKey(id)){
+            return null;
+        }
+        Application app = applications.get(id);
+        res.setId(id);
+        res.setAppName(app.getAppName());
+        res.setProjectName(app.getProjectName());
+        res.setLog(osmanager.getBuildLogs(app.getAppName(),app.getProjectName()));
+        return res;
     }
 
     @RequestMapping(value = "/app", method = RequestMethod.GET)

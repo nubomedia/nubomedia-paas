@@ -1,6 +1,6 @@
 package org.project.openbaton.nubomedia.api.persistence;
 
-import java.util.UUID;
+import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 
 /**
  * Created by maa on 28.09.15.
@@ -19,6 +19,7 @@ public class Application {
     private int replicasNumber;
     private String secretName;
     private String flavor;
+    private BuildingStatus status;
 
     public Application(String appID,String flavor, String appName, String projectName, String route, String groupID, String gitURL, int[] targetPorts, int[] ports, String[] protocols, int replicasNumber, String secretName) {
         this.appID = appID;
@@ -40,6 +41,7 @@ public class Application {
         this.protocols = protocols;
         this.replicasNumber = replicasNumber;
         this.secretName = secretName;
+        this.status = BuildingStatus.CREATED;
     }
 
     public String getAppName() {
@@ -128,5 +130,21 @@ public class Application {
 
     public void setFlavor(String flavor) {
         this.flavor = flavor;
+    }
+
+    public String getAppID() {
+        return appID;
+    }
+
+    public void setAppID(String appID) {
+        this.appID = appID;
+    }
+
+    public BuildingStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BuildingStatus status) {
+        this.status = status;
     }
 }
