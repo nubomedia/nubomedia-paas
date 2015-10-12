@@ -32,8 +32,8 @@ public class RouteManager {
         this.suffix = "/routes/";
     }
 
-    public ResponseEntity<String> makeRoute(String baseURL, String name, String namespace, HttpHeaders authHeader) {
-        RouteConfig message = MessageBuilderFactory.getRouteMessage(name);
+    public ResponseEntity<String> makeRoute(String baseURL,String appID, String name, String namespace, HttpHeaders authHeader) {
+        RouteConfig message = MessageBuilderFactory.getRouteMessage(name, appID);
 
         logger.debug("Route message " + mapper.toJson(message,RouteConfig.class));
 

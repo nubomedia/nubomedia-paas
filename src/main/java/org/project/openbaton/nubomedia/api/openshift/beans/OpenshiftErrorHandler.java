@@ -1,5 +1,6 @@
 package org.project.openbaton.nubomedia.api.openshift.beans;
 
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -30,7 +31,7 @@ public class OpenshiftErrorHandler implements ResponseErrorHandler{
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
         if (response.getStatusCode() == HttpStatus.UNAUTHORIZED){
-//            throw new UnauthorizedException();
+//           throw new UnauthorizedException();
         }
 
     }

@@ -49,7 +49,7 @@ public class OpenshiftManager {
         //later for authentication
     }
 
-    public String buildApplication(String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber, String secretName, String mediaServerGID){
+    public String buildApplication(String appID, String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber, String secretName, String mediaServerGID){
 
         HttpHeaders creationHeader = new HttpHeaders();
         creationHeader.add("Authorization","Bearer " + config.getProperty("token"));
@@ -83,7 +83,7 @@ public class OpenshiftManager {
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = routeManager.makeRoute(openshiftBaseURL,appName,namespace,creationHeader);
+        appBuilEntity = routeManager.makeRoute(openshiftBaseURL,appID, appName,namespace,creationHeader);
         if(!appBuilEntity.getStatusCode().is2xxSuccessful()){
             logger.debug("Failed creation of route " + appBuilEntity.toString());
             return appBuilEntity.getBody();

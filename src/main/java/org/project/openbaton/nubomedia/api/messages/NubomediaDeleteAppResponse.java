@@ -8,7 +8,7 @@ import java.util.UUID;
  */
 public class NubomediaDeleteAppResponse {
 
-    private UUID appID;
+    private String appID;
     private String appName;
     private String nameSpace;
     private int code;
@@ -16,18 +16,18 @@ public class NubomediaDeleteAppResponse {
     public NubomediaDeleteAppResponse() {
     }
 
-    public NubomediaDeleteAppResponse(UUID appID, String appName, String nameSpace, int deleteStatus) {
+    public NubomediaDeleteAppResponse(String appID, String appName, String nameSpace, int deleteStatus) {
         this.appID = appID;
         this.appName = appName;
         this.nameSpace = nameSpace;
         this.code = deleteStatus;
     }
 
-    public UUID getAppID() {
+    public String getAppID() {
         return appID;
     }
 
-    public void setAppID(UUID appID) {
+    public void setAppID(String appID) {
         this.appID = appID;
     }
 

@@ -9,7 +9,6 @@ public enum BuildingStatus {
     INITIALISED,
     BUILDING,
     RUNNING,
-    FAILED,
-    DELETED
+    FAILED
 
 }

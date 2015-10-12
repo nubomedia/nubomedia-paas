@@ -7,7 +7,7 @@ import java.util.UUID;
  */
 public class Application {
 
-    private UUID appID;
+    private String appID;
     private String appName;
     private String projectName;
     private String route;
@@ -20,7 +20,7 @@ public class Application {
     private String secretName;
     private String flavor;
 
-    public Application(UUID appID,String flavor, String appName, String projectName, String route, String groupID, String gitURL, int[] targetPorts, int[] ports, String[] protocols, int replicasNumber, String secretName) {
+    public Application(String appID,String flavor, String appName, String projectName, String route, String groupID, String gitURL, int[] targetPorts, int[] ports, String[] protocols, int replicasNumber, String secretName) {
         this.appID = appID;
         this.flavor = flavor;
         this.appName = appName;

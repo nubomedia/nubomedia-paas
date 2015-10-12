@@ -9,20 +9,20 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class SshGitKeySecret implements SecretType{
 
-    @SerializedName(value = "ssh-primarykey") private String sshPrimarykey;
+    @SerializedName(value = "ssh-privatekey") private String sshPrivateKey;
 
     public SshGitKeySecret(String sshPrimarykey) {
-        this.sshPrimarykey = Base64.encodeBase64String(sshPrimarykey.getBytes());
+        this.sshPrivateKey = Base64.encodeBase64String(sshPrimarykey.getBytes());
     }
 
     public SshGitKeySecret() {
     }
 
     public String getSshPrimarykey() {
-        return sshPrimarykey;
+        return sshPrivateKey;
     }
 
     public void setSshPrimarykey(String sshPrimarykey) {
-        this.sshPrimarykey = sshPrimarykey;
+        this.sshPrivateKey = Base64.encodeBase64String(sshPrimarykey.getBytes());
     }
 }

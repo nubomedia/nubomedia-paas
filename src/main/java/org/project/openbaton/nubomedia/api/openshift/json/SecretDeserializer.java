@@ -19,7 +19,7 @@ public class SecretDeserializer implements JsonDeserializer<SecretConfig> {
         JsonObject metadata = jsonAsObj.get("metadata").getAsJsonObject();
         Metadata metadata1 = new Metadata(metadata.get("name").getAsString(),"","");
         JsonObject data = jsonAsObj.get("data").getAsJsonObject();
-        SshGitKeySecret secret = new SshGitKeySecret(data.get("ssh-primarykey").getAsString());
+        SshGitKeySecret secret = new SshGitKeySecret(data.get("ssh-privatekey").getAsString());
 
         return new SecretConfig(metadata1,secret);
     }

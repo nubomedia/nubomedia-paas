@@ -39,8 +39,8 @@ public class MessageBuilderFactory {
         return smb.buildMessage();
     }
 
-    public static RouteConfig getRouteMessage(String name) {
-        RouteMessageBuilder rmb = new RouteMessageBuilder(name);
+    public static RouteConfig getRouteMessage(String name, String appID) {
+        RouteMessageBuilder rmb = new RouteMessageBuilder(name, appID);
         return rmb.buildMessage();
     }
 

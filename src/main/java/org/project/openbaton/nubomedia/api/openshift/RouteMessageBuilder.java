@@ -11,16 +11,18 @@ import org.project.openbaton.nubomedia.api.openshift.json.RouteSpec;
 public class RouteMessageBuilder {
 
     private String name;
+    private String appID;
 
-    public RouteMessageBuilder(String name){
+    public RouteMessageBuilder(String name, String appID){
         this.name = name;
+        this.appID = appID;
     }
 
     public RouteConfig buildMessage() {
 
         Metadata metadata = new Metadata(name + "-route","","");
         BuildElements be = new BuildElements("Service",name+"-svc");
-        RouteSpec spec = new RouteSpec(name+".paas.nubomedia.eu",be,new RouteSpec.Status());
+        RouteSpec spec = new RouteSpec(name+ appID + ".paas.nubomedia.eu",be,new RouteSpec.Status());
 
         return new RouteConfig(metadata,spec);
     }
