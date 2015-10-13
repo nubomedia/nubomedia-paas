@@ -53,7 +53,7 @@ public class NubomediaAppManager {
 
 
         //Openbaton MediaServer Request
-        String mediaServerGID = obmanager.getMediaServerGroupID();
+        String mediaServerGID = obmanager.getMediaServerGroupID(request.getFlavor());
 
         //Openshift Application Creation
         String route = osmanager.buildApplication(appID,request.getAppName(), request.getProjectName(), request.getGitURL(), request.getPorts(), request.getTargetPorts(), request.getProtocols(), request.getReplicasNumber(), request.getSecretName(),mediaServerGID); //to be fixed with secret creation
@@ -81,10 +81,10 @@ public class NubomediaAppManager {
 
         switch (app.getStatus()){
             case CREATED:
-                app.setStatus(obmanager.getStatus());
+                app.setStatus(obmanager.getStatus(app.getGroupID()));
                 break;
             case INITIALIZING:
-                app.setStatus(obmanager.getStatus());
+                app.setStatus(obmanager.getStatus(app.getGroupID()));
                 break;
             case INITIALISED:
                 app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
@@ -133,6 +133,7 @@ public class NubomediaAppManager {
         Application app = applications.get(id);
         applications.remove(id);
 
+        obmanager.deleteRecord(app.getGroupID());
         HttpStatus resDelete = osmanager.deleteApplication(app.getAppName(), app.getProjectName());
 
         return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),resDelete.value());
