@@ -29,14 +29,14 @@ public class OpenbatonManager {
     //Stati: NULL, INSTANTIATED, ACTIVE
     public String getMediaServerGroupID(String flavorID) {
 
-        NetworkServiceRecord nsr = null;
-
-        try {
-            this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(nsd);
-            nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
-        } catch (SDKException e) {
-            e.printStackTrace();
-        }
+//        NetworkServiceRecord nsr = null;
+//
+//        try {
+//            this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(nsd);
+//            nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
+//        } catch (SDKException e) {
+//            e.printStackTrace();
+//        }
 
 
         return "ciaoPippo";
@@ -72,11 +72,11 @@ public class OpenbatonManager {
     }
 
     public void deleteRecord(String nsrID){
-        try {
+       /* try {
             nfvoRequestor.getNetworkServiceRecordAgent().delete(nsrID);
         } catch (SDKException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
 

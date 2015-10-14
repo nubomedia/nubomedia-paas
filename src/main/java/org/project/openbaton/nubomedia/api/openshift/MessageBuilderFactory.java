@@ -13,7 +13,7 @@ public class MessageBuilderFactory {
     }
 
     public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL,String secretName,String mediaServerGID) {
-        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("MEDIA_SERVER_GID",mediaServerGID)},new BuildElements("DockerImage","flaviomu/nubomedia-signaling-plane:v1"));
+        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("MEDIA_SERVER_GID",mediaServerGID)},null);
         DockerBuildStrategy strategy = new DockerBuildStrategy(ds);
         Source.SourceSecret secret = new Source.SourceSecret(secretName);
         Trigger trigger = new Trigger("ConfigChange");

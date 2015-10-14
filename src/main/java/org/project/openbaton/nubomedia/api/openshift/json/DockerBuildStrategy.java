@@ -9,11 +9,11 @@ public class DockerBuildStrategy implements BuildStrategy{
     private DockerStrategy dockerStrategy;
 
     public static class DockerStrategy{
-        EnviromentVariable[] variables;
+        EnviromentVariable[] env;
         BuildElements from;
 
         public DockerStrategy(EnviromentVariable[] variables, BuildElements from) {
-            this.variables = variables;
+            this.env = variables;
             this.from = from;
         }
 
@@ -29,11 +29,11 @@ public class DockerBuildStrategy implements BuildStrategy{
         }
 
         public EnviromentVariable[] getVariables() {
-            return variables;
+            return env;
         }
 
         public void setVariables(EnviromentVariable[] variables) {
-            this.variables = variables;
+            this.env = variables;
         }
     }
 
