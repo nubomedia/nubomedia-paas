@@ -12,10 +12,10 @@ public class BuildMessageBuilder {
     private BuildStrategy bs;
     private BuildElements be;
     private String gitURL;
-    private Trigger[] triggers;
+    private ConfigChangeTrigger[] triggers;
     private Source.SourceSecret secret;
 
-    public BuildMessageBuilder(String name, BuildStrategy bs, BuildElements be, String gitURL, Trigger[] triggers,Source.SourceSecret secret) {
+    public BuildMessageBuilder(String name, BuildStrategy bs, BuildElements be, String gitURL, ConfigChangeTrigger[] triggers,Source.SourceSecret secret) {
         this.name = name;
         this.bs = bs;
         this.be = be;

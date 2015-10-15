@@ -2,6 +2,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openshift.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +35,29 @@ public class BuildStatusManager {
     }
 
     //Responses: Complete, Running, Failed
-    public BuildStatus getBuildStatus (String baseURL, String appName, String namespace, HttpHeaders authHeader){
+    public BuildingStatus getBuildStatus (String baseURL, String appName, String namespace, HttpHeaders authHeader){
 
-        BuildStatus res = null;
+        BuildingStatus res = null;
+        BuildStatus status = null;
         BuildList buildList = this.getBuilds(baseURL,namespace,authHeader);
 
         for (Build b : buildList.getItems()){
             if (b.getStatus().getConfig().getName().equals(appName + "-bc")){
-                res = b.getStatus();
+                logger.debug("build is " + mapper.toJson(b,Build.class));
+                status = b.getStatus();
             }
+        }
+
+        switch (status.getPhase()){
+            case "Running":
+                res = BuildingStatus.BUILDING;
+                break;
+            case "Failed":
+                res = BuildingStatus.FAILED;
+                break;
+            case "Complete":
+                res = BuildingStatus.BUILD_OK;
+                break;
         }
 
         return res;
@@ -84,6 +99,7 @@ public class BuildStatusManager {
         for (Build bd : buildList.getItems()){
 
             if(bd.getStatus().getConfig().getName().equals(appName + "-bc")){
+                logger.debug("build is " + mapper.toJson(bd,Build.class));
                 res = bd;
             }
 
@@ -95,6 +111,7 @@ public class BuildStatusManager {
         String URL = baseURL + namespace + suffix;
         HttpEntity<String> buildEntity = new HttpEntity<>(authHeader);
         ResponseEntity<String> builds = template.exchange(URL, HttpMethod.GET, buildEntity, String.class);
+        logger.debug("BuildsList " + builds.getStatusCode() + " response " + builds.toString());
 
         if(builds.getStatusCode() != HttpStatus.OK){ logger.debug("Error retrieving builds " + builds.getStatusCode() + " response " + builds.toString());}
 

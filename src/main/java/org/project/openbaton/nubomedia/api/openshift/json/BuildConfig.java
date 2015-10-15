@@ -14,13 +14,13 @@ public class BuildConfig {
     private BuildConfigStatus status;
 
     public static class Spec{
-       Trigger[] triggers; //TODO: add other triggers in class definition
+       ConfigChangeTrigger[] triggers; //TODO: add other triggers in class definition
        Source source;
        @SerializedName("strategy") BuildStrategy bs;
        Output output;
        Resources resources;
 
-       public Spec(Trigger[] triggers, Source type, BuildStrategy bs, Output output,Resources resources) {
+       public Spec(ConfigChangeTrigger[] triggers, Source type, BuildStrategy bs, Output output,Resources resources) {
            this.triggers = triggers;
            this.source = type;
            this.bs = bs;
@@ -31,11 +31,11 @@ public class BuildConfig {
        public Spec() {
        }
 
-       public Trigger[] getTriggers() {
+       public ConfigChangeTrigger[] getTriggers() {
             return triggers;
        }
 
-       public void setTriggers(Trigger[] triggers) {
+       public void setTriggers(ConfigChangeTrigger[] triggers) {
            this.triggers = triggers;
        }
 

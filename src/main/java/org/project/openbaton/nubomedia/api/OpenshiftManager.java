@@ -30,7 +30,6 @@ public class OpenshiftManager {
     @Autowired private SecretManager secretManager;
     @Autowired private ImageStreamManager imageStreamManager;
     @Autowired private BuildManager buildManager;
-    @Autowired private BuildStatusManager buildStatusManager;
     @Autowired private DeploymentManager deploymentManager;
     @Autowired private ServiceManager serviceManager;
     @Autowired private RouteManager routeManager;
@@ -109,9 +108,6 @@ public class OpenshiftManager {
         res = buildManager.deleteBuild(openshiftBaseURL, appName, namespace, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
-        res= buildStatusManager.deleteBuilds(openshiftBaseURL,appName,namespace,deleteHeader);
-        if (!res.is2xxSuccessful()) return res;
-
         res = deploymentManager.deleteDeployment(openshiftBaseURL, appName, namespace, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
@@ -147,17 +143,17 @@ public class OpenshiftManager {
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization","Bearer " + config.getProperty("token"));
 
-        BuildStatus status = buildStatusManager.getBuildStatus(openshiftBaseURL, appName, namespace, authHeader);
+        BuildingStatus status = buildManager.getApplicationStatus(openshiftBaseURL, appName, namespace, authHeader);
 
-        switch (status.getPhase()){
-            case "Running":
+        switch (status){
+            case BUILDING:
                 res = BuildingStatus.BUILDING;
                 break;
-            case "Failed":
+            case FAILED:
                 res = BuildingStatus.FAILED;
                 break;
-            case "Complete":
-                res = BuildingStatus.RUNNING;
+            case BUILD_OK:
+                res = deploymentManager.getDeployStatus(kubernetesBaseURL,appName,namespace,authHeader);
                 break;
         }
 
@@ -168,7 +164,7 @@ public class OpenshiftManager {
 
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization","Bearer " + config.getProperty("token"));
-        return buildStatusManager.retrieveLogs(openshiftBaseURL,appName,namespace,authHeader);
+        return buildManager.getBuildLogs(openshiftBaseURL,appName,namespace,authHeader);
     }
 
 }

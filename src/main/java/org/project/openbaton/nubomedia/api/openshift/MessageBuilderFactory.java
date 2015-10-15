@@ -16,8 +16,8 @@ public class MessageBuilderFactory {
         DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("MEDIA_SERVER_GID",mediaServerGID)},null);
         DockerBuildStrategy strategy = new DockerBuildStrategy(ds);
         Source.SourceSecret secret = new Source.SourceSecret(secretName);
-        Trigger trigger = new Trigger("ConfigChange");
-        BuildMessageBuilder builder = new BuildMessageBuilder(name, strategy, new BuildElements("DockerImage", dockerRepo), gitURL, new Trigger[]{trigger},secret);
+        ConfigChangeTrigger trigger = new ConfigChangeTrigger("ConfigChange");
+        BuildMessageBuilder builder = new BuildMessageBuilder(name, strategy, new BuildElements("DockerImage", dockerRepo + ":latest"), gitURL, new ConfigChangeTrigger[]{trigger},secret);
 
         return builder.buildMessage();
     }
@@ -27,9 +27,10 @@ public class MessageBuilderFactory {
         for (int i = 0; i < ports.length; i++) {
             cports[i] = new Container.Port(protocols[i], ports[i]);
         }
-        Container container = new Container(name + "-cnt", dockerRepo, cports);
-        Trigger trigger = new Trigger("ConfigChange");
-        DeploymentMessageBuilder builder = new DeploymentMessageBuilder(name, new Container[]{container}, replicasNumber, new Trigger[]{trigger}, "Rolling");
+        Container container = new Container(name + "-cnt", dockerRepo + ":latest", cports);
+        ImageChangeTrigger.ImageChangeParams params = new ImageChangeTrigger.ImageChangeParams(true,new BuildElements("ImageStream",name),new String[]{container.getName()});
+        ImageChangeTrigger trigger = new ImageChangeTrigger("ImageChange",params);
+        DeploymentMessageBuilder builder = new DeploymentMessageBuilder(name, new Container[]{container}, replicasNumber, new ImageChangeTrigger[]{trigger}, "Rolling");
 
         return builder.buildMessage();
     }

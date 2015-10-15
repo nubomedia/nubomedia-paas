@@ -8,7 +8,7 @@ public class DeploymentConfigSpec {
     private Template template;
     private int replicas;
     private Selector selector;
-    private Trigger[] triggers;
+    private ImageChangeTrigger[] triggers;
     private Strategy strategy;
 
     public static class Strategy{
@@ -30,7 +30,7 @@ public class DeploymentConfigSpec {
         }
     }
 
-    public DeploymentConfigSpec(Template template, int replicas, Selector selectors, Trigger[] triggers, Strategy strategy) {
+    public DeploymentConfigSpec(Template template, int replicas, Selector selectors, ImageChangeTrigger[] triggers, Strategy strategy) {
         this.template = template;
         this.replicas = replicas;
         this.selector = selectors;
@@ -65,11 +65,11 @@ public class DeploymentConfigSpec {
         this.selector = selector;
     }
 
-    public Trigger[] getTriggers() {
+    public ImageChangeTrigger[] getTriggers() {
         return triggers;
     }
 
-    public void setTriggers(Trigger[] triggers) {
+    public void setTriggers(ImageChangeTrigger[] triggers) {
         this.triggers = triggers;
     }
 

@@ -41,6 +41,7 @@ public class ImageStreamManager {
         ResponseEntity response = template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
 
         if(response.getStatusCode() != HttpStatus.OK) { logger.debug(response.toString()); }
+        logger.debug("response " + response.getBody());
 
         return response;
     }

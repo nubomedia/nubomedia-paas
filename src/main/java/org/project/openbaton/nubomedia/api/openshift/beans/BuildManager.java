@@ -2,6 +2,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openshift.json.BuildStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +40,17 @@ public class BuildManager {
 
     public HttpStatus deleteBuild(String baseURL, String appName,String namespace, HttpHeaders authHeader){
         logger.info("Deleting buildconfig for " + appName + " in project " + namespace);
-        return builderManager.deleteBuildConfig(baseURL, appName, namespace, authHeader);
+        HttpStatus res = builderManager.deleteBuildConfig(baseURL, appName, namespace, authHeader);
+
+        if(!res.is2xxSuccessful()){ logger.debug("Error deleting bc");}
+
+        return statusManager.deleteBuilds(baseURL,appName,namespace,authHeader);
     }
 
-    public String getApplicationStatus(String baseURL, String appName,String namespace, HttpHeaders authHeader){
-        BuildStatus status = statusManager.getBuildStatus(baseURL,appName,namespace,authHeader);
-        logger.info(mapper.toJson(status, BuildStatus.class));
-        return status.getPhase();
+    public BuildingStatus getApplicationStatus(String baseURL, String appName,String namespace, HttpHeaders authHeader){
+        BuildingStatus status = statusManager.getBuildStatus(baseURL,appName,namespace,authHeader);
+        logger.info("Status:" + status);
+        return status;
     }
 
     public String getBuildLogs(String baseURL, String appName,String namespace, HttpHeaders authHeader){

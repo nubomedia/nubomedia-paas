@@ -10,10 +10,10 @@ public class DeploymentMessageBuilder {
     private String name;
     private Container[] containers;
     private int replicaNumber;
-    private Trigger[] triggers;
+    private ImageChangeTrigger[] triggers;
     private String strategyType;
 
-    public DeploymentMessageBuilder(String name, Container[] containers, int replicaNumber, Trigger[] triggers, String strategyType) {
+    public DeploymentMessageBuilder(String name, Container[] containers, int replicaNumber, ImageChangeTrigger[] triggers, String strategyType) {
         this.name = name;
         this.containers = containers;
         this.replicaNumber = replicaNumber;
