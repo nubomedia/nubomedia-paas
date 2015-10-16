@@ -133,6 +133,10 @@ public class NubomediaAppManager {
 
         logger.debug("id " + id);
 
+        if(!applications.containsKey(id)){
+            return new NubomediaDeleteAppResponse(id,"Application not found","null",404);
+        }
+
         Application app = applications.get(id);
         applications.remove(id);
 
