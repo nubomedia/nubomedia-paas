@@ -59,7 +59,7 @@ public class OpenshiftManager {
 
         logger.info("Starting build app " + appName + " in project " + namespace);
 
-        ResponseEntity<String> appBuilEntity = imageStreamManager.makeImageStream(openshiftBaseURL,appName,namespace,creationHeader);
+        ResponseEntity<String> appBuilEntity = imageStreamManager.makeImageStream(openshiftBaseURL, appName, namespace, creationHeader);
         if(!appBuilEntity.getStatusCode().is2xxSuccessful()){
             logger.debug("Failed creation of imagestream " + appBuilEntity.toString());
             return appBuilEntity.getBody();
@@ -67,25 +67,25 @@ public class OpenshiftManager {
 
         ImageStreamConfig isConfig = mapper.fromJson(appBuilEntity.getBody(),ImageStreamConfig.class);
 
-        appBuilEntity = buildManager.createBuild(openshiftBaseURL,appName,namespace,gitURL,isConfig.getStatus().getDockerImageRepository(),creationHeader,secretName,mediaServerGID);
+        appBuilEntity = buildManager.createBuild(openshiftBaseURL, appName, namespace, gitURL, isConfig.getStatus().getDockerImageRepository(), creationHeader, secretName, mediaServerGID);
         if(!appBuilEntity.getStatusCode().is2xxSuccessful()){
             logger.debug("Failed creation of buildconfig " + appBuilEntity.toString());
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = deploymentManager.makeDeployment(openshiftBaseURL,appName,isConfig.getStatus().getDockerImageRepository(),targetPorts,protocols,replicasnumber,namespace,creationHeader);
+        appBuilEntity = deploymentManager.makeDeployment(openshiftBaseURL, appName, isConfig.getStatus().getDockerImageRepository(), targetPorts, protocols, replicasnumber, namespace, creationHeader);
         if(!appBuilEntity.getStatusCode().is2xxSuccessful()){
             logger.debug("Failed creation of deploymentconfig " + appBuilEntity.toString());
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = serviceManager.makeService(kubernetesBaseURL,appName,namespace,ports,targetPorts,protocols,creationHeader);
+        appBuilEntity = serviceManager.makeService(kubernetesBaseURL, appName, namespace, ports, targetPorts, protocols, creationHeader);
         if(!appBuilEntity.getStatusCode().is2xxSuccessful()){
             logger.debug("Failed creation of service " + appBuilEntity.toString());
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = routeManager.makeRoute(openshiftBaseURL,appID, appName,namespace,creationHeader);
+        appBuilEntity = routeManager.makeRoute(openshiftBaseURL, appID, appName, namespace, creationHeader);
         if(!appBuilEntity.getStatusCode().is2xxSuccessful()){
             logger.debug("Failed creation of route " + appBuilEntity.toString());
             return appBuilEntity.getBody();
@@ -164,7 +164,7 @@ public class OpenshiftManager {
 
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization","Bearer " + config.getProperty("token"));
-        return buildManager.getBuildLogs(openshiftBaseURL,appName,namespace,authHeader);
+        return buildManager.getBuildLogs(openshiftBaseURL, appName, namespace, authHeader);
     }
 
 }

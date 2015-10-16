@@ -92,6 +92,9 @@ public class NubomediaAppManager {
             case BUILDING:
                 app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
                 break;
+            case DEPLOYNG:
+                app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
+                break;
             case FAILED:
                 app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
                 break;
