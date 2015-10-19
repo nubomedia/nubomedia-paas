@@ -1,6 +1,7 @@
 package org.project.openbaton.nubomedia.api;
 
 import org.project.openbaton.nubomedia.api.messages.*;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.persistence.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,9 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app",  method = RequestMethod.POST)
-    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestBody NubomediaCreateAppRequest request) {
+    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) {
+
+        //validate token here using oauth token 2.0 validation
 
         NubomediaCreateAppResponse res = new NubomediaCreateAppResponse();
         String appID = new BigInteger(130,appIDGenerator).toString(64);
@@ -56,7 +59,7 @@ public class NubomediaAppManager {
         String mediaServerGID = obmanager.getMediaServerGroupID(request.getFlavor());
 
         //Openshift Application Creation
-        String route = osmanager.buildApplication(appID,request.getAppName(), request.getProjectName(), request.getGitURL(), request.getPorts(), request.getTargetPorts(), request.getProtocols(), request.getReplicasNumber(), request.getSecretName(),mediaServerGID); //to be fixed with secret creation
+        String route = osmanager.buildApplication(token, appID,request.getAppName(), request.getProjectName(), request.getGitURL(), request.getPorts(), request.getTargetPorts(), request.getProtocols(), request.getReplicasNumber(), request.getSecretName(),mediaServerGID); //to be fixed with secret creation
 
         Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),route,mediaServerGID,request.getGitURL(),request.getTargetPorts(),request.getPorts(),request.getProtocols(),request.getReplicasNumber(),request.getSecretName());
         applications.put(appID, persistApp);
@@ -69,7 +72,9 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app/{id}", method =  RequestMethod.GET)
-    public @ResponseBody Application getApp(@PathVariable("id") String id){
+    public @ResponseBody Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id){
+
+        //validate token here...
 
         logger.info("Request status for " + id + " app");
 
@@ -87,19 +92,19 @@ public class NubomediaAppManager {
                 app.setStatus(obmanager.getStatus(app.getGroupID()));
                 break;
             case INITIALISED:
-                app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
+                app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
                 break;
             case BUILDING:
-                app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
+                app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
                 break;
             case DEPLOYNG:
-                app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
+                app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
                 break;
             case FAILED:
-                app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
+                app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
                 break;
             case RUNNING:
-                app.setStatus(osmanager.getStatus(app.getAppName(),app.getProjectName()));
+                app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
                 break;
         }
 
@@ -108,7 +113,7 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app/{id}/buildlogs", method = RequestMethod.GET)
-    public @ResponseBody NubomediaBuildLogs getBuildLogs(@PathVariable("id") String id){
+    public @ResponseBody NubomediaBuildLogs getBuildLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id){
 
         NubomediaBuildLogs res = new NubomediaBuildLogs();
 
@@ -119,7 +124,7 @@ public class NubomediaAppManager {
         res.setId(id);
         res.setAppName(app.getAppName());
         res.setProjectName(app.getProjectName());
-        res.setLog(osmanager.getBuildLogs(app.getAppName(),app.getProjectName()));
+        res.setLog(osmanager.getBuildLogs(token,app.getAppName(),app.getProjectName()));
         return res;
     }
 
@@ -129,7 +134,7 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
-    public @ResponseBody NubomediaDeleteAppResponse deleteApp(@PathVariable("id") String id) {
+    public @ResponseBody NubomediaDeleteAppResponse deleteApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) {
 
         logger.debug("id " + id);
 
@@ -141,20 +146,20 @@ public class NubomediaAppManager {
         applications.remove(id);
 
         obmanager.deleteRecord(app.getGroupID());
-        HttpStatus resDelete = osmanager.deleteApplication(app.getAppName(), app.getProjectName());
+        HttpStatus resDelete = osmanager.deleteApplication(token, app.getAppName(), app.getProjectName());
 
         return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),resDelete.value());
     }
 
     @RequestMapping(value = "/secret", method = RequestMethod.POST)
-    public @ResponseBody String createSecret(@RequestBody NubomediaCreateSecretRequest ncsr){
+    public @ResponseBody String createSecret(@RequestHeader("Auth-token") String token, @RequestBody NubomediaCreateSecretRequest ncsr){
         logger.debug("Creating new secret for " + ncsr.getProjectName() + " with key " + ncsr.getPrivateKey());
-        return osmanager.createSecret(ncsr.getPrivateKey(), ncsr.getProjectName());
+        return osmanager.createSecret(token, ncsr.getPrivateKey(), ncsr.getProjectName());
     }
 
     @RequestMapping(value = "/secret/{projectName}/{secretName}", method = RequestMethod.DELETE)
-    public @ResponseBody NubomediaDeleteSecretResponse deleteSecret (@PathVariable("secretName") String secretName, @PathVariable("projectName") String projectName){
-        HttpStatus deleteStatus = osmanager.deleteSecret(secretName, projectName);
+    public @ResponseBody NubomediaDeleteSecretResponse deleteSecret (@RequestHeader("Auth-token") String token, @PathVariable("secretName") String secretName, @PathVariable("projectName") String projectName){
+        HttpStatus deleteStatus = osmanager.deleteSecret(token, secretName, projectName);
         return new NubomediaDeleteSecretResponse(secretName,projectName,deleteStatus.value());
     }
 }

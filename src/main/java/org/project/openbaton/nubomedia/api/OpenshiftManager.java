@@ -51,10 +51,10 @@ public class OpenshiftManager {
         //later for authentication
     }
 
-    public String buildApplication(String appID, String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber, String secretName, String mediaServerGID){
+    public String buildApplication(String token, String appID, String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber, String secretName, String mediaServerGID){
 
         HttpHeaders creationHeader = new HttpHeaders();
-        creationHeader.add("Authorization","Bearer " + config.getProperty("token"));
+        creationHeader.add("Authorization","Bearer " + token);
         creationHeader.add("Content-type","application/json");
 
         logger.info("Starting build app " + appName + " in project " + namespace);
@@ -97,10 +97,10 @@ public class OpenshiftManager {
 
     }
 
-    public HttpStatus deleteApplication(String appName, String namespace){
+    public HttpStatus deleteApplication(String token, String appName, String namespace){
 
         HttpHeaders deleteHeader = new HttpHeaders();
-        deleteHeader.add("Authorization","Bearer " + config.getProperty("token"));
+        deleteHeader.add("Authorization","Bearer " + token);
 
         HttpStatus res = imageStreamManager.deleteImageStream(openshiftBaseURL, appName, namespace, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
@@ -122,26 +122,26 @@ public class OpenshiftManager {
         return res;
     }
 
-    public String createSecret (String privateKey, String namespace){
+    public String createSecret (String token, String privateKey, String namespace){
 
         HttpHeaders authHeader = new HttpHeaders();
-        authHeader.add("Authorization","Bearer " + config.getProperty("token"));
+        authHeader.add("Authorization","Bearer " + token);
         return secretManager.createSecret(kubernetesBaseURL, namespace, privateKey, authHeader);
     }
 
-    public HttpStatus deleteSecret(String secretName, String namespace){
+    public HttpStatus deleteSecret(String token ,String secretName, String namespace){
         HttpHeaders authHeader = new HttpHeaders();
-        authHeader.add("Authorization","Bearer " + config.getProperty("token"));
+        authHeader.add("Authorization","Bearer " + token);
 
         HttpStatus entity = secretManager.deleteSecret(kubernetesBaseURL, secretName,namespace,authHeader);
         return entity;
     }
 
-    public BuildingStatus getStatus (String appName, String namespace){
+    public BuildingStatus getStatus (String token, String appName, String namespace){
 
         BuildingStatus res = BuildingStatus.INITIALISED;
         HttpHeaders authHeader = new HttpHeaders();
-        authHeader.add("Authorization","Bearer " + config.getProperty("token"));
+        authHeader.add("Authorization","Bearer " + token);
 
         BuildingStatus status = buildManager.getApplicationStatus(openshiftBaseURL, appName, namespace, authHeader);
 
@@ -160,10 +160,10 @@ public class OpenshiftManager {
         return res;
     }
 
-    public String getBuildLogs(String appName,String namespace){
+    public String getBuildLogs(String token, String appName,String namespace){
 
         HttpHeaders authHeader = new HttpHeaders();
-        authHeader.add("Authorization","Bearer " + config.getProperty("token"));
+        authHeader.add("Authorization","Bearer " + token);
         return buildManager.getBuildLogs(openshiftBaseURL, appName, namespace, authHeader);
     }
 
