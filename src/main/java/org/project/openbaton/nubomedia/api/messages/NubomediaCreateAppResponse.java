@@ -1,7 +1,5 @@
 package org.project.openbaton.nubomedia.api.messages;
 
-import java.util.UUID;
-
 /**
  * Created by maa on 28.09.15.
  */

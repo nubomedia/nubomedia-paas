@@ -5,8 +5,6 @@ import com.google.gson.Gson;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
 import org.project.openbaton.nubomedia.api.openshift.beans.*;
-
-import org.project.openbaton.nubomedia.api.openshift.json.BuildStatus;
 import org.project.openbaton.nubomedia.api.openshift.json.ImageStreamConfig;
 import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
 import org.slf4j.Logger;
@@ -33,6 +31,7 @@ public class OpenshiftManager {
     @Autowired private DeploymentManager deploymentManager;
     @Autowired private ServiceManager serviceManager;
     @Autowired private RouteManager routeManager;
+    @Autowired private AuthenticationManager authManager;
     private Properties config;
     private Logger logger;
     private String openshiftBaseURL;
@@ -47,8 +46,10 @@ public class OpenshiftManager {
         this.kubernetesBaseURL = config.getProperty("baseURL") + "/api/v1/namespaces/";
     }
 
-    public void Authenticate(){
-        //later for authentication
+    public String authenticate(String username, String password){
+
+        return this.authManager.authenticate(config.getProperty("baseURL"),username,password);
+
     }
 
     public String buildApplication(String token, String appID, String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber, String secretName, String mediaServerGID){

@@ -21,6 +21,8 @@ import java.util.UUID;
  * Created by maa on 28.09.15.
  */
 
+//TODO remap all response messages with interface and codes
+
 @RestController
 @RequestMapping("/api/v1/nubomedia/paas")
 public class NubomediaAppManager {
@@ -162,5 +164,18 @@ public class NubomediaAppManager {
         HttpStatus deleteStatus = osmanager.deleteSecret(token, secretName, projectName);
         return new NubomediaDeleteSecretResponse(secretName,projectName,deleteStatus.value());
     }
+
+    @RequestMapping(value = "/auth", method = RequestMethod.POST)
+    public @ResponseBody NubomediaAuthorizationResponse authorize(@RequestBody NubomediaAuthorizationRequest request){
+
+        String token = osmanager.authenticate(request.getUsername(),request.getPassword());
+        if (token.equals("Unauthorized")){
+            return new NubomediaAuthorizationResponse(token,401);
+        }
+        else{
+            return new NubomediaAuthorizationResponse(token,200);
+        }
+    }
+
 }
 
