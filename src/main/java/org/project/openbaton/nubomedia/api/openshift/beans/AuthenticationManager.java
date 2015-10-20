@@ -33,6 +33,7 @@ public class AuthenticationManager {
         this.suffix = "/oauth/authorize";
     }
 
+    //TODO rewrite when openshift uses correctly /oauth/token
     public String authenticate(String baseURL, String username, String password){
 
         String res = "";

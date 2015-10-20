@@ -2,11 +2,16 @@ package org.project.openbaton.nubomedia.api.persistence;
 
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 /**
  * Created by maa on 28.09.15.
  */
+@Entity
 public class Application {
 
+    @Id
     private String appID;
     private String appName;
     private String projectName;
