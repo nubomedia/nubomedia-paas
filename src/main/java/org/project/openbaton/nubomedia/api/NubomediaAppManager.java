@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api;
 import org.project.openbaton.nubomedia.api.messages.*;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.persistence.Application;
+import org.project.openbaton.nubomedia.api.persistence.ApplicationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,9 @@ public class NubomediaAppManager {
     private Logger logger;
     private SecureRandom appIDGenerator;
 
-    @Autowired
-    private OpenshiftManager osmanager;
-
-    @Autowired
-    private OpenbatonManager obmanager;
+    @Autowired private OpenshiftManager osmanager;
+    @Autowired private OpenbatonManager obmanager;
+    @Autowired private ApplicationRepository appRepo;
 
     @PostConstruct
     private void init() {
@@ -47,8 +46,6 @@ public class NubomediaAppManager {
 
     @RequestMapping(value = "/app",  method = RequestMethod.POST)
     public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) {
-
-        //validate token here using oauth token 2.0 validation
 
         NubomediaCreateAppResponse res = new NubomediaCreateAppResponse();
         String appID = new BigInteger(130,appIDGenerator).toString(64);
@@ -64,7 +61,7 @@ public class NubomediaAppManager {
         String route = osmanager.buildApplication(token, appID,request.getAppName(), request.getProjectName(), request.getGitURL(), request.getPorts(), request.getTargetPorts(), request.getProtocols(), request.getReplicasNumber(), request.getSecretName(),mediaServerGID); //to be fixed with secret creation
 
         Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),route,mediaServerGID,request.getGitURL(),request.getTargetPorts(),request.getPorts(),request.getProtocols(),request.getReplicasNumber(),request.getSecretName());
-        applications.put(appID, persistApp);
+        appRepo.save(persistApp);
 
         res.setRoute(route);
         res.setId(appID);
@@ -76,15 +73,14 @@ public class NubomediaAppManager {
     @RequestMapping(value = "/app/{id}", method =  RequestMethod.GET)
     public @ResponseBody Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id){
 
-        //validate token here...
-
         logger.info("Request status for " + id + " app");
 
-        if(!applications.containsKey(id)){
+        if(!appRepo.exists(id)){
             return null;
         }
 
-        Application app = applications.get(id);
+        Application app = appRepo.findOne(id);
+        logger.debug("Retrieving status for " + app.toString());
 
         switch (app.getStatus()){
             case CREATED:
@@ -110,6 +106,8 @@ public class NubomediaAppManager {
                 break;
         }
 
+        appRepo.save(app);
+
         return app;
 
     }
@@ -119,10 +117,12 @@ public class NubomediaAppManager {
 
         NubomediaBuildLogs res = new NubomediaBuildLogs();
 
-        if(!applications.containsKey(id)){
+        if(!appRepo.exists(id)){
             return null;
         }
-        Application app = applications.get(id);
+
+        Application app = appRepo.findOne(id);
+
         res.setId(id);
         res.setAppName(app.getAppName());
         res.setProjectName(app.getProjectName());
@@ -131,8 +131,8 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app", method = RequestMethod.GET)
-    public @ResponseBody Map<String, Application> getApps(){
-        return this.applications;
+    public @ResponseBody Iterable<Application> getApps(){
+        return this.appRepo.findAll();
     }
 
     @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
@@ -140,15 +140,17 @@ public class NubomediaAppManager {
 
         logger.debug("id " + id);
 
-        if(!applications.containsKey(id)){
+        if(!appRepo.exists(id)){
             return new NubomediaDeleteAppResponse(id,"Application not found","null",404);
         }
 
-        Application app = applications.get(id);
-        applications.remove(id);
+        Application app = appRepo.findOne(id);
+        logger.debug("Deleting " + app.toString());
 
         obmanager.deleteRecord(app.getGroupID());
         HttpStatus resDelete = osmanager.deleteApplication(token, app.getAppName(), app.getProjectName());
+
+        appRepo.delete(app);
 
         return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),resDelete.value());
     }

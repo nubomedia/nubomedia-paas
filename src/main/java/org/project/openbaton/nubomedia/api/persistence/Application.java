@@ -49,6 +49,9 @@ public class Application {
         this.status = BuildingStatus.CREATED;
     }
 
+    public Application() {
+    }
+
     public String getAppName() {
         return appName;
     }
@@ -151,5 +154,14 @@ public class Application {
 
     public void setStatus(BuildingStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString(){
+        return "Application with ID: " + appID  + "\n" +
+                "Application name: " + appName + "\n" +
+                "Project: " + projectName + "\n" +
+                "Route: " + route + "\n" +
+                "Git URL: " + gitURL;
     }
 }

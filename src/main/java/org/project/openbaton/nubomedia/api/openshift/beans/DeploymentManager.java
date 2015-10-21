@@ -83,8 +83,9 @@ public class DeploymentManager {
                 }
             }
         }
-        else{
-            logger.debug(deleteEntity.toString());
+        else if (deleteEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)){ //means that you are deleting an application before the build was complete
+            logger.debug("Status code " + deleteEntity.getStatusCode());
+            return HttpStatus.OK;
         }
 
         return deleteEntity.getStatusCode();
