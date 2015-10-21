@@ -2,6 +2,9 @@ package org.project.openbaton.nubomedia.api;
 
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.api.messages.NubomediaAppNotFoundMessage;
+import org.project.openbaton.nubomedia.api.messages.NubomediaAuthorizationRequest;
+import org.project.openbaton.nubomedia.api.messages.NubomediaUnauthorizedMessage;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -25,13 +28,21 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ApplicationNotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     protected ResponseEntity<Object> handleAppNotFound(Exception e,WebRequest request){
-        logger.debug("handling exception from " + request.getDescription(true));
+        logger.debug("handling ApplicationNotFoundException from " + request.getDescription(true));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         NubomediaAppNotFoundMessage body = new NubomediaAppNotFoundMessage(request.getParameter("id"),request.getHeader("Auth-token"));
         return handleExceptionInternal(e,body,headers,HttpStatus.NOT_FOUND,request);
     }
 
-    
+    @ExceptionHandler({UnauthorizedException.class})
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    protected ResponseEntity<Object> handleUnauthorized(Exception e, WebRequest request){
+        logger.debug("handling UnauthorizedException from " + request.getDescription(true));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        NubomediaUnauthorizedMessage body = new NubomediaUnauthorizedMessage("Wrong authentication",e.getMessage());
+        return handleExceptionInternal(e,body,headers,HttpStatus.NOT_FOUND,request);
+    }
 
 }

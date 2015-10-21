@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
 import org.project.openbaton.nubomedia.api.openshift.beans.*;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.json.ImageStreamConfig;
 import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ public class OpenshiftManager {
         this.kubernetesBaseURL = config.getProperty("baseURL") + "/api/v1/namespaces/";
     }
 
-    public String authenticate(String username, String password){
+    public String authenticate(String username, String password) throws UnauthorizedException {
 
         return this.authManager.authenticate(config.getProperty("baseURL"),username,password);
 

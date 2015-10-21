@@ -168,7 +168,7 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    public @ResponseBody NubomediaAuthorizationResponse authorize(@RequestBody NubomediaAuthorizationRequest request){
+    public @ResponseBody NubomediaAuthorizationResponse authorize(@RequestBody NubomediaAuthorizationRequest request) throws UnauthorizedException {
 
         String token = osmanager.authenticate(request.getUsername(),request.getPassword());
         if (token.equals("Unauthorized")){

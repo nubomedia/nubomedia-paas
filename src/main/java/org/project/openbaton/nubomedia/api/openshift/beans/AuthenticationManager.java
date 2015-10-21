@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class AuthenticationManager {
     }
 
     //TODO rewrite when openshift uses correctly /oauth/token
-    public String authenticate(String baseURL, String username, String password){
+    public String authenticate(String baseURL, String username, String password) throws UnauthorizedException{
 
         String res = "";
 
@@ -63,14 +64,12 @@ public class AuthenticationManager {
             res = this.getToken(location.toString());
 
         }
-        else {
+        else if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 
-            res = "Unauthorized";
-
+            throw new UnauthorizedException("Username: " + username + " password: " + password + " are invalid");
         }
 
         return res;
-
     }
 
 
