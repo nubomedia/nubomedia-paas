@@ -9,8 +9,11 @@ import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.openbaton.sdk.NFVORequestor;
+import org.project.openbaton.nubomedia.api.openbaton.OpenbatonConfiguration;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +28,23 @@ import java.util.Set;
 @Service
 public class OpenbatonManager {
 
-    @Autowired private NetworkServiceDescriptor nsd;
+    private Logger logger;
+    private NetworkServiceDescriptor nsd;
     private Properties properties;
     private NFVORequestor nfvoRequestor;
     private String apiPath;
 
     @PostConstruct
     private void init() throws IOException, SDKException {
+
+        this.logger = LoggerFactory.getLogger(this.getClass());
         this.properties = ConfigReader.loadProperties();
         this.nfvoRequestor = new NFVORequestor(properties.getProperty("openbatonUsername"),properties.getProperty("openbatonPasswd"),properties.getProperty("openbatonIP"), properties.getProperty("openbatonPort"),"1");
         this.apiPath = "/api/v1/nubomedia/paas";
-        this.nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(nsd);
+        NetworkServiceDescriptor tmp = OpenbatonConfiguration.getNSD();
+        logger.debug("NSD tmp " + tmp.toString());
+        this.nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(tmp);
+        logger.debug("Official NSD " + nsd.toString());
     }
 
     public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID) {
@@ -50,6 +59,7 @@ public class OpenbatonManager {
         try {
 
             nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
+            logger.debug("NSR " + nsr.toString());
             eventEndpoint.setNetworkServiceId(nsr.getId());
             res.setMediaServerID(nsr.getId());
             Set<VirtualNetworkFunctionRecord> vnfrs = nsr.getVnfr();

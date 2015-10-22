@@ -1,5 +1,6 @@
 package org.project.openbaton.nubomedia.api;
 
+import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.api.messages.NubomediaAppNotFoundMessage;
 import org.project.openbaton.nubomedia.api.messages.NubomediaAuthorizationRequest;
@@ -44,5 +45,11 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         NubomediaUnauthorizedMessage body = new NubomediaUnauthorizedMessage("Wrong authentication",e.getMessage());
         return handleExceptionInternal(e,body,headers,HttpStatus.NOT_FOUND,request);
     }
+
+//    @ExceptionHandler({SDKException.class})
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    protected ResponseEntity<Object> handleSDK (Exception e, WebRequest request){
+//
+//    }
 
 }
