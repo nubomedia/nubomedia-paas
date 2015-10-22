@@ -9,6 +9,7 @@ import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.openbaton.sdk.NFVORequestor;
+import org.project.openbaton.nubomedia.api.openbaton.OpenbatonConfiguration;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import java.util.Set;
 @Service
 public class OpenbatonManager {
 
-    @Autowired private NetworkServiceDescriptor nsd;
+    private NetworkServiceDescriptor nsd;
     private Properties properties;
     private NFVORequestor nfvoRequestor;
     private String apiPath;
@@ -35,7 +36,8 @@ public class OpenbatonManager {
         this.properties = ConfigReader.loadProperties();
         this.nfvoRequestor = new NFVORequestor(properties.getProperty("openbatonUsername"),properties.getProperty("openbatonPasswd"),properties.getProperty("openbatonIP"), properties.getProperty("openbatonPort"),"1");
         this.apiPath = "/api/v1/nubomedia/paas";
-        this.nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(nsd);
+        NetworkServiceDescriptor tmp = OpenbatonConfiguration.getNSD();
+        this.nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(tmp);
     }
 
     public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID) {
