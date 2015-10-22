@@ -1,5 +1,6 @@
 package org.project.openbaton.nubomedia.api;
 
+import com.google.gson.GsonBuilder;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.project.openbaton.nubomedia.api.messages.*;
@@ -12,9 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -196,10 +199,14 @@ public class NubomediaAppManager {
         }
     }
 
-    @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST)
-    public void startOpenshiftBuild(@PathVariable("id") String id, @RequestBody OpenbatonEvent evt){
+    @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void startOpenshiftBuild(@RequestBody String evt, @PathVariable("id") String id){
+
+        OpenbatonEvent event = new GsonBuilder().create().fromJson(evt,OpenbatonEvent.class);
+        
         logger.debug("starting callback for appId" + id);
-        logger.info("Received event " + evt.getAction() + " with payload " + evt.getPayload());
+        logger.info("Received event " + evt);
         Application app = appRepo.findOne(id);
 //        if(evt.getAction().equals(Action.INSTANTIATE_FINISH)){
             OpenbatonCreateServer server = deploymentMap.get(id);
