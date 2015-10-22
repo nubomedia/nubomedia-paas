@@ -59,11 +59,11 @@ project.ext {
 repositories {
     mavenCentral()
     maven {
-        url "http://193.175.132.176:8081/nexus/content/groups/public"
+        url "http://get.openbaton.org:8081/nexus/content/groups/public"
     }
 }
 dependencies {
-    compile 'org.openbaton:sdk:0.11'
+    compile 'org.openbaton:sdk:0.12'
     compile 'org.springframework.boot:spring-boot-starter-test:' + springBootVersion
     compile 'org.springframework.boot:spring-boot:' + springBootVersion
     compile 'org.springframework.boot:spring-boot-autoconfigure:' + springBootVersion
