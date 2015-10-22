@@ -2,14 +2,20 @@ package org.project.openbaton.nubomedia.api;
 
 import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
-import org.openbaton.catalogue.mano.record.Status;
+import org.openbaton.catalogue.nfvo.Action;
+import org.openbaton.catalogue.nfvo.EndpointType;
+import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.openbaton.sdk.NFVORequestor;
+import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
+import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Created by lto on 24/09/15.
@@ -18,65 +24,85 @@ import javax.annotation.PostConstruct;
 public class OpenbatonManager {
 
     @Autowired private NetworkServiceDescriptor nsd;
+    private Properties properties;
     private NFVORequestor nfvoRequestor;
+    private String apiPath;
 
     @PostConstruct
-    private void init(){
-        this.nfvoRequestor = new NFVORequestor("","","","","");
+    private void init() throws IOException {
+        this.properties = ConfigReader.loadProperties();
+        this.nfvoRequestor = new NFVORequestor(properties.getProperty("openbatonUsername"),properties.getProperty("openbatonPasswd"),properties.getProperty("openbatonIP"), properties.getProperty("openbatonPort"),"1");
+        this.apiPath = "/api/v1/nubomedia/paas";
     }
 
 
     //Stati: NULL, INSTANTIATED, ACTIVE
-    public String getMediaServerGroupID(String flavorID) {
+    public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID) {
 
-//        NetworkServiceRecord nsr = null;
-//
-//        try {
-//            this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(nsd);
-//            nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
-//        } catch (SDKException e) {
-//            e.printStackTrace();
-//        }
+        OpenbatonCreateServer res = new OpenbatonCreateServer();
+        NetworkServiceRecord nsr = null;
+        EventEndpoint eventEndpoint = new EventEndpoint();
+        eventEndpoint.setType(EndpointType.REST);
+        eventEndpoint.setEndpoint(properties.getProperty("internalURL") + apiPath +"/openbaton/" + appID);
+        eventEndpoint.setEvent(Action.INSTANTIATE_FINISH);
 
+        try {
+            nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(nsd);
+            nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
+            eventEndpoint.setNetworkServiceId(nsr.getId());
+            eventEndpoint = this.nfvoRequestor.getEventAgent().create(eventEndpoint);
+            res.setMediaServerID(nsr.getId());
+            res.setEventID(eventEndpoint.getId());
+        } catch (SDKException e) {
+            e.printStackTrace();
+        }
 
-        return "ciaoPippo";
+        return res;
     }
 
     public BuildingStatus getStatus(String nsrID){
         NetworkServiceRecord nsr = null;
         BuildingStatus res = BuildingStatus.INITIALISED;
-//        try {
-//             nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID);
-//        } catch (SDKException e) {
-//            e.printStackTrace();
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        switch (nsr.getStatus()){
-//            case NULL:
-//                res = BuildingStatus.CREATED;
-//                break;
-//            case INITIALIZED:
-//                res = BuildingStatus.INITIALIZING;
-//                break;
-//            case ERROR:
-//                res = BuildingStatus.FAILED;
-//                break;
-//            case ACTIVE:
-//                res = BuildingStatus.INITIALISED;
-//                break;
-//        }
+        try {
+             nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID);
+        } catch (SDKException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        switch (nsr.getStatus()){
+            case NULL:
+                res = BuildingStatus.CREATED;
+                break;
+            case INITIALIZED:
+                res = BuildingStatus.INITIALIZING;
+                break;
+            case ERROR:
+                res = BuildingStatus.FAILED;
+                break;
+            case ACTIVE:
+                res = BuildingStatus.INITIALISED;
+                break;
+        }
 
         return res;
     }
 
     public void deleteRecord(String nsrID){
-       /* try {
+        try {
             nfvoRequestor.getNetworkServiceRecordAgent().delete(nsrID);
         } catch (SDKException e) {
             e.printStackTrace();
-        }*/
+        }
+    }
+
+    public void deleteEvent(String eventID){
+        try {
+            this.nfvoRequestor.getEventAgent().delete(eventID);
+        } catch (SDKException e) {
+            e.printStackTrace();
+        }
     }
 
 

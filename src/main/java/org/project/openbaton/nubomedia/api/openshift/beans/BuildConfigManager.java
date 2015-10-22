@@ -29,9 +29,9 @@ public class BuildConfigManager {
         this.suffix = "/buildconfigs/";
     }
 
-    public ResponseEntity<String> createBuildConfig (String baseURL, String appName,String namespace,String dockerRepo,String gitURL, HttpHeaders authHeader, String secretName,String mediaServerGID){
+    public ResponseEntity<String> createBuildConfig (String baseURL, String appName,String namespace,String dockerRepo,String gitURL, HttpHeaders authHeader, String secretName,String mediaServerGID,String mediaServerIP, String mediaServerPort){
 
-        BuildConfig message = MessageBuilderFactory.getBuilderMessage(appName, dockerRepo, gitURL, secretName,mediaServerGID);
+        BuildConfig message = MessageBuilderFactory.getBuilderMessage(appName, dockerRepo, gitURL, secretName,mediaServerGID, mediaServerIP, mediaServerPort);
         logger.debug("writing message " + mapper.toJson(message,BuildConfig.class));
         String URL = baseURL + namespace + suffix;
         HttpEntity<String> buildEntity = new HttpEntity<>(mapper.toJson(message, BuildConfig.class), authHeader);

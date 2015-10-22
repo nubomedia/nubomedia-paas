@@ -1,6 +1,10 @@
 package org.project.openbaton.nubomedia.api;
 
+import org.openbaton.catalogue.nfvo.Action;
+import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.project.openbaton.nubomedia.api.messages.*;
+import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
+import org.project.openbaton.nubomedia.api.openbaton.OpenbatonEvent;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.persistence.Application;
 import org.project.openbaton.nubomedia.api.persistence.ApplicationRepository;
@@ -15,7 +19,6 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 
 /**
@@ -28,7 +31,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/nubomedia/paas")
 public class NubomediaAppManager {
 
-    private Map<String, Application> applications;
+    private static Map<String, OpenbatonCreateServer> deploymentMap = new HashMap<>();
     private Logger logger;
     private SecureRandom appIDGenerator;
 
@@ -39,7 +42,6 @@ public class NubomediaAppManager {
     @PostConstruct
     private void init() {
         System.setProperty("javax.net.ssl.trustStore", "resource/openshift-keystore");
-        this.applications = new HashMap<String, Application>();
         this.logger = LoggerFactory.getLogger(this.getClass());
         this.appIDGenerator = new SecureRandom();
     }
@@ -55,15 +57,15 @@ public class NubomediaAppManager {
 
 
         //Openbaton MediaServer Request
-        String mediaServerGID = obmanager.getMediaServerGroupID(request.getFlavor());
+        OpenbatonCreateServer openbatonCreateServer = obmanager.getMediaServerGroupID(request.getFlavor(),appID);
+        openbatonCreateServer.setToken(token);
 
-        //Openshift Application Creation
-        String route = osmanager.buildApplication(token, appID,request.getAppName(), request.getProjectName(), request.getGitURL(), request.getPorts(), request.getTargetPorts(), request.getProtocols(), request.getReplicasNumber(), request.getSecretName(),mediaServerGID); //to be fixed with secret creation
+        deploymentMap.put(appID,openbatonCreateServer);
 
-        Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),route,mediaServerGID,request.getGitURL(),request.getTargetPorts(),request.getPorts(),request.getProtocols(),request.getReplicasNumber(),request.getSecretName());
+        Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),"",openbatonCreateServer.getMediaServerID(), request.getGitURL(),request.getTargetPorts(),request.getPorts(),request.getProtocols(),request.getReplicasNumber(),request.getSecretName());
         appRepo.save(persistApp);
 
-        res.setRoute(route);
+        res.setRoute(request.getAppName() + appID + ".paas.nubomedia.eu");
         res.setId(appID);
         res.setCode(200);
         res.setAppName(request.getAppName() + appID);
@@ -123,6 +125,15 @@ public class NubomediaAppManager {
 
         Application app = appRepo.findOne(id);
 
+        if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
+            res.setId(id);
+            res.setAppName(app.getAppName());
+            res.setProjectName(app.getProjectName());
+            res.setLog("The application is retrieving resources " + app.getStatus());
+
+            return res;
+        }
+
         res.setId(id);
         res.setAppName(app.getAppName());
         res.setProjectName(app.getProjectName());
@@ -177,6 +188,20 @@ public class NubomediaAppManager {
         else{
             return new NubomediaAuthorizationResponse(token,200);
         }
+    }
+
+    @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST)
+    public void startOpenshiftBuild(@PathVariable("id") String id, @RequestBody OpenbatonEvent evt){
+
+        Application app = appRepo.findOne(id);
+        if(evt.getAction().equals(Action.INSTANTIATE_FINISH)){
+            String token = deploymentMap.get(app.getAppID()).getToken();
+            String route = osmanager.buildApplication(token, app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),app.getGroupID()); //to be fixed with secret creation
+            app.setRoute(route);
+            app.setStatus(BuildingStatus.INITIALISED);
+            deploymentMap.remove(app.getAppID());
+        }
+
     }
 
 }

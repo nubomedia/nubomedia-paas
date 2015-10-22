@@ -33,9 +33,9 @@ public class BuildManager {
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    public ResponseEntity<String> createBuild(String baseURL, String appName,String namespace,String gitURL,String dockerRepo, HttpHeaders authHeader, String secretName,String mediaServerGID){
+    public ResponseEntity<String> createBuild(String baseURL, String appName,String namespace,String gitURL,String dockerRepo, HttpHeaders authHeader, String secretName,String mediaServerGID, String mediaServerIP, String mediaServerPort){
         logger.info("Creating buildconfig for " + appName + " in project " + namespace + " from gitURL " + gitURL + " with secret " + secretName);
-        return builderManager.createBuildConfig(baseURL,appName,namespace,dockerRepo,gitURL,authHeader,secretName,mediaServerGID);
+        return builderManager.createBuildConfig(baseURL,appName,namespace,dockerRepo,gitURL,authHeader,secretName,mediaServerGID, mediaServerIP, mediaServerPort);
     }
 
     public HttpStatus deleteBuild(String baseURL, String appName,String namespace, HttpHeaders authHeader){
