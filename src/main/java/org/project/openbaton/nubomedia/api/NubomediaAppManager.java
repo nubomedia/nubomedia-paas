@@ -201,10 +201,9 @@ public class NubomediaAppManager {
 
     @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void startOpenshiftBuild(@RequestBody String evt, @PathVariable("id") String id){
+    public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id){
         logger.debug("starting callback for appId" + id);
         logger.info("Received event " + evt);
-        OpenbatonEvent event = new GsonBuilder().create().fromJson(evt,OpenbatonEvent.class);
         Application app = appRepo.findOne(id);
 //        if(evt.getAction().equals(Action.INSTANTIATE_FINISH)){
             OpenbatonCreateServer server = deploymentMap.get(id);
