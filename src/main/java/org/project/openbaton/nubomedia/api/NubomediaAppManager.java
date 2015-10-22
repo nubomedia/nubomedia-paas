@@ -200,6 +200,11 @@ public class NubomediaAppManager {
             app.setStatus(BuildingStatus.INITIALISED);
             deploymentMap.remove(app.getAppID());
         }
+        else if (evt.getAction().equals(Action.ERROR)){
+
+            app.setStatus(BuildingStatus.FAILED);
+
+        }
 
     }
 
