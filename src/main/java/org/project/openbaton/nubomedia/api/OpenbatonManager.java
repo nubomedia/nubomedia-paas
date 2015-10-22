@@ -75,7 +75,7 @@ public class OpenbatonManager {
         } catch (SDKException e) {
             e.printStackTrace();
         }
-
+        logger.debug("Result " + res.toString());
         return res;
     }
 

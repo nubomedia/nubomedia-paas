@@ -44,4 +44,14 @@ public class OpenbatonCreateServer {
     public void setVnfrID(String vnfrID) {
         this.vnfrID = vnfrID;
     }
+
+    @Override
+    public String toString() {
+        return "OpenbatonCreateServer{" +
+                "vnfrID='" + vnfrID + '\'' +
+                ", mediaServerID='" + mediaServerID + '\'' +
+                ", eventID='" + eventID + '\'' +
+                ", token='" + token + '\'' +
+                '}';
+    }
 }
