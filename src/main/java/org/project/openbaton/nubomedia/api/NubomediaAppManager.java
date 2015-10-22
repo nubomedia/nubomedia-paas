@@ -193,18 +193,18 @@ public class NubomediaAppManager {
     public void startOpenshiftBuild(@PathVariable("id") String id, @RequestBody OpenbatonEvent evt){
 
         Application app = appRepo.findOne(id);
-        if(evt.getAction().equals(Action.INSTANTIATE_FINISH)){
+//        if(evt.getAction().equals(Action.INSTANTIATE_FINISH)){
             OpenbatonCreateServer server = deploymentMap.get(id);
             String route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),server.getVnfrID()); //to be fixed with secret creation
             app.setRoute(route);
             app.setStatus(BuildingStatus.INITIALISED);
             deploymentMap.remove(app.getAppID());
-        }
-        else if (evt.getAction().equals(Action.ERROR)){
-
-            app.setStatus(BuildingStatus.FAILED);
-
-        }
+//        }
+//        else if (evt.getAction().equals(Action.ERROR)){
+//
+//            app.setStatus(BuildingStatus.FAILED);
+//
+//        }
 
     }
 
