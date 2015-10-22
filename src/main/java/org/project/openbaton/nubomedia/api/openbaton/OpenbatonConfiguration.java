@@ -15,16 +15,21 @@ import java.io.FileReader;
 /**
  * Created by maa on 13.10.15.
  */
+@Configuration
 public class OpenbatonConfiguration {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public static NetworkServiceDescriptor getNSD(){
+    @Bean
+    public NetworkServiceDescriptor getNSD(){
 
         NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
         try {
             Gson mapper = new GsonBuilder().create();
             FileReader jsonNSD = new FileReader("resource/nsd.json");
             nsd = mapper.fromJson(jsonNSD,NetworkServiceDescriptor.class);
+
+            logger.debug("readed nsd " + nsd.toString());
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
