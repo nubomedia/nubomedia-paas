@@ -1,13 +1,14 @@
 package org.project.openbaton.nubomedia.api.messages;
 
+import org.project.openbaton.nubomedia.api.persistence.Application;
+
 /**
  * Created by maa on 28.09.15.
  */
 public class NubomediaCreateAppResponse {
 
     private String id;
-    private String route;
-    private String appName;
+    private Application app;
     private int code;
 
     public NubomediaCreateAppResponse() {
@@ -21,20 +22,12 @@ public class NubomediaCreateAppResponse {
         this.id = id;
     }
 
-    public String getRoute() {
-        return route;
+    public Application getApp() {
+        return app;
     }
 
-    public void setRoute(String route) {
-        this.route = route;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
+    public void setApp(Application app) {
+        this.app = app;
     }
 
     public int getCode() {

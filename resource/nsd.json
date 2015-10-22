@@ -1,9 +1,10 @@
 {
-  "vendor":"fokus",
-  "version":"0.1-ALPHA",
+  "vendor":"TUB",
+  "name":"MS-NSD",
+  "version":"0.1",
   "vnfd":[
     {
-      "vendor":"fokus",
+      "vendor":"TUB",
       "version":"0.1",
       "name":"media-server-vnf-1",
       "type":"media-server",
@@ -11,18 +12,9 @@
       "vdu":[
         {
           "vm_image":[
-            "nubomedia-media-server-5"
+            "alincalinciuc/openstack_kms_6_0"
           ],
-          "computation_requirement":"",
-          "virtual_memory_resource_element":"1024",
-          "virtual_network_bandwidth_resource":"1000000",
-          "lifecycle_event":[
-          ],
-          "vimInstance":{
-            "name":"vim-instance"
-          },
-          "vdu_constraint":"",
-          "high_availability":"ACTIVE_PASSIVE",
+          "vimInstanceName":"vim-instance",
           "scale_in_out":3,
           "vnfc":[
             {
@@ -33,21 +25,13 @@
                 }
               ]
             }
-          ],
-          "monitoring_parameter":[
-            "cpu_utilization"
           ]
         }
       ],
       "virtual_link":[
         {
-          "connectivity_type": "LAN",
-          "connection_points_references": [
-            "internal_nubomedia"
-          ]
+          "name":"internal_nubomedia"
         }
-      ],
-      "connection_point":[
       ],
       "lifecycle_event":[
         {
@@ -63,46 +47,18 @@
           ]
         }
       ],
-      "vdu_dependency":[
-      ],
-      "monitoring_parameter":[
-        "cpu_utilization"
-      ],
-      "deployment_flavour":[{
-        "df_constraint":[
-          "constraint1",
-          "constraint2"
-        ],
-        "costituent_vdu":[],
-        "flavour_key":"m1.medium"
-      }],
-      "auto_scale_policy":[
-      ],
-      "manifest_file":""
+      "deployment_flavour":[
+        {
+          "flavour_key":"m1.medium"
+        }
+      ]
     }
-  ],
-  "vnffgd":[
   ],
   "vld":[
-  ],
-  "lifecycle_event":[
-  ],
-  "vnf_dependency":[
-  ],
-  "monitoring_parameter":[
-    "cpu_utilization"
-  ],
-  "service_deployment_flavour":[
     {
-
+      "name":"internal_nubomedia"
     }
   ],
-  "auto_scale_policy":[
-  ],
-  "connection_point":[
-  ],
-  "pnfd":[
+  "vnf_dependency":[
   ]
 }
-
-

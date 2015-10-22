@@ -2,6 +2,7 @@ package org.project.openbaton.nubomedia.api;
 
 import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
+import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.catalogue.nfvo.EndpointType;
 import org.openbaton.catalogue.nfvo.EventEndpoint;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Created by lto on 24/09/15.
@@ -35,8 +37,6 @@ public class OpenbatonManager {
         this.apiPath = "/api/v1/nubomedia/paas";
     }
 
-
-    //Stati: NULL, INSTANTIATED, ACTIVE
     public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID) {
 
         OpenbatonCreateServer res = new OpenbatonCreateServer();
@@ -50,8 +50,16 @@ public class OpenbatonManager {
             nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(nsd);
             nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
             eventEndpoint.setNetworkServiceId(nsr.getId());
-            eventEndpoint = this.nfvoRequestor.getEventAgent().create(eventEndpoint);
             res.setMediaServerID(nsr.getId());
+            Set<VirtualNetworkFunctionRecord> vnfrs = nsr.getVnfr();
+
+            for(VirtualNetworkFunctionRecord record : vnfrs){
+                if(record.getType().equals("media-server")){
+                    res.setVnfrID(record.getId());
+                }
+            }
+
+            eventEndpoint = this.nfvoRequestor.getEventAgent().create(eventEndpoint);
             res.setEventID(eventEndpoint.getId());
         } catch (SDKException e) {
             e.printStackTrace();

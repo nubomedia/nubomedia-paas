@@ -5,6 +5,7 @@ package org.project.openbaton.nubomedia.api.openbaton;
  */
 public class OpenbatonCreateServer {
 
+    private String vnfrID;
     private String mediaServerID;
     private String eventID;
     private String token;
@@ -34,5 +35,13 @@ public class OpenbatonCreateServer {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getVnfrID() {
+        return vnfrID;
+    }
+
+    public void setVnfrID(String vnfrID) {
+        this.vnfrID = vnfrID;
     }
 }

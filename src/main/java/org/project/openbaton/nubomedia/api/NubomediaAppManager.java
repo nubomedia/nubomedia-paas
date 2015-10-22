@@ -65,10 +65,9 @@ public class NubomediaAppManager {
         Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),"",openbatonCreateServer.getMediaServerID(), request.getGitURL(),request.getTargetPorts(),request.getPorts(),request.getProtocols(),request.getReplicasNumber(),request.getSecretName());
         appRepo.save(persistApp);
 
-        res.setRoute(request.getAppName() + appID + ".paas.nubomedia.eu");
+        res.setApp(persistApp);
         res.setId(appID);
         res.setCode(200);
-        res.setAppName(request.getAppName() + appID);
         return res;
     }
 
@@ -195,8 +194,8 @@ public class NubomediaAppManager {
 
         Application app = appRepo.findOne(id);
         if(evt.getAction().equals(Action.INSTANTIATE_FINISH)){
-            String token = deploymentMap.get(app.getAppID()).getToken();
-            String route = osmanager.buildApplication(token, app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),app.getGroupID()); //to be fixed with secret creation
+            OpenbatonCreateServer server = deploymentMap.get(id);
+            String route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),server.getVnfrID()); //to be fixed with secret creation
             app.setRoute(route);
             app.setStatus(BuildingStatus.INITIALISED);
             deploymentMap.remove(app.getAppID());
