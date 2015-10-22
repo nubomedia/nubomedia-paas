@@ -71,7 +71,7 @@ public class OpenbatonManager {
             }
 
             eventEndpoint = this.nfvoRequestor.getEventAgent().create(eventEndpoint);
-            res.setEventID(eventEndpoint.getId());
+            res.setEventID(eventEndpoint.getName());
         } catch (SDKException e) {
             e.printStackTrace();
         }
