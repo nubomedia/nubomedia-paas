@@ -157,6 +157,13 @@ public class NubomediaAppManager {
         Application app = appRepo.findOne(id);
         logger.debug("Deleting " + app.toString());
 
+        if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
+
+            obmanager.deleteRecord(app.getGroupID());
+            return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),200);
+
+        }
+
         obmanager.deleteRecord(app.getGroupID());
         HttpStatus resDelete = osmanager.deleteApplication(token, app.getAppName(), app.getProjectName());
 
@@ -196,7 +203,9 @@ public class NubomediaAppManager {
         Application app = appRepo.findOne(id);
 //        if(evt.getAction().equals(Action.INSTANTIATE_FINISH)){
             OpenbatonCreateServer server = deploymentMap.get(id);
+            logger.debug("retrieved session for " + server.getToken());
             String route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),server.getVnfrID()); //to be fixed with secret creation
+            obmanager.deleteEvent(server.getEventID());
             app.setRoute(route);
             app.setStatus(BuildingStatus.INITIALISED);
             deploymentMap.remove(app.getAppID());

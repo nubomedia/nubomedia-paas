@@ -31,10 +31,11 @@ public class OpenbatonManager {
     private String apiPath;
 
     @PostConstruct
-    private void init() throws IOException {
+    private void init() throws IOException, SDKException {
         this.properties = ConfigReader.loadProperties();
         this.nfvoRequestor = new NFVORequestor(properties.getProperty("openbatonUsername"),properties.getProperty("openbatonPasswd"),properties.getProperty("openbatonIP"), properties.getProperty("openbatonPort"),"1");
         this.apiPath = "/api/v1/nubomedia/paas";
+        this.nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(nsd);
     }
 
     public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID) {
@@ -47,7 +48,7 @@ public class OpenbatonManager {
         eventEndpoint.setEvent(Action.INSTANTIATE_FINISH);
 
         try {
-            nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(nsd);
+
             nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
             eventEndpoint.setNetworkServiceId(nsr.getId());
             res.setMediaServerID(nsr.getId());
@@ -70,28 +71,28 @@ public class OpenbatonManager {
 
     public BuildingStatus getStatus(String nsrID){
         NetworkServiceRecord nsr = null;
-        BuildingStatus res = BuildingStatus.INITIALISED;
+        BuildingStatus res = BuildingStatus.CREATED;
         try {
              nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID);
-        } catch (SDKException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SDKException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        switch (nsr.getStatus()){
-            case NULL:
-                res = BuildingStatus.CREATED;
-                break;
-            case INITIALIZED:
-                res = BuildingStatus.INITIALIZING;
-                break;
-            case ERROR:
-                res = BuildingStatus.FAILED;
-                break;
-            case ACTIVE:
-                res = BuildingStatus.INITIALISED;
-                break;
+        if (nsr != null) {
+            switch (nsr.getStatus()){
+                case NULL:
+                    res = BuildingStatus.CREATED;
+                    break;
+                case INITIALIZED:
+                    res = BuildingStatus.INITIALIZING;
+                    break;
+                case ERROR:
+                    res = BuildingStatus.FAILED;
+                    break;
+                case ACTIVE:
+                    res = BuildingStatus.INITIALISED;
+                    break;
+            }
         }
 
         return res;
