@@ -20,9 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by lto on 24/09/15.
@@ -35,7 +33,7 @@ public class OpenbatonManager {
     private Properties properties;
     private NFVORequestor nfvoRequestor;
     private String apiPath;
-    private Set<NetworkServiceRecord> records;
+    private Map<String, NetworkServiceRecord> records;
 
     @PostConstruct
     private void init() throws IOException, SDKException {
@@ -47,7 +45,7 @@ public class OpenbatonManager {
         NetworkServiceDescriptor tmp = OpenbatonConfiguration.getNSD();
         logger.debug("NSD tmp " + tmp.toString());
         this.nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(tmp);
-        this.records = new HashSet<>();
+        this.records = new HashMap<>();
         logger.debug("Official NSD " + nsd.toString());
     }
 
@@ -62,7 +60,7 @@ public class OpenbatonManager {
 
         nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
         logger.debug("NSR " + nsr.toString());
-        this.records.add(nsr);
+        this.records.put(nsr.getId(),nsr);
         eventEndpoint.setNetworkServiceId(nsr.getId());
         res.setMediaServerID(nsr.getId());
         Set<VirtualNetworkFunctionRecord> vnfrs = nsr.getVnfr();
@@ -111,6 +109,7 @@ public class OpenbatonManager {
 
     public void deleteRecord(String nsrID){
         try {
+            records.remove(nsrID);
             nfvoRequestor.getNetworkServiceRecordAgent().delete(nsrID);
         } catch (SDKException e) {
             e.printStackTrace();
@@ -128,8 +127,9 @@ public class OpenbatonManager {
     @PreDestroy
     private void deleteNSD() throws SDKException {
         if(!this.records.isEmpty()){
-            for(NetworkServiceRecord nsr : records){
-                this.nfvoRequestor.getNetworkServiceRecordAgent().delete(nsr.getId());
+            for(String nsrId : records.keySet()){
+                this.nfvoRequestor.getNetworkServiceRecordAgent().delete(nsrId);
+                this.records.remove(nsrId);
             }
         }
         this.nfvoRequestor.getNetworkServiceDescriptorAgent().delete(nsd.getId());
