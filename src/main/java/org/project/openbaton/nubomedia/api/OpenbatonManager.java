@@ -47,7 +47,7 @@ public class OpenbatonManager {
         logger.debug("Official NSD " + nsd.toString());
     }
 
-    public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID) {
+    public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID) throws SDKException {
 
         OpenbatonCreateServer res = new OpenbatonCreateServer();
         NetworkServiceRecord nsr = null;
@@ -56,25 +56,21 @@ public class OpenbatonManager {
         eventEndpoint.setEndpoint(properties.getProperty("internalURL") + apiPath +"/openbaton/" + appID);
         eventEndpoint.setEvent(Action.INSTANTIATE_FINISH);
 
-        try {
+        nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
+        logger.debug("NSR " + nsr.toString());
+        eventEndpoint.setNetworkServiceId(nsr.getId());
+        res.setMediaServerID(nsr.getId());
+        Set<VirtualNetworkFunctionRecord> vnfrs = nsr.getVnfr();
 
-            nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
-            logger.debug("NSR " + nsr.toString());
-            eventEndpoint.setNetworkServiceId(nsr.getId());
-            res.setMediaServerID(nsr.getId());
-            Set<VirtualNetworkFunctionRecord> vnfrs = nsr.getVnfr();
-
-            for(VirtualNetworkFunctionRecord record : vnfrs){
-                if(record.getType().equals("media-server")){
-                    res.setVnfrID(record.getId());
-                }
+        for(VirtualNetworkFunctionRecord record : vnfrs){
+            if(record.getType().equals("media-server")){
+                res.setVnfrID(record.getId());
             }
-
-            eventEndpoint = this.nfvoRequestor.getEventAgent().create(eventEndpoint);
-            res.setEventID(eventEndpoint.getName());
-        } catch (SDKException e) {
-            e.printStackTrace();
         }
+
+        eventEndpoint = this.nfvoRequestor.getEventAgent().create(eventEndpoint);
+        res.setEventID(eventEndpoint.getName());
+
         logger.debug("Result " + res.toString());
         return res;
     }
