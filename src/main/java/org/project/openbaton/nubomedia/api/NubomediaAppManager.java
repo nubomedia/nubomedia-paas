@@ -208,20 +208,20 @@ public class NubomediaAppManager {
         Application app = appRepo.findOne(id);
         logger.debug(deploymentMap.toString());
         OpenbatonEvent myevt = new GsonBuilder().create().fromJson(evt,OpenbatonEvent.class);
-//        if(evt.getAction().equals(Action.INSTANTIATE_FINISH)){
+        if(myevt.getAction().equals(Action.INSTANTIATE_FINISH)){
             OpenbatonCreateServer server = deploymentMap.get(id);
+            app.setStatus(BuildingStatus.INITIALISED);
             logger.debug("retrieved session for " + server.getToken());
             String route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),server.getVnfrID()); //to be fixed with secret creation
             obmanager.deleteEvent(server.getEventID());
             app.setRoute(route);
-            app.setStatus(BuildingStatus.INITIALISED);
             deploymentMap.remove(app.getAppID());
-//        }
-//        else if (evt.getAction().equals(Action.ERROR)){
-//
-//            app.setStatus(BuildingStatus.FAILED);
-//
-//        }
+        }
+        else if (myevt.getAction().equals(Action.ERROR)){
+
+            app.setStatus(BuildingStatus.FAILED);
+
+        }
 
     }
 
