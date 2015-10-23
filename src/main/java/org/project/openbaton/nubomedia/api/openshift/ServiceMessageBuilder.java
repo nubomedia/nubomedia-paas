@@ -32,7 +32,7 @@ public class ServiceMessageBuilder {
         }
         else {
             for (int i = 0; i < targetPorts.length; i++) {
-                sPorts[i] = new ServiceSpec.ServicePort(protocols[i], ports[i], targetPorts[i], protocols[i] + ":" +targetPorts[i]);
+                sPorts[i] = new ServiceSpec.ServicePort(protocols[i], ports[i], targetPorts[i], protocols[i].toLowerCase() + "-" +targetPorts[i]);
             }
         }
         Metadata metadata = new Metadata(name + "-svc","","");
