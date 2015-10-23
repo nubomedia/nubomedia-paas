@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -33,6 +35,7 @@ public class OpenbatonManager {
     private Properties properties;
     private NFVORequestor nfvoRequestor;
     private String apiPath;
+    private Set<NetworkServiceRecord> records;
 
     @PostConstruct
     private void init() throws IOException, SDKException {
@@ -44,6 +47,7 @@ public class OpenbatonManager {
         NetworkServiceDescriptor tmp = OpenbatonConfiguration.getNSD();
         logger.debug("NSD tmp " + tmp.toString());
         this.nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(tmp);
+        this.records = new HashSet<>();
         logger.debug("Official NSD " + nsd.toString());
     }
 
@@ -58,6 +62,7 @@ public class OpenbatonManager {
 
         nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
         logger.debug("NSR " + nsr.toString());
+        this.records.add(nsr);
         eventEndpoint.setNetworkServiceId(nsr.getId());
         res.setMediaServerID(nsr.getId());
         Set<VirtualNetworkFunctionRecord> vnfrs = nsr.getVnfr();
@@ -69,7 +74,7 @@ public class OpenbatonManager {
         }
 
         eventEndpoint = this.nfvoRequestor.getEventAgent().create(eventEndpoint);
-        res.setEventID(eventEndpoint.getName());
+        res.setEventID(eventEndpoint.getId());
 
         logger.debug("Result " + res.toString());
         return res;
@@ -118,6 +123,17 @@ public class OpenbatonManager {
         } catch (SDKException e) {
             e.printStackTrace();
         }
+    }
+
+    @PreDestroy
+    private void deleteNSD() throws SDKException {
+        if(!this.records.isEmpty()){
+            for(NetworkServiceRecord nsr : records){
+                this.nfvoRequestor.getNetworkServiceRecordAgent().delete(nsr.getId());
+            }
+        }
+        this.nfvoRequestor.getNetworkServiceDescriptorAgent().delete(nsd.getId());
+
     }
 
 
