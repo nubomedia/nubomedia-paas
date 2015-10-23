@@ -211,10 +211,12 @@ public class NubomediaAppManager {
         if(myevt.getAction().equals(Action.INSTANTIATE_FINISH)){
             OpenbatonCreateServer server = deploymentMap.get(id);
             app.setStatus(BuildingStatus.INITIALISED);
+            appRepo.save(app);
             logger.debug("retrieved session for " + server.getToken());
             String route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),server.getVnfrID()); //to be fixed with secret creation
             obmanager.deleteEvent(server.getEventID());
             app.setRoute(route);
+            appRepo.save(app);
             deploymentMap.remove(app.getAppID());
         }
         else if (myevt.getAction().equals(Action.ERROR)){

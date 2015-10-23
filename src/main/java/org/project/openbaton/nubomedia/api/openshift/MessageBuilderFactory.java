@@ -17,7 +17,7 @@ public class MessageBuilderFactory {
         DockerBuildStrategy strategy = new DockerBuildStrategy(ds);
         Source.SourceSecret secret;
 
-        if (secretName.equals(null)){
+        if (secretName == null){
             secret = null;
         }
         else{
