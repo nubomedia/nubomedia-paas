@@ -13,14 +13,16 @@ public class ServiceSpec {
         String protocol;
         int port;
         int targetPort;
+        String name;
 
         public ServicePort() {
         }
 
-        public ServicePort(String protocol, int port, int targetPort) {
+        public ServicePort(String protocol, int port, int targetPort, String name) {
             this.protocol = protocol;
             this.port = port;
             this.targetPort = targetPort;
+            this.name = name;
         }
 
         public String getProtocol() {
@@ -45,6 +47,14 @@ public class ServiceSpec {
 
         public void setTargetPort(int targetPort) {
             this.targetPort = targetPort;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
     }
 

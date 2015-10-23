@@ -27,12 +27,12 @@ public class ServiceMessageBuilder {
 
         if(ports == null){
             for(int i = 0; i< targetPorts.length; i++) {
-                sPorts[i] = new ServiceSpec.ServicePort(protocols[i], targetPorts[i], targetPorts[i]);
+                sPorts[i] = new ServiceSpec.ServicePort(protocols[i], targetPorts[i], targetPorts[i], protocols[i] + ":" +targetPorts[i]);
             }
         }
         else {
             for (int i = 0; i < targetPorts.length; i++) {
-                sPorts[i] = new ServiceSpec.ServicePort(protocols[i], ports[i], targetPorts[i]);
+                sPorts[i] = new ServiceSpec.ServicePort(protocols[i], ports[i], targetPorts[i], protocols[i] + ":" +targetPorts[i]);
             }
         }
         Metadata metadata = new Metadata(name + "-svc","","");
