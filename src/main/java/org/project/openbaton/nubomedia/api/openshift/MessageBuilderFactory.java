@@ -15,7 +15,15 @@ public class MessageBuilderFactory {
     public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL,String secretName,String mediaServerGID, String mediaServerIP, String mediaServerPort) {
         DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("MEDIA_SERVER_GID",mediaServerGID),new EnviromentVariable("MEDIA_SERVER_IP",mediaServerIP),new EnviromentVariable("MEDIA_SERVER_PORT",mediaServerPort)},null);
         DockerBuildStrategy strategy = new DockerBuildStrategy(ds);
-        Source.SourceSecret secret = new Source.SourceSecret(secretName);
+        Source.SourceSecret secret;
+
+        if (secretName.equals("") || secretName.equals(null)){
+            secret = null;
+        }
+        else{
+            secret = new Source.SourceSecret(secretName);
+        }
+
         ConfigChangeTrigger trigger = new ConfigChangeTrigger("ConfigChange");
         BuildMessageBuilder builder = new BuildMessageBuilder(name, strategy, new BuildElements("DockerImage", dockerRepo + ":latest"), gitURL, new ConfigChangeTrigger[]{trigger},secret);
 
