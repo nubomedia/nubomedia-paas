@@ -42,7 +42,7 @@ public class DeploymentManager {
         logger.debug(mapper.toJson(message, DeploymentConfig.class));
         String URL = baseURL + namespace + suffix;
         HttpEntity<String> deployEntity = new HttpEntity<String>(mapper.toJson(message,DeploymentConfig.class),authHeader);
-        ResponseEntity response = template.exchange(URL, HttpMethod.POST,deployEntity,String.class);
+        ResponseEntity<String> response = template.exchange(URL, HttpMethod.POST,deployEntity,String.class);
         logger.debug("Deployment response: " + response);
 
         return response;
