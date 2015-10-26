@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.openbaton.sdk.api.exception.SDKException;
+import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.api.messages.*;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonEvent;
@@ -76,12 +77,12 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app/{id}", method =  RequestMethod.GET)
-    public @ResponseBody Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id){
+    public @ResponseBody Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws ApplicationNotFoundException {
 
         logger.info("Request status for " + id + " app");
 
         if(!appRepo.exists(id)){
-            return null;
+            throw new ApplicationNotFoundException("Application with ID not found");
         }
 
         Application app = appRepo.findOne(id);
