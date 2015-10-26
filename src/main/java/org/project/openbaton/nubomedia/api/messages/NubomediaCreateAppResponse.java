@@ -7,19 +7,10 @@ import org.project.openbaton.nubomedia.api.persistence.Application;
  */
 public class NubomediaCreateAppResponse {
 
-    private String id;
     private Application app;
     private int code;
 
     public NubomediaCreateAppResponse() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Application getApp() {

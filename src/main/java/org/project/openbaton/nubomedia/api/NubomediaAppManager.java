@@ -60,7 +60,6 @@ public class NubomediaAppManager {
 
         logger.debug("request params " + request.getAppName() + " " + request.getGitURL() + " " + request.getProjectName() + " " + request.getPorts() + " " + request.getProtocols() + " " + request.getReplicasNumber());
 
-
         //Openbaton MediaServer Request
         OpenbatonCreateServer openbatonCreateServer = obmanager.getMediaServerGroupID(request.getFlavor(),appID);
         openbatonCreateServer.setToken(token);
@@ -71,7 +70,6 @@ public class NubomediaAppManager {
         appRepo.save(persistApp);
 
         res.setApp(persistApp);
-        res.setId(appID);
         res.setCode(200);
         return res;
     }
