@@ -15,7 +15,6 @@ public class OpenshiftConfiguration {
 
     @Bean
     public RestTemplate getRestTemplate(){
-
         return new RestTemplate();
     }
 
