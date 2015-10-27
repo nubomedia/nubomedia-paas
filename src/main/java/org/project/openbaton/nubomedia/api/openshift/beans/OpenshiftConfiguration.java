@@ -15,9 +15,8 @@ public class OpenshiftConfiguration {
 
     @Bean
     public RestTemplate getRestTemplate(){
-        RestTemplate res = new RestTemplate();
-        res.setErrorHandler(new OpenshiftErrorHandler());
-        return res;
+
+        return new RestTemplate();
     }
 
     @Bean

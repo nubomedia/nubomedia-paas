@@ -52,7 +52,11 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app",  method = RequestMethod.POST)
-    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException {
+    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException {
+
+        if(token == null){
+            throw new UnauthorizedException("no auth-token header");
+        }
 
         NubomediaCreateAppResponse res = new NubomediaCreateAppResponse();
         String appID = new BigInteger(130,appIDGenerator).toString(64);
@@ -75,9 +79,13 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app/{id}", method =  RequestMethod.GET)
-    public @ResponseBody Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws ApplicationNotFoundException {
+    public @ResponseBody Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws ApplicationNotFoundException, UnauthorizedException {
 
         logger.info("Request status for " + id + " app");
+
+        if(token == null){
+            throw new UnauthorizedException("no auth-token header");
+        }
 
         if(!appRepo.exists(id)){
             throw new ApplicationNotFoundException("Application with ID not found");
@@ -117,7 +125,11 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app/{id}/buildlogs", method = RequestMethod.GET)
-    public @ResponseBody NubomediaBuildLogs getBuildLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id){
+    public @ResponseBody NubomediaBuildLogs getBuildLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException {
+
+        if(token == null){
+            throw new UnauthorizedException("no auth-token header");
+        }
 
         NubomediaBuildLogs res = new NubomediaBuildLogs();
 
@@ -144,12 +156,21 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app", method = RequestMethod.GET)
-    public @ResponseBody Iterable<Application> getApps(){
+    public @ResponseBody Iterable<Application> getApps(@RequestHeader String token) throws UnauthorizedException {
+
+        if(token == null){
+            throw new UnauthorizedException("no auth-token header");
+        }
+
         return this.appRepo.findAll();
     }
 
     @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
-    public @ResponseBody NubomediaDeleteAppResponse deleteApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) {
+    public @ResponseBody NubomediaDeleteAppResponse deleteApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException {
+
+        if(token == null){
+            throw new UnauthorizedException("no auth-token header");
+        }
 
         logger.debug("id " + id);
 
@@ -176,13 +197,23 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/secret", method = RequestMethod.POST)
-    public @ResponseBody String createSecret(@RequestHeader("Auth-token") String token, @RequestBody NubomediaCreateSecretRequest ncsr){
+    public @ResponseBody String createSecret(@RequestHeader("Auth-token") String token, @RequestBody NubomediaCreateSecretRequest ncsr) throws UnauthorizedException {
+
+        if(token == null){
+            throw new UnauthorizedException("no auth-token header");
+        }
+
         logger.debug("Creating new secret for " + ncsr.getProjectName() + " with key " + ncsr.getPrivateKey());
         return osmanager.createSecret(token, ncsr.getPrivateKey(), ncsr.getProjectName());
     }
 
     @RequestMapping(value = "/secret/{projectName}/{secretName}", method = RequestMethod.DELETE)
-    public @ResponseBody NubomediaDeleteSecretResponse deleteSecret (@RequestHeader("Auth-token") String token, @PathVariable("secretName") String secretName, @PathVariable("projectName") String projectName){
+    public @ResponseBody NubomediaDeleteSecretResponse deleteSecret (@RequestHeader("Auth-token") String token, @PathVariable("secretName") String secretName, @PathVariable("projectName") String projectName) throws UnauthorizedException {
+
+        if(token == null){
+            throw new UnauthorizedException("no auth-token header");
+        }
+
         HttpStatus deleteStatus = osmanager.deleteSecret(token, secretName, projectName);
         return new NubomediaDeleteSecretResponse(secretName,projectName,deleteStatus.value());
     }
