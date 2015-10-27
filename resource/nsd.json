@@ -20,7 +20,7 @@
             {
               "connection_point":[
                 {
-                  "floatingIp":"80.96.122.66",
+                  "floatingIp":"80.96.122.71",
                   "virtual_link_reference":"internal_nubomedia"
                 }
               ]
