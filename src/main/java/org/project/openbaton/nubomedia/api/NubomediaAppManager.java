@@ -156,7 +156,7 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app", method = RequestMethod.GET)
-    public @ResponseBody Iterable<Application> getApps(@RequestHeader String token) throws UnauthorizedException {
+    public @ResponseBody Iterable<Application> getApps(@RequestHeader("Auth-token") String token) throws UnauthorizedException {
 
         if(token == null){
             throw new UnauthorizedException("no auth-token header");
