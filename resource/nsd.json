@@ -12,7 +12,7 @@
       "vdu":[
         {
           "vm_image":[
-            "nubomedia-media-server-6.0"
+            "nubomedia-media-server-6.0-with-apps"
           ],
           "vimInstanceName":"vim-instance",
           "scale_in_out":3,
