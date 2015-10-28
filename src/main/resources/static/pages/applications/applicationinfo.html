@@ -10,31 +10,39 @@
             <li><a href="#applications"><i class="fa fa-tasks"></i>
                 Applications</a></li>
             <li class="active"><i class="fa fa-bar-chart-o"></i>
-                {{application.appName}}</li>
+                {{application.appName}}
+            </li>
         </ol>
     </div>
 </div>
-<div class="row" >
+<div class="row">
     <div class="col-lg-12">
-        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)"><div ng-bind-html="alert.msg"></div></alert>
+        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">
+            <div ng-bind-html="alert.msg"></div>
+        </alert>
 
 
         <h2>Application</h2>
         <a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a>
         <br/>
         <dl class="dl-horizontal">
-            <spam ng-repeat="(k,v) in application" ng-if="k!='vimInstance' && k!='vnfc_instance'">
+            <spam ng-repeat="(k,v) in application" ng-if="k!='route'">
                 <dt>{{k}}</dt>
                 <dd>{{v}}</dd>
+            </spam>
+            <spam ng-if="application.route">
+                <dt>route</dt>
+                <dd><a href="http://{{application.route}}" target="_blank">{{application.route}}</a></dd>
             </spam>
         </dl>
 
     </div>
 </div>
-<div class="row" ng-show="application" >
+<div class="row" ng-show="application">
     <div class="col-lg-12">
         <button id="btn_create_topology" class="btn btn-primary pull-right"
-                title="Create a new App" ng-click="loadLog()">Load Log</button>
+                title="Create a new App" ng-click="loadLog()">Load Log
+        </button>
     </div>
 </div>
 <br/>
@@ -51,7 +59,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
                 <h4 class="modal-title" id="myModalLabel">JSON of Topology: {{application.appName}}</h4>
             </div>
             <div class="modal-body">
@@ -59,7 +68,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" id="closeModal" class="btn btn-default"
-                        data-dismiss="modal">Close</button>
+                        data-dismiss="modal">Close
+                </button>
             </div>
         </div>
     </div>
