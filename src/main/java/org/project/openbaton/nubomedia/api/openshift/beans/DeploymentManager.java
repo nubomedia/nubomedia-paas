@@ -42,7 +42,7 @@ public class DeploymentManager {
         logger.debug(mapper.toJson(message, DeploymentConfig.class));
         String URL = baseURL + namespace + suffix;
         HttpEntity<String> deployEntity = new HttpEntity<String>(mapper.toJson(message,DeploymentConfig.class),authHeader);
-        ResponseEntity response = template.exchange(URL, HttpMethod.POST,deployEntity,String.class);
+        ResponseEntity<String> response = template.exchange(URL, HttpMethod.POST,deployEntity,String.class);
         logger.debug("Deployment response: " + response);
 
         return response;
@@ -66,6 +66,11 @@ public class DeploymentManager {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
         String rcURL = kubernetesBaseURL + namespace + rcSuffix + appName + "-dc-1";
+
+        if(!this.existRC(requestEntity,rcURL)){
+            return HttpStatus.OK;
+        }
+
         logger.debug("deleting replication controller for " + appName + " of project " + namespace);
         ResponseEntity<String> deleteEntity = template.exchange(rcURL,HttpMethod.DELETE,requestEntity,String.class);
 
@@ -128,6 +133,18 @@ public class DeploymentManager {
         ResponseEntity<String> pods = template.exchange(podsURL,HttpMethod.GET,requestEntity,String.class);
         logger.debug(pods.getBody());
         return mapper.fromJson(pods.getBody(),Pods.class);
+    }
+
+    private boolean existRC(HttpEntity<String> reqEntity, String rcURL){
+
+        ResponseEntity<String> rcEntity = template.exchange(rcURL,HttpMethod.GET,reqEntity,String.class);
+        if(rcEntity.getStatusCode().is2xxSuccessful()){
+            return true;
+        }
+        else{
+            return false;
+        }
+
     }
 
 }

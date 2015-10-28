@@ -13,7 +13,7 @@ public class MessageBuilderFactory {
     }
 
     public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL,String secretName,String mediaServerGID, String mediaServerIP, String mediaServerPort) {
-        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("MEDIA_SERVER_GID",mediaServerGID),new EnviromentVariable("MEDIA_SERVER_IP",mediaServerIP),new EnviromentVariable("MEDIA_SERVER_PORT",mediaServerPort)},null);
+        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("VNFR_ID",mediaServerGID),new EnviromentVariable("VNFM_IP",mediaServerIP),new EnviromentVariable("VNFM_PORT",mediaServerPort)},null);
         DockerBuildStrategy strategy = new DockerBuildStrategy(ds);
         Source.SourceSecret secret;
 
