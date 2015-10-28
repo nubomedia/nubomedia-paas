@@ -69,10 +69,10 @@ angular.module('app').factory('AuthService', function($http, Session, $location,
         this.token = token;
         this.userName = userName;
         this.logged = logged;
-        $cookieStore.put('logged', logged);
-        $cookieStore.put('userName', userName);
-        $cookieStore.put('token', token);
-        $cookieStore.put('URL', URL);
+        $cookieStore.put('loggedNb', logged);
+        $cookieStore.put('userNameNb', userName);
+        $cookieStore.put('tokenNb', token);
+        $cookieStore.put('URLNb', URL);
 //        console.log($cookieStore.get('token'));
 
     };
@@ -81,10 +81,10 @@ angular.module('app').factory('AuthService', function($http, Session, $location,
         this.token = null;
         this.userName = null;
         this.logged = false;
-        $cookieStore.remove('logged');
-        $cookieStore.remove('userName');
-        $cookieStore.remove('token');
-        $cookieStore.remove('URL');
+        $cookieStore.remove('loggedNb');
+        $cookieStore.remove('userNameNb');
+        $cookieStore.remove('tokenNb');
+        $cookieStore.remove('URLNb');
 
     };
     return this;

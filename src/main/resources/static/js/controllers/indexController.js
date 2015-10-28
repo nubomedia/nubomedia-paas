@@ -17,14 +17,14 @@ app.controller('LoginController', function ($scope, AuthService, Session, $rootS
         "password": ''
     };
 
-    if (angular.isUndefined($cookieStore.get('logged'))) {
+    if (angular.isUndefined($cookieStore.get('loggedNb'))) {
         $scope.logged = false;
         $rootScope.logged = false;
     }
 
-    else if ($cookieStore.get('logged')) {
-        $scope.logged = $cookieStore.get('logged');
-        $rootScope.logged = $cookieStore.get('logged');
+    else if ($cookieStore.get('loggedNb')) {
+        $scope.logged = $cookieStore.get('loggedNb');
+        $rootScope.logged = $cookieStore.get('loggedNb');
     }
     $location.replace();
     console.log($scope.logged);
@@ -58,8 +58,8 @@ app.controller('LoginController', function ($scope, AuthService, Session, $rootS
      */
     $scope.login = function (credential) {
         AuthService.login(credential, $scope.URL);
-        $scope.loginError = angular.isUndefined($cookieStore.get('logged'));
-        console.log($cookieStore.get('logged'))
+        $scope.loginError = angular.isUndefined($cookieStore.get('loggedNb'));
+        console.log($cookieStore.get('loggedNb'))
     };
 
 
@@ -69,8 +69,8 @@ app.controller('LoginController', function ($scope, AuthService, Session, $rootS
 app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthService,http) {
 
 
-    var url = $cookieStore.get('URL');
-    $scope.logged = $cookieStore.get('logged');
+    var url = $cookieStore.get('URLNb');
+    $scope.logged = $cookieStore.get('loggedNb');
     console.log($scope.logged);
     $location.replace();
 
@@ -85,7 +85,7 @@ app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthServi
     if ($scope.logged)
         console.log('Ok Logged');
     $location.replace();
-    $scope.username = $cookieStore.get('userName');
+    $scope.username = $cookieStore.get('userNameNb');
 
     console.log($scope.username);
 

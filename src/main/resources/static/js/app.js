@@ -35,8 +35,8 @@ angular.module('app').run(function ($rootScope, $location, $cookieStore, $route)
     //$route.reload();
     $rootScope.$on('$routeChangeStart', function (event, next) {
 
-//        console.log($cookieStore.get('logged'));
-        if ($cookieStore.get('logged') === false || angular.isUndefined($cookieStore.get('logged'))) {
+//        console.log($cookieStore.get('loggedNb'));
+        if ($cookieStore.get('loggedNb') === false || angular.isUndefined($cookieStore.get('loggedNb'))) {
             // no logged user, we should be going to #login
             if (next.templateUrl === "login.html") {
                 // already going to #login, no redirect needed

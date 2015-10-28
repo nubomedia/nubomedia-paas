@@ -5,7 +5,7 @@ angular.module('app')
         var URL = 'http://emm-dev.nubomedia.eu:8090';
         var customHeaders = {};
 
-        if ($cookieStore.get('token') === '')
+        if ($cookieStore.get('tokenNb') === '')
             customHeaders = {
                 'Accept': 'application/json',
                 'Content-type': 'application/json'
@@ -15,7 +15,7 @@ angular.module('app')
             customHeaders = {
                 'Accept': 'application/json',
                 'Content-type': 'application/json',
-                'Auth-token': $cookieStore.get('token')
+                'Auth-token': $cookieStore.get('tokenNb')
             };
         }
 

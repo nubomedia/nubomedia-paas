@@ -1,6 +1,6 @@
 angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore,$http,$sce) {
 
-        var url = $cookieStore.get('URL') + '/api/v1/nubomedia/paas/app/';
+        var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
 
         $scope.alerts = [];
         $scope.apllications=[];

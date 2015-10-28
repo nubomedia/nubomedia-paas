@@ -98,8 +98,7 @@ require({
     'angular',
     'angular_route',
     'indexController',
-    'applicationController',
-
+    'applicationController'
 ], function(require) {
     return require(['bootstrap']);
 });
