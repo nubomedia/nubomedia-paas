@@ -66,7 +66,7 @@ public class OpenbatonManager {
         Set<VirtualNetworkFunctionRecord> vnfrs = nsr.getVnfr();
 
         for(VirtualNetworkFunctionRecord record : vnfrs){
-            if(record.getType().equals("media-server")){
+            if(record.getType().equals("media-server-vnf-1")){
                 res.setVnfrID(record.getId());
             }
         }

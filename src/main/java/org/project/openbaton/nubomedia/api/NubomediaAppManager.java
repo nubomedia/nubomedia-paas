@@ -2,7 +2,6 @@ package org.project.openbaton.nubomedia.api;
 
 import com.google.gson.GsonBuilder;
 import org.openbaton.catalogue.nfvo.Action;
-import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.api.messages.*;
@@ -19,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import javax.validation.Valid;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -96,10 +94,10 @@ public class NubomediaAppManager {
 
         switch (app.getStatus()){
             case CREATED:
-                app.setStatus(obmanager.getStatus(app.getGroupID()));
+                app.setStatus(obmanager.getStatus(app.getVnfrID()));
                 break;
             case INITIALIZING:
-                app.setStatus(obmanager.getStatus(app.getGroupID()));
+                app.setStatus(obmanager.getStatus(app.getVnfrID()));
                 break;
             case INITIALISED:
                 app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
@@ -183,12 +181,12 @@ public class NubomediaAppManager {
 
         if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
 
-            obmanager.deleteRecord(app.getGroupID());
+            obmanager.deleteRecord(app.getVnfrID());
             return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),200);
 
         }
 
-        obmanager.deleteRecord(app.getGroupID());
+        obmanager.deleteRecord(app.getVnfrID());
         HttpStatus resDelete = osmanager.deleteApplication(token, app.getAppName(), app.getProjectName());
 
         appRepo.delete(app);
@@ -243,7 +241,7 @@ public class NubomediaAppManager {
             app.setStatus(BuildingStatus.INITIALISED);
             appRepo.save(app);
             logger.debug("retrieved session for " + server.getToken());
-            String route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),server.getVnfrID()); //to be fixed with secret creation
+            String route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),server.getVnfrID());
             obmanager.deleteEvent(server.getEventID());
             app.setRoute(route);
             appRepo.save(app);

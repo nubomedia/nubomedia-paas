@@ -16,7 +16,7 @@ public class Application {
     private String appName;
     private String projectName;
     private String route;
-    private String groupID;
+    private String vnfrID;
     private String gitURL;
     private int[] targetPorts;
     private int[] ports;
@@ -26,13 +26,13 @@ public class Application {
     private String flavor;
     private BuildingStatus status;
 
-    public Application(String appID,String flavor, String appName, String projectName, String route, String groupID, String gitURL, int[] targetPorts, int[] ports, String[] protocols, int replicasNumber, String secretName) {
+    public Application(String appID,String flavor, String appName, String projectName, String route, String vnfrID, String gitURL, int[] targetPorts, int[] ports, String[] protocols, int replicasNumber, String secretName) {
         this.appID = appID;
         this.flavor = flavor;
         this.appName = appName;
         this.projectName = projectName;
         this.route = route;
-        this.groupID = groupID;
+        this.vnfrID = vnfrID;
         this.gitURL = gitURL;
         this.targetPorts = targetPorts;
 
@@ -76,12 +76,12 @@ public class Application {
         this.route = route;
     }
 
-    public String getGroupID() {
-        return groupID;
+    public String getVnfrID() {
+        return vnfrID;
     }
 
-    public void setGroupID(String groupID) {
-        this.groupID = groupID;
+    public void setVnfrID(String vnfrID) {
+        this.vnfrID = vnfrID;
     }
 
     public String getGitURL() {
