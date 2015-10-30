@@ -45,8 +45,12 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         $scope.sendApp = function () {
             var postTopology;
             var sendOk = true;
+
+            $scope.appCreate.ports = $scope.appCreate.ports.split(",");
+            $scope.appCreate.targetPorts = $scope.appCreate.targetPorts.split(",");
+            $scope.appCreate.protocols = $scope.appCreate.protocols.split(",");
             console.log($scope.appCreate);
-            console.log(postTopology);
+
             if ($scope.file !== '') {
                 postTopology = $scope.file;
             }
@@ -58,6 +62,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 alert('Problem with Topology');
                 sendOk = false;
             }
+            console.log(postTopology);
 
             if (sendOk) {
                 console.log(postTopology);
