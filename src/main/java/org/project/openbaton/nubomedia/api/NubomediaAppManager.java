@@ -1,6 +1,7 @@
 package org.project.openbaton.nubomedia.api;
 
 import com.google.gson.GsonBuilder;
+import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
@@ -240,8 +241,18 @@ public class NubomediaAppManager {
             OpenbatonCreateServer server = deploymentMap.get(id);
             app.setStatus(BuildingStatus.INITIALISED);
             appRepo.save(app);
+
+            String vnfrID ="";
+
+            for(VirtualNetworkFunctionRecord record : myevt.getPayload().getVnfr()){
+
+                if(record.getEndpoint().equals("media-server"))
+                    vnfrID = record.getId();
+
+            }
+
             logger.debug("retrieved session for " + server.getToken());
-            String route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),server.getVnfrID());
+            String route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),vnfrID);
             obmanager.deleteEvent(server.getEventID());
             app.setRoute(route);
             appRepo.save(app);

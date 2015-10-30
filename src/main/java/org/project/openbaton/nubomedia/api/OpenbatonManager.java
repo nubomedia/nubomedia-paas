@@ -63,13 +63,6 @@ public class OpenbatonManager {
         this.records.put(nsr.getId(),nsr);
         eventEndpoint.setNetworkServiceId(nsr.getId());
         res.setMediaServerID(nsr.getId());
-        Set<VirtualNetworkFunctionRecord> vnfrs = nsr.getVnfr();
-
-        for(VirtualNetworkFunctionRecord record : vnfrs){
-            if(record.getType().equals("media-server-vnf-1")){
-                res.setVnfrID(record.getId());
-            }
-        }
 
         eventEndpoint = this.nfvoRequestor.getEventAgent().create(eventEndpoint);
         res.setEventID(eventEndpoint.getId());
