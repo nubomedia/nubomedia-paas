@@ -1,8 +1,8 @@
-FROM alincalinciuc/nubomedia
+FROM java:7
 
 MAINTAINER Nubomedia
 
 ADD *.jar /usr/lib/jvm/java-1.7.0-openjdk-amd64/lib/
 ENV CLASSPATH $CLASSPATH:/usr/lib/jvm/java-1.7.0-openjdk-amd64/lib/
 RUN mkdir ~/.kurento
-RUN echo "kms.url.provider="de.fhg.fokus.nubomedia.kmc.KmsUrlProvider" > ~/.kurento/config.properties
+RUN echo "kms.url.provider=de.fhg.fokus.nubomedia.kmc.KmsUrlProvider" > ~/.kurento/config.properties
