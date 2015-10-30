@@ -94,10 +94,10 @@ public class NubomediaAppManager {
 
         switch (app.getStatus()){
             case CREATED:
-                app.setStatus(obmanager.getStatus(app.getVnfrID()));
+                app.setStatus(obmanager.getStatus(app.getNsrID()));
                 break;
             case INITIALIZING:
-                app.setStatus(obmanager.getStatus(app.getVnfrID()));
+                app.setStatus(obmanager.getStatus(app.getNsrID()));
                 break;
             case INITIALISED:
                 app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
@@ -181,12 +181,12 @@ public class NubomediaAppManager {
 
         if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
 
-            obmanager.deleteRecord(app.getVnfrID());
+            obmanager.deleteRecord(app.getNsrID());
             return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),200);
 
         }
 
-        obmanager.deleteRecord(app.getVnfrID());
+        obmanager.deleteRecord(app.getNsrID());
         HttpStatus resDelete = osmanager.deleteApplication(token, app.getAppName(), app.getProjectName());
 
         appRepo.delete(app);
