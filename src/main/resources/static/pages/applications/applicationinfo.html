@@ -26,13 +26,13 @@
         <a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a>
         <br/>
         <dl class="dl-horizontal">
-            <spam ng-repeat="(k,v) in application" ng-if="k!='route'">
-                <dt>{{k}}</dt>
-                <dd>{{v}}</dd>
-            </spam>
             <spam ng-if="application.route">
                 <dt>route</dt>
                 <dd><a href="http://{{application.route}}" target="_blank">{{application.route}}</a></dd>
+            </spam>
+            <spam ng-repeat="(k,v) in application" ng-if="k!='route'">
+                <dt>{{k}}</dt>
+                <dd>{{v}}</dd>
             </spam>
         </dl>
 
