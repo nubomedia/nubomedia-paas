@@ -69,7 +69,7 @@ public class NubomediaAppManager {
 
         deploymentMap.put(appID,openbatonCreateServer);
 
-        Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),"",openbatonCreateServer.getMediaServerID(), request.getGitURL(),request.getTargetPorts(),request.getPorts(),request.getProtocols(),request.getReplicasNumber(),request.getSecretName());
+        Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),"",openbatonCreateServer.getMediaServerID(), request.getGitURL(),request.getTargetPorts(),request.getPorts(),request.getProtocols(),request.getReplicasNumber(),request.getSecretName(),false);
         appRepo.save(persistApp);
 
         res.setApp(persistApp);
@@ -180,6 +180,15 @@ public class NubomediaAppManager {
         Application app = appRepo.findOne(id);
         logger.debug("Deleting " + app.toString());
 
+        if (!app.isResourceOK()){
+
+            String name = app.getAppName();
+            String projectName = app.getProjectName();
+            appRepo.delete(app);
+            return new NubomediaDeleteAppResponse(id,name,projectName,200);
+
+        }
+
         if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
 
             obmanager.deleteRecord(app.getNsrID());
@@ -240,6 +249,7 @@ public class NubomediaAppManager {
         if(myevt.getAction().equals(Action.INSTANTIATE_FINISH)){
             OpenbatonCreateServer server = deploymentMap.get(id);
             app.setStatus(BuildingStatus.INITIALISED);
+            app.setResourceOK(true);
             appRepo.save(app);
 
             String vnfrID ="";

@@ -1,5 +1,6 @@
 package org.project.openbaton.nubomedia.api.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 
 import javax.persistence.Entity;
@@ -25,8 +26,9 @@ public class Application {
     private String secretName;
     private String flavor;
     private BuildingStatus status;
+    @JsonIgnore private boolean resourceOK;
 
-    public Application(String appID,String flavor, String appName, String projectName, String route, String nsrID, String gitURL, int[] targetPorts, int[] ports, String[] protocols, int replicasNumber, String secretName) {
+    public Application(String appID,String flavor, String appName, String projectName, String route, String nsrID, String gitURL, int[] targetPorts, int[] ports, String[] protocols, int replicasNumber, String secretName,boolean resourceOK) {
         this.appID = appID;
         this.flavor = flavor;
         this.appName = appName;
@@ -47,6 +49,7 @@ public class Application {
         this.replicasNumber = replicasNumber;
         this.secretName = secretName;
         this.status = BuildingStatus.CREATED;
+        this.resourceOK = resourceOK;
     }
 
     public Application() {
@@ -154,6 +157,14 @@ public class Application {
 
     public void setStatus(BuildingStatus status) {
         this.status = status;
+    }
+
+    public boolean isResourceOK() {
+        return resourceOK;
+    }
+
+    public void setResourceOK(boolean resourceOK) {
+        this.resourceOK = resourceOK;
     }
 
     @Override
