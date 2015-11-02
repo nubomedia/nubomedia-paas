@@ -261,6 +261,7 @@ public class NubomediaAppManager {
         else if (myevt.getAction().equals(Action.ERROR)){
 
             app.setStatus(BuildingStatus.FAILED);
+            appRepo.save(app);
 
         }
 
