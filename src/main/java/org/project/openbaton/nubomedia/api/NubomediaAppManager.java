@@ -138,6 +138,15 @@ public class NubomediaAppManager {
 
         Application app = appRepo.findOne(id);
 
+        if(!app.isResourceOK()){
+
+            res.setId(id);
+            res.setAppName(app.getAppName());
+            res.setProjectName(app.getProjectName());
+            res.setLog("Something wrong on retrieving resources");
+
+        }
+
         if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
             res.setId(id);
             res.setAppName(app.getAppName());

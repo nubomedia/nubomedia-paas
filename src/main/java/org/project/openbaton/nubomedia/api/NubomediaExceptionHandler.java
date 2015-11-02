@@ -34,7 +34,7 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         NubomediaAppNotFoundMessage body = new NubomediaAppNotFoundMessage(request.getParameter("id"),request.getHeader("Auth-token"));
-        return handleExceptionInternal(e,body,headers,HttpStatus.NOT_FOUND,request);
+        return new ResponseEntity<Object>(body,HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({UnauthorizedException.class})
@@ -44,7 +44,7 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         NubomediaUnauthorizedMessage body = new NubomediaUnauthorizedMessage("Wrong authentication",e.getMessage());
-        return handleExceptionInternal(e,body,headers,HttpStatus.UNAUTHORIZED,request);
+        return new ResponseEntity<Object>(body,HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({SDKException.class})
@@ -54,7 +54,7 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         NubomediaOpenbatonMessage body = new NubomediaOpenbatonMessage("Bad Request",e.getMessage());
-        return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
+        return new ResponseEntity<Object>(body,HttpStatus.BAD_REQUEST);
     }
 
 }
