@@ -12,16 +12,16 @@
       "vdu":[
         {
           "vm_image":[
-            "nubomedia/kurento-media-server"
+            "alincalinciuc/openstack_kms_6_0"
           ],
-          "vimInstanceName":"nubomedia-production",
+          "vimInstanceName":"vim-instance",
           "scale_in_out":3,
           "vnfc":[
             {
               "connection_point":[
                 {
-                  "floatingIp":"random",
-                  "virtual_link_reference":"internal_production"
+                  "floatingIp":"80.96.122.71",
+                  "virtual_link_reference":"internal_nubomedia"
                 }
               ]
             }
@@ -30,7 +30,7 @@
       ],
       "virtual_link":[
         {
-          "name":"internal_production"
+          "name":"internal_nubomedia"
         }
       ],
       "lifecycle_event":[
@@ -56,7 +56,7 @@
   ],
   "vld":[
     {
-      "name":"internal_production"
+      "name":"internal_nubomedia"
     }
   ],
   "vnf_dependency":[
