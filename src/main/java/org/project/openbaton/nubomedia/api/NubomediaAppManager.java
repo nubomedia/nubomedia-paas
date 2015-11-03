@@ -250,7 +250,7 @@ public class NubomediaAppManager {
 
     @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void startOpenshiftBuild(@RequestBody String evt, @PathVariable("id") String id) throws DuplicatedException { //TODO fix to throw it before
+    public void startOpenshiftBuild(@RequestBody String evt, @PathVariable("id") String id){ //TODO fix to throw it before
         logger.debug("starting callback for appId" + id);
         logger.info("Received event " + evt);
         Application app = appRepo.findOne(id);
@@ -272,7 +272,14 @@ public class NubomediaAppManager {
             }
 
             logger.debug("retrieved session for " + server.getToken());
-            String route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),vnfrID);
+            String route = null;
+            try {
+                route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),vnfrID);
+            } catch (DuplicatedException e) {
+                app.setRoute(e.getMessage());
+                app.setStatus(BuildingStatus.DUPLICATED);
+                return;
+            }
             obmanager.deleteEvent(server.getEventID());
             app.setRoute(route);
             appRepo.save(app);

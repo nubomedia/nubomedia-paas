@@ -8,6 +8,7 @@ public enum BuildingStatus {
     CREATED,
     INITIALIZING,
     INITIALISED,
+    DUPLICATED,
     BUILDING,
     BUILD_OK, //internal state not visible from outside, used to redirect requests to deploymentManager
     DEPLOYNG,

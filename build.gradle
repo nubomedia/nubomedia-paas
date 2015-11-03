@@ -63,7 +63,7 @@ repositories {
     }
 }
 dependencies {
-    compile 'org.openbaton:sdk:0.12'
+    compile 'org.openbaton:sdk:0.14'
     compile 'org.springframework.boot:spring-boot-starter-test:' + springBootVersion
     compile 'org.springframework.boot:spring-boot:' + springBootVersion
     compile 'org.springframework.boot:spring-boot-autoconfigure:' + springBootVersion
