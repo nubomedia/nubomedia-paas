@@ -278,6 +278,7 @@ public class NubomediaAppManager {
             } catch (DuplicatedException e) {
                 app.setRoute(e.getMessage());
                 app.setStatus(BuildingStatus.DUPLICATED);
+                appRepo.save(app);
                 return;
             }
             obmanager.deleteEvent(server.getEventID());
