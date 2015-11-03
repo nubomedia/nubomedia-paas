@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.json.ImageStreamConfig;
 import org.project.openbaton.nubomedia.api.openshift.json.Metadata;
 import org.project.openbaton.nubomedia.api.openshift.json.MetadataTypeAdapter;
@@ -33,15 +34,17 @@ public class ImageStreamManager {
         this.suffix = "/imagestreams/";
     }
 
-    public ResponseEntity<String> makeImageStream(String baseURL, String appName,String namespace,HttpHeaders authHeader){
+    public ResponseEntity<String> makeImageStream(String baseURL, String appName,String namespace,HttpHeaders authHeader) throws DuplicatedException {
         ImageStreamConfig message = MessageBuilderFactory.getImageStreamMessage(appName);
         logger.debug("Sending message " + mapper.toJson(message,ImageStreamConfig.class));
         String URL = baseURL + namespace + suffix;
         HttpEntity<String> imageStreamEntity = new HttpEntity<String>(mapper.toJson(message,ImageStreamConfig.class),authHeader);
         ResponseEntity response = template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
-
-        if(response.getStatusCode() != HttpStatus.OK) { logger.debug(response.toString()); }
         logger.debug("response " + response.getBody());
+
+        if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
+            throw new DuplicatedException("Application with " + appName + " is already present");
+        }
 
         return response;
     }

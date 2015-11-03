@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 import com.google.gson.Gson;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class DeploymentManager {
         this.rcSuffix = "/replicationcontrollers/";
     }
 
-    public ResponseEntity<String> makeDeployment(String baseURL, String appName, String dockerRepo, int[] ports,String[] protocols,int repnumbers,String namespace,HttpHeaders authHeader){
+    public ResponseEntity<String> makeDeployment(String baseURL, String appName, String dockerRepo, int[] ports,String[] protocols,int repnumbers,String namespace,HttpHeaders authHeader) throws DuplicatedException {
 
         logger.debug("params arg: " + appName + " " + dockerRepo + " " + ports + " " + protocols + " " + repnumbers);
         DeploymentConfig message = MessageBuilderFactory.getDeployMessage(appName, dockerRepo, ports, protocols, repnumbers);
@@ -44,6 +45,10 @@ public class DeploymentManager {
         HttpEntity<String> deployEntity = new HttpEntity<String>(mapper.toJson(message,DeploymentConfig.class),authHeader);
         ResponseEntity<String> response = template.exchange(URL, HttpMethod.POST,deployEntity,String.class);
         logger.debug("Deployment response: " + response);
+
+        if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
+            throw new DuplicatedException("Application with " + appName + " is already present");
+        }
 
         return response;
     }

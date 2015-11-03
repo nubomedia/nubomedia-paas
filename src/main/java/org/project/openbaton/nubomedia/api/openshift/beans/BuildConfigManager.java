@@ -2,6 +2,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 
 import com.google.gson.Gson;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.json.BuildConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class BuildConfigManager {
         this.suffix = "/buildconfigs/";
     }
 
-    public ResponseEntity<String> createBuildConfig (String baseURL, String appName,String namespace,String dockerRepo,String gitURL, HttpHeaders authHeader, String secretName,String mediaServerGID,String mediaServerIP, String mediaServerPort){
+    public ResponseEntity<String> createBuildConfig (String baseURL, String appName,String namespace,String dockerRepo,String gitURL, HttpHeaders authHeader, String secretName,String mediaServerGID,String mediaServerIP, String mediaServerPort) throws DuplicatedException {
 
         BuildConfig message = MessageBuilderFactory.getBuilderMessage(appName, dockerRepo, gitURL, secretName,mediaServerGID, mediaServerIP, mediaServerPort);
         logger.debug("writing message " + mapper.toJson(message,BuildConfig.class));
@@ -37,6 +38,10 @@ public class BuildConfigManager {
         HttpEntity<String> buildEntity = new HttpEntity<>(mapper.toJson(message, BuildConfig.class), authHeader);
         ResponseEntity response = template.exchange(URL, HttpMethod.POST,buildEntity,String.class);
         logger.debug("Build response: " + response.toString());
+
+        if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
+            throw new DuplicatedException("Application with " + appName + " is already present");
+        }
 
         return response;
     }

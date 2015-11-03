@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.json.Metadata;
 import org.project.openbaton.nubomedia.api.openshift.json.MetadataTypeAdapter;
 import org.project.openbaton.nubomedia.api.openshift.json.ServiceConfig;
@@ -33,7 +34,7 @@ public class ServiceManager {
     }
 
 
-    public ResponseEntity<String> makeService(String kubernetesBaseURL, String appName,String namespace,int[] ports,int[] targetPorts,String[] protocols,HttpHeaders authHeader){
+    public ResponseEntity<String> makeService(String kubernetesBaseURL, String appName,String namespace,int[] ports,int[] targetPorts,String[] protocols,HttpHeaders authHeader) throws DuplicatedException {
         ServiceConfig message = MessageBuilderFactory.getServiceMessage(appName, ports, targetPorts, protocols);
 
         logger.debug("Writing service creation " + mapper.toJson(message,ServiceConfig.class));
@@ -42,7 +43,9 @@ public class ServiceManager {
         HttpEntity<String> serviceEntity = new HttpEntity<String>(mapper.toJson(message,ServiceConfig.class),authHeader);
         ResponseEntity response = template.exchange(URL, HttpMethod.POST,serviceEntity,String.class);
 
-        logger.debug("Service response: " + response);
+        if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
+            throw new DuplicatedException("Application with " + appName + " is already present");
+        }
 
         return response;
     }

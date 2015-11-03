@@ -2,10 +2,8 @@ package org.project.openbaton.nubomedia.api;
 
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
-import org.project.openbaton.nubomedia.api.messages.NubomediaAppNotFoundMessage;
-import org.project.openbaton.nubomedia.api.messages.NubomediaAuthorizationRequest;
-import org.project.openbaton.nubomedia.api.messages.NubomediaOpenbatonMessage;
-import org.project.openbaton.nubomedia.api.messages.NubomediaUnauthorizedMessage;
+import org.project.openbaton.nubomedia.api.messages.*;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +28,7 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ApplicationNotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     protected ResponseEntity<Object> handleAppNotFound(Exception e,WebRequest request){
-        logger.debug("handling ApplicationNotFoundException from " + request.getDescription(true));
+        logger.info("handling ApplicationNotFoundException from " + request.getDescription(true));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         NubomediaAppNotFoundMessage body = new NubomediaAppNotFoundMessage(request.getParameter("id"),request.getHeader("Auth-token"));
@@ -40,7 +38,7 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({UnauthorizedException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     protected ResponseEntity<Object> handleUnauthorized(Exception e, WebRequest request){
-        logger.debug("handling UnauthorizedException from " + request.getDescription(true));
+        logger.info("handling UnauthorizedException from " + request.getDescription(true));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         NubomediaUnauthorizedMessage body = new NubomediaUnauthorizedMessage("Wrong authentication",e.getMessage());
@@ -50,11 +48,21 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({SDKException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Object> handleSDK (Exception e, WebRequest request){
-        logger.debug("handling SDKException from " + request.getDescription(true));
+        logger.info("handling SDKException from " + request.getDescription(true));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         NubomediaOpenbatonMessage body = new NubomediaOpenbatonMessage("Bad Request",e.getMessage());
         return new ResponseEntity<Object>(body,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({DuplicatedException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    protected ResponseEntity<Object> handleDup (Exception e, WebRequest request){
+        logger.info("handling duplicate from " + request.getDescription(true));
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
+        NubomediaDupMessage body = new NubomediaDupMessage(e.getMessage(), request.getParameter("token"));
+        return new ResponseEntity<Object>(body,HttpStatus.CONFLICT);
     }
 
 }

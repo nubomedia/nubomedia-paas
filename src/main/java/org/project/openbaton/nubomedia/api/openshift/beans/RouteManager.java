@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.json.Metadata;
 import org.project.openbaton.nubomedia.api.openshift.json.MetadataTypeAdapter;
 import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
@@ -32,7 +33,7 @@ public class RouteManager {
         this.suffix = "/routes/";
     }
 
-    public ResponseEntity<String> makeRoute(String baseURL,String appID, String name, String namespace, HttpHeaders authHeader) {
+    public ResponseEntity<String> makeRoute(String baseURL,String appID, String name, String namespace, HttpHeaders authHeader) throws DuplicatedException {
         RouteConfig message = MessageBuilderFactory.getRouteMessage(name, appID);
 
         logger.debug("Route message " + mapper.toJson(message,RouteConfig.class));
@@ -41,7 +42,9 @@ public class RouteManager {
         HttpEntity<String> routeEntity = new HttpEntity<String>(mapper.toJson(message, RouteConfig.class), authHeader);
         ResponseEntity response = template.exchange(URL, HttpMethod.POST, routeEntity, String.class);
 
-        if(response.getStatusCode() != HttpStatus.OK) logger.debug("Deployment response: " + response.toString());
+        if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
+            throw new DuplicatedException("Application with " + name + " is already present");
+        }
 
         return response;
     }
