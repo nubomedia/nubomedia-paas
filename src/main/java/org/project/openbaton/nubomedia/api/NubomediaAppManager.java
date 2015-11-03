@@ -8,6 +8,7 @@ import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundExcepti
 import org.project.openbaton.nubomedia.api.messages.*;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonEvent;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.persistence.Application;
 import org.project.openbaton.nubomedia.api.persistence.ApplicationRepository;
@@ -249,7 +250,7 @@ public class NubomediaAppManager {
 
     @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void startOpenshiftBuild(@RequestBody String evt, @PathVariable("id") String id){
+    public void startOpenshiftBuild(@RequestBody String evt, @PathVariable("id") String id) throws DuplicatedException { //TODO fix to throw it before
         logger.debug("starting callback for appId" + id);
         logger.info("Received event " + evt);
         Application app = appRepo.findOne(id);
