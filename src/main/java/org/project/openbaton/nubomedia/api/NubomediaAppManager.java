@@ -12,6 +12,7 @@ import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedExcept
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.persistence.Application;
 import org.project.openbaton.nubomedia.api.persistence.ApplicationRepository;
+import org.project.openbaton.nubomedia.api.utils.KeystoreUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class NubomediaAppManager {
 
     @PostConstruct
     private void init() {
-        System.setProperty("javax.net.ssl.trustStore", "resource/openshift-keystore");
+        System.setProperty("javax.net.ssl.trustStore", KeystoreUtils.getKeystore());
         this.logger = LoggerFactory.getLogger(this.getClass());
         this.appIDGenerator = new SecureRandom();
     }
