@@ -10,6 +10,7 @@ import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonEvent;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.NameToLongException;
 import org.project.openbaton.nubomedia.api.persistence.Application;
 import org.project.openbaton.nubomedia.api.persistence.ApplicationRepository;
 import org.slf4j.Logger;
@@ -52,10 +53,16 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app",  method = RequestMethod.POST)
-    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException {
+    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameToLongException {
 
         if(token == null){
             throw new UnauthorizedException("no auth-token header");
+        }
+
+        if(request.getAppName().length() > 19){
+
+            throw new NameToLongException("name is too long");
+
         }
 
         if(!appRepo.findByAppName(request.getAppName()).isEmpty()){
