@@ -55,14 +55,14 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(body,HttpStatus.BAD_REQUEST);
     }
 
-//    @ExceptionHandler({DuplicatedException.class})
-//    @ResponseStatus(HttpStatus.CONFLICT)
-//    protected ResponseEntity<Object> handleDup (Exception e, WebRequest request){
-//        logger.info("handling duplicate from " + request.getDescription(true));
-//        HttpHeaders header = new HttpHeaders();
-//        header.setContentType(MediaType.APPLICATION_JSON);
-//        NubomediaDupMessage body = new NubomediaDupMessage(e.getMessage(), request.getParameter("token"));
-//        return new ResponseEntity<Object>(body,HttpStatus.CONFLICT);
-//    }
+    @ExceptionHandler({DuplicatedException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    protected ResponseEntity<Object> handleDup (Exception e, WebRequest request){
+        logger.info("handling duplicate from " + request.getDescription(true));
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
+        NubomediaDupMessage body = new NubomediaDupMessage(e.getMessage(), request.getParameter("token"));
+        return new ResponseEntity<Object>(body,HttpStatus.CONFLICT);
+    }
 
 }

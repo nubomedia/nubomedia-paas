@@ -52,10 +52,14 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app",  method = RequestMethod.POST)
-    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException {
+    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException {
 
         if(token == null){
             throw new UnauthorizedException("no auth-token header");
+        }
+
+        if(!appRepo.findByAppName(request.getAppName()).isEmpty()){
+            throw new DuplicatedException("Application with " + request.getAppName() + " already exist");
         }
 
         NubomediaCreateAppResponse res = new NubomediaCreateAppResponse();
