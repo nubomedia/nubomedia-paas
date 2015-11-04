@@ -33,7 +33,8 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         NubomediaAppNotFoundMessage body = new NubomediaAppNotFoundMessage(request.getParameter("id"),request.getHeader("Auth-token"));
-        return new ResponseEntity<Object>(body,HttpStatus.NOT_FOUND);
+        return handleExceptionInternal(e,body,headers,HttpStatus.NOT_FOUND,request);
+
     }
 
     @ExceptionHandler({UnauthorizedException.class})
@@ -43,7 +44,7 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         NubomediaUnauthorizedMessage body = new NubomediaUnauthorizedMessage("Wrong authentication",e.getMessage());
-        return new ResponseEntity<Object>(body,HttpStatus.UNAUTHORIZED);
+        return handleExceptionInternal(e,body,headers,HttpStatus.UNAUTHORIZED,request);
     }
 
     @ExceptionHandler({SDKException.class})
@@ -53,7 +54,7 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         NubomediaOpenbatonMessage body = new NubomediaOpenbatonMessage("Bad Request",e.getMessage());
-        return new ResponseEntity<Object>(body,HttpStatus.BAD_REQUEST);
+        return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
     }
 
     @ExceptionHandler({DuplicatedException.class})
@@ -63,7 +64,7 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         NubomediaDupMessage body = new NubomediaDupMessage(e.getMessage(), request.getParameter("token"));
-        return new ResponseEntity<Object>(body,HttpStatus.CONFLICT);
+        return handleExceptionInternal(e,body,header,HttpStatus.CONFLICT,request);
     }
 
     @ExceptionHandler({NameToLongException.class})
