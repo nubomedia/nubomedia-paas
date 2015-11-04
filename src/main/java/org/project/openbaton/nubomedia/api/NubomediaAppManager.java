@@ -59,7 +59,7 @@ public class NubomediaAppManager {
             throw new UnauthorizedException("no auth-token header");
         }
 
-        if(request.getAppName().length() > 19){
+        if(request.getAppName().length() > 18){
 
             throw new NameToLongException("name is too long");
 
