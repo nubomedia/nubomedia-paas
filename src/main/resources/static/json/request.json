@@ -3,13 +3,13 @@
   "appName":"magic-mirror",
   "projectName":"nubomedia2",
   "protocols":[
-    "TCP","TCP"
+    "TCP","TCP","TCP","TCP"
   ],
   "ports":[
-    8080,8888
+    8080,8888,8092,8100
   ],
   "targetPorts":[
-    8080,8888
+    8080,8888,8092,8100
   ],
   "flavor":"m1.medium",
   "replicasNumber":2,
