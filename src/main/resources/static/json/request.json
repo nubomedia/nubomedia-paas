@@ -1,15 +1,15 @@
 {
-  "gitURL":"https://gitlab.fokus.fraunhofer.de/openbaton/nubomedia-app.git",
-  "appName":"provadocker-public",
+  "gitURL":"https://gitlab.fokus.fraunhofer.de/maa/nubomedia-magic-mirror.git",
+  "appName":"magic-mirror",
   "projectName":"nubomedia2",
   "protocols":[
-    "TCP","TCP","TCP","TCP"
+    "TCP","TCP"
   ],
   "ports":[
-    8888,22,8092,8100
+    8080,8888
   ],
   "targetPorts":[
-    8888,22,8092,8100
+    8080,8888
   ],
   "flavor":"m1.medium",
   "replicasNumber":2,
