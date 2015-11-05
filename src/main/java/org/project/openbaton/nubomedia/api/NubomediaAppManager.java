@@ -10,7 +10,7 @@ import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonEvent;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
-import org.project.openbaton.nubomedia.api.openshift.exceptions.NameToLongException;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.NameStructureException;
 import org.project.openbaton.nubomedia.api.persistence.Application;
 import org.project.openbaton.nubomedia.api.persistence.ApplicationRepository;
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app",  method = RequestMethod.POST)
-    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameToLongException {
+    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException {
 
         if(token == null){
             throw new UnauthorizedException("no auth-token header");
@@ -61,7 +61,13 @@ public class NubomediaAppManager {
 
         if(request.getAppName().length() > 18){
 
-            throw new NameToLongException("name is too long");
+            throw new NameStructureException("name is too long");
+
+        }
+
+        if(request.getAppName().contains(".")){
+
+            throw new NameStructureException("name can't contains dots");
 
         }
 

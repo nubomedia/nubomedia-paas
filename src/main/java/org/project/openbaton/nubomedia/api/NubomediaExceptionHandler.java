@@ -4,7 +4,7 @@ import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.api.messages.*;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
-import org.project.openbaton.nubomedia.api.openshift.exceptions.NameToLongException;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.NameStructureException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e,body,header,HttpStatus.CONFLICT,request);
     }
 
-    @ExceptionHandler({NameToLongException.class})
+    @ExceptionHandler({NameStructureException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Object> handleNameToLong(Exception e, WebRequest request){
         logger.info("Handling to long name from " + request.getDescription(true));
