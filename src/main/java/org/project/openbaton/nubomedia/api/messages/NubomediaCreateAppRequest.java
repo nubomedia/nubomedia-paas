@@ -8,9 +8,7 @@ public class NubomediaCreateAppRequest {
     private String gitURL;
     private String appName;
     private String projectName;
-    private String[] protocols;
-    private int[] ports;
-    private int[] targetPorts;
+    private NubomediaPort[] ports;
     private String flavor;
     private int replicasNumber;
     private String secretName;
@@ -42,28 +40,12 @@ public class NubomediaCreateAppRequest {
         this.projectName = projectName;
     }
 
-    public String[] getProtocols() {
-        return protocols;
-    }
-
-    public void setProtocols(String[] protocols) {
-        this.protocols = protocols;
-    }
-
-    public int[] getPorts() {
+    public NubomediaPort[] getPorts() {
         return ports;
     }
 
-    public void setPorts(int[] ports) {
+    public void setPorts(NubomediaPort[] ports) {
         this.ports = ports;
-    }
-
-    public int[] getTargetPorts() {
-        return targetPorts;
-    }
-
-    public void setTargetPorts(int[] targetPorts) {
-        this.targetPorts = targetPorts;
     }
 
     public String getFlavor() {

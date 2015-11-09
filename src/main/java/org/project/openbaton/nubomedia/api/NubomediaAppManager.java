@@ -75,11 +75,23 @@ public class NubomediaAppManager {
             throw new DuplicatedException("Application with " + request.getAppName() + " already exist");
         }
 
+        String[] protocols = new String[request.getPorts().length];
+        int[] targetPorts = new int[request.getPorts().length];
+        int[] ports = new int[request.getPorts().length];
+
+        for (int i = 0; i < request.getPorts().length; i++){
+
+            protocols[i] = request.getPorts()[i].getProtocol();
+            targetPorts[i] = request.getPorts()[i].getTargetPort();
+            ports[i] = request.getPorts()[i].getPort();
+
+        }
+
         NubomediaCreateAppResponse res = new NubomediaCreateAppResponse();
         String appID = new BigInteger(130,appIDGenerator).toString(64);
         logger.debug("App ID " + appID + "\n");
 
-        logger.debug("request params " + request.getAppName() + " " + request.getGitURL() + " " + request.getProjectName() + " " + request.getPorts() + " " + request.getProtocols() + " " + request.getReplicasNumber());
+        logger.debug("request params " + request.getAppName() + " " + request.getGitURL() + " " + request.getProjectName() + " " + ports + " " + protocols + " " + request.getReplicasNumber());
 
         //Openbaton MediaServer Request
         OpenbatonCreateServer openbatonCreateServer = obmanager.getMediaServerGroupID(request.getFlavor(),appID);
@@ -87,7 +99,7 @@ public class NubomediaAppManager {
 
         deploymentMap.put(appID,openbatonCreateServer);
 
-        Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),"",openbatonCreateServer.getMediaServerID(), request.getGitURL(),request.getTargetPorts(),request.getPorts(),request.getProtocols(),request.getReplicasNumber(),request.getSecretName(),false);
+        Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),"",openbatonCreateServer.getMediaServerID(), request.getGitURL(), targetPorts, ports, protocols,request.getReplicasNumber(),request.getSecretName(),false);
         appRepo.save(persistApp);
 
         res.setApp(persistApp);
