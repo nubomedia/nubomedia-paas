@@ -279,13 +279,13 @@ public class NubomediaAppManager {
 
     @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void startOpenshiftBuild(@RequestBody String evt, @PathVariable("id") String id){ //TODO fix to throw it before
+    public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id){ //TODO fix to throw it before
         logger.debug("starting callback for appId" + id);
         logger.info("Received event " + evt);
         Application app = appRepo.findOne(id);
         logger.debug(deploymentMap.toString());
-        OpenbatonEvent myevt = new GsonBuilder().create().fromJson(evt,OpenbatonEvent.class);
-        if(myevt.getAction().equals(Action.INSTANTIATE_FINISH)){
+//        OpenbatonEvent myevt = new GsonBuilder().create().fromJson(evt,OpenbatonEvent.class);
+        if(evt.getAction().equals(Action.INSTANTIATE_FINISH)){
             OpenbatonCreateServer server = deploymentMap.get(id);
             app.setStatus(BuildingStatus.INITIALISED);
             app.setResourceOK(true);
@@ -293,7 +293,7 @@ public class NubomediaAppManager {
 
             String vnfrID ="";
 
-            for(VirtualNetworkFunctionRecord record : myevt.getPayload().getVnfr()){
+            for(VirtualNetworkFunctionRecord record : evt.getPayload().getVnfr()){
 
                 if(record.getEndpoint().equals("media-server"))
                     vnfrID = record.getId();
@@ -315,7 +315,7 @@ public class NubomediaAppManager {
             appRepo.save(app);
             deploymentMap.remove(app.getAppID());
         }
-        else if (myevt.getAction().equals(Action.ERROR)){
+        else if (evt.getAction().equals(Action.ERROR)){
 
             app.setStatus(BuildingStatus.FAILED);
             appRepo.save(app);
