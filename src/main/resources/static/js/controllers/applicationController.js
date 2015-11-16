@@ -46,9 +46,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             var postTopology;
             var sendOk = true;
 
-            $scope.appCreate.ports = $scope.appCreate.ports.split(",");
-            $scope.appCreate.targetPorts = $scope.appCreate.targetPorts.split(",");
-            $scope.appCreate.protocols = $scope.appCreate.protocols.split(",");
+
             console.log($scope.appCreate);
 
             if ($scope.file !== '') {
@@ -65,7 +63,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             console.log(postTopology);
 
             if (sendOk) {
-                console.log(postTopology);
+                console.log(JSON.stringify(postTopology));
                 http.post(url, $scope.appCreate)
                     .success(function (response) {
                         showOk('App created!');
@@ -80,6 +78,17 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         };
 
+        $scope.addPort = function(){
+            $scope.appCreate.ports.push({
+                "port":8080,
+                "targetPort":8080,
+                "protocol":"TCP"
+            });
+        };
+
+        $scope.deletePort = function(index){
+            $scope.appCreate.ports.splice(index, 1);
+        };
         $scope.deleteData = function (id) {
             http.delete(url + id)
                 .success(function (response) {
