@@ -284,9 +284,9 @@ public class NubomediaAppManager {
         logger.info("Received event " + evt);
         Application app = appRepo.findOne(id);
         logger.debug(deploymentMap.toString());
-//        OpenbatonEvent myevt = new GsonBuilder().create().fromJson(evt,OpenbatonEvent.class);
-        if(evt.getAction().equals(Action.INSTANTIATE_FINISH)){
-            OpenbatonCreateServer server = deploymentMap.get(id);
+        OpenbatonCreateServer server = deploymentMap.get(id);
+
+        if(evt.getAction().equals(Action.INSTANTIATE_FINISH) && server.getMediaServerID().equals(evt.getPayload().getId())){
             app.setStatus(BuildingStatus.INITIALISED);
             app.setResourceOK(true);
             appRepo.save(app);
