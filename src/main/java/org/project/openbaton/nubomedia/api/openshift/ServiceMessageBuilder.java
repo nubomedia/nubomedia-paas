@@ -32,6 +32,11 @@ public class ServiceMessageBuilder {
         }
         else {
             for (int i = 0; i < targetPorts.length; i++) {
+
+                if(ports[i] == 0){
+                    sPorts[i] = new ServiceSpec.ServicePort(protocols[i], targetPorts[i], targetPorts[i], protocols[i].toLowerCase() + "-" +targetPorts[i]);
+                }
+
                 sPorts[i] = new ServiceSpec.ServicePort(protocols[i], ports[i], targetPorts[i], protocols[i].toLowerCase() + "-" +targetPorts[i]);
             }
         }
