@@ -1,6 +1,5 @@
 package org.project.openbaton.nubomedia.api.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 
