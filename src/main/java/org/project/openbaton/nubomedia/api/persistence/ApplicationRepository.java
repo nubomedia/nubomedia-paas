@@ -10,5 +10,5 @@ import java.util.List;
 public interface ApplicationRepository extends CrudRepository<Application, String> {
 
     List<Application> findByAppName(String appName);
-    Application findFirstById(String id);
+    Application findFirstByAppID(String id);
 }

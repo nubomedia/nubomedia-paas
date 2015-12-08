@@ -119,7 +119,7 @@ public class NubomediaAppManager {
             throw new ApplicationNotFoundException("Application with ID not found");
         }
 
-        Application app = appRepo.findFirstById(id);
+        Application app = appRepo.findFirstByAppID(id);
         logger.debug("Retrieving status for " + app.toString());
 
         switch (app.getStatus()){
@@ -165,7 +165,7 @@ public class NubomediaAppManager {
             return null;
         }
 
-        Application app = appRepo.findFirstById(id);
+        Application app = appRepo.findFirstByAppID(id);
 
         if(!app.isResourceOK()){
 
@@ -215,7 +215,7 @@ public class NubomediaAppManager {
             return new NubomediaDeleteAppResponse(id,"Application not found","null",404);
         }
 
-        Application app = appRepo.findFirstById(id);
+        Application app = appRepo.findFirstByAppID(id);
         logger.debug("Deleting " + app.toString());
 
         if (!app.isResourceOK()){
@@ -281,7 +281,7 @@ public class NubomediaAppManager {
     public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id){ //TODO fix to throw it before
         logger.debug("starting callback for appId" + id);
         logger.info("Received event " + evt);
-        Application app = appRepo.findFirstById(id);
+        Application app = appRepo.findFirstByAppID(id);
         logger.debug(deploymentMap.toString());
         OpenbatonCreateServer server = deploymentMap.get(id);
 
