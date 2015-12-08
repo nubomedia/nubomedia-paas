@@ -1,10 +1,15 @@
 package org.project.openbaton.nubomedia.api.persistence;
 
 import com.google.gson.annotations.Expose;
+import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by maa on 28.09.15.
@@ -19,16 +24,19 @@ public class Application {
     private String route;
     private String nsrID;
     private String gitURL;
-    private int[] targetPorts;
-    private int[] ports;
-    private String[] protocols;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Integer> targetPorts;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Integer> ports;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> protocols;
     private int replicasNumber;
     private String secretName;
     private String flavor;
     private BuildingStatus status;
     @Expose(serialize = false,deserialize = false) private boolean resourceOK;
 
-    public Application(String appID,String flavor, String appName, String projectName, String route, String nsrID, String gitURL, int[] targetPorts, int[] ports, String[] protocols, int replicasNumber, String secretName,boolean resourceOK) {
+    public Application(String appID,String flavor, String appName, String projectName, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, int replicasNumber, String secretName,boolean resourceOK) {
         this.appID = appID;
         this.flavor = flavor;
         this.appName = appName;
@@ -95,30 +103,6 @@ public class Application {
         this.gitURL = gitURL;
     }
 
-    public int[] getTargetPorts() {
-        return targetPorts;
-    }
-
-    public void setTargetPorts(int[] targetPorts) {
-        this.targetPorts = targetPorts;
-    }
-
-    public int[] getPorts() {
-        return ports;
-    }
-
-    public void setPorts(int[] ports) {
-        this.ports = ports;
-    }
-
-    public String[] getProtocols() {
-        return protocols;
-    }
-
-    public void setProtocols(String[] protocols) {
-        this.protocols = protocols;
-    }
-
     public int getReplicasNumber() {
         return replicasNumber;
     }
@@ -165,6 +149,30 @@ public class Application {
 
     public void setResourceOK(boolean resourceOK) {
         this.resourceOK = resourceOK;
+    }
+
+    public List<Integer> getTargetPorts() {
+        return targetPorts;
+    }
+
+    public void setTargetPorts(List<Integer> targetPorts) {
+        this.targetPorts = targetPorts;
+    }
+
+    public List<Integer> getPorts() {
+        return ports;
+    }
+
+    public void setPorts(List<Integer> ports) {
+        this.ports = ports;
+    }
+
+    public List<String> getProtocols() {
+        return protocols;
+    }
+
+    public void setProtocols(List<String> protocols) {
+        this.protocols = protocols;
     }
 
     @Override

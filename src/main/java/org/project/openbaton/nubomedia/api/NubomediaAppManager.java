@@ -23,8 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -75,15 +74,15 @@ public class NubomediaAppManager {
             throw new DuplicatedException("Application with " + request.getAppName() + " already exist");
         }
 
-        String[] protocols = new String[request.getPorts().length];
-        int[] targetPorts = new int[request.getPorts().length];
-        int[] ports = new int[request.getPorts().length];
+        List<String> protocols = new ArrayList<>();
+        List<Integer> targetPorts = new ArrayList<>();
+        List<Integer> ports = new ArrayList<>();
 
         for (int i = 0; i < request.getPorts().length; i++){
 
-            protocols[i] = request.getPorts()[i].getProtocol();
-            targetPorts[i] = request.getPorts()[i].getTargetPort();
-            ports[i] = request.getPorts()[i].getPort();
+            protocols.add(request.getPorts()[i].getProtocol());
+            targetPorts.add(request.getPorts()[i].getTargetPort());
+            ports.add(request.getPorts()[i].getPort());
 
         }
 
@@ -303,7 +302,16 @@ public class NubomediaAppManager {
             logger.debug("retrieved session for " + server.getToken());
             String route = null;
             try {
-                route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), app.getPorts(), app.getTargetPorts(), app.getProtocols(), app.getReplicasNumber(), app.getSecretName(),vnfrID);
+                int[] ports = new int[app.getPorts().size()];
+                int[] targetPorts = new int[app.getTargetPorts().size()];
+
+                for(int i = 0; i < ports.length; i++){
+                    ports[i] = app.getPorts().get(i);
+                    targetPorts[i] = app.getTargetPorts().get(i);
+                }
+
+
+                route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(),vnfrID);
             } catch (DuplicatedException e) {
                 app.setRoute(e.getMessage());
                 app.setStatus(BuildingStatus.DUPLICATED);
