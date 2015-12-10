@@ -1,0 +1,17 @@
+{
+  "name":"nubomedia-production",
+  "authUrl":"http://192.168.145.18:5000/v2.0",
+  "tenant":"demo",
+  "username":"admin",
+  "password":"e0ebe520a17576cc3281",
+  "keyPair":"maa",
+  "securityGroups": [
+    "default"
+  ],
+  "type":"openstack",
+  "location":{
+	"name":"Munich",
+	"latitude":"52.525876",
+	"longitude":"13.314400"
+  }
+}
