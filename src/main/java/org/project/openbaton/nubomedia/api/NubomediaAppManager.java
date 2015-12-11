@@ -95,6 +95,7 @@ public class NubomediaAppManager {
         logger.debug("request params " + request.getAppName() + " " + request.getGitURL() + " " + request.getProjectName() + " " + ports + " " + protocols + " " + request.getReplicasNumber());
 
         //Openbaton MediaServer Request
+        logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
         OpenbatonCreateServer openbatonCreateServer = obmanager.getMediaServerGroupID(request.getFlavor(),appID);
         openbatonCreateServer.setToken(token);
 
