@@ -326,7 +326,7 @@ public class NubomediaAppManager {
             obmanager.deleteEvent(server.getEventID());
             app.setRoute(route);
             appRepo.save(app);
-//            deploymentMap.remove(app.getAppID());
+            deploymentMap.remove(app.getAppID());
         }
         else if (evt.getAction().equals(Action.ERROR)){
 
@@ -337,20 +337,20 @@ public class NubomediaAppManager {
 
     }
 
-    @Scheduled(initialDelay = 0,fixedDelay = 200)
-    public void refreshStatus() throws ApplicationNotFoundException, UnauthorizedException {
-
-        for (String id : deploymentMap.keySet()){
-            boolean writed = false;
-            OpenbatonCreateServer ocs = deploymentMap.get(id);
-            Application app = this.getApp(ocs.getToken(),id);
-            if(app.getStatus() == BuildingStatus.RUNNING && !writed){
-                logger.info("[PAAS]: APP_RUNNING " + new Date().getTime());
-                writed = true;
-            }
-        }
-
-    }
+//    @Scheduled(initialDelay = 0,fixedDelay = 200)
+//    public void refreshStatus() throws ApplicationNotFoundException, UnauthorizedException {
+//
+//        for (String id : deploymentMap.keySet()){
+//            boolean writed = false;
+//            OpenbatonCreateServer ocs = deploymentMap.get(id);
+//            Application app = this.getApp(ocs.getToken(),id);
+//            if(app.getStatus() == BuildingStatus.RUNNING && !writed){
+//                logger.info("[PAAS]: APP_RUNNING " + new Date().getTime());
+//                writed = true;
+//            }
+//        }
+//
+//    }
 
 }
 
