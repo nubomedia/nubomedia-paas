@@ -58,6 +58,7 @@ public class OpenbatonManager {
         eventEndpoint.setEndpoint(properties.getProperty("internalURL") + apiPath +"/openbaton/" + appID);
         eventEndpoint.setEvent(Action.INSTANTIATE_FINISH);
 
+        logger.info("[PAAS]: CREATE_APP_OB " + new Date().getTime());
         nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
         logger.debug("NSR " + nsr.toString());
         this.records.put(nsr.getId(),nsr);

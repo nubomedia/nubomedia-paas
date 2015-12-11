@@ -1,6 +1,7 @@
 package org.project.openbaton.nubomedia.api;
 
 import com.google.gson.GsonBuilder;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.sdk.api.exception.SDKException;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -286,6 +288,7 @@ public class NubomediaAppManager {
         OpenbatonCreateServer server = deploymentMap.get(id);
 
         if(evt.getAction().equals(Action.INSTANTIATE_FINISH) && server.getMediaServerID().equals(evt.getPayload().getId())){
+            logger.info("[PAAS]: EVENT_FINISH " + new Date().getTime());
             app.setStatus(BuildingStatus.INITIALISED);
             app.setResourceOK(true);
             appRepo.save(app);
@@ -310,8 +313,9 @@ public class NubomediaAppManager {
                     targetPorts[i] = app.getTargetPorts().get(i);
                 }
 
-
+                logger.info("[PAAS]: CREATE_APP_OS " + new Date().getTime());
                 route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(),vnfrID);
+                logger.info("[PAAS]: SCHEDULED_APP_OS " + new Date().getTime());
             } catch (DuplicatedException e) {
                 app.setRoute(e.getMessage());
                 app.setStatus(BuildingStatus.DUPLICATED);
@@ -321,13 +325,28 @@ public class NubomediaAppManager {
             obmanager.deleteEvent(server.getEventID());
             app.setRoute(route);
             appRepo.save(app);
-            deploymentMap.remove(app.getAppID());
+//            deploymentMap.remove(app.getAppID());
         }
         else if (evt.getAction().equals(Action.ERROR)){
 
             app.setStatus(BuildingStatus.FAILED);
             appRepo.save(app);
 
+        }
+
+    }
+
+    @Scheduled(initialDelay = 0,fixedDelay = 200)
+    public void refreshStatus() throws ApplicationNotFoundException, UnauthorizedException {
+
+        for (String id : deploymentMap.keySet()){
+            boolean writed = false;
+            OpenbatonCreateServer ocs = deploymentMap.get(id);
+            Application app = this.getApp(ocs.getToken(),id);
+            if(app.getStatus() == BuildingStatus.RUNNING && !writed){
+                logger.info("[PAAS]: APP_RUNNING " + new Date().getTime());
+                writed = true;
+            }
         }
 
     }
