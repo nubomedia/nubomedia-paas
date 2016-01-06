@@ -1,7 +1,5 @@
 package org.project.openbaton.nubomedia.api;
 
-import com.google.gson.GsonBuilder;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.sdk.api.exception.SDKException;
@@ -10,8 +8,8 @@ import org.project.openbaton.nubomedia.api.messages.*;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonEvent;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
-import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.NameStructureException;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.persistence.Application;
 import org.project.openbaton.nubomedia.api.persistence.ApplicationRepository;
 import org.slf4j.Logger;
@@ -19,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
