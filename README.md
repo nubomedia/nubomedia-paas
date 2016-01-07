@@ -20,7 +20,7 @@ Create, build, deploy and make it avaliable is possible through an HTTP POST on 
 The response is a json object with two fields:
 
 * id: the id of the application;
-* route: the URL of the application visible from outside (tipically appName.paas.nubomedia.eu)
+* route: the URL of the application visible from outside (typically appName.paas.nubomedia.eu)
 
 
 

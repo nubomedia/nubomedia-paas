@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+set -e
+#
+# This script allows you to install Nubomedia PaaS API. To execute it:
+#
+# 'curl -fsSkL https://gitlab.fokus.fraunhofer.de/NUBOMEDIA/nubomedia-paas/raw/master/bootstrap | bash'
+
+
+export DEBIAN_FRONTEND=noninteractive
+_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+_nubomedia_paas_base_repo="https://gitlab.fokus.fraunhofer.de/NUBOMEDIA/nubomedia-paas.git"
+_tag="develop"
+#_tag="tags/0.15"
+
+_base=/opt
+_nubomedia_base="${_base}/nubomedia"
+_nubomedia_paas="${_nubomedia_base}/nubomedia-paas"
+_log_folder=/var/log/nubomedia
+
+_user="$(id -un 2>/dev/null || true)"
+
+function checkBinary {
+  echo -n " * Checking for '$1'..."
+  if command -v $1 >/dev/null 2>&1; then
+     echo "OK"
+     return 0
+   else
+     echo >&2 "FAILED."
+     return 1
+   fi
+}
+
+_ex='sh -c'
+if [ "$_user" != 'root' ]; then
+    if checkBinary sudo; then
+        _ex='sudo -E sh -c'
+    elif checkBinary su; then
+        _ex='su -c'
+    fi
+fi
+
+function createNubomediaBase {
+    echo "Creating the Nubomedia base folder"
+    # removing it if exists
+    #$_ex 'rm -rf '$_nubomedia_base
+    $_ex 'mkdir -p '$_nubomedia_paas
+    $_ex 'chown -R '"$_user $_nubomedia_base"
+
+    # create log folder and give perission
+    #$_ex 'rm -rf '$_log_folder
+    $_ex 'mkdir -p '$_log_folder
+    $_ex 'chown -R '"$_user $_log_folder"
+}
+
+function compileProperties {
+     read -p "Enter the PaaS ip [localhost]: " baseUrl
+     if [[ baseUrl != "" ]]; then
+         $_ex 'sed -i "s/baseURL = localhost/baseURL = $baseUrl/g" /etc/nubomedia/paas.properties'
+     fi
+
+     read -p "Enter the PaaS API ip [localhost]: " paasIp
+     if [[ paasIp != "" ]]; then
+         $_ex 'sed -i "s/internalURL = localhost/internalURL = $paasIp/g" /etc/nubomedia/paas.properties'
+     fi
+
+     read -p "Enter the Vnfm ip [localhost]: " vnfmIp
+     if [[ vnfmIp != "" ]]; then
+         $_ex 'sed -i "s/vnfmIp = localhost/vnfmIP = $vnfmIp/g" /etc/nubomedia/paas.properties'
+     fi
+
+     read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
+     if [[ nfvoIp != "" ]]; then
+          $_ex 'sed -i "s/openbatonIp = localhost/openbatonIp = $nfvoIp/g" /etc/nubomedia/paas.properties'
+     fi
+
+    read -p "Enter the Orchestrator username [admin]: " nfvoUsername
+    if [[ nfvoUsername != "" ]]; then
+         $_ex 'sed -i "s/openbatonUsername = admin/openbatonUsername = $nfvoUsername/g" /etc/nubomedia/paas.properties'
+    fi
+
+    read -p "Enter the Orchestrator password [openbaton]: " nfvoPassword
+    if [[ nfvoPassword != "" ]]; then
+         $_ex 'sed -i "s/openbatonPassword = localhost/openbatonPassword = $nfvoPassword/g" /etc/nubomedia/paas.properties'
+    fi
+}
+
+function checkoutNubomediaPaaS {
+    echo "Getting Nubomedia PaaS API..."
+    createNubomediaBase
+    git clone --recursive "${_ms_vnfm_base_repo}" "${_ms_vnfm}"
+    pushd "${_nubomedia_paas}"
+    git checkout ${_tag}
+    popd
+    $_ex 'rm -rf "/etc/nubomedia"; mkdir "/etc/nubomedia"'
+    _ex 'cp '"${_nubomedia_paas}/src/resources/paas.properties /etc/nubomedia/paas.properties"
+}
+
+function compileNubomediaPaaS {
+    echo "compiling the MS-VNFM"
+    pushd "${_nubomedia_paas}"
+    ./nubomedia-paas.sh compile
+    if [ $? -ne 0 ]; then
+        echo "ERROR: The compilation of the Nubomedia PaaS API failed"
+        exit 1
+    fi
+    popd
+}
+
+function startNubomediaPaaS {
+    echo "starting the Nubomedia PaaS API"
+    pushd ${_nubomedia_paas}
+    ./nubomedia-paas.sh start
+    popd
+}
+
+function deployNubomediaPaaS {
+    compileNubomediaPaaS
+    startNubomediaPaaS
+}
+
+function bootstrap {
+    # checkout Nubomedia PaaS API
+    checkoutNubomediaPaaS
+    compileProperties
+    # deploy and compile Nubomedia PaaS API
+    deployNubomediaPaaS
+    echo "Nubomedia PaaS API is up and running now. Check screen -x nubomedia..."
+
+}
+
+bootstrap
