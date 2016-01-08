@@ -1,7 +1,8 @@
-Nubomedia REST API
+Nubomedia PaaS API
 =============================
 
-This is a short guide to create and delete application on Nubomedia platform using REST API.
+The Nubomedia PaaS API (and PaaS manager)
+This is a short guide to deploy and install the Nubomedia PaaS API.
 
 Create
 ---------------------
