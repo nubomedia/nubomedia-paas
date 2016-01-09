@@ -9,7 +9,7 @@ The PaaS API and PaaS Manager are implemented in java using the [spring.io] fram
 
 * [Openbaton][orchestrator] is up and running
 * The [MS-VNFM][vnfm] is up, running and registered to Openbaton
-* The [PaaS][openshift] is configured[os-config] and running (this API are tested with version 1.0.5 of Openshift binaries)
+* The [PaaS][openshift] is [configured][os-config] and running (this API are tested with version 1.0.5 of Openshift binaries)
 * A keystore with the PaaS SSL certificates exists and is available on the PaaS API machine (you can use this [guide][keytool] or this [software][portecle] to do that)
 
 ## Installation
