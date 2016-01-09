@@ -27,8 +27,6 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 
-group = 'org.openbaton'
-version = '0.1-SNAPSHOT'
 /**
  * Project settings
  */
