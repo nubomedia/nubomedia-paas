@@ -5,6 +5,7 @@ source ./gradle.properties
 _version=${version}
 
 _nubomedia_paas_base="/opt/nubomedia/nubomedia-paas"
+_nubomedia_config_file="/etc/nubomedia/paas.properties"
 #_message_queue_base="apache-activemq-5.11.1"
 #_openbaton_config_file=/etc/openbaton/openbaton.properties
 
@@ -68,7 +69,7 @@ function start {
         #then
 	    #screen -X eval "chdir $PWD"
 	#screen -c screenrc -d -m -S ms-vnfm -t ms-vnfm java -jar "build/libs/ms-vnfm-$_version.jar"
-	screen -S nubomedia -p 0 -X screen -t nubomedia-paas-api java -jar "build/libs/nubomedia-paas-$_version.jar"
+	screen -S nubomedia -p 0 -X screen -t nubomedia-paas-api java -jar "build/libs/nubomedia-paas-$_version.jar" --spring.config.location=file:${_nubomedia_config_file}
 	    #screen -c screenrc -r -p 0
     #fi
 }
@@ -91,7 +92,21 @@ function kill {
     fi
 }
 
-
+function init {
+    if [ ! -f $_nubomedia_config_file ]; then
+        if [ $EUID != 0 ]; then
+            echo "creating the directory, insert administrator password" | sudo -kS sh -c "mkdir /etc/nubomedia; cp ${_nubomedia_paas_base}/src/main/resources/paas.properties ${_nubomedia_config_file}"
+            #echo "copying the file, insert the administrator password" | sudo -kS cp ${_nubomedia_paas_base}/src/main/resources/paas.properties ${_nubomedia_config_file}
+        else
+            echo "creating the directory"
+            mkdir /etc/nubomedia
+            echo "copying the file"
+            cp ${_nubomedia_paas_base}/src/main/resources/paas.properties ${_nubomedia_config_file}
+        fi
+    else
+        echo "Properties file already exist"
+    fi
+}
 function compile {
     ./gradlew build -x test
 }
@@ -136,6 +151,8 @@ do
             start ;;
         "stop" )
             stop ;;
+        "init" )
+            init ;;
         "restart" )
             restart ;;
         "compile" )

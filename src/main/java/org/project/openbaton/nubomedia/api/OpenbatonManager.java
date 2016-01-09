@@ -6,6 +6,7 @@ import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.catalogue.nfvo.EndpointType;
 import org.openbaton.catalogue.nfvo.EventEndpoint;
+import org.openbaton.catalogue.nfvo.VimInstance;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.openbaton.sdk.NFVORequestor;
@@ -30,6 +31,7 @@ public class OpenbatonManager {
 
     private Logger logger;
     private NetworkServiceDescriptor nsd;
+    private VimInstance vim;
     private Properties properties;
     private NFVORequestor nfvoRequestor;
     private String apiPath;
@@ -41,9 +43,11 @@ public class OpenbatonManager {
         this.logger = LoggerFactory.getLogger(this.getClass());
         this.properties = ConfigReader.loadProperties();
         this.nfvoRequestor = new NFVORequestor(properties.getProperty("openbatonUsername"),properties.getProperty("openbatonPasswd"),properties.getProperty("openbatonIP"), properties.getProperty("openbatonPort"),"1");
+        this.vim = OpenbatonConfiguration.getVimInstance();
         this.apiPath = "/api/v1/nubomedia/paas";
         NetworkServiceDescriptor tmp = OpenbatonConfiguration.getNSD();
         logger.debug("NSD tmp " + tmp.toString());
+        this.vim = this.nfvoRequestor.getVimInstanceAgent().create(vim);
         this.nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(tmp);
         this.records = new HashMap<>();
         logger.debug("Official NSD " + nsd.toString());
