@@ -1,9 +1,9 @@
 {
   "name":"nubomedia-production",
-  "authUrl":"http://192.168.145.18:5000/v2.0",
-  "tenant":"demo",
-  "username":"admin",
-  "password":"e0ebe520a17576cc3281",
+  "authUrl":"http://80.96.122.48:5000/v2.0",
+  "tenant":"nubomedia",
+  "username":"nubomedia",
+  "password":"nub0m3d1@",
   "keyPair":"maa",
   "securityGroups": [
     "default"
