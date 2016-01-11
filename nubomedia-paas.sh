@@ -69,8 +69,11 @@ function start {
         #then
 	    #screen -X eval "chdir $PWD"
 	#screen -c screenrc -d -m -S ms-vnfm -t ms-vnfm java -jar "build/libs/ms-vnfm-$_version.jar"
+	pushd "${_nubomedia_paas_base}"
+	#                                                                   build/libs/nubomedia-paas-api-0.1-SNAPSHOT.jar
 	screen -S nubomedia -p 0 -X screen -t nubomedia-paas-api java -jar "build/libs/nubomedia-paas-api-$_version.jar" --spring.config.location=file:${_nubomedia_config_file}
 	    #screen -c screenrc -r -p 0
+	popd
     #fi
 }
 
