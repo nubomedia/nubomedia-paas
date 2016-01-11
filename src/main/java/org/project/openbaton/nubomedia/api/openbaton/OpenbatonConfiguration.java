@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.openbaton.catalogue.nfvo.VimInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,6 +16,7 @@ import java.io.FileReader;
  */
 public class OpenbatonConfiguration {
 
+    private static Logger logger = LoggerFactory.getLogger(OpenbatonConfiguration.class);
 
     public static VimInstance getVimInstance(){
         VimInstance vim = new VimInstance();
@@ -21,6 +24,7 @@ public class OpenbatonConfiguration {
             Gson mapper = new GsonBuilder().create();
             FileReader jsonVIM = new FileReader("resource/vim-instance-nubomedia-internal.json");
             vim = mapper.fromJson(jsonVIM,VimInstance.class);
+            logger.debug(vim.toString());
         } catch (FileNotFoundException e){
             e.printStackTrace();
         }
