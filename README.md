@@ -23,8 +23,10 @@ The [bootstrap] repository contains the script to install and start the Nubomedi
 In order to do it you can run the following command:
 
 ```bash
-curl -fsSkl https://raw.githubusercontent.com/fhg-fokus-nubomedia/bootstrap/master/bootstrap | bash
+bash <(curl -fsSkl https://raw.githubusercontent.com/fhg-fokus-nubomedia/bootstrap/master/bootstrap)
 ```
+
+At the end of the installation process the Nubomedia PaaS API and PaaS Manager dashboard is reachable at localhost:8081
 
 Afterwards the source code of the Nubomedia PaaS API and PaaS Manager is located in `/opt/nubomedia/nubomedia-paas`.
 If the NFVO and/or the MS-VNFM is not installed and started. Otherwise the Nubomedia PaaS API and PaaS Manager start will fail and you need to start it manually when the NFVO and the MS-VNFM are up and running.
