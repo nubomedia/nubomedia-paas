@@ -131,6 +131,7 @@ public class OpenbatonManager {
             }
         }
         this.nfvoRequestor.getNetworkServiceDescriptorAgent().delete(nsd.getId());
+        this.nfvoRequestor.getVimInstanceAgent().delete(this.vim.getId());
 
     }
 
