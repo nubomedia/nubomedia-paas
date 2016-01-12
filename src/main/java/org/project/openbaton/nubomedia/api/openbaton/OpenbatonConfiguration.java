@@ -22,7 +22,7 @@ public class OpenbatonConfiguration {
         VimInstance vim = new VimInstance();
         try{
             Gson mapper = new GsonBuilder().create();
-            FileReader jsonVIM = new FileReader("/opt/nubomedia-paas/resource/vim-instance-nubomedia-internal.json");
+            FileReader jsonVIM = new FileReader("/opt/nubomedia/nubomedia-paas/resource/vim-instance-nubomedia-internal.json");
             vim = mapper.fromJson(jsonVIM,VimInstance.class);
             logger.debug(vim.toString());
         } catch (FileNotFoundException e){
@@ -37,7 +37,7 @@ public class OpenbatonConfiguration {
         NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
         try {
             Gson mapper = new GsonBuilder().create();
-            FileReader jsonNSD = new FileReader("/opt/nubomedia-paas/resource/nsd-internal.json");
+            FileReader jsonNSD = new FileReader("/opt/nubomedia/nubomedia-paas/resource/nsd-internal.json");
             nsd = mapper.fromJson(jsonNSD,NetworkServiceDescriptor.class);
 
         } catch (FileNotFoundException e) {
