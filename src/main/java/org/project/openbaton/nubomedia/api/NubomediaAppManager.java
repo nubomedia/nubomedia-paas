@@ -45,7 +45,7 @@ public class NubomediaAppManager {
 
     @PostConstruct
     private void init() {
-        System.setProperty("javax.net.ssl.trustStore", "resource/openshift-keystore");
+        System.setProperty("javax.net.ssl.trustStore", "/opt/nubomedia-paas/resource/openshift-keystore");
         this.logger = LoggerFactory.getLogger(this.getClass());
         this.appIDGenerator = new SecureRandom();
     }
