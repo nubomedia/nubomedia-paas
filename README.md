@@ -1,7 +1,7 @@
 # Nubomedia PaaS Manager
 
-The Nubomedia PaaS manager are the public APIs to build and deploy applications on Nubomedia platform.
-This is a short guide to deploy and install the Nubomedia PaaS API.
+The Nubomedia PaaS manager is the manager for PaaS Platform that exposes REST API to allow Nubomedia users to build and deploy applications on the Nubomedia Platform.
+This is a short guide to deploy and install the Nubomedia PaaS Manager.
 
 ## Getting Started
 
