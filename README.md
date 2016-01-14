@@ -5,7 +5,7 @@ This is a short guide to deploy and install the Nubomedia PaaS Manager.
 
 ## Getting Started
 
-The PaaS Manager are implemented in java using the [spring.io] framework. This manager requires that all infrastructure is running:
+The PaaS Manager is implemented in java using the [spring.io] framework. This manager requires that all infrastructure is running:
 
 * [Openbaton][orchestrator] is up and running
 * The [MS-VNFM][vnfm] is up, running and registered to Openbaton
