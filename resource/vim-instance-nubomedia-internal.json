@@ -4,7 +4,7 @@
   "tenant":"nubomedia",
   "username":"nubomedia",
   "password":"nub0m3d1@",
-  "keyPair":"maa",
+  "keyPair":"tub-nubomedia",
   "securityGroups": [
     "default"
   ],

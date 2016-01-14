@@ -1,11 +1,11 @@
-# Nubomedia PaaS API
+# Nubomedia PaaS Manager
 
-The Nubomedia PaaS API (and PaaS manager) are the public APIs to build and deploy applications on Nubomedia platform.
+The Nubomedia PaaS manager are the public APIs to build and deploy applications on Nubomedia platform.
 This is a short guide to deploy and install the Nubomedia PaaS API.
 
 ## Getting Started
 
-The PaaS API and PaaS Manager are implemented in java using the [spring.io] framework. This manager requires that all infrastructure is running:
+The PaaS Manager are implemented in java using the [spring.io] framework. This manager requires that all infrastructure is running:
 
 * [Openbaton][orchestrator] is up and running
 * The [MS-VNFM][vnfm] is up, running and registered to Openbaton
@@ -14,26 +14,26 @@ The PaaS API and PaaS Manager are implemented in java using the [spring.io] fram
 
 ## Installation
 
-You can install the Nubomedia PaaS API and PaaS manager either automatically by downloading and executing the bootstrap or manually.
+You can install the Nubomedia PaaS manager either automatically by downloading and executing the bootstrap or manually.
 Both options are described below.
 
 ### Automatic installation and start
 
-The [bootstrap] repository contains the script to install and start the Nubomedia PaaS API and PaaS Manager automatically.
+The [bootstrap] repository contains the script to install and start the Nubomedia PaaS Manager automatically.
 In order to do it you can run the following command:
 
 ```bash
 bash <(curl -fsSkl https://raw.githubusercontent.com/fhg-fokus-nubomedia/bootstrap/master/bootstrap)
 ```
 
-At the end of the installation process the Nubomedia PaaS API and PaaS Manager dashboard is reachable at localhost:8081
+At the end of the installation process the Nubomedia PaaS Manager dashboard is reachable at localhost:8081
 
-Afterwards the source code of the Nubomedia PaaS API and PaaS Manager is located in `/opt/nubomedia/nubomedia-paas`.
+Afterwards the source code of the Nubomedia PaaS Manager is located in `/opt/nubomedia/nubomedia-paas`.
 If the NFVO and/or the MS-VNFM is not installed and started. Otherwise the Nubomedia PaaS API and PaaS Manager start will fail and you need to start it manually when the NFVO and the MS-VNFM are up and running.
 
-In case the Nubomedia PaaS API and PaaS Manager are already installed you can start them manually using the provided script as described [here](#start-the-nubomedia-paas-api-and-paas-manager-manually)
+In case the Nubomedia PaaS Manager are already installed you can start them manually using the provided script as described [here](#start-the-nubomedia-paas-api-and-paas-manager-manually)
 
-### Install the Nubomedia PaaS API and PaaS Manager manually
+### Install the Nubomedia PaaS Manager manually
 
 1. Download the source code from git:
 
@@ -63,15 +63,15 @@ cd nubomedia-paas/
 ./nubomedia-paas.sh compile
 ```
 
-### Start the Nubomedia PaaS API and PaaS Manager Manually
+### Start the Nubomedia PaaS Manager Manually
 
-The Nubomedia PaaS API and PaaS Manager can be started by executing the following command (in the directory nubomedia-paas)
+The Nubomedia PaaS Manager can be started by executing the following command (in the directory nubomedia-paas)
 
 ```bash
 ./nubomedia-paas.sh start
 ```
 
-Once the Nubomedia PaaS API and PaaS Manager is started you can access the screen session that is in another window with the ms-vnfm running:
+Once the Nubomedia PaaS Manager is started you can access the screen session that is in another window with the ms-vnfm running:
 
 ```bash
 screen -r nubomedia
@@ -80,7 +80,7 @@ and move to the windows named `nubomedia-paas`
 
 ## Configuration
 
-The configuration can be fount in `/etc/nubomedia/paas.properties` if you have installed the Nubomedia PaaS API and PaaS Manager with bootstrap or in the `$(pwd)/nubomedia-paas/src/main/resources/paas.properties` if you have installed it manually
+The configuration can be fount in `/etc/nubomedia/paas.properties`.
 
 Here you can configure:
 
