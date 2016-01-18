@@ -1,7 +1,7 @@
 {
   "gitURL":"https://gitlab.fokus.fraunhofer.de/maa/nubomedia-magic-mirror.git",
   "appName":"nubo-magic-mirror",
-  "projectName":"nubomedia2",
+  "projectName":"nubomedia",
   "ports":[
     {
       "port":8080,
