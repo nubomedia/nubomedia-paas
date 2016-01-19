@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.json.ImageStreamConfig;
 import org.project.openbaton.nubomedia.api.openshift.json.Metadata;
 import org.project.openbaton.nubomedia.api.openshift.json.MetadataTypeAdapter;
@@ -34,7 +35,7 @@ public class ImageStreamManager {
         this.suffix = "/imagestreams/";
     }
 
-    public ResponseEntity<String> makeImageStream(String baseURL, String appName,String namespace,HttpHeaders authHeader) throws DuplicatedException {
+    public ResponseEntity<String> makeImageStream(String baseURL, String appName,String namespace,HttpHeaders authHeader) throws DuplicatedException, UnauthorizedException {
         ImageStreamConfig message = MessageBuilderFactory.getImageStreamMessage(appName);
         logger.debug("Sending message " + mapper.toJson(message,ImageStreamConfig.class));
         String URL = baseURL + namespace + suffix;
@@ -46,16 +47,26 @@ public class ImageStreamManager {
             throw new DuplicatedException("Application with " + appName + " is already present");
         }
 
+        if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
         return response;
     }
 
-    public HttpStatus deleteImageStream (String baseURL, String appName, String namespace, HttpHeaders authHeader){
+    public HttpStatus deleteImageStream (String baseURL, String appName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
 
         String URL = baseURL + namespace + suffix + appName;
         HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
         ResponseEntity<String> deleteResponse = template.exchange(URL,HttpMethod.DELETE,deleteEntity,String.class);
 
         if(deleteResponse.getStatusCode() != HttpStatus.OK) logger.debug("Error deleting imagestream for " + appName + " in project " + namespace + " response " + deleteEntity.toString());
+
+        if(deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
 
         return deleteResponse.getStatusCode();
     }
