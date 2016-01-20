@@ -102,5 +102,5 @@ After changing any configuration, you need to restart
 [portecle]:http://portecle.sourceforge.net/
 [keytool]:https://docs.oracle.com/javase/tutorial/security/toolsign/rstep2.html
 [spring.io]:https://spring.io/
-[bootstrap]:https://raw.githubusercontent.com/fhg-fokus-nubomedia/bootstrap/master/bootstrap
+[bootstrap]:https://raw.githubusercontent.com/fhg-fokus-nubomedia/nubomedia-paas/master/bootstrap
 [NFV MANO]:http://www.etsi.org/deliver/etsi_gs/NFV-MAN/001_099/001/01.01.01_60/gs_nfv-man001v010101p.pdf
