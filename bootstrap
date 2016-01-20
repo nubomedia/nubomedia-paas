@@ -10,8 +10,8 @@ export DEBIAN_FRONTEND=noninteractive
 _dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 _nubomedia_paas_base_repo="https://github.com/fhg-fokus-nubomedia/nubomedia-paas.git"
-#_tag="develop"
-_tag="tags/1.1"
+_tag="develop"
+#_tag="tags/1.1"
 
 _base=/opt
 _nubomedia_base="${_base}/nubomedia"
@@ -91,6 +91,42 @@ function compileProperties {
    	$_ex 'cp $keystorePath $_nubomedia-paas/resource/openshift-keystore'
     fi
 
+    read -p "Enter the Vim Auth URL (http://localhost:5000/v2.0): " authURL
+    if [[ authURL != "" ]]; then
+        $_ex 'sed -i "s|\"authUrl\":\"http://localhost:5000/v2.0\"|\"authUrl\":\"$authURL\"|g" /etc/nubomedia/vim-instance.json'
+    fi
+
+    read -p "Enter the tenant name (nubomedia): " tenantName
+    if [[ tenantName != "" ]]; then
+        $_ex 'sed -i "s|\"tenant\":\"nubomedia\"|\"tenant\":\"$tenantName\"|g" /etc/nubomedia/vim-instance.json'
+    fi
+
+    read -p "Enter the vim username (nubomedia): " username
+    if [[ username != "" ]]; then
+        $_ex 'sed -i "s|\"username\":\"nubomedia"|\"username\":\"$username\"|g" /etc/nubomedia/vim-instance.json'
+    fi
+
+    read -p "Enter the vim password (changeme): " password
+    if [[ password != "" ]]; then
+        $_ex 'sed -i "s|\"password\":\"changeme"|\"password\":\"$password\"|g" /etc/nubomedia/vim-instance.json'
+    fi
+
+    read -p "Enter the vim keyPair (nubomedia): " keyPair
+    if [[ keyPair != "" ]]; then
+        $_ex 'sed -i "s|\"keyPair\":\"nubomedia"|\"keyPair\":\"$keyPair\"|g" /etc/nubomedia/vim-instance.json'
+    fi
+
+    read -p "Enter the vim type (openstack): " type
+    if [[ type != "" ]]; then
+        $_ex 'sed -i "s|\"type\":\"openstack"|\"type\":\"$type\"|g" /etc/nubomedia/vim-instance.json'
+    fi
+
+    read -p "Enter the vim username (nubomedia): " username
+    if [[ username != "" ]]; then
+        $_ex 'sed -i "s|\"username\":\"nubomedia"|\"username\":\"$username\"|g" /etc/nubomedia/vim-instance.json'
+    fi
+
+
 }
 
 function checkoutNubomediaPaaS {
@@ -103,6 +139,8 @@ function checkoutNubomediaPaaS {
     $_ex 'rm -rf "/etc/nubomedia"; mkdir "/etc/nubomedia"'
     echo "created properties folder"
     $_ex 'cp '"${_nubomedia_paas}/src/main/resources/paas.properties /etc/nubomedia/paas.properties"
+    $_ex 'cp '"${_nubomedia_paas}/resource/vim-instance.json /etc/nubomedia/vim-instance.json"
+    $_ex 'cp '"${_nubomedia_paas}/resource/nubomedia-nsd /etc/nubomedia/nubomedia-nsd.json"
     echo "copied properties file, now modifing..."
 }
 
