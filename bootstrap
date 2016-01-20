@@ -48,14 +48,14 @@ function createNubomediaBase {
     $_ex 'mkdir -p '$_nubomedia_paas
     $_ex 'chown -R '"$_user $_nubomedia_base"
 
-    # create log folder and give perission
+    # create log folder and give permission
     #$_ex 'rm -rf '$_log_folder
     $_ex 'mkdir -p '$_log_folder
     $_ex 'chown -R '"$_user $_log_folder"
 }
 
 function compileProperties {
-     
+
      echo "Setting properties..."
      read -p "Enter the PaaS ip [https://localhost:8443]: " baseUrl
      if [[ baseUrl != "" ]]; then
@@ -69,7 +69,7 @@ function compileProperties {
 
      read -p "Enter the Vnfm ip [localhost]: " vnfmIp
      if [[ vnfmIp != "" ]]; then
-         $_ex 'sed -i "s/vnfmIp=localhost/vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s|vnfmIp=localhost|vnfmIP=$vnfmIp|g" /etc/nubomedia/paas.properties'
      fi
 
      read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
@@ -89,7 +89,7 @@ function compileProperties {
     
     read -p "Enter the Openshift Keystore location (including the filename): " keystorePath
     if [[ ! -z "$keystorePath" ]]; then
-   	    $_ex 'cp $keystorePath $_nubomedia-paas/resource/openshift-keystore'
+   	    $_ex 'cp $keystorePath $_nubomedia_paas/resource/openshift-keystore'
     fi
 
     read -p "Enter the Vim Auth URL (http://localhost:5000/v2.0): " authURL
