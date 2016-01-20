@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.json.Metadata;
 import org.project.openbaton.nubomedia.api.openshift.json.MetadataTypeAdapter;
 import org.project.openbaton.nubomedia.api.openshift.json.ServiceConfig;
@@ -34,7 +35,7 @@ public class ServiceManager {
     }
 
 
-    public ResponseEntity<String> makeService(String kubernetesBaseURL, String appName,String namespace,int[] ports,int[] targetPorts,String[] protocols,HttpHeaders authHeader) throws DuplicatedException {
+    public ResponseEntity<String> makeService(String kubernetesBaseURL, String appName,String namespace,int[] ports,int[] targetPorts,String[] protocols,HttpHeaders authHeader) throws DuplicatedException, UnauthorizedException {
         ServiceConfig message = MessageBuilderFactory.getServiceMessage(appName, ports, targetPorts, protocols);
 
         logger.debug("Writing service creation " + mapper.toJson(message,ServiceConfig.class));
@@ -47,15 +48,25 @@ public class ServiceManager {
             throw new DuplicatedException("Application with " + appName + " is already present");
         }
 
+        if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
         return response;
     }
 
-    public HttpStatus deleteService(String kubernetesBaseURL, String appName, String namespace,HttpHeaders authHeader){
+    public HttpStatus deleteService(String kubernetesBaseURL, String appName, String namespace,HttpHeaders authHeader) throws UnauthorizedException {
         String URL = kubernetesBaseURL + namespace + suffix + appName + "-svc";
         HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
         ResponseEntity<String> deleteResponse = template.exchange(URL,HttpMethod.DELETE,deleteEntity,String.class);
 
         if(deleteResponse.getStatusCode() != HttpStatus.OK) logger.debug("Error deleting service " + appName + "-svc response " + deleteResponse.toString());
+
+        if(deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
 
         return deleteResponse.getStatusCode();
     }

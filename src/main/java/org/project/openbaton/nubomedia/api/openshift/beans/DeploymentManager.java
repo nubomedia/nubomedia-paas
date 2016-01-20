@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class DeploymentManager {
         this.rcSuffix = "/replicationcontrollers/";
     }
 
-    public ResponseEntity<String> makeDeployment(String baseURL, String appName, String dockerRepo, int[] ports,String[] protocols,int repnumbers,String namespace,HttpHeaders authHeader) throws DuplicatedException {
+    public ResponseEntity<String> makeDeployment(String baseURL, String appName, String dockerRepo, int[] ports,String[] protocols,int repnumbers,String namespace,HttpHeaders authHeader) throws DuplicatedException, UnauthorizedException {
 
         logger.debug("params arg: " + appName + " " + dockerRepo + " " + ports + " " + protocols + " " + repnumbers);
         DeploymentConfig message = MessageBuilderFactory.getDeployMessage(appName, dockerRepo, ports, protocols, repnumbers);
@@ -50,10 +51,15 @@ public class DeploymentManager {
             throw new DuplicatedException("Application with " + appName + " is already present");
         }
 
+        if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
         return response;
     }
 
-    public HttpStatus deleteDeployment(String baseURL, String appName, String namespace, HttpHeaders authHeader){
+    public HttpStatus deleteDeployment(String baseURL, String appName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
 
         logger.debug("Deleting deployment config " + appName + " of project " + namespace);
         String URL = baseURL + namespace + suffix + appName + "-dc";
@@ -64,10 +70,15 @@ public class DeploymentManager {
             logger.debug(res.toString());
         }
 
+        if(res.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
         return res.getStatusCode();
     }
 
-    public HttpStatus deletePodsRC(String kubernetesBaseURL, String appName, String namespace, HttpHeaders authHeader){
+    public HttpStatus deletePodsRC(String kubernetesBaseURL, String appName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
         String rcURL = kubernetesBaseURL + namespace + rcSuffix + appName + "-dc-1";
@@ -96,6 +107,11 @@ public class DeploymentManager {
         else if (deleteEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)){ //means that you are deleting an application before the build was complete
             logger.debug("Status code " + deleteEntity.getStatusCode());
             return HttpStatus.OK;
+        }
+
+        if(deleteEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
         }
 
         return deleteEntity.getStatusCode();

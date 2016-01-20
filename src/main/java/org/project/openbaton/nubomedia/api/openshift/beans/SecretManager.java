@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 import com.google.gson.Gson;
 import org.mockito.internal.util.collections.ArrayUtils;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class SecretManager {
         this.saSuffix = "/serviceaccounts/builder";
     }
 
-    public String createSecret(String baseURL, String namespace, String privateKey, HttpHeaders authHeader){
+    public String createSecret(String baseURL, String namespace, String privateKey, HttpHeaders authHeader) throws UnauthorizedException {
 
         SecretConfig message = MessageBuilderFactory.getSecretMessage(namespace, privateKey);
         logger.debug("message " + mapper.toJson(message,SecretConfig.class));
@@ -49,19 +50,34 @@ public class SecretManager {
         responseEntity = this.updateBuilder(baseURL, secretName,authHeader,namespace,true);
         if(responseEntity.getStatusCode() != HttpStatus.OK) logger.debug("Error updating builder account " + response.toString());
 
+        if(responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
         return secretName;
 
     }
 
-    public HttpStatus deleteSecret(String baseURL, String secretName, String namespace, HttpHeaders authHeader){
+    public HttpStatus deleteSecret(String baseURL, String secretName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
         HttpEntity<String> deleteEntity = new HttpEntity<>("",authHeader);
         ResponseEntity<String> entity = template.exchange(baseURL + namespace + secretSuffix + "/" + secretName, HttpMethod.DELETE, deleteEntity, String.class);
 
         if(entity.getStatusCode() != HttpStatus.OK) logger.debug("Error deleting secret " + secretName + " response " + entity.toString());
 
+        if(entity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
         entity = this.updateBuilder(baseURL, secretName,authHeader,namespace,false);
 
         if(entity.getStatusCode() != HttpStatus.OK) logger.debug("Error updating builder account " + entity.toString());
+
+        if(entity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
 
         return entity.getStatusCode();
     }

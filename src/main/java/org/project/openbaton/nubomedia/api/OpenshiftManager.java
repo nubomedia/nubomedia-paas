@@ -54,7 +54,7 @@ public class OpenshiftManager {
 
     }
 
-    public String buildApplication(String token, String appID, String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber, String secretName, String mediaServerGID) throws DuplicatedException {
+    public String buildApplication(String token, String appID, String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber, String secretName, String mediaServerGID) throws DuplicatedException, UnauthorizedException {
 
         HttpHeaders creationHeader = new HttpHeaders();
         creationHeader.add("Authorization","Bearer " + token);
@@ -100,7 +100,7 @@ public class OpenshiftManager {
 
     }
 
-    public HttpStatus deleteApplication(String token, String appName, String namespace){
+    public HttpStatus deleteApplication(String token, String appName, String namespace) throws UnauthorizedException {
 
         HttpHeaders deleteHeader = new HttpHeaders();
         deleteHeader.add("Authorization","Bearer " + token);
@@ -125,14 +125,14 @@ public class OpenshiftManager {
         return res;
     }
 
-    public String createSecret (String token, String privateKey, String namespace){
+    public String createSecret (String token, String privateKey, String namespace) throws UnauthorizedException {
 
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization","Bearer " + token);
         return secretManager.createSecret(kubernetesBaseURL, namespace, privateKey, authHeader);
     }
 
-    public HttpStatus deleteSecret(String token ,String secretName, String namespace){
+    public HttpStatus deleteSecret(String token ,String secretName, String namespace) throws UnauthorizedException {
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization","Bearer " + token);
 
@@ -140,7 +140,7 @@ public class OpenshiftManager {
         return entity;
     }
 
-    public BuildingStatus getStatus (String token, String appName, String namespace){
+    public BuildingStatus getStatus (String token, String appName, String namespace) throws UnauthorizedException {
 
         BuildingStatus res = BuildingStatus.INITIALISED;
         HttpHeaders authHeader = new HttpHeaders();
@@ -163,7 +163,7 @@ public class OpenshiftManager {
         return res;
     }
 
-    public String getBuildLogs(String token, String appName,String namespace){
+    public String getBuildLogs(String token, String appName,String namespace) throws UnauthorizedException {
 
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization","Bearer " + token);

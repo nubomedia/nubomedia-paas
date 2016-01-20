@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
+import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.json.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class BuildStatusManager {
     }
 
     //Responses: Complete, Running, Failed
-    public BuildingStatus getBuildStatus (String baseURL, String appName, String namespace, HttpHeaders authHeader){
+    public BuildingStatus getBuildStatus (String baseURL, String appName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
 
         BuildingStatus res = null;
         BuildStatus status = null;
@@ -63,7 +64,7 @@ public class BuildStatusManager {
         return res;
     }
 
-    public HttpStatus deleteBuilds(String baseURL, String appName, String namespace, HttpHeaders authHeader){
+    public HttpStatus deleteBuilds(String baseURL, String appName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
 
         Build target = this.retrieveBuild(baseURL,appName,namespace,authHeader);
         String URL = baseURL + namespace + suffix + target.getMetadata().getName();
@@ -74,10 +75,15 @@ public class BuildStatusManager {
         if(responseEntity.getStatusCode() != HttpStatus.OK)
             logger.debug(responseEntity.toString());
 
+        if(responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
         return responseEntity.getStatusCode();
     }
 
-    public String retrieveLogs(String baseURL, String appName, String namespace, HttpHeaders authHeader){
+    public String retrieveLogs(String baseURL, String appName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
 
         Build target = this.retrieveBuild(baseURL,appName,namespace,authHeader);
         String URL = baseURL + namespace + suffix + target.getMetadata().getName() + logSuffix;
@@ -87,11 +93,15 @@ public class BuildStatusManager {
         if(res.getStatusCode() != HttpStatus.OK){
             logger.debug("Error retrieving logs " + res.getStatusCode() + " response " + res.toString());
         }
+        if(res.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
 
         return res.getBody();
     }
 
-    private Build retrieveBuild(String baseURL, String appName, String namespace, HttpHeaders authHeader){
+    private Build retrieveBuild(String baseURL, String appName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
 
         Build res = null;
         BuildList buildList = this.getBuilds(baseURL,namespace,authHeader);
@@ -107,13 +117,18 @@ public class BuildStatusManager {
         return res;
     }
 
-    private BuildList getBuilds(String baseURL, String namespace, HttpHeaders authHeader){
+    private BuildList getBuilds(String baseURL, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
         String URL = baseURL + namespace + suffix;
         HttpEntity<String> buildEntity = new HttpEntity<>(authHeader);
         ResponseEntity<String> builds = template.exchange(URL, HttpMethod.GET, buildEntity, String.class);
         logger.debug("BuildsList " + builds.getStatusCode() + " response " + builds.toString());
 
         if(builds.getStatusCode() != HttpStatus.OK){ logger.debug("Error retrieving builds " + builds.getStatusCode() + " response " + builds.toString());}
+
+        if(builds.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
 
         return mapper.fromJson(builds.getBody(),BuildList.class);
     }
