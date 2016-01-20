@@ -71,7 +71,7 @@ function start {
 	#screen -c screenrc -d -m -S ms-vnfm -t ms-vnfm java -jar "build/libs/ms-vnfm-$_version.jar"
 	pushd "${_nubomedia_paas_base}"
 	#                                                                   build/libs/nubomedia-paas-api-0.1-SNAPSHOT.jar
-	screen -d - m -S nubomedia-paas -t nubomedia-paas-manager java -jar "/opt/nubomedia/nubomedia-paas/build/libs/nubomedia-paas-api-$_version.jar" --spring.config.location=file:${_nubomedia_config_file}
+	screen -d -m -S nubomedia-paas -t nubomedia-paas-manager java -jar "/opt/nubomedia/nubomedia-paas/build/libs/nubomedia-paas-api-$_version.jar" --spring.config.location=file:${_nubomedia_config_file}
 	    #screen -c screenrc -r -p 0
 	popd
     #fi
