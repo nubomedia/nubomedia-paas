@@ -278,7 +278,7 @@ public class NubomediaAppManager {
 
     @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id){ //TODO fix to throw it before
+    public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id) throws UnauthorizedException{ //TODO fix to throw it before
         logger.debug("starting callback for appId" + id);
         logger.info("Received event " + evt);
         Application app = appRepo.findFirstByAppID(id);
