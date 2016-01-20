@@ -1,0 +1,168 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1>Applications</h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>
+                Overview</a></li>
+            <li class="active"><i class="fa fa-tasks"></i>
+                Applications
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <button id="btn_create_topology" class="btn btn-primary pull-right"
+                title="Create a new App" ng-click="createApp()">Create App
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 top-buffer">
+        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">
+            <div ng-bind-html="alert.msg"></div>
+        </alert>
+
+        <div class="table-responsive" ng-if="apllications.length > 0">
+            <table
+                    class="table table-bordered table-striped table-hover tablesorter"
+                    id="topoTabletable">
+                <thead>
+                <tr>
+                    <th ng-click="predicate = 'appID';reverse = !reverse">appID <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'appName';reverse = !reverse">appName <i class="fa fa-sort"></i></th>
+                    <th ng-if="application.route" ng-click="predicate = 'route';reverse = !reverse">route <i
+                            class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'flavor'; reverse = !reverse">flavor <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'projectName'; reverse = !projectName">projectName <i
+                            class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'status'; reverse = !status">status <i class="fa fa-sort"></i></th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="data in apllications| orderBy:predicate:reverse">
+                    <td><a href="#applications/{{data.appID}}">{{data.appID}}</a></td>
+                    <td>{{data.appName}}</td>
+                    <td ng-if="application.route"><a href="http://{{application.route}}" target="_blank">url</a></td>
+                    <td>{{data.flavor}}</td>
+                    <td>{{data.projectName}}</td>
+                    <td>{{data.status}}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                                Action <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li class="divider"></li>
+                                <li><a href="" ng-click="deleteData(data.appID)">Delete</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="modal " id="modalT">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="serviceFormLabel">Create Topology</h4>
+            </div>
+            <div class="modal-body">
+                <tabset>
+                    <tab heading="Form">
+                        <form class="form-horizontal" name="formApp" id="formModalL">
+                            <br/>
+
+                            <div class="form-group" ng-repeat="(key,value) in appCreate"
+                                 ng-if="key!='ports'">
+                                <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" id="{{key}}" name="{{key}}"
+                                           ng-model="appCreate[key]"/>
+                                </div>
+                            </div>
+                            <h4>Ports <a href="" title="Add a new port">
+                                <li class="fa fa-plus-square" ng-click="addPort()"></li>
+                            </a></h4>
+                            <table ng-if="appCreate.ports.length>0">
+                                <tr>
+                                    <td class="col-lg-3"></td>
+                                    <td class="col-lg-2 "><b>Port</b></td>
+                                    <td class="col-lg-2 "><b>PortTarget</b></td>
+                                    <td class="col-lg-2 "><b>Protocol</b></td>
+                                </tr>
+                            </table>
+                            <!--<hr/>-->
+
+
+                            <div class="form-group" ng-repeat="port in appCreate.ports track by $index"
+                                 ng-if="key!='ports'">
+                                <!--<label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>-->
+                                <div class="col-lg-2"></div>
+                                <div class="col-sm-3">
+                                    <input type="number" class="form-control" id="port" name="port"
+                                           ng-model="appCreate.ports[$index]['port']"/>
+                                </div>
+                                <div class="col-sm-3">
+                                    <input type="number" class="form-control" id="targetPort" name="targetPort"
+                                           ng-model="appCreate.ports[$index]['targetPort']"/>
+                                </div>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control" id="protocol" name="protocol"
+                                           ng-model="appCreate.ports[$index][['protocol']]"/>
+                                </div>
+                                <div class="col-sm-1">
+                                    <h4><a href="" ng-click="deletePort($index)">
+                                        <li class="fa fa-trash"></li>
+                                    </a></h4>
+                                </div>
+                            </div>
+
+
+                        </form>
+
+
+                    </tab>
+                    <tab heading="Json">
+                        <form role="form" id="formJson">
+                            <div class="form-group">
+                                <br> <label for="jsonInputArea">Insert Your Json</label>
+                                <textarea name="textTopologyJson" ng-model="textTopologyJson" id="jsonInputArea"
+                                          class="form-control" rows="5"
+                                          placeholder="{ }" ng-change="changeText(textTopologyJson)"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="jsonInputFile">File input</label>
+                                <input type="file" id="jsonInputFile"
+                                       onchange="angular.element(this).scope().setFile(this)">
+
+                                <p class="help-block">Example: reqApp.json </p>
+                            </div>
+                        </form>
+                    </tab>
+
+                </tabset>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeModal" class="btn btn-default"
+                        data-dismiss="modal">Close
+                </button>
+                <button type="button" id="sendTemplate"
+                        data-dismiss="modal"
+                        class="btn btn-primary" ng-click="sendApp()">Create App
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.modal -->

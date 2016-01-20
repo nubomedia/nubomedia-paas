@@ -1,0 +1,20 @@
+{
+  "gitURL":"https://gitlab.fokus.fraunhofer.de/maa/nubomedia-magic-mirror.git",
+  "appName":"nubo-magic-mirror",
+  "projectName":"nubomedia",
+  "ports":[
+    {
+      "port":8080,
+      "targetPort":8080,
+      "protocol":"TCP"
+    },
+    {
+      "port":8888,
+      "targetPort":8888,
+      "protocol":"TCP"
+    }
+  ],
+  "flavor":"m1.medium",
+  "replicasNumber":2,
+  "privateKey":"nubomedia-9181613528203210735-secret"
+}
