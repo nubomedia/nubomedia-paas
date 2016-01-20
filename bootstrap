@@ -116,18 +116,6 @@ function compileProperties {
     if [[ keyPair != "" ]]; then
         $_ex 'sed -i "s|\"keyPair\":\"nubomedia\"|\"keyPair\":\"$keyPair\"|g" /etc/nubomedia/vim-instance.json'
     fi
-
-    read -p "Enter the vim type (openstack): " type
-    if [[ type != "" ]]; then
-        $_ex 'sed -i "s|\"type\":\"openstack\"|\"type\":\"$type\"|g" /etc/nubomedia/vim-instance.json'
-    fi
-
-    read -p "Enter the vim username (nubomedia): " username
-    if [[ username != "" ]]; then
-        $_ex 'sed -i "s|\"username\":\"nubomedia\"|\"username\":\"$username\"|g" /etc/nubomedia/vim-instance.json'
-    fi
-
-
 }
 
 function checkoutNubomediaPaaS {
