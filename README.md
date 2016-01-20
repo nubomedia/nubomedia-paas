@@ -23,7 +23,7 @@ The [bootstrap] repository contains the script to install and start the Nubomedi
 In order to do it you can run the following command:
 
 ```bash
-bash <(curl -fsSkl https://raw.githubusercontent.com/fhg-fokus-nubomedia/nubomedia-paas/develop/bootstrap)
+bash <(curl -fsSkl https://raw.githubusercontent.com/fhg-fokus-nubomedia/nubomedia-paas/master/bootstrap)
 ```
 
 At the end of the installation process the Nubomedia PaaS Manager dashboard is reachable at localhost:8081
