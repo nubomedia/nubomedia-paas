@@ -57,7 +57,7 @@ function createNubomediaBase {
 function compileProperties {
 
      read -p "Enter the PaaS ip [https://localhost:8443]: " baseUrl
-     if [[ "$baseUrl != "" ]]; then
+     if [[ "$baseUrl" != "" ]]; then
          $_ex 'sed -i "s|baseURL=https://localhost:8443|baseURL=$baseUrl|g" /etc/nubomedia/paas.properties'
      fi
 
