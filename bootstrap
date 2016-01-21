@@ -71,13 +71,13 @@ function compileProperties {
     export vnfmIp
     read -p "Enter the Vnfm ip [localhost]: " vnfmIp
     if [[ $vnfmIp != "" ]]; then
-        $_ex 'sed -i "s/vnfmIp=localhost/vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
+        $_ex 'sed -i "s/vnfmIP=localhost/vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoIp
     read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
     if [[ $nfvoIp != "" ]]; then
-         $_ex 'sed -i "s/openbatonIp=localhost/openbatonIp=$nfvoIp/g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s/openbatonIP=localhost/openbatonIP=$nfvoIp/g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoUsername
@@ -89,7 +89,7 @@ function compileProperties {
     export nfvoPassword
     read -p "Enter the Orchestrator password [openbaton]: " nfvoPassword
     if [[ $nfvoPassword != "" ]]; then
-         $_ex 'sed -i "s/openbatonPassword=localhost/openbatonPassword=$nfvoPassword/g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s/openbatonPasswd=localhost/openbatonPasswd=$nfvoPassword/g" /etc/nubomedia/paas.properties'
     fi
 
     export keystorePath
