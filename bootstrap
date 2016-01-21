@@ -81,7 +81,7 @@ function compileProperties {
 
      read -p "Enter the Vnfm ip [localhost]: " vnfmIp
      if [[ "$vnfmIp" != "" ]]; then
-         $_ex 'sed -i "s|vnfmIp=localhost|vnfmIP=$vnfmIp|g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s/vnfmIp=localhost/vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
      fi
 
      read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
@@ -111,22 +111,22 @@ function compileProperties {
 
     read -p "Enter the tenant name (nubomedia): " tenantName
     if [[ "$tenantName" != "" ]]; then
-        $_ex 'sed -i "s|\"tenant\":\"nubomedia\"|\"tenant\":\"$tenantName\"|g" /etc/nubomedia/vim-instance.json'
+        $_ex 'sed -i "s/\"tenant\":\"nubomedia\"/\"tenant\":\"$tenantName\"/g" /etc/nubomedia/vim-instance.json'
     fi
 
     read -p "Enter the vim username (nubomedia): " username
     if [[ "$username" != "" ]]; then
-        $_ex 'sed -i "s|\"username\":\"nubomedia\"|\"username\":\"$username\"|g" /etc/nubomedia/vim-instance.json'
+        $_ex 'sed -i "s/\"username\":\"nubomedia\"/\"username\":\"$username\"/g" /etc/nubomedia/vim-instance.json'
     fi
 
     read -p "Enter the vim password (changeme): " password
     if [[ "$password" != "" ]]; then
-        $_ex 'sed -i "s|\"password\":\"changeme\"|\"password\":\"$password\"|g" /etc/nubomedia/vim-instance.json'
+        $_ex 'sed -i "s/\"password\":\"changeme\"/\"password\":\"$password\"/g" /etc/nubomedia/vim-instance.json'
     fi
 
     read -p "Enter the vim keyPair (nubomedia): " keyPair
     if [[ "$keyPair" != "" ]]; then
-        $_ex 'sed -i "s|\"keyPair\":\"nubomedia\"|\"keyPair\":\"$keyPair\"|g" /etc/nubomedia/vim-instance.json'
+        $_ex 'sed -i "s/\"keyPair\":\"nubomedia\"/\"keyPair\":\"$keyPair\"/g" /etc/nubomedia/vim-instance.json'
     fi
 }
 
