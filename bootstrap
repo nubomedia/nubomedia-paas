@@ -57,73 +57,72 @@ function createNubomediaBase {
 function compileProperties {
 
     export baseUrl
+    read -p "Enter the PaaS ip [https://localhost:8443]: " baseUrl
+    if [[ "$baseUrl" != "" ]]; then
+        $_ex 'sed -i "s|baseURL=https://localhost:8443|baseURL=$baseUrl|g" /etc/nubomedia/paas.properties'
+    fi
+
     export paasIp
+    read -p "Enter the PaaS API ip [http://localhost:8081]: " paasIp
+    if [[ "$paasIp" != "" ]]; then
+        $_ex 'sed -i "s|internalURL=http://localhost:8081|internalURL=$paasIp|g" /etc/nubomedia/paas.properties'
+    fi
+
     export vnfmIp
+    read -p "Enter the Vnfm ip [localhost]: " vnfmIp
+    if [[ "$vnfmIp" != "" ]]; then
+        $_ex 'sed -i "s/vnfmIp=localhost/vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
+    fi
+
     export nfvoIp
+    read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
+    if [[ "$nfvoIp" != "" ]]; then
+         $_ex 'sed -i "s/openbatonIp=localhost/openbatonIp=$nfvoIp/g" /etc/nubomedia/paas.properties'
+    fi
+
     export nfvoUsername
-    export nfvoPassword
-    export keystorePath
-    export authURL
-    export tenantName
-    export username
-    export password
-    export keyPair
-
-     read -p "Enter the PaaS ip [https://localhost:8443]: " baseUrl
-     if [[ "$baseUrl" != "" ]]; then
-         $_ex 'sed -i "s|baseURL=https://localhost:8443|baseURL=$baseUrl|g" /etc/nubomedia/paas.properties'
-     fi
-
-     read -p "Enter the PaaS API ip [http://localhost:8081]: " paasIp
-     if [[ "$paasIp" != "" ]]; then
-         $_ex 'sed -i "s|internalURL=http://localhost:8081|internalURL=$paasIp|g" /etc/nubomedia/paas.properties'
-     fi
-
-     read -p "Enter the Vnfm ip [localhost]: " vnfmIp
-     if [[ "$vnfmIp" != "" ]]; then
-         $_ex 'sed -i "s/vnfmIp=localhost/vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
-     fi
-
-     read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
-     if [[ "$nfvoIp" != "" ]]; then
-          $_ex 'sed -i "s/openbatonIp=localhost/openbatonIp=$nfvoIp/g" /etc/nubomedia/paas.properties'
-     fi
-
     read -p "Enter the Orchestrator username [admin]: " nfvoUsername
     if [[ "$nfvoUsername" != "" ]]; then
          $_ex 'sed -i "s/openbatonUsername=admin/openbatonUsername=$nfvoUsername/g" /etc/nubomedia/paas.properties'
     fi
 
+    export nfvoPassword
     read -p "Enter the Orchestrator password [openbaton]: " nfvoPassword
     if [[ "$nfvoPassword" != "" ]]; then
          $_ex 'sed -i "s/openbatonPassword=localhost/openbatonPassword=$nfvoPassword/g" /etc/nubomedia/paas.properties'
     fi
-    
+
+    export keystorePath
     read -p "Enter the Openshift Keystore location (including the filename): " keystorePath
     if [[ ! -z "$keystorePath" ]]; then
    	    $_ex 'cp $keystorePath $_nubomedia_paas/resource/openshift-keystore'
     fi
 
+    export authURL
     read -p "Enter the Vim Auth URL (http://localhost:5000/v2.0): " authURL
     if [[ "$authURL" != "" ]]; then
         $_ex 'sed -i "s|\"authUrl\":\"http://localhost:5000/v2.0\"|\"authUrl\":\"$authURL\"|g" /etc/nubomedia/vim-instance.json'
     fi
 
+    export tenantName
     read -p "Enter the tenant name (nubomedia): " tenantName
     if [[ "$tenantName" != "" ]]; then
         $_ex 'sed -i "s/\"tenant\":\"nubomedia\"/\"tenant\":\"$tenantName\"/g" /etc/nubomedia/vim-instance.json'
     fi
 
+    export username
     read -p "Enter the vim username (nubomedia): " username
     if [[ "$username" != "" ]]; then
         $_ex 'sed -i "s/\"username\":\"nubomedia\"/\"username\":\"$username\"/g" /etc/nubomedia/vim-instance.json'
     fi
 
+    export password
     read -p "Enter the vim password (changeme): " password
     if [[ "$password" != "" ]]; then
         $_ex 'sed -i "s/\"password\":\"changeme\"/\"password\":\"$password\"/g" /etc/nubomedia/vim-instance.json'
     fi
 
+    export keyPair
     read -p "Enter the vim keyPair (nubomedia): " keyPair
     if [[ "$keyPair" != "" ]]; then
         $_ex 'sed -i "s/\"keyPair\":\"nubomedia\"/\"keyPair\":\"$keyPair\"/g" /etc/nubomedia/vim-instance.json'
