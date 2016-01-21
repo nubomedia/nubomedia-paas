@@ -57,32 +57,32 @@ function createNubomediaBase {
 function compileProperties {
 
      read -p "Enter the PaaS ip [https://localhost:8443]: " baseUrl
-     if [[ $baseUrl != "" ]]; then
+     if [[ "$baseUrl" != "" ]]; then
          $_ex 'sed -i "s|baseURL=https://localhost:8443|baseURL=$baseUrl|g" /etc/nubomedia/paas.properties'
      fi
 
      read -p "Enter the PaaS API ip [http://localhost:8081]: " paasIp
-     if [[ $paasIp != "" ]]; then
+     if [[ "$paasIp" != "" ]]; then
          $_ex 'sed -i "s|internalURL=http://localhost:8081|internalURL=$paasIp|g" /etc/nubomedia/paas.properties'
      fi
 
      read -p "Enter the Vnfm ip [localhost]: " vnfmIp
-     if [[ $vnfmIp != "" ]]; then
+     if [[ "$vnfmIp" != "" ]]; then
          $_ex 'sed -i "s|vnfmIp=localhost|vnfmIP=$vnfmIp|g" /etc/nubomedia/paas.properties'
      fi
 
      read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
-     if [[ $nfvoIp != "" ]]; then
+     if [[ "$nfvoIp" != "" ]]; then
           $_ex 'sed -i "s/openbatonIp=localhost/openbatonIp=$nfvoIp/g" /etc/nubomedia/paas.properties'
      fi
 
     read -p "Enter the Orchestrator username [admin]: " nfvoUsername
-    if [[ $nfvoUsername != "" ]]; then
+    if [[ "$nfvoUsername" != "" ]]; then
          $_ex 'sed -i "s/openbatonUsername=admin/openbatonUsername=$nfvoUsername/g" /etc/nubomedia/paas.properties'
     fi
 
     read -p "Enter the Orchestrator password [openbaton]: " nfvoPassword
-    if [[ $nfvoPassword != "" ]]; then
+    if [[ "$nfvoPassword" != "" ]]; then
          $_ex 'sed -i "s/openbatonPassword=localhost/openbatonPassword=$nfvoPassword/g" /etc/nubomedia/paas.properties'
     fi
     
@@ -92,27 +92,27 @@ function compileProperties {
     fi
 
     read -p "Enter the Vim Auth URL (http://localhost:5000/v2.0): " authURL
-    if [[ $authURL != "" ]]; then
+    if [[ "$authURL" != "" ]]; then
         $_ex 'sed -i "s|\"authUrl\":\"http://localhost:5000/v2.0\"|\"authUrl\":\"$authURL\"|g" /etc/nubomedia/vim-instance.json'
     fi
 
     read -p "Enter the tenant name (nubomedia): " tenantName
-    if [[ $tenantName != "" ]]; then
+    if [[ "$tenantName" != "" ]]; then
         $_ex 'sed -i "s|\"tenant\":\"nubomedia\"|\"tenant\":\"$tenantName\"|g" /etc/nubomedia/vim-instance.json'
     fi
 
     read -p "Enter the vim username (nubomedia): " username
-    if [[ $username != "" ]]; then
+    if [[ "$username" != "" ]]; then
         $_ex 'sed -i "s|\"username\":\"nubomedia\"|\"username\":\"$username\"|g" /etc/nubomedia/vim-instance.json'
     fi
 
     read -p "Enter the vim password (changeme): " password
-    if [[ $password != "" ]]; then
+    if [[ "$password" != "" ]]; then
         $_ex 'sed -i "s|\"password\":\"changeme\"|\"password\":\"$password\"|g" /etc/nubomedia/vim-instance.json'
     fi
 
     read -p "Enter the vim keyPair (nubomedia): " keyPair
-    if [[ $keyPair != "" ]]; then
+    if [[ "$keyPair" != "" ]]; then
         $_ex 'sed -i "s|\"keyPair\":\"nubomedia\"|\"keyPair\":\"$keyPair\"|g" /etc/nubomedia/vim-instance.json'
     fi
 }
