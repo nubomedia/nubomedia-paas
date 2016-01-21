@@ -70,25 +70,25 @@ function compileProperties {
 
     export vnfmIp
     read -p "Enter the Vnfm ip [localhost]: " vnfmIp
-    if [[ "$vnfmIp" != "" ]]; then
+    if [[ $vnfmIp != "" ]]; then
         $_ex 'sed -i "s/vnfmIp=localhost/vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoIp
     read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
-    if [[ "$nfvoIp" != "" ]]; then
+    if [[ $nfvoIp != "" ]]; then
          $_ex 'sed -i "s/openbatonIp=localhost/openbatonIp=$nfvoIp/g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoUsername
     read -p "Enter the Orchestrator username [admin]: " nfvoUsername
-    if [[ "$nfvoUsername" != "" ]]; then
+    if [[ $nfvoUsername != "" ]]; then
          $_ex 'sed -i "s/openbatonUsername=admin/openbatonUsername=$nfvoUsername/g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoPassword
     read -p "Enter the Orchestrator password [openbaton]: " nfvoPassword
-    if [[ "$nfvoPassword" != "" ]]; then
+    if [[ $nfvoPassword != "" ]]; then
          $_ex 'sed -i "s/openbatonPassword=localhost/openbatonPassword=$nfvoPassword/g" /etc/nubomedia/paas.properties'
     fi
 
@@ -106,25 +106,25 @@ function compileProperties {
 
     export tenantName
     read -p "Enter the tenant name (nubomedia): " tenantName
-    if [[ "$tenantName" != "" ]]; then
+    if [[ $tenantName != "" ]]; then
         $_ex 'sed -i "s/\"tenant\":\"nubomedia\"/\"tenant\":\"$tenantName\"/g" /etc/nubomedia/vim-instance.json'
     fi
 
     export username
     read -p "Enter the vim username (nubomedia): " username
-    if [[ "$username" != "" ]]; then
+    if [[ $username != "" ]]; then
         $_ex 'sed -i "s/\"username\":\"nubomedia\"/\"username\":\"$username\"/g" /etc/nubomedia/vim-instance.json'
     fi
 
     export password
     read -p "Enter the vim password (changeme): " password
-    if [[ "$password" != "" ]]; then
+    if [[ $password != "" ]]; then
         $_ex 'sed -i "s/\"password\":\"changeme\"/\"password\":\"$password\"/g" /etc/nubomedia/vim-instance.json'
     fi
 
     export keyPair
     read -p "Enter the vim keyPair (nubomedia): " keyPair
-    if [[ "$keyPair" != "" ]]; then
+    if [[ $keyPair != "" ]]; then
         $_ex 'sed -i "s/\"keyPair\":\"nubomedia\"/\"keyPair\":\"$keyPair\"/g" /etc/nubomedia/vim-instance.json'
     fi
 }
