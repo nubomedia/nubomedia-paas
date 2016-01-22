@@ -1,6 +1,7 @@
 angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce) {
 
         var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
+        var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
 
         $scope.alerts = [];
         $scope.apllications = [];
@@ -21,11 +22,12 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         $scope.sendPK = function (privateKeyReq) {
 
-            console.log(url + 'secret');
-            http.post(url + 'secret', privateKeyReq, 'text')
+            console.log(urlPK + 'secret');
+            http.post(urlPK + 'secret', privateKeyReq, 'text')
                 .success(function (data) {
                     console.log(data);
                     $scope.appCreate.projectKey = data;
+                    showOk('Private key saved. SecretName is:'+ data);
 
                 })
                 .error(function (data, status) {

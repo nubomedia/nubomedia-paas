@@ -41,14 +41,14 @@ angular.module('app')
         };
 
         http.post = function (url, data, type) {
-            if (!angular.isUndefined(type)) {
-
-                customHeaders['Content-type'] = 'text/plain';
-                customHeaders['Accept'] = 'text/plain';
-            } else {
-                customHeaders['Accept'] = 'application/json';
-                customHeaders['Content-type'] = 'application/json';
-            }
+            //if (!angular.isUndefined(type)) {
+            //
+            //    customHeaders['Content-type'] = 'text/plain';
+            //    customHeaders['Accept'] = 'text/plain';
+            //} else {
+            //    customHeaders['Accept'] = 'application/json';
+            //    customHeaders['Content-type'] = 'application/json';
+            //}
             $('#modalSend').modal('show');
             console.log(customHeaders);
             console.log(data);
