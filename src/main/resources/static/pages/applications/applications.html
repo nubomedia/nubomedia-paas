@@ -83,12 +83,30 @@
                             <br/>
 
                             <div class="form-group" ng-repeat="(key,value) in appCreate"
-                                 ng-if="key!='ports'">
+                                 ng-if="key!='ports' && key!='projectName' && key!='flavor' && key!='privateKey'">
                                 <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
 
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" id="{{key}}" name="{{key}}"
                                            ng-model="appCreate[key]"/>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label for="projectKey" class="col-sm-4 control-label">projectKey</label>
+
+                                <div ng-class="row" class="col-sm-6">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="projectKey" name="projectKey"
+                                               ng-model="appCreate.privateKey"/>
+                                        <span class="input-group-addon"><a href="" data-toggle="modal" data-target="#modalPrivateKey">
+                                            <li title="Add a Private key" class="fa fa-plus-square"></li>
+                                        </a></span>
+                                    </div>
+                                    <!--<input type="text" class="form-control" id="{{key}}" name="{{key}}"-->
+                                           <!--ng-model="appCreate.privateKey"/><a href="" data-toggle="modal" data-target="#modalPrivateKey">-->
+                                    <!--<li class="fa fa-plus-square"></li>-->
+                                </a>
                                 </div>
                             </div>
                             <h4>Ports <a href="" title="Add a new port">
@@ -166,3 +184,51 @@
     </div>
 </div>
 <!-- /.modal -->
+
+
+<div class="modal " id="modalPrivateKey">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="serviceFormLabel">Save Private key</h4>
+            </div>
+            <div class="modal-body">
+
+
+                <form class="form-horizontal" id="" role="form">
+                    <div class="form-group">
+                        <label for="projectName" class="col-sm-4 control-label">projectName</label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="projectName" name="projectName"
+                                   ng-model="privateKeyReq.projectName"/>
+                        </div>
+
+                    </div>
+
+                    <br/>
+<div class="inputKeyP">
+                    <div class="form-group">
+                        <br> <label for="jsonInputArea" class="">Insert Your Private Key</label>
+                                <textarea name="textTopologyJson" ng-model="privateKeyReq.privateKey" id="jsonInputArea"
+                                          class="form-control" rows="25"
+                                          placeholder="-----BEGIN PRIVATE KEY-----"></textarea>
+                    </div>
+</div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeModal" class="btn btn-default"
+                        data-dismiss="modal">Close
+                </button>
+                <button type="button" id="sendTemplate"
+                        data-dismiss="modal"
+                        class="btn btn-primary" ng-click="sendPK(privateKeyReq)">Send PrivateKey
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -40,8 +40,17 @@ angular.module('app')
             URL = orcURL;
         };
 
-        http.post = function (url, data) {
+        http.post = function (url, data, type) {
+            if (!angular.isUndefined(type)) {
+
+                customHeaders['Content-type'] = 'text/plain';
+                customHeaders['Accept'] = 'text/plain';
+            } else {
+                customHeaders['Accept'] = 'application/json';
+                customHeaders['Content-type'] = 'application/json';
+            }
             $('#modalSend').modal('show');
+            console.log(customHeaders);
             console.log(data);
             return $http({
                 url: url,
