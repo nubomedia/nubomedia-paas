@@ -12,9 +12,9 @@
       "vdu":[
         {
           "vm_image":[
-            "alincalinciuc/openstack_kms_6_0"
+            "nubomedia/kurento-media-server"
           ],
-          "vimInstanceName":"vim-instance",
+          "vimInstanceName":"nubomedia-vim",
           "scale_in_out":3,
           "vnfc":[
             {
@@ -51,7 +51,8 @@
         {
           "flavour_key":"d1.medium"
         }
-      ]
+      ],
+      "vnfPackageLocation":""
     }
   ],
   "vld":[

@@ -1,9 +1,9 @@
-angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore,$http,$sce) {
+angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce) {
 
         var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
 
         $scope.alerts = [];
-        $scope.apllications=[];
+        $scope.apllications = [];
         $scope.createApp = function () {
             $http.get('json/request.json')
                 .then(function (res) {
@@ -13,6 +13,25 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             $('#modalT').modal('show');
         };
 
+        $scope.privateKeyReq = {
+            projectName: 'nubomedia',
+            privateKey: ''
+
+        };
+
+        $scope.sendPK = function (privateKeyReq) {
+
+            console.log(url + 'secret');
+            http.post(url + 'secret', privateKeyReq, 'text')
+                .success(function (data) {
+                    console.log(data);
+                    $scope.appCreate.projectKey = data;
+
+                })
+                .error(function (data, status) {
+                    showError(status, data);
+                });
+        };
         if (!angular.isUndefined($routeParams.applicationId)) {
             http.get(url + $routeParams.applicationId)
                 .success(function (data) {
@@ -40,8 +59,6 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
 
 
-
-
         $scope.sendApp = function () {
             var postTopology;
             var sendOk = true;
@@ -54,7 +71,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             }
             else if ($scope.textTopologyJson !== '')
                 postTopology = $scope.textTopologyJson;
-            else if(angular.isUndefined(postTopology))
+            else if (angular.isUndefined(postTopology))
                 postTopology = $scope.appCreate;
             else {
                 alert('Problem with Topology');
@@ -78,15 +95,15 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         };
 
-        $scope.addPort = function(){
+        $scope.addPort = function () {
             $scope.appCreate.ports.push({
-                "port":8080,
-                "targetPort":8080,
-                "protocol":"TCP"
+                "port": 8080,
+                "targetPort": 8080,
+                "protocol": "TCP"
             });
         };
 
-        $scope.deletePort = function(index){
+        $scope.deletePort = function (index) {
             $scope.appCreate.ports.splice(index, 1);
         };
         $scope.deleteData = function (id) {
@@ -105,8 +122,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             console.log($scope.textTopologyJson);
         };
 
-        $scope.loadLog = function(){
-            http.get(url + $routeParams.applicationId+'/buildlogs')
+        $scope.loadLog = function () {
+            http.get(url + $routeParams.applicationId + '/buildlogs')
                 .success(function (response) {
                     //$scope.log = response;
                     $scope.log = $sce.trustAsHtml(n2br(response.log));

@@ -23,15 +23,15 @@ The [bootstrap] repository contains the script to install and start the Nubomedi
 In order to do it you can run the following command:
 
 ```bash
-bash <(curl -fsSkl https://raw.githubusercontent.com/fhg-fokus-nubomedia/nubomedia-paas/develop/bootstrap)
+bash <(curl -fsSkl https://raw.githubusercontent.com/fhg-fokus-nubomedia/nubomedia-paas/master/bootstrap)
 ```
 
 At the end of the installation process the Nubomedia PaaS Manager dashboard is reachable at localhost:8081
 
 Afterwards the source code of the Nubomedia PaaS Manager is located in `/opt/nubomedia/nubomedia-paas`.
-If the NFVO and/or the MS-VNFM is not installed and started. Otherwise the Nubomedia PaaS API and PaaS Manager start will fail and you need to start it manually when the NFVO and the MS-VNFM are up and running.
+Check if the NFVO and/or the MS-VNFM is not installed and started, otherwise the Nubomedia PaaS Manager start will fail and you need to start it manually when the NFVO and the MS-VNFM are up and running.
 
-In case the Nubomedia PaaS Manager are already installed you can start them manually using the provided script as described [here](#start-the-nubomedia-paas-api-and-paas-manager-manually)
+In case the Nubomedia PaaS Manager are already installed you can start them manually using the provided script as described [here](#start-the-nubomedia-paas-manager-manually)
 
 ### Install the Nubomedia PaaS Manager manually
 
@@ -102,5 +102,5 @@ After changing any configuration, you need to restart
 [portecle]:http://portecle.sourceforge.net/
 [keytool]:https://docs.oracle.com/javase/tutorial/security/toolsign/rstep2.html
 [spring.io]:https://spring.io/
-[bootstrap]:https://raw.githubusercontent.com/fhg-fokus-nubomedia/bootstrap/master/bootstrap
+[bootstrap]:https://raw.githubusercontent.com/fhg-fokus-nubomedia/nubomedia-paas/master/bootstrap
 [NFV MANO]:http://www.etsi.org/deliver/etsi_gs/NFV-MAN/001_099/001/01.01.01_60/gs_nfv-man001v010101p.pdf
