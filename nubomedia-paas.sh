@@ -48,7 +48,7 @@ function check_mysql {
 }
 
 function check_already_running {
-        result=$(screen -ls | grep ms-vnfm | wc -l);
+        result=$(screen -ls | grep nubomedia-paas | wc -l);
         if [ "${result}" -ne "0" ]; then
                 echo "Nubomedia-PaaS is already running.."
 		exit;
