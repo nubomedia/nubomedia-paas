@@ -89,7 +89,7 @@ function compileProperties {
     export nfvoPassword
     read -p "Enter the Orchestrator password [openbaton]: " nfvoPassword
     if [[ $nfvoPassword != "" ]]; then
-         $_ex 'sed -i "s/openbatonPasswd=localhost/openbatonPasswd=$nfvoPassword/g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s/openbatonPasswd=openbaton/openbatonPasswd=$nfvoPassword/g" /etc/nubomedia/paas.properties'
     fi
 
     export keystorePath
