@@ -173,7 +173,7 @@ function bootstrap {
     compileProperties
     # deploy and compile Nubomedia PaaS API
     deployNubomediaPaaS
-    echo "Nubomedia PaaS API is up and running now. Check screen -x nubomedia..."
+    echo "Nubomedia PaaS API is up and running now. Check screen -x nubomedia-paas..."
 
 }
 
