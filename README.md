@@ -31,7 +31,7 @@ At the end of the installation process the Nubomedia PaaS Manager dashboard is r
 Afterwards the source code of the Nubomedia PaaS Manager is located in `/opt/nubomedia/nubomedia-paas`.
 If the NFVO and/or the MS-VNFM is not installed and started. Otherwise the Nubomedia PaaS API and PaaS Manager start will fail and you need to start it manually when the NFVO and the MS-VNFM are up and running.
 
-In case the Nubomedia PaaS Manager are already installed you can start them manually using the provided script as described [here](#start-the-nubomedia-paas-api-and-paas-manager-manually)
+In case the Nubomedia PaaS Manager are already installed you can start them manually using the provided script as described [here](#start-the-nubomedia-paas-manager-manually)
 
 ### Install the Nubomedia PaaS Manager manually
 
