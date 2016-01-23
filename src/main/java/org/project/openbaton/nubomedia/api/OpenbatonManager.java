@@ -2,17 +2,16 @@ package org.project.openbaton.nubomedia.api;
 
 import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
-import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.catalogue.nfvo.EndpointType;
 import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.openbaton.catalogue.nfvo.VimInstance;
-import org.openbaton.sdk.api.exception.SDKException;
-import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.openbaton.sdk.NFVORequestor;
+import org.openbaton.sdk.api.exception.SDKException;
+import org.project.openbaton.nubomedia.api.configuration.NfvoProperties;
+import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonConfiguration;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
-import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by lto on 24/09/15.
@@ -29,40 +29,39 @@ import java.util.*;
 @Service
 public class OpenbatonManager {
 
+    @Autowired private VimInstance vimInstance;
+    @Autowired private NfvoProperties nfvoProperties;
     private Logger logger;
     private NetworkServiceDescriptor nsd;
-    private VimInstance vim;
-    private Properties properties;
+//    private Properties properties;
     private NFVORequestor nfvoRequestor;
     private String apiPath;
     private Map<String, NetworkServiceRecord> records;
 
     @PostConstruct
     private void init() throws IOException, SDKException {
-
+//        this.properties = ConfigReader.loadProperties();
         this.logger = LoggerFactory.getLogger(this.getClass());
-        this.properties = ConfigReader.loadProperties();
-        this.nfvoRequestor = new NFVORequestor(properties.getProperty("openbatonUsername"),properties.getProperty("openbatonPasswd"),properties.getProperty("openbatonIP"), properties.getProperty("openbatonPort"),"1");
-        this.vim = OpenbatonConfiguration.getVimInstance();
+        this.nfvoRequestor = new NFVORequestor(nfvoProperties.getOpenbatonUsername(),nfvoProperties.getOpenbatonPasswd(),nfvoProperties.getOpenbatonIP(), nfvoProperties.getOpenbatonPort(),"1");
+        //this.vim = configuration;
         this.apiPath = "/api/v1/nubomedia/paas";
-        NetworkServiceDescriptor tmp = OpenbatonConfiguration.getNSD();
+        NetworkServiceDescriptor tmp = new NetworkServiceDescriptor();
         logger.debug("NSD tmp " + tmp.toString());
-        this.vim = this.nfvoRequestor.getVimInstanceAgent().create(vim);
+        this.nfvoRequestor.getVimInstanceAgent().create(vimInstance);
         this.nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(tmp);
         this.records = new HashMap<>();
         logger.debug("Official NSD " + nsd.toString());
     }
 
-    public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID) throws SDKException {
+    public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID,String callbackUrl) throws SDKException {
 
         OpenbatonCreateServer res = new OpenbatonCreateServer();
         NetworkServiceRecord nsr = null;
         EventEndpoint eventEndpoint = new EventEndpoint();
         eventEndpoint.setType(EndpointType.REST);
-        eventEndpoint.setEndpoint(properties.getProperty("internalURL") + apiPath +"/openbaton/" + appID);
+        eventEndpoint.setEndpoint(callbackUrl + apiPath +"/openbaton/" + appID);
         eventEndpoint.setEvent(Action.INSTANTIATE_FINISH);
 
-        logger.info("[PAAS]: CREATE_APP_OB " + new Date().getTime());
         nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
         logger.debug("NSR " + nsr.toString());
         this.records.put(nsr.getId(),nsr);
@@ -131,7 +130,7 @@ public class OpenbatonManager {
             }
         }
         this.nfvoRequestor.getNetworkServiceDescriptorAgent().delete(nsd.getId());
-        this.nfvoRequestor.getVimInstanceAgent().delete(this.vim.getId());
+        this.nfvoRequestor.getVimInstanceAgent().delete(this.vimInstance.getId());
 
     }
 

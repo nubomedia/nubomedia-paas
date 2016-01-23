@@ -24,7 +24,7 @@ public class ConfigReader {
             log.info("loading properties from " + f.getAbsolutePath());
             properties.load(new FileInputStream(f));
         }
-        log.info("Loaded Properties: " + properties);
+        log.debug("Loaded Properties: " + properties);
 
         return properties;
     }

@@ -2,8 +2,8 @@ package org.project.openbaton.nubomedia.api;
 
 
 import com.google.gson.Gson;
+import org.project.openbaton.nubomedia.api.configuration.OpenshiftProperties;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
-import org.project.openbaton.nubomedia.api.openshift.ConfigReader;
 import org.project.openbaton.nubomedia.api.openshift.beans.*;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
@@ -12,11 +12,13 @@ import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.Properties;
 
 
 /**
@@ -34,7 +36,8 @@ public class OpenshiftManager {
     @Autowired private ServiceManager serviceManager;
     @Autowired private RouteManager routeManager;
     @Autowired private AuthenticationManager authManager;
-    private Properties config;
+//    private Properties config;
+    @ Autowired private OpenshiftProperties properties;
     private Logger logger;
     private String openshiftBaseURL;
     private String kubernetesBaseURL;
@@ -42,19 +45,19 @@ public class OpenshiftManager {
 
     @PostConstruct
     private void init() throws IOException {
-        this.config = ConfigReader.loadProperties();
+//        this.config = ConfigReader.loadProperties();
         this.logger = LoggerFactory.getLogger(this.getClass());
-        this.openshiftBaseURL = config.getProperty("baseURL") + "/oapi/v1/namespaces/";
-        this.kubernetesBaseURL = config.getProperty("baseURL") + "/api/v1/namespaces/";
+        this.openshiftBaseURL = properties.getOsBaseUrl() + "/oapi/v1/namespaces/";
+        this.kubernetesBaseURL = properties.getOsBaseUrl() + "/api/v1/namespaces/";
     }
 
     public String authenticate(String username, String password) throws UnauthorizedException {
 
-        return this.authManager.authenticate(config.getProperty("baseURL"),username,password);
+        return this.authManager.authenticate(properties.getOsBaseUrl(),username,password);
 
     }
 
-    public String buildApplication(String token, String appID, String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber, String secretName, String mediaServerGID) throws DuplicatedException, UnauthorizedException {
+    public String buildApplication(String token, String appID, String appName, String namespace,String gitURL,int[] ports,int[] targetPorts,String[] protocols, int replicasnumber, String secretName, String mediaServerGID, String vnfmIp, String vnfmPort) throws DuplicatedException, UnauthorizedException {
 
         HttpHeaders creationHeader = new HttpHeaders();
         creationHeader.add("Authorization","Bearer " + token);
@@ -70,7 +73,7 @@ public class OpenshiftManager {
 
         ImageStreamConfig isConfig = mapper.fromJson(appBuilEntity.getBody(),ImageStreamConfig.class);
 
-        appBuilEntity = buildManager.createBuild(openshiftBaseURL, appName, namespace, gitURL, isConfig.getStatus().getDockerImageRepository(), creationHeader, secretName, mediaServerGID,config.getProperty("vnfmIP"),config.getProperty("vnfmPort"));
+        appBuilEntity = buildManager.createBuild(openshiftBaseURL, appName, namespace, gitURL, isConfig.getStatus().getDockerImageRepository(), creationHeader, secretName, mediaServerGID,vnfmIp,vnfmPort);
         if(!appBuilEntity.getStatusCode().is2xxSuccessful()){
             logger.debug("Failed creation of buildconfig " + appBuilEntity.toString());
             return appBuilEntity.getBody();
