@@ -58,6 +58,7 @@ public class OpenbatonConfiguration {
         try{
             FileReader nsdFile = new FileReader("/etc/nubomedia/nubomedia-nsd.json");
             nsd = mapper.fromJson(nsdFile,NetworkServiceDescriptor.class);
+
         }
         catch (FileNotFoundException e){
             logger.debug("DO NOT REMOVE OR RENAME THE FILE /etc/nubomedia/nubomedia-nsd.json!!!!\nexiting");

@@ -29,11 +29,13 @@ import java.util.Map;
 @Service
 public class OpenbatonManager {
 
-    @Autowired private VimInstance vimInstance;
-    @Autowired private NfvoProperties nfvoProperties;
+    @Autowired
+    private VimInstance vimInstance;
+    @Autowired
+    private NfvoProperties nfvoProperties;
     private Logger logger;
     private NetworkServiceDescriptor nsd;
-//    private Properties properties;
+    //    private Properties properties;
     private NFVORequestor nfvoRequestor;
     private String apiPath;
     private Map<String, NetworkServiceRecord> records;
@@ -42,29 +44,30 @@ public class OpenbatonManager {
     private void init() throws IOException, SDKException {
 //        this.properties = ConfigReader.loadProperties();
         this.logger = LoggerFactory.getLogger(this.getClass());
-        this.nfvoRequestor = new NFVORequestor(nfvoProperties.getOpenbatonUsername(),nfvoProperties.getOpenbatonPasswd(),nfvoProperties.getOpenbatonIP(), nfvoProperties.getOpenbatonPort(),"1");
+        this.nfvoRequestor = new NFVORequestor(nfvoProperties.getOpenbatonUsername(), nfvoProperties.getOpenbatonPasswd(), nfvoProperties.getOpenbatonIP(), nfvoProperties.getOpenbatonPort(), "1");
         //this.vim = configuration;
         this.apiPath = "/api/v1/nubomedia/paas";
-        NetworkServiceDescriptor tmp = new NetworkServiceDescriptor();
+        NetworkServiceDescriptor tmp = OpenbatonConfiguration.getNSD("d1.medium", null);
         logger.debug("NSD tmp " + tmp.toString());
-        this.nfvoRequestor.getVimInstanceAgent().create(vimInstance);
+        VimInstance vimInstanceResult = this.nfvoRequestor.getVimInstanceAgent().create(vimInstance);
+        logger.debug(String.valueOf(vimInstanceResult.getFlavours()));
         this.nsd = this.nfvoRequestor.getNetworkServiceDescriptorAgent().create(tmp);
         this.records = new HashMap<>();
         logger.debug("Official NSD " + nsd.toString());
     }
 
-    public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID,String callbackUrl) throws SDKException {
+    public OpenbatonCreateServer getMediaServerGroupID(String flavorID, String appID, String callbackUrl) throws SDKException {
 
         OpenbatonCreateServer res = new OpenbatonCreateServer();
         NetworkServiceRecord nsr = null;
         EventEndpoint eventEndpoint = new EventEndpoint();
         eventEndpoint.setType(EndpointType.REST);
-        eventEndpoint.setEndpoint(callbackUrl + apiPath +"/openbaton/" + appID);
+        eventEndpoint.setEndpoint(callbackUrl + apiPath + "/openbaton/" + appID);
         eventEndpoint.setEvent(Action.INSTANTIATE_FINISH);
 
         nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(nsd.getId());
         logger.debug("NSR " + nsr.toString());
-        this.records.put(nsr.getId(),nsr);
+        this.records.put(nsr.getId(), nsr);
         eventEndpoint.setNetworkServiceId(nsr.getId());
         res.setMediaServerID(nsr.getId());
 
@@ -75,17 +78,17 @@ public class OpenbatonManager {
         return res;
     }
 
-    public BuildingStatus getStatus(String nsrID){
+    public BuildingStatus getStatus(String nsrID) {
         NetworkServiceRecord nsr = null;
         BuildingStatus res = BuildingStatus.CREATED;
         try {
-             nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID);
+            nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID);
         } catch (SDKException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
         if (nsr != null) {
-            switch (nsr.getStatus()){
+            switch (nsr.getStatus()) {
                 case NULL:
                     res = BuildingStatus.CREATED;
                     break;
@@ -104,7 +107,7 @@ public class OpenbatonManager {
         return res;
     }
 
-    public void deleteRecord(String nsrID){
+    public void deleteRecord(String nsrID) {
         try {
             records.remove(nsrID);
             nfvoRequestor.getNetworkServiceRecordAgent().delete(nsrID);
@@ -113,7 +116,7 @@ public class OpenbatonManager {
         }
     }
 
-    public void deleteEvent(String eventID){
+    public void deleteEvent(String eventID) {
         try {
             this.nfvoRequestor.getEventAgent().delete(eventID);
         } catch (SDKException e) {
@@ -123,8 +126,8 @@ public class OpenbatonManager {
 
     @PreDestroy
     private void deleteNSD() throws SDKException {
-        if(!this.records.isEmpty()){
-            for(String nsrId : records.keySet()){
+        if (!this.records.isEmpty()) {
+            for (String nsrId : records.keySet()) {
                 this.nfvoRequestor.getNetworkServiceRecordAgent().delete(nsrId);
                 this.records.remove(nsrId);
             }
