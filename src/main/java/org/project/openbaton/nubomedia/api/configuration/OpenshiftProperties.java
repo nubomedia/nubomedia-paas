@@ -30,6 +30,6 @@ public class OpenshiftProperties {
 
     @PostConstruct
     private void init(){
-        log.info("Base URL for OShift is: " + baseURL);
+        log.debug("Base URL for OShift is: " + baseURL);
     }
 }

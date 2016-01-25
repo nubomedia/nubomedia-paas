@@ -1,7 +1,11 @@
 package org.project.openbaton.nubomedia.api.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Created by maa on 22.01.16.
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Service;
 @ConfigurationProperties(prefix="vim")
 public class VimProperties {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     private String authURL;
     private String username;
     private String password;
@@ -91,5 +96,10 @@ public class VimProperties {
 
     public void setLocationLongitude(String locationLongitude) {
         this.locationLongitude = locationLongitude;
+    }
+
+    @PostConstruct
+    private void init(){
+        logger.debug("authURL: " + authURL + "\nusername: " + username + "\npassword: " + password + "\nkeypair: " + keypair + "\ntenant: " + tenant + "\ntype: " + type);
     }
 }
