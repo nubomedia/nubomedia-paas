@@ -68,9 +68,9 @@ public class OpenbatonManager {
         this.records = new HashMap<>();
     }
 
-    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, QoS qos,String serverTurnIp,String serverTurnUsername, String serverTurnPassword, double scale_in_threshold, double scale_out_threshold) throws SDKException {
+    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, QoS qos,String serverTurnIp,String serverTurnUsername, String serverTurnPassword,int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws SDKException {
 
-        NetworkServiceDescriptor targetNSD = OpenbatonConfiguration.getNSD(flavorID.getValue(),qos.toString(),serverTurnIp,serverTurnUsername,serverTurnPassword, scale_in_threshold,scale_out_threshold);
+        NetworkServiceDescriptor targetNSD = OpenbatonConfiguration.getNSD(flavorID.getValue(),qos.toString(),serverTurnIp,serverTurnUsername,serverTurnPassword,scaleInOut, scale_in_threshold,scale_out_threshold);
 
         if (cloudRepositorySet){
             VirtualNetworkFunctionDescriptor cloudRepoDef = this.setRandomPassword(cloudRepository);

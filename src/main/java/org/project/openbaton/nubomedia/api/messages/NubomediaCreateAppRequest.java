@@ -20,6 +20,7 @@ public class NubomediaCreateAppRequest {
     private String turnServerIp;
     private String turnServerUsername;
     private String turnServerPassword;
+    private int scaleInOut;
     private double scale_in_threshold;
     private double scale_out_threshold;
 
@@ -120,6 +121,14 @@ public class NubomediaCreateAppRequest {
 
     public void setTurnServerPassword(String turnServerPassword) {
         this.turnServerPassword = turnServerPassword;
+    }
+
+    public int getScaleInOut() {
+        return scaleInOut;
+    }
+
+    public void setScaleInOut(int scaleInOut) {
+        this.scaleInOut = scaleInOut;
     }
 
     public double getScale_in_threshold() {

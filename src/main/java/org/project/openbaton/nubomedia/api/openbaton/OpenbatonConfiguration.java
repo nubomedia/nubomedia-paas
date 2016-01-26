@@ -8,6 +8,7 @@ import org.openbaton.catalogue.mano.common.ScalingAlarm;
 import org.openbaton.catalogue.mano.common.VNFDeploymentFlavour;
 import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
 import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
+import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.nfvo.ConfigurationParameter;
 import org.openbaton.catalogue.nfvo.Location;
@@ -73,7 +74,7 @@ public class OpenbatonConfiguration {
         return vnfd;
     }
 
-    public static NetworkServiceDescriptor getNSD(String flavor, String Qos, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, double scale_in_threshold, double scale_out_threshold){
+    public static NetworkServiceDescriptor getNSD(String flavor, String Qos, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, int scaleInOut, double scale_in_threshold, double scale_out_threshold){
         NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
         Gson mapper = new GsonBuilder().create();
 
@@ -86,7 +87,7 @@ public class OpenbatonConfiguration {
             logger.debug("DO NOT REMOVE OR RENAME THE FILE /etc/nubomedia/nubomedia-nsd.json!!!!\nexiting");
         }
 
-        nsd = OpenbatonConfiguration.injectFlavor(flavor,nsd);
+        nsd = OpenbatonConfiguration.injectFlavor(flavor,scaleInOut, nsd);
 
         if (Qos != null){
 
@@ -217,12 +218,18 @@ public class OpenbatonConfiguration {
         return nsd;
     }
 
-    private static NetworkServiceDescriptor injectFlavor(String flavour, NetworkServiceDescriptor networkServiceDescriptor){
+    private static NetworkServiceDescriptor injectFlavor(String flavour,int scaleInOut, NetworkServiceDescriptor networkServiceDescriptor){
 
         Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
 
         for (VirtualNetworkFunctionDescriptor vnfd : networkServiceDescriptor.getVnfd()) {
             if (vnfd.getEndpoint().equals("media-server")){
+                Set<VirtualDeploymentUnit> virtualDeploymentUnits = new HashSet<>();
+                for (VirtualDeploymentUnit vdu : vnfd.getVdu()){
+                    vdu.setScale_in_out(scaleInOut);
+                    virtualDeploymentUnits.add(vdu);
+                }
+                vnfd.setVdu(virtualDeploymentUnits);
                 Set<VNFDeploymentFlavour> flavours = new HashSet<>();
                 VNFDeploymentFlavour newFlavour = new VNFDeploymentFlavour();
                 newFlavour.setFlavour_key(flavour);
