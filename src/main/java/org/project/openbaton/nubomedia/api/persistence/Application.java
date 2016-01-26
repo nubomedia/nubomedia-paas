@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api.persistence;
 import com.google.gson.annotations.Expose;
 import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
+import org.project.openbaton.nubomedia.api.openbaton.Flavor;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -32,11 +33,11 @@ public class Application {
     private List<String> protocols;
     private int replicasNumber;
     private String secretName;
-    private String flavor;
+    private Flavor flavor;
     private BuildingStatus status;
     @Expose(serialize = false,deserialize = false) private boolean resourceOK;
 
-    public Application(String appID,String flavor, String appName, String projectName, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, int replicasNumber, String secretName,boolean resourceOK) {
+    public Application(String appID,Flavor flavor, String appName, String projectName, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, int replicasNumber, String secretName,boolean resourceOK) {
         this.appID = appID;
         this.flavor = flavor;
         this.appName = appName;
@@ -119,11 +120,11 @@ public class Application {
         this.secretName = secretName;
     }
 
-    public String getFlavor() {
+    public Flavor getFlavor() {
         return flavor;
     }
 
-    public void setFlavor(String flavor) {
+    public void setFlavor(Flavor flavor) {
         this.flavor = flavor;
     }
 
