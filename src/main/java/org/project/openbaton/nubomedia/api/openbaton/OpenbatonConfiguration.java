@@ -95,6 +95,11 @@ public class OpenbatonConfiguration {
         }
 
         if (mediaServerTurnIP != null){
+
+            if (mediaServerTurnUsername == null || mediaServerTurnPassword == null){
+                throw new IllegalArgumentException("No Authentication for Turn Server");
+            }
+
             nsd = OpenbatonConfiguration.setStunServer(mediaServerTurnIP,mediaServerTurnUsername, mediaServerTurnPassword, nsd);
         }
 
