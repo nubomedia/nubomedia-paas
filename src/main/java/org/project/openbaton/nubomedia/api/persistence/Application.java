@@ -1,7 +1,6 @@
 package org.project.openbaton.nubomedia.api.persistence;
 
-import com.google.gson.annotations.Expose;
-import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openbaton.Flavor;
 
@@ -10,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by maa on 28.09.15.
@@ -35,7 +33,7 @@ public class Application {
     private String secretName;
     private Flavor flavor;
     private BuildingStatus status;
-    @Expose(serialize = false,deserialize = false) private boolean resourceOK;
+    @JsonIgnore private boolean resourceOK;
 
     public Application(String appID,Flavor flavor, String appName, String projectName, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, int replicasNumber, String secretName,boolean resourceOK) {
         this.appID = appID;

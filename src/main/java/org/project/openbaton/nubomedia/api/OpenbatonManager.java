@@ -81,6 +81,7 @@ public class OpenbatonManager {
         targetNSD = nfvoRequestor.getNetworkServiceDescriptorAgent().create(targetNSD);
 
         OpenbatonCreateServer res = new OpenbatonCreateServer();
+        res.setNsdID(targetNSD.getId());
         NetworkServiceRecord nsr = null;
         EventEndpoint eventEndpoint = new EventEndpoint();
         eventEndpoint.setType(EndpointType.REST);
@@ -142,6 +143,14 @@ public class OpenbatonManager {
         try {
             this.nfvoRequestor.getEventAgent().delete(eventID);
         } catch (SDKException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteDescriptor(String nsdID){
+        try {
+            this.nfvoRequestor.getNetworkServiceDescriptorAgent().delete(nsdID);
+        } catch (SDKException e){
             e.printStackTrace();
         }
     }

@@ -7,9 +7,18 @@ public class OpenbatonCreateServer {
 
     private String mediaServerID;
     private String eventID;
+    private String nsdID;
     private String token;
 
     public OpenbatonCreateServer() {
+    }
+
+    public String getNsdID() {
+        return nsdID;
+    }
+
+    public void setNsdID(String nsdID) {
+        this.nsdID = nsdID;
     }
 
     public String getMediaServerID() {

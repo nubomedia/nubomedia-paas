@@ -345,6 +345,7 @@ public class NubomediaAppManager {
                 appRepo.save(app);
                 return;
             }
+            obmanager.deleteDescriptor(server.getNsdID());
             obmanager.deleteEvent(server.getEventID());
             app.setRoute(route);
             appRepo.save(app);
@@ -352,9 +353,11 @@ public class NubomediaAppManager {
         }
         else if (evt.getAction().equals(Action.ERROR)){
 
+            obmanager.deleteDescriptor(server.getNsdID());
+            obmanager.deleteEvent(server.getEventID());
             app.setStatus(BuildingStatus.FAILED);
             appRepo.save(app);
-
+            deploymentMap.remove(app.getAppID());
         }
 
     }
