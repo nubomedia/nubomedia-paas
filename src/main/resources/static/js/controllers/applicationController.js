@@ -27,7 +27,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 .success(function (data) {
                     console.log(data);
                     $scope.appCreate.projectKey = data;
-                    showOk('Private key saved. SecretName is:'+ data);
+                    $('#modalSend').modal('hide');
+                    $('#modalPrivateKey').modal('hide');
 
                 })
                 .error(function (data, status) {
