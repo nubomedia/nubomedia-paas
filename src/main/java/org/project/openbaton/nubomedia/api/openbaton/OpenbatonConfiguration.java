@@ -63,8 +63,10 @@ public class OpenbatonConfiguration {
         Gson mapper = new GsonBuilder().create();
 
         try{
+            logger.debug("Reading cloud repository");
             FileReader vnfdFile = new FileReader("/etc/nubomedia/cloudrepo-vnfd.json");
             vnfd = mapper.fromJson(vnfdFile,VirtualNetworkFunctionDescriptor.class);
+            logger.debug("CLOUD REPOSITORY IS " + vnfd.toString());
 
         }
         catch (FileNotFoundException e){
