@@ -9,7 +9,7 @@ import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.configuration.NfvoProperties;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openbaton.Flavor;
-import org.project.openbaton.nubomedia.api.openbaton.OpenbatonConfiguration;
+import org.project.openbaton.nubomedia.api.openbaton.NetworkServiceDescriptorConfiguration;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.QoS;
 import org.slf4j.Logger;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -70,7 +69,7 @@ public class OpenbatonManager {
 
     public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, QoS qos,String serverTurnIp,String serverTurnUsername, String serverTurnPassword,int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws SDKException {
 
-        NetworkServiceDescriptor targetNSD = OpenbatonConfiguration.getNSD(flavorID.getValue(),qos.toString(),serverTurnIp,serverTurnUsername,serverTurnPassword,scaleInOut, scale_in_threshold,scale_out_threshold);
+        NetworkServiceDescriptor targetNSD = NetworkServiceDescriptorConfiguration.getNSD(flavorID.getValue(),qos.toString(),serverTurnIp,serverTurnUsername,serverTurnPassword,scaleInOut, scale_in_threshold,scale_out_threshold);
 
         if (cloudRepositorySet){
             VirtualNetworkFunctionDescriptor cloudRepoDef = this.setRandomPassword(cloudRepository);

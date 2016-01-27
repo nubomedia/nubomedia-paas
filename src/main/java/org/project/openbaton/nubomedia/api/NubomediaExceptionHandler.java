@@ -67,14 +67,14 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
     }
 
-//    @ExceptionHandler({IllegalArgumentException.class})
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    protected ResponseEntity<Object> handleNoUserOrPasswordTurn(Exception e, WebRequest request){
-//        logger.info("Handling to long name from " + request.getDescription(true));
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        String body = "With turnServerIp, username and password are mandatory" + e.getMessage();
-//        return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
-//    }
+    @ExceptionHandler({IllegalArgumentException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ResponseEntity<Object> handleNoUserOrPasswordTurn(Exception e, WebRequest request){
+        logger.info("Handling to long name from " + request.getDescription(true));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String body = "With turnServerIp, username and password are mandatory" + e.getMessage();
+        return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
+    }
 
 }
