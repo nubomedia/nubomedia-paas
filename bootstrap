@@ -136,7 +136,7 @@ function checkoutNubomediaPaaS {
     pushd "${_nubomedia_paas}"
     git checkout ${_tag}
     popd
-    $_ex 'rm -rf "/etc/nubomedia"; mkdir "/etc/nubomedia"'
+    $_ex 'mkdir "/etc/nubomedia"'
     echo "created properties folder"
     $_ex 'cp '"${_nubomedia_paas}/src/main/resources/paas.properties /etc/nubomedia/paas.properties"
     $_ex 'cp '"${_nubomedia_paas}/resource/vim-instance.json /etc/nubomedia/vim-instance.json"
