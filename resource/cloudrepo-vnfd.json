@@ -3,7 +3,7 @@
   "version":"0.1",
   "name":"mongodb",
   "type":"mongodb",
-  "endpoint":"generic",
+  "endpoint":"generic-endpoint",
   "configurations":{
     "name":"config_config",
     "configurationParameters":[
