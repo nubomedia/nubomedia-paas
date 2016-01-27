@@ -139,7 +139,7 @@ function checkoutNubomediaPaaS {
     $_ex 'mkdir -p "/etc/nubomedia"'
     echo "created properties folder"
     $_ex 'cp '"${_nubomedia_paas}/src/main/resources/paas.properties /etc/nubomedia/paas.properties"
-    $_ex 'cp '"${_nubomedia_paas}/resource/vim-instance.json /etc/nubomedia/vim-instance.json"
+    $_ex 'cp '"${_nubomedia_paas}/resource/cloudrepo-vnfd.json /etc/nubomedia/cloudrepo-vnfd.json"
     $_ex 'cp '"${_nubomedia_paas}/resource/nubomedia-nsd.json /etc/nubomedia/nubomedia-nsd.json"
     echo "copied properties file, now modifing..."
 }
