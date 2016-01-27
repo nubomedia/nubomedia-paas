@@ -95,7 +95,7 @@ function compileProperties {
     export keystorePath
     read -p "Enter the Openshift Keystore location (including the filename): " keystorePath
     if [[ ! -z "$keystorePath" ]]; then
-   	    $_ex 'cp $keystorePath $_nubomedia_paas/resource/openshift-keystore'
+   	    $_ex 'cp '"${keystorePath} ${_nubomedia_paas}/resource/openshift-keystore"
     fi
 
     export authURL
