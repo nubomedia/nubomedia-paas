@@ -74,4 +74,23 @@ public class OpenbatonConfiguration {
         return vnfd;
     }
 
+    @Bean
+    public NetworkServiceDescriptor getDescriptor(){
+        logger.debug("Reading descriptor");
+        NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
+        Gson mapper = new GsonBuilder().create();
+
+        try{
+            logger.debug("Trying to read the descriptor");
+            FileReader nsdFile = new FileReader("/etc/nubomedia/nubomedia-nsd.json");
+            nsd = mapper.fromJson(nsdFile,NetworkServiceDescriptor.class);
+            logger.debug("DESCRIPTOR " + nsd.toString());
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+            logger.debug("DO NOT REMOVE OR RENAME THE FILE /etc/nubomedia/nubomedia-nsd.json!!!!\nexiting");
+        }
+        return nsd;
+    }
+
 }

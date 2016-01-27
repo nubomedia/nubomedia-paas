@@ -1,6 +1,11 @@
 package org.project.openbaton.nubomedia.api;
 
+import org.openbaton.catalogue.mano.common.AutoScalePolicy;
+import org.openbaton.catalogue.mano.common.ScalingAlarm;
+import org.openbaton.catalogue.mano.common.VNFDeploymentFlavour;
+import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
 import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
+import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.openbaton.catalogue.nfvo.*;
@@ -21,10 +26,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by lto on 24/09/15.
@@ -35,6 +37,7 @@ public class OpenbatonManager {
     @Autowired private VimInstance vimInstance;
     @Autowired private NfvoProperties nfvoProperties;
     @Autowired private VirtualNetworkFunctionDescriptor cloudRepository;
+    @Autowired private NetworkServiceDescriptor nsdFromFile;
     private Logger logger;
     private NFVORequestor nfvoRequestor;
     private String apiPath;
@@ -70,7 +73,8 @@ public class OpenbatonManager {
     public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, QoS qos,String serverTurnIp,String serverTurnUsername, String serverTurnPassword,int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws SDKException {
 
         logger.debug("FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
-        NetworkServiceDescriptor targetNSD = NetworkServiceDescriptorConfiguration.getNSD(flavorID.getValue(),qos.toString(),serverTurnIp,serverTurnUsername,serverTurnPassword,scaleInOut, scale_in_threshold,scale_out_threshold);
+
+        NetworkServiceDescriptor targetNSD = this.configureDescriptor(nsdFromFile,flavorID,qos,serverTurnIp,serverTurnUsername,serverTurnPassword,scaleInOut,scale_in_threshold,scale_out_threshold);
 
         if (cloudRepositorySet){
             VirtualNetworkFunctionDescriptor cloudRepoDef = this.setRandomPassword(cloudRepository);
@@ -170,6 +174,171 @@ public class OpenbatonManager {
         cloudRepository.setConfigurations(configuration);
         return cloudRepository;
     }
+
+    private NetworkServiceDescriptor configureDescriptor(NetworkServiceDescriptor nsd, Flavor flavor, QoS Qos, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, int scaleInOut, double scale_in_threshold, double scale_out_threshold){
+        logger.debug("Start configure");
+        nsd = this.injectFlavor(flavor.getValue(),scaleInOut,nsd);
+        logger.debug("After flavor the nsd is\n" + nsd.toString() + "\n****************************");
+
+        if (Qos != null){
+            logger.debug("\nSetting QoS");
+            nsd = this.injectQoS(Qos.toString(),nsd);
+            logger.debug("After QOS the nsd is\n" + nsd.toString() + "\n############################");
+        }
+
+        if (mediaServerTurnIP != null){
+
+            if (mediaServerTurnUsername == null || mediaServerTurnPassword == null){
+                throw new IllegalArgumentException("No Authentication for Turn Server");
+            }
+            logger.debug("Setting Turn Server");
+            nsd = this.setStunServer(mediaServerTurnIP,mediaServerTurnUsername, mediaServerTurnPassword, nsd);
+            logger.debug("After Turn Server the nsd is\n" + nsd.toString() + "\n---------------------------");
+        }
+
+        if (scale_in_threshold > 0){
+            logger.debug("Setting scale_in_threshold");
+            nsd = this.setScaleInThreshold(scale_in_threshold,nsd);
+            logger.debug("After scale_in_threshold the nsd is\n" + nsd.toString() + "\n§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§");
+        }
+
+        if (scale_out_threshold > 0){
+            logger.debug("Setting scale_out_threshold");
+            nsd = this.setScaleOutThreshold(scale_out_threshold,nsd);
+            logger.debug("After scale_out_threshold the nsd is\n" + nsd.toString() + "\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+        }
+
+        return nsd;
+    }
+
+    private NetworkServiceDescriptor setScaleOutThreshold(double scale_out_threshold, NetworkServiceDescriptor nsd) {
+        Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
+
+        for (VirtualNetworkFunctionDescriptor vnfd : nsd.getVnfd()){
+            Set<AutoScalePolicy> autoScalePolicy = vnfd.getAuto_scale_policy();
+
+            for (AutoScalePolicy policy : autoScalePolicy){
+                if (policy.getName().equals("scale-out")){
+                    for (ScalingAlarm alarm : policy.getAlarms()){
+                        if (alarm.getMetric().equals("CONSUMED_CAPACITY")){
+                            alarm.setThreshold(scale_out_threshold);
+                        }
+                    }
+                }
+            }
+            vnfd.setAuto_scale_policy(autoScalePolicy);
+            vnfds.add(vnfd);
+        }
+        nsd.setVnfd(vnfds);
+
+        return nsd;
+    }
+
+    private NetworkServiceDescriptor setScaleInThreshold(double scale_in_threshold, NetworkServiceDescriptor nsd) {
+
+        Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
+
+        for (VirtualNetworkFunctionDescriptor vnfd : nsd.getVnfd()){
+            Set<AutoScalePolicy> autoScalePolicy = vnfd.getAuto_scale_policy();
+
+            for (AutoScalePolicy policy : autoScalePolicy){
+                if (policy.getName().equals("scale-in")){
+                    for (ScalingAlarm alarm : policy.getAlarms()){
+                        if (alarm.getMetric().equals("CONSUMED_CAPACITY")){
+                            alarm.setThreshold(scale_in_threshold);
+                        }
+                    }
+                }
+            }
+            vnfd.setAuto_scale_policy(autoScalePolicy);
+            vnfds.add(vnfd);
+        }
+        nsd.setVnfd(vnfds);
+
+        return nsd;
+    }
+
+    private NetworkServiceDescriptor setStunServer(String mediaServerStunIP, String mediaServerTurnUsername, String mediaServerTurnPassword, NetworkServiceDescriptor nsd) {
+
+        Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
+
+        for (VirtualNetworkFunctionDescriptor vnfd : nsd.getVnfd()) {
+            if (vnfd.getEndpoint().equals("media-server")){
+                ConfigurationParameter cpIp = new ConfigurationParameter();
+                cpIp.setConfKey("mediaserver.stun.url");
+                cpIp.setValue(mediaServerStunIP);
+                ConfigurationParameter cpUser = new ConfigurationParameter();
+                cpUser.setConfKey("mediaserver.turn-server.username");
+                cpUser.setValue(mediaServerTurnUsername);
+                ConfigurationParameter cpPassword = new ConfigurationParameter();
+                cpPassword.setConfKey("mediaserver.turn-server.password");
+                cpPassword.setValue(mediaServerTurnPassword);
+                org.openbaton.catalogue.nfvo.Configuration configuration = new org.openbaton.catalogue.nfvo.Configuration();
+                configuration.setName("mediaserver");
+                HashSet<ConfigurationParameter> cps = new HashSet<>();
+                cps.add(cpIp);
+                cps.add(cpUser);
+                cps.add(cpPassword);
+                configuration.setConfigurationParameters(cps);
+                vnfd.setConfigurations(configuration);
+                vnfds.add(vnfd);
+            }
+            else
+                vnfds.add(vnfd);
+        }
+        nsd.setVnfd(vnfds);
+
+        return nsd;
+    }
+
+    private NetworkServiceDescriptor injectQoS(String qos, NetworkServiceDescriptor nsd) {
+
+        Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
+
+        for (VirtualNetworkFunctionDescriptor vnfd : nsd.getVnfd()) {
+            if (vnfd.getEndpoint().equals("media-server")){
+                Set<InternalVirtualLink> vlds = new HashSet<>();
+                for (InternalVirtualLink vld : vnfd.getVirtual_link()) {
+                    Set<String> qoss = new HashSet<>();
+                    qoss.add("minimum_bandwith:" + qos);
+                    vld.setQos(qoss);
+                    vlds.add(vld);
+                }
+                vnfd.setVirtual_link(vlds);
+                vnfds.add(vnfd);
+            }
+            else
+                vnfds.add(vnfd);
+        }
+        nsd.setVnfd(vnfds);
+        return nsd;
+    }
+
+    private NetworkServiceDescriptor injectFlavor(String flavour,int scaleInOut, NetworkServiceDescriptor networkServiceDescriptor){
+
+        Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
+
+        for (VirtualNetworkFunctionDescriptor vnfd : networkServiceDescriptor.getVnfd()) {
+            if (vnfd.getEndpoint().equals("media-server")){
+                Set<VirtualDeploymentUnit> virtualDeploymentUnits = new HashSet<>();
+                for (VirtualDeploymentUnit vdu : vnfd.getVdu()){
+                    vdu.setScale_in_out(scaleInOut);
+                    virtualDeploymentUnits.add(vdu);
+                }
+                vnfd.setVdu(virtualDeploymentUnits);
+                Set<VNFDeploymentFlavour> flavours = new HashSet<>();
+                VNFDeploymentFlavour newFlavour = new VNFDeploymentFlavour();
+                newFlavour.setFlavour_key(flavour);
+                flavours.add(newFlavour);
+                vnfd.setDeployment_flavour(flavours);
+                vnfds.add(vnfd);
+            }
+        }
+
+        networkServiceDescriptor.setVnfd(vnfds);
+        return networkServiceDescriptor;
+    }
+
 
 //    @PreDestroy
 //    private void deleteNSD() throws SDKException {
