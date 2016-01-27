@@ -34,7 +34,6 @@
       ],
       "vimInstanceName":"vim-instance",
       "vdu_constraint":"",
-      "high_availability":"ACTIVE_PASSIVE",
       "scale_in_out":2,
       "vnfc":[
         {
