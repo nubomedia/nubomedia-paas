@@ -47,13 +47,13 @@ public class OpenshiftManager {
     private void init() throws IOException {
 //        this.config = ConfigReader.loadProperties();
         this.logger = LoggerFactory.getLogger(this.getClass());
-        this.openshiftBaseURL = properties.getOsBaseUrl() + "/oapi/v1/namespaces/";
-        this.kubernetesBaseURL = properties.getOsBaseUrl() + "/api/v1/namespaces/";
+        this.openshiftBaseURL = properties.getBaseURL() + "/oapi/v1/namespaces/";
+        this.kubernetesBaseURL = properties.getBaseURL() + "/api/v1/namespaces/";
     }
 
     public String authenticate(String username, String password) throws UnauthorizedException {
 
-        return this.authManager.authenticate(properties.getOsBaseUrl(),username,password);
+        return this.authManager.authenticate(properties.getBaseURL(),username,password);
 
     }
 

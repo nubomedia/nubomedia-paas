@@ -8,17 +8,17 @@ import org.springframework.stereotype.Service;
  * Created by maa on 20.01.16.
  */
 @Service
-@Scope
 @ConfigurationProperties (prefix="openshift")
 public class OpenshiftProperties {
 
     private String baseURL;
 
-    public String getOsBaseUrl() {
+    public String getBaseURL() {
         return baseURL;
     }
 
-    public void setOsBaseUrl(String baseURL) {
+    public void setBaseURL(String baseURL) {
         this.baseURL = baseURL;
     }
+
 }
