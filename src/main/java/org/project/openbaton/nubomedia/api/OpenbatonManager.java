@@ -78,8 +78,10 @@ public class OpenbatonManager {
 
         if (cloudRepositorySet){
             VirtualNetworkFunctionDescriptor cloudRepoDef = this.setRandomPassword(cloudRepository);
+            logger.debug("CLOUD REPOSITORY WITH NEW PASSWORD IS " + cloudRepoDef.toString());
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
             vnfds.add(cloudRepoDef);
+            logger.debug("VNFDS " + vnfds.toString());
             targetNSD.setVnfd(vnfds);
         }
         targetNSD = nfvoRequestor.getNetworkServiceDescriptorAgent().create(targetNSD);
