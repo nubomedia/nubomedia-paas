@@ -69,6 +69,7 @@ public class OpenbatonManager {
 
     public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, QoS qos,String serverTurnIp,String serverTurnUsername, String serverTurnPassword,int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws SDKException {
 
+        logger.debug("FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
         NetworkServiceDescriptor targetNSD = NetworkServiceDescriptorConfiguration.getNSD(flavorID.getValue(),qos.toString(),serverTurnIp,serverTurnUsername,serverTurnPassword,scaleInOut, scale_in_threshold,scale_out_threshold);
 
         if (cloudRepositorySet){

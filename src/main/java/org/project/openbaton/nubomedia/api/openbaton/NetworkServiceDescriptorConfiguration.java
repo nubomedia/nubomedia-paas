@@ -26,19 +26,24 @@ public class NetworkServiceDescriptorConfiguration {
     private static Logger logger = LoggerFactory.getLogger(NetworkServiceDescriptorConfiguration.class);
 
     public static NetworkServiceDescriptor getNSD(String flavor, String Qos, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, int scaleInOut, double scale_in_threshold, double scale_out_threshold){
+
+        logger.debug("Starting the descriptor");
         NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
         Gson mapper = new GsonBuilder().create();
 
         try{
+            logger.debug("Trying to read the descriptor");
             FileReader nsdFile = new FileReader("/etc/nubomedia/nubomedia-nsd.json");
             nsd = mapper.fromJson(nsdFile,NetworkServiceDescriptor.class);
-
+            logger.debug("DESCRIPTOR " + nsd.toString());
         }
         catch (FileNotFoundException e){
+            e.printStackTrace();
             logger.debug("DO NOT REMOVE OR RENAME THE FILE /etc/nubomedia/nubomedia-nsd.json!!!!\nexiting");
         }
 
         nsd = NetworkServiceDescriptorConfiguration.injectFlavor(flavor,scaleInOut, nsd);
+        logger.debug("NSD WITH FLAVOR\n" + nsd.toString() + "\n*********************************");
 
         if (Qos != null){
 
