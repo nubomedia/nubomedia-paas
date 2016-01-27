@@ -10,7 +10,7 @@ export DEBIAN_FRONTEND=noninteractive
 _dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 _nubomedia_paas_base_repo="https://github.com/fhg-fokus-nubomedia/nubomedia-paas.git"
-#_tag="develop"
+_tag="develop"
 #_tag="tags/1.1"
 
 
@@ -136,10 +136,8 @@ function checkoutNubomediaPaaS {
     pushd "${_nubomedia_paas}"
     git checkout ${_tag}
     popd
-    if [ -d /etc/nubomedia ]; then
-        $_ex 'mkdir "/etc/nubomedia"'
-        echo "created properties folder"
-    fi
+    $_ex 'mkdir -p "/etc/nubomedia"'
+    echo "created properties folder"
     $_ex 'cp '"${_nubomedia_paas}/src/main/resources/paas.properties /etc/nubomedia/paas.properties"
     $_ex 'cp '"${_nubomedia_paas}/resource/vim-instance.json /etc/nubomedia/vim-instance.json"
     $_ex 'cp '"${_nubomedia_paas}/resource/nubomedia-nsd.json /etc/nubomedia/nubomedia-nsd.json"
