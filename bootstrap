@@ -136,8 +136,10 @@ function checkoutNubomediaPaaS {
     pushd "${_nubomedia_paas}"
     git checkout ${_tag}
     popd
-    $_ex 'mkdir "/etc/nubomedia"'
-    echo "created properties folder"
+    if [ -d /etc/nubomedia ]; then
+        $_ex 'mkdir "/etc/nubomedia"'
+        echo "created properties folder"
+    fi
     $_ex 'cp '"${_nubomedia_paas}/src/main/resources/paas.properties /etc/nubomedia/paas.properties"
     $_ex 'cp '"${_nubomedia_paas}/resource/vim-instance.json /etc/nubomedia/vim-instance.json"
     $_ex 'cp '"${_nubomedia_paas}/resource/nubomedia-nsd.json /etc/nubomedia/nubomedia-nsd.json"
