@@ -32,7 +32,7 @@
       "lifecycle_event":[
 
       ],
-      "vimInstanceName":"vim-instance",
+      "vimInstanceName":"nubomedia-vim",
       "vdu_constraint":"",
       "scale_in_out":2,
       "vnfc":[
