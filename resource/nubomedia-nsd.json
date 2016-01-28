@@ -28,6 +28,56 @@
           ]
         }
       ],
+      "auto_scale_policy": [
+        {
+          "name":"scale-out",
+          "threshold":100,
+          "comparisonOperator":">=",
+          "period":30,
+          "cooldown":60,
+          "mode":"REACTIVE",
+          "type":"VOTED",
+          "alarms": [
+            {
+              "metric":"CONSUMED_CAPACITY",
+              "statistic":"avg",
+              "comparisonOperator":">=",
+              "threshold":70,
+              "weight":1
+            }
+          ],
+          "actions": [
+            {
+              "type":"SCALE_OUT",
+              "value":"2"
+            }
+          ]
+        },
+        {
+          "name":"scale-in",
+          "threshold":100,
+          "comparisonOperator":">=",
+          "period":30,
+          "cooldown":60,
+          "mode":"REACTIVE",
+          "type":"VOTED",
+          "alarms": [
+            {
+              "metric":"CONSUMED_CAPACITY",
+              "statistic":"avg",
+              "comparisonOperator":"<=",
+              "threshold":30,
+              "weight":1
+            }
+          ],
+          "actions": [
+            {
+              "type":"SCALE_IN",
+              "value":"2"
+            }
+          ]
+        }
+      ],
       "virtual_link":[
         {
           "name":"internal_nubomedia"

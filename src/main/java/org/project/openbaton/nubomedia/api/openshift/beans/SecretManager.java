@@ -82,6 +82,31 @@ public class SecretManager {
         return entity.getStatusCode();
     }
 
+    //BETA!!!!
+    public List<String> getSecretList(String baseURL, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
+
+        List<String> res = new ArrayList<>();
+        String url = baseURL + namespace + saSuffix;
+        HttpEntity<String> builderEntity = new HttpEntity<>(authHeader);
+        ResponseEntity<String> serviceAccountBuilder = template.exchange(url, HttpMethod.GET, builderEntity, String.class);
+
+        if(serviceAccountBuilder.getStatusCode() != HttpStatus.OK) logger.debug("Error updating builder account " + serviceAccountBuilder.toString());
+
+        if(serviceAccountBuilder.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
+        ServiceAccount serviceAccount = mapper.fromJson(serviceAccountBuilder.getBody(),ServiceAccount.class);
+        for (SecretID secretID : serviceAccount.getSecrets()){
+            if(secretID.getName().contains(namespace)){
+                res.add(secretID.getName());
+            }
+        }
+
+        return res;
+    }
+
     private ResponseEntity<String> updateBuilder(String baseURL, String secretName, HttpHeaders authHeader, String namespace, boolean add){
         String URL =  baseURL + namespace + saSuffix;
         HttpEntity<String> builderEntity = new HttpEntity<>(authHeader);
@@ -90,8 +115,8 @@ public class SecretManager {
         logger.debug("Builder account " + serviceAccount.getBody());
 
         ServiceAccount builder = mapper.fromJson(serviceAccount.getBody(), ServiceAccount.class);
-        SecretID[] secrets = builder.getSecrets();
-        SecretID[] newSecrets;
+        List<SecretID> secrets = builder.getSecrets();
+        List<SecretID> newSecrets;
 
         if (add){
              newSecrets = this.addSecret(secrets, secretName);
@@ -110,29 +135,21 @@ public class SecretManager {
         return serviceAccount;
     }
 
-    private SecretID[] removeSecret(SecretID[] secrets, String secretName) {
-
-        List<SecretID> result = new ArrayList<SecretID>();
+    private List<SecretID> removeSecret(List<SecretID> secrets, String secretName) {
 
         for(SecretID sec : secrets){
-            if(!sec.getName().equals(secretName))
-                result.add(sec);
+            if(sec.getName().equals(secretName))
+                secrets.remove(sec);
         }
 
-        return result.toArray(new SecretID[0]);
+        return secrets;
     }
 
-    private SecretID[] addSecret(SecretID[] secrets, String secretName) {
+    private List<SecretID> addSecret(List<SecretID> secrets, String secretName) {
 
-        SecretID[] newSecrets = new SecretID[secrets.length + 1];
+        secrets.add(new SecretID(secretName));
 
-        for(int i = 0; i < secrets.length; i++){
-            newSecrets[i] = secrets[i];
-        }
-
-        newSecrets[newSecrets.length - 1] = new SecretID(secretName);
-
-        return newSecrets;
+        return secrets;
     }
 
 }

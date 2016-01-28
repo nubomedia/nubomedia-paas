@@ -12,8 +12,8 @@ public class MessageBuilderFactory {
         return ism.buildMessage();
     }
 
-    public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL,String secretName,String mediaServerGID, String mediaServerIP, String mediaServerPort) {
-        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("VNFR_ID",mediaServerGID),new EnviromentVariable("VNFM_IP",mediaServerIP),new EnviromentVariable("VNFM_PORT",mediaServerPort)},null);
+    public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL,String secretName,String mediaServerGID, String mediaServerIP, String mediaServerPort,String cloudRepositoryIp, String cloudRepositoryUser, String cloudRepositoryPassword,String cloudRepoPort) {
+        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("VNFR_ID",mediaServerGID),new EnviromentVariable("VNFM_IP",mediaServerIP),new EnviromentVariable("VNFM_PORT",mediaServerPort),new EnviromentVariable("CLOUDREPO_IP",cloudRepositoryIp),new EnviromentVariable("CLOUDREPO_USER",cloudRepositoryUser),new EnviromentVariable("CLOUDREPO_PASSWORD",cloudRepositoryPassword),new EnviromentVariable("CLOUDREPO_PORT",cloudRepoPort)},null);
         DockerBuildStrategy strategy = new DockerBuildStrategy(ds);
         Source.SourceSecret secret;
 
@@ -40,6 +40,11 @@ public class MessageBuilderFactory {
         ImageChangeTrigger trigger = new ImageChangeTrigger("ImageChange",params);
         DeploymentMessageBuilder builder = new DeploymentMessageBuilder(name, new Container[]{container}, replicasNumber, new ImageChangeTrigger[]{trigger}, "Rolling");
 
+        return builder.buildMessage();
+    }
+
+    public static ProjectRequest getProjectRequest(String name){
+        ProjectRequestBuilder builder = new ProjectRequestBuilder(name, "This is the project of " + name);
         return builder.buildMessage();
     }
 

@@ -1,5 +1,7 @@
 package org.project.openbaton.nubomedia.api.openshift.json;
 
+import java.util.List;
+
 /**
  * Created by maa on 01.10.15.
  */
@@ -8,12 +10,12 @@ public class ServiceAccountList {
     private final String kind = "ServiceAccountList";
     private final String apiVersion = "v1";
     private Metadata metadata;
-    private ServiceAccount[] items;
+    private List<ServiceAccount> items;
 
     public ServiceAccountList() {
     }
 
-    public ServiceAccountList(Metadata metadata, ServiceAccount[] items) {
+    public ServiceAccountList(Metadata metadata, List<ServiceAccount> items) {
         this.metadata = metadata;
         this.items = items;
     }
@@ -26,11 +28,11 @@ public class ServiceAccountList {
         return apiVersion;
     }
 
-    public ServiceAccount[] getItems() {
+    public List<ServiceAccount> getItems() {
         return items;
     }
 
-    public void setItems(ServiceAccount[] items) {
+    public void setItems(List<ServiceAccount> items) {
         this.items = items;
     }
 

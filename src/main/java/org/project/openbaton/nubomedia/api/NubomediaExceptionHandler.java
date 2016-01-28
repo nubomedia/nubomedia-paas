@@ -47,16 +47,6 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e,body,headers,HttpStatus.UNAUTHORIZED,request);
     }
 
-    @ExceptionHandler({SDKException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ResponseEntity<Object> handleSDK (Exception e, WebRequest request){
-        logger.info("handling SDKException from " + request.getDescription(true));
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        NubomediaOpenbatonMessage body = new NubomediaOpenbatonMessage("Bad Request",e.getMessage());
-        return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
-    }
-
     @ExceptionHandler({DuplicatedException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     protected ResponseEntity<Object> handleDup (Exception e, WebRequest request){
@@ -74,6 +64,16 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String body = e.getMessage();
+        return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ResponseEntity<Object> handleNoUserOrPasswordTurn(Exception e, WebRequest request){
+        logger.info("Handling to long name from " + request.getDescription(true));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String body = "With turnServerIp, username and password are mandatory" + e.getMessage();
         return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
     }
 

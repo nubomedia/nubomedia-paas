@@ -3,8 +3,14 @@ package org.project.openbaton.nubomedia.api.openbaton;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.openbaton.catalogue.mano.common.AutoScalePolicy;
+import org.openbaton.catalogue.mano.common.ScalingAlarm;
 import org.openbaton.catalogue.mano.common.VNFDeploymentFlavour;
-import org.openbaton.catalogue.mano.descriptor.*;
+import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
+import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
+import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
+import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
+import org.openbaton.catalogue.nfvo.ConfigurationParameter;
 import org.openbaton.catalogue.nfvo.Location;
 import org.openbaton.catalogue.nfvo.VimInstance;
 import org.project.openbaton.nubomedia.api.configuration.VimProperties;
@@ -51,64 +57,42 @@ public class OpenbatonConfiguration {
         return vim;
     }
 
-    public static NetworkServiceDescriptor getNSD(String flavor,String Qos){
+    @Bean
+    public VirtualNetworkFunctionDescriptor getCloudRepository(){
+        VirtualNetworkFunctionDescriptor vnfd = null;
+        Gson mapper = new GsonBuilder().create();
+
+        try{
+            logger.debug("Reading cloud repository");
+            FileReader vnfdFile = new FileReader("/etc/nubomedia/cloudrepo-vnfd.json");
+            vnfd = mapper.fromJson(vnfdFile,VirtualNetworkFunctionDescriptor.class);
+            logger.debug("CLOUD REPOSITORY IS " + vnfd.toString());
+
+        }
+        catch (FileNotFoundException e){
+            logger.debug("DO NOT REMOVE OR RENAME THE FILE /etc/nubomedia/cloudrepo-vnfd.json!!!!\nexiting");
+        }
+
+        return vnfd;
+    }
+
+    @Bean
+    public NetworkServiceDescriptor getDescriptor(){
+        logger.debug("Reading descriptor");
         NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
         Gson mapper = new GsonBuilder().create();
 
         try{
+            logger.debug("Trying to read the descriptor");
             FileReader nsdFile = new FileReader("/etc/nubomedia/nubomedia-nsd.json");
             nsd = mapper.fromJson(nsdFile,NetworkServiceDescriptor.class);
-
+            logger.debug("DESCRIPTOR " + nsd.toString());
         }
         catch (FileNotFoundException e){
+            e.printStackTrace();
             logger.debug("DO NOT REMOVE OR RENAME THE FILE /etc/nubomedia/nubomedia-nsd.json!!!!\nexiting");
         }
-
-        nsd = OpenbatonConfiguration.injectFlavor(flavor,nsd);
-
-        if (Qos != null){
-
-            nsd = OpenbatonConfiguration.injectQoS(Qos,nsd);
-
-        }
-
         return nsd;
-    }
-
-    private static NetworkServiceDescriptor injectQoS(String qos, NetworkServiceDescriptor nsd) {
-
-        Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
-
-        for (VirtualNetworkFunctionDescriptor vnfd : nsd.getVnfd()){
-            Set<InternalVirtualLink> vlds = new HashSet<>();
-            for (InternalVirtualLink vld : vnfd.getVirtual_link()) {
-                Set<String> qoss = new HashSet<>();
-                qoss.add("minimum_bandwith:" + qos);
-                vld.setQos(qoss);
-                vlds.add(vld);
-            }
-            vnfd.setVirtual_link(vlds);
-            vnfds.add(vnfd);
-        }
-        nsd.setVnfd(vnfds);
-        return nsd;
-    }
-
-    private static NetworkServiceDescriptor injectFlavor(String flavour, NetworkServiceDescriptor networkServiceDescriptor){
-
-        Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
-
-        for (VirtualNetworkFunctionDescriptor vnfd : networkServiceDescriptor.getVnfd()){
-            Set<VNFDeploymentFlavour> flavours = new HashSet<>();
-            VNFDeploymentFlavour newFlavour = new VNFDeploymentFlavour();
-            newFlavour.setFlavour_key(flavour);
-            flavours.add(newFlavour);
-            vnfd.setDeployment_flavour(flavours);
-            vnfds.add(vnfd);
-        }
-
-        networkServiceDescriptor.setVnfd(vnfds);
-        return networkServiceDescriptor;
     }
 
 }
