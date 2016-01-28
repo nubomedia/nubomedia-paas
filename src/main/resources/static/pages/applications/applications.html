@@ -83,7 +83,7 @@
                             <br/>
 
                             <div class="form-group" ng-repeat="(key,value) in appCreate"
-                                 ng-if="key!='ports' && key!='projectName' && key!='flavor' && key!='privateKey'">
+                                 ng-if="key!='ports' && key!='projectName' && key!='flavor' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut'">
                                 <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
 
                                 <div class="col-sm-6">
@@ -92,23 +92,133 @@
                                 </div>
 
                             </div>
+
+
+
                             <div class="form-group">
-                                <label for="projectKey" class="col-sm-4 control-label">projectKey</label>
+                                <label for="flavor" class="col-sm-4 control-label">flavor</label>
+
+                                <div class="col-sm-6">
+                                    <select class="form-control modal-select" name="flavor" id="flavor"
+                                            ng-model="appCreate.flavor">
+                                        <option ng-repeat="flavor in flavors" value="{{flavor}}">{{flavor}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+                            <div class="form-group">
+                                <label for="projectKey" class="col-sm-4 control-label">secretName</label>
 
                                 <div ng-class="row" class="col-sm-6">
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="projectKey" name="projectKey"
-                                               ng-model="appCreate.privateKey"/>
-                                        <span class="input-group-addon"><a href="" data-toggle="modal" data-target="#modalPrivateKey">
+                                               ng-model="appCreate.secretName"/>
+                                        <span class="input-group-addon"><a href="" data-toggle="modal"
+                                                                           data-target="#modalPrivateKey">
                                             <li title="Add a Private key" class="fa fa-plus-square"></li>
                                         </a></span>
                                     </div>
                                     <!--<input type="text" class="form-control" id="{{key}}" name="{{key}}"-->
-                                           <!--ng-model="appCreate.privateKey"/><a href="" data-toggle="modal" data-target="#modalPrivateKey">-->
+                                    <!--ng-model="appCreate.privateKey"/><a href="" data-toggle="modal" data-target="#modalPrivateKey">-->
                                     <!--<li class="fa fa-plus-square"></li>-->
-                                </a>
+                                    </a>
                                 </div>
                             </div>
+                            <div class="form-group" >
+                                <label for="scaleInOut" class="col-sm-4 control-label">scaleInOut</label>
+                                <div class="col-sm-6">
+                                    <input type="number" class="form-control" id="scaleInOut" name="scaleInOut"
+                                           ng-model="appCreate.scaleInOut"/>
+                                </div>
+
+                            </div>
+
+
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><b>Do you want to set the scale IN/OUT threshold ?</b>
+                                            <input type="checkbox" id="inOutThreshold" name="inOutThreshold"
+                                                   ng-model="toggle.threshold"></div>
+                                        <div class="panel-body" ng-if="toggle.threshold">
+                                            <div class="form-group" ng-repeat="(key,value) in _threshold"
+                                                 ng-if="key!='turnSertverPassword'">
+                                                <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+                                                <div class="col-sm-6">
+                                                    <input type="number" class="form-control" id="{{key}}" name="{{key}}"
+                                                           ng-model="_threshold[key]"/>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><b>Do you want to set the Quality of Service?</b>
+                                            <input type="checkbox" id="qos" name="qos"
+                                                   ng-model="toggle.qualityOfService"></div>
+                                        <div class="panel-body" ng-if="toggle.qualityOfService">
+                                            <label ng-repeat="qos in _qualityOfService"
+                                                   class="radio-inline">
+                                                <input type="radio" name="optradio" ng-model="qosValue._qos" value="{{qos}}">{{qos}}</label>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><b>Do you want to set the Cloud Repository?</b>
+                                            <input type="checkbox" id="cloudRepository" name="togglecloudRepository"
+                                                   ng-model="appCreate.cloudRepository"></div>
+                                        <div class="panel-body" ng-if="appCreate.cloudRepository">
+                                            <div class="form-group" >
+                                            <label for="cloudRepoPort" class="col-sm-4 control-label">cloudRepoPort</label>
+                                            <div class="col-sm-6">
+                                                <input type="text" class="form-control" id="cloudRepoPort" name="cloudRepoPort"
+                                                       ng-model="cloudRepository.cloudRepoPort" ng-init="cloudRepository.cloudRepoPort = '27018'"/>
+                                            </div>
+                                            </div>
+                                            <div class="form-group" >
+
+                                            <label for="cloudRepoSecurity" class="col-sm-4 control-label">cloudRepoSecurity</label>
+                                            <div class="col-sm-6">
+                                                <input type="checkbox" class="" id="cloudRepoSecurity" name="cloudRepoSecurity"
+                                                       ng-model="cloudRepository.cloudRepoSecurity"/>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading"><b>Do you want to set the Turn Server?</b>
+                                            <input type="checkbox" id="turnServer" name="turnServer"
+                                                   ng-model="toggle.turnServer"></div>
+                                        <div class="panel-body" ng-if="toggle.turnServer">
+                                            <div class="form-group" ng-repeat="(key,value) in _turnServer"
+                                                 ng-if="key!='turnServerPassword'">
+                                                <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="{{key}}" name="{{key}}"
+                                                           ng-model="_turnServer[key]"/>
+                                                </div>
+
+                                            </div>
+                                            <div class="form-group" >
+                                                <label for="turnSertverPassword" class="col-sm-4 control-label">turnSertverPassword</label>
+                                                <div class="col-sm-6">
+                                                    <input type="password" class="form-control" id="turnSertverPassword" name="turnSertverPassword"
+                                                           ng-model="_turnServer.turnServerPassword"/>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                             <h4>Ports <a href="" title="Add a new port">
                                 <li class="fa fa-plus-square" ng-click="addPort()"></li>
                             </a></h4>
@@ -209,14 +319,15 @@
                     </div>
 
                     <br/>
-<div class="inputKeyP">
-                    <div class="form-group">
-                        <br> <label for="jsonInputArea" class="">Insert Your Private Key</label>
+
+                    <div class="inputKeyP">
+                        <div class="form-group">
+                            <br> <label for="jsonInputArea" class="">Insert Your Private Key</label>
                                 <textarea name="textTopologyJson" ng-model="privateKeyReq.privateKey" id="jsonInputArea"
                                           class="form-control" rows="25"
                                           placeholder="-----BEGIN PRIVATE KEY-----"></textarea>
+                        </div>
                     </div>
-</div>
                 </form>
 
             </div>

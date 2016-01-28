@@ -5,6 +5,18 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         $scope.alerts = [];
         $scope.apllications = [];
+        $scope.flavors = ["SMALL", "MEDIUM", "LARGE"];
+        $scope._qualityOfService = ["BRONZE", "SILVER", "GOLD"];
+        $scope._turnServer ={
+            'turnServerIp':'',
+            'turnServerUser':'',
+            'turnServerPassword':''
+        };
+        $scope.qosValue={_qos:''};
+        $scope._threshold = {
+          'scale_in_threshold':0,
+          'scale_out_threshold':0
+        };
         $scope.createApp = function () {
             $http.get('json/request.json')
                 .then(function (res) {
@@ -26,7 +38,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             http.post(urlPK + 'secret', privateKeyReq, 'text')
                 .success(function (data) {
                     console.log(data);
-                    $scope.appCreate.projectKey = data;
+                    $scope.appCreate.secretName = data.slice(1, -1);
                     $('#modalSend').modal('hide');
                     $('#modalPrivateKey').modal('hide');
 
@@ -61,13 +73,43 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             $scope.alerts.splice(index, 1);
         };
 
+        $scope.toggle = {
+            turnServer : false,
+            threshold : false,
+            cloudRepository : false,
+            qualityOfService : false
+        };
 
         $scope.sendApp = function () {
             var postTopology;
             var sendOk = true;
 
 
-            console.log($scope.appCreate);
+            if($scope.toggle.turnServer){
+                $scope.appCreate.turnServerIp = $scope._turnServer.turnServerIp;
+                $scope.appCreate.turnServerUser= $scope._turnServer.turnServerUser;
+                $scope.appCreate.turnServerPassword= $scope._turnServer.turnServerPassword;
+
+            }
+            if($scope.toggle.threshold){
+                $scope.appCreate.scale_in_threshold= $scope._threshold.scale_in_threshold;
+                $scope.appCreate.scale_out_threshold= $scope._threshold.scale_out_threshold;
+            }
+            $scope.cloudRepository = {
+                cloudRepoPort:'27018',
+                cloudRepoSecurity:true
+            };
+            if($scope.appCreate.cloudRepository){
+                $scope.appCreate.cloudRepoPort= $scope.cloudRepository.cloudRepoPort;
+                $scope.appCreate.cloudRepoSecurity= $scope.cloudRepository.cloudRepoSecurity;
+            }
+            if($scope.toggle.qualityOfService){
+                $scope.appCreate.qualityOfService= $scope.qosValue._qos;
+
+            }
+
+
+            console.log(JSON.stringify($scope.appCreate));
 
             if ($scope.file !== '') {
                 postTopology = $scope.file;
