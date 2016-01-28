@@ -1,7 +1,6 @@
 package org.project.openbaton.nubomedia.api;
 
 import org.openbaton.catalogue.mano.common.AutoScalePolicy;
-import org.openbaton.catalogue.mano.common.ConnectionPoint;
 import org.openbaton.catalogue.mano.common.ScalingAlarm;
 import org.openbaton.catalogue.mano.common.VNFDeploymentFlavour;
 import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
@@ -15,9 +14,9 @@ import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.configuration.NfvoProperties;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openbaton.Flavor;
-import org.project.openbaton.nubomedia.api.openbaton.NetworkServiceDescriptorConfiguration;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.QoS;
+import org.project.openbaton.nubomedia.api.openbaton.exceptions.turnServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +70,7 @@ public class OpenbatonManager {
         this.records = new HashMap<>();
     }
 
-    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, String  cloudRepoPort, boolean cloudRepoSecurity, QoS qos,String serverTurnIp,String serverTurnUsername, String serverTurnPassword,int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws SDKException {
+    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, String  cloudRepoPort, boolean cloudRepoSecurity, QoS qos,String serverTurnIp,String serverTurnUsername, String serverTurnPassword,int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws SDKException, turnServerException {
 
         logger.debug("FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
 
@@ -199,7 +198,7 @@ public class OpenbatonManager {
         return cloudRepository;
     }
 
-    private NetworkServiceDescriptor configureDescriptor(NetworkServiceDescriptor nsd, Flavor flavor, QoS Qos, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, int scaleInOut, double scale_in_threshold, double scale_out_threshold){
+    private NetworkServiceDescriptor configureDescriptor(NetworkServiceDescriptor nsd, Flavor flavor, QoS Qos, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws turnServerException {
         logger.debug("Start configure");
         nsd = this.injectFlavor(flavor.getValue(),scaleInOut,nsd);
         logger.debug("After flavor the nsd is\n" + nsd.toString() + "\n****************************");
@@ -213,7 +212,7 @@ public class OpenbatonManager {
         if (mediaServerTurnIP != null){
 
             if (mediaServerTurnUsername == null || mediaServerTurnPassword == null){
-                throw new IllegalArgumentException("No Authentication for Turn Server");
+                throw new turnServerException("No Authentication for Turn Server");
             }
             logger.debug("Setting Turn Server");
             nsd = this.setStunServer(mediaServerTurnIP,mediaServerTurnUsername, mediaServerTurnPassword, nsd);

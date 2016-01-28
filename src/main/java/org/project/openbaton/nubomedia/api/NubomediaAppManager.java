@@ -14,6 +14,7 @@ import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundExcepti
 import org.project.openbaton.nubomedia.api.messages.*;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonEvent;
+import org.project.openbaton.nubomedia.api.openbaton.exceptions.turnServerException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.NameStructureException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
@@ -59,7 +60,7 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app",  method = RequestMethod.POST)
-    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException {
+    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException {
 
         if(token == null){
             throw new UnauthorizedException("no auth-token header");

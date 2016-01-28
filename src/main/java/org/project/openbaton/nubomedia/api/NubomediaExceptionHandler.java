@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.api.messages.*;
+import org.project.openbaton.nubomedia.api.openbaton.exceptions.turnServerException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.NameStructureException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
@@ -67,14 +68,15 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ResponseEntity<Object> handleNoUserOrPasswordTurn(Exception e, WebRequest request){
-        logger.info("Handling to long name from " + request.getDescription(true));
+    @ExceptionHandler({turnServerException.class})
+    @ResponseStatus(HttpStatus.PRECONDITION_REQUIRED)
+    protected ResponseEntity<Object> handleTurnParametersException(Exception e, WebRequest request){
+        logger.info("Handling parameters from" + request.getDescription(true));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String body = "With turnServerIp, username and password are mandatory" + e.getMessage();
-        return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
+        String body = "Turn server requires authentication parameters";
+        return handleExceptionInternal(e,body,headers,HttpStatus.PRECONDITION_REQUIRED,request);
     }
+
 
 }
