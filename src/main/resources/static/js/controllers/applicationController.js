@@ -9,7 +9,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         $scope._qualityOfService = ["BRONZE", "SILVER", "GOLD"];
         $scope._turnServer ={
             'turnServerIp':'',
-            'turnServerUser':'',
+            'turnServerUsername':'',
             'turnServerPassword':''
         };
         $scope.qosValue={_qos:''};
@@ -87,7 +87,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
             if($scope.toggle.turnServer){
                 $scope.appCreate.turnServerIp = $scope._turnServer.turnServerIp;
-                $scope.appCreate.turnServerUser= $scope._turnServer.turnServerUser;
+                $scope.appCreate.turnServerUsername= $scope._turnServer.turnServerUsername;
                 $scope.appCreate.turnServerPassword= $scope._turnServer.turnServerPassword;
 
             }
