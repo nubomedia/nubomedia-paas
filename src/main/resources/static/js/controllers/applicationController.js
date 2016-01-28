@@ -7,15 +7,15 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         $scope.apllications = [];
         $scope.flavors = ["SMALL", "MEDIUM", "LARGE"];
         $scope._qualityOfService = ["BRONZE", "SILVER", "GOLD"];
-        $scope._turnServer ={
-            'turnServerIp':'',
-            'turnServerUsername':'',
-            'turnServerPassword':''
+        $scope._turnServer = {
+            'turnServerIp': 'turn:127.0.0.1',
+            'turnServerUsername': 'test',
+            'turnServerPassword': 'test'
         };
-        $scope.qosValue={_qos:''};
+        $scope.qosValue = {_qos: ''};
         $scope._threshold = {
-          'scale_in_threshold':0,
-          'scale_out_threshold':0
+            'scale_in_threshold': 0,
+            'scale_out_threshold': 0
         };
         $scope.createApp = function () {
             $http.get('json/request.json')
@@ -74,10 +74,10 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
 
         $scope.toggle = {
-            turnServer : false,
-            threshold : false,
-            cloudRepository : false,
-            qualityOfService : false
+            turnServer: false,
+            threshold: false,
+            cloudRepository: false,
+            qualityOfService: false
         };
 
         $scope.sendApp = function () {
@@ -85,26 +85,26 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             var sendOk = true;
 
 
-            if($scope.toggle.turnServer){
+            if ($scope.toggle.turnServer) {
                 $scope.appCreate.turnServerIp = $scope._turnServer.turnServerIp;
-                $scope.appCreate.turnServerUsername= $scope._turnServer.turnServerUsername;
-                $scope.appCreate.turnServerPassword= $scope._turnServer.turnServerPassword;
+                $scope.appCreate.turnServerUsername = $scope._turnServer.turnServerUsername;
+                $scope.appCreate.turnServerPassword = $scope._turnServer.turnServerPassword;
 
             }
-            if($scope.toggle.threshold){
-                $scope.appCreate.scale_in_threshold= $scope._threshold.scale_in_threshold;
-                $scope.appCreate.scale_out_threshold= $scope._threshold.scale_out_threshold;
+            if ($scope.toggle.threshold) {
+                $scope.appCreate.scale_in_threshold = $scope._threshold.scale_in_threshold;
+                $scope.appCreate.scale_out_threshold = $scope._threshold.scale_out_threshold;
             }
             $scope.cloudRepository = {
-                cloudRepoPort:'27018',
-                cloudRepoSecurity:true
+                cloudRepoPort: '27018',
+                cloudRepoSecurity: true
             };
-            if($scope.appCreate.cloudRepository){
-                $scope.appCreate.cloudRepoPort= $scope.cloudRepository.cloudRepoPort;
-                $scope.appCreate.cloudRepoSecurity= $scope.cloudRepository.cloudRepoSecurity;
+            if ($scope.appCreate.cloudRepository) {
+                $scope.appCreate.cloudRepoPort = $scope.cloudRepository.cloudRepoPort;
+                $scope.appCreate.cloudRepoSecurity = $scope.cloudRepository.cloudRepoSecurity;
             }
-            if($scope.toggle.qualityOfService){
-                $scope.appCreate.qualityOfService= $scope.qosValue._qos;
+            if ($scope.toggle.qualityOfService) {
+                $scope.appCreate.qualityOfService = $scope.qosValue._qos;
 
             }
 
@@ -212,6 +212,73 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             $scope.alerts.push({type: 'success', msg: msg});
             $('.modal').modal('hide');
         }
+
+        $scope.classVar = 'panel-default';
+        $scope.checkTurn = function () {
+            console.log($scope._turnServer);
+            checkTURNServer({
+                url: $scope._turnServer.turnServerIp,
+                username: $scope._turnServer.turnServerUsername,
+                credential: $scope._turnServer.turnServerPassword
+            }).then(function (bool) {
+                console.log('is TURN server active? ', bool ? 'yes' : 'no');
+                if (bool)
+               changeDivPane('panel-success')
+
+                else
+                changeDivPane('panel-danger')
+
+
+            }).catch(console.error.bind(console));
+
+        };
+        function changeDivPane(classValue){
+            $scope.$apply(function () {
+                $scope.classVar = classValue;
+            });
+
+        }
+        function checkTURNServer(turnConfig, timeout) {
+
+            return new Promise(function (resolve, reject) {
+
+                setTimeout(function () {
+                    if (promiseResolved) return;
+                    resolve(false);
+                    promiseResolved = true;
+                }, timeout || 5000);
+
+                var promiseResolved = false
+                    , myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection   //compatibility for firefox and chrome
+                    , pc = new myPeerConnection({iceServers: [turnConfig]})
+                    , noop = function () {
+                    };
+                pc.createDataChannel("");    //create a bogus data channel
+                pc.createOffer(function (sdp) {
+                    if (sdp.sdp.indexOf('typ relay') > -1) { // sometimes sdp contains the ice candidates...
+                        promiseResolved = true;
+                        resolve(true);
+                    }
+                    pc.setLocalDescription(sdp, noop, noop);
+                }, noop);    // create offer and set local description
+                pc.onicecandidate = function (ice) {  //listen for candidate events
+                    if (promiseResolved || !ice || !ice.candidate || !ice.candidate.candidate || !(ice.candidate.candidate.indexOf('typ relay') > -1))  return;
+                    promiseResolved = true;
+                    resolve(true);
+                };
+            });
+        }
+
+//# example usage:
+
+        /*  checkTURNServer({
+         url: 'turn:127.0.0.1',
+         username: 'test',
+         credential: 'test'
+         }).then(function(bool){
+         console.log('is TURN server active? ', bool? 'yes':'no');
+         }).catch(console.error.bind(console));*/
+
 
     }
 );
