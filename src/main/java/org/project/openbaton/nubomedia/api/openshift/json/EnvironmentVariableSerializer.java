@@ -17,7 +17,7 @@ public class EnvironmentVariableSerializer implements JsonSerializer<EnviromentV
             return null;
         }
         else {
-            return context.serialize(src,typeOfSrc);
+            return context.serialize(src,EnviromentVariable.class);
         }
     }
 }
