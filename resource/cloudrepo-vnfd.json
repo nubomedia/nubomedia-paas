@@ -22,7 +22,7 @@
       "vm_image":[
         "ubuntu-cloud-64bit"
       ],
-      "vimInstanceName":"vim-instance",
+      "vimInstanceName":"nubomedia-vim",
       "scale_in_out":4,
       "vnfc":[
         {
