@@ -3,21 +3,17 @@
   "version":"0.1",
   "name":"mongodb",
   "type":"mongodb",
-  "endpoint":"generic-endpoint",
+  "endpoint":"generic",
   "configurations":{
     "name":"config_config",
     "configurationParameters":[
       {
-        "confKey":"smallfiles",
+        "confKey":"PORT",
+        "value":"27018"
+      },
+      {
+        "confKey":"SMALLFILES",
         "value":"true"
-      },
-      {
-        "confKey":"USERNAME_MD",
-        "value":"nubomedia"
-      },
-      {
-        "confKey":"PASSWORD",
-        "value":"clrp_nubomedia"
       }
     ]
   },
@@ -26,15 +22,8 @@
       "vm_image":[
         "ubuntu-cloud-64bit"
       ],
-      "computation_requirement":"",
-      "virtual_memory_resource_element":"1024",
-      "virtual_network_bandwidth_resource":"1000000",
-      "lifecycle_event":[
-
-      ],
-      "vimInstanceName":"nubomedia-vim",
-      "vdu_constraint":"",
-      "scale_in_out":2,
+      "vimInstanceName":"vim-instance",
+      "scale_in_out":4,
       "vnfc":[
         {
           "connection_point":[
@@ -52,9 +41,6 @@
       "name":"internal_nubomedia"
     }
   ],
-  "connection_point":[
-
-  ],
   "lifecycle_event":[
     {
       "event":"INSTANTIATE",
@@ -69,17 +55,10 @@
       ]
     }
   ],
-  "vdu_dependency":[
-
-  ],
-  "monitoring_parameter":[
-    "cpu_utilization"
-  ],
   "deployment_flavour":[
     {
       "flavour_key":"m1.small"
     }
   ],
-  "manifest_file":"",
   "vnfPackageLocation":"https://github.com/tub-nubomedia/cloud-repository-scripts.git"
 }

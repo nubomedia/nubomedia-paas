@@ -1,6 +1,7 @@
 package org.project.openbaton.nubomedia.api;
 
 import org.openbaton.catalogue.mano.common.AutoScalePolicy;
+import org.openbaton.catalogue.mano.common.ConnectionPoint;
 import org.openbaton.catalogue.mano.common.ScalingAlarm;
 import org.openbaton.catalogue.mano.common.VNFDeploymentFlavour;
 import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
@@ -70,14 +71,14 @@ public class OpenbatonManager {
         this.records = new HashMap<>();
     }
 
-    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, QoS qos,String serverTurnIp,String serverTurnUsername, String serverTurnPassword,int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws SDKException {
+    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, String  cloudRepoPort, boolean cloudRepoSecurity, QoS qos,String serverTurnIp,String serverTurnUsername, String serverTurnPassword,int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws SDKException {
 
         logger.debug("FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
 
         NetworkServiceDescriptor targetNSD = this.configureDescriptor(nsdFromFile,flavorID,qos,serverTurnIp,serverTurnUsername,serverTurnPassword,scaleInOut,scale_in_threshold,scale_out_threshold);
 
         if (cloudRepositorySet){
-            VirtualNetworkFunctionDescriptor cloudRepoDef = this.setRandomPassword(cloudRepository);
+            VirtualNetworkFunctionDescriptor cloudRepoDef = this.configureCloudRepo(cloudRepository,cloudRepoPort,cloudRepoSecurity);
             logger.debug("CLOUD REPOSITORY WITH NEW PASSWORD IS " + cloudRepoDef.toString());
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
             vnfds.add(cloudRepoDef);
@@ -161,17 +162,38 @@ public class OpenbatonManager {
         }
     }
 
-    public VirtualNetworkFunctionDescriptor setRandomPassword(VirtualNetworkFunctionDescriptor cloudRepository){
+    public VirtualNetworkFunctionDescriptor configureCloudRepo(VirtualNetworkFunctionDescriptor cloudRepository,String cloudRepoPort, boolean cloudRepoSecurity){
 
         SecureRandom random = new SecureRandom();
         Configuration configuration = cloudRepository.getConfigurations();
         Set<ConfigurationParameter> parameters = configuration.getConfigurationParameters();
-        for (ConfigurationParameter configurationParameter : parameters){
-            if (configurationParameter.getConfKey().equals("PASSWORD")){
-                configurationParameter.setValue(new BigInteger(130,random).toString(32));
+
+        if (cloudRepoPort != null) {
+            for (ConfigurationParameter configurationParameter : parameters) {
+                if (configurationParameter.getConfKey().equals("PORT")) {
+                    configurationParameter.setValue(cloudRepoPort);
+                }
+                parameters.add(configurationParameter);
             }
-            parameters.add(configurationParameter);
         }
+
+        if (cloudRepoSecurity){
+            ConfigurationParameter secEnableCp = new ConfigurationParameter();
+            secEnableCp.setConfKey("SECURITY");
+            secEnableCp.setValue("true");
+            parameters.add(secEnableCp);
+
+            ConfigurationParameter secUser = new ConfigurationParameter();
+            secUser.setConfKey("USERNAME_MD");
+            secUser.setValue("nubomedia");
+            parameters.add(secUser);
+
+            ConfigurationParameter secPassword = new ConfigurationParameter();
+            secPassword.setConfKey("PASSWORD");
+            secPassword.setValue(new BigInteger(130, random).toString(32));
+            parameters.add(secPassword);
+        }
+
         configuration.setConfigurationParameters(parameters);
         cloudRepository.setConfigurations(configuration);
         return cloudRepository;
