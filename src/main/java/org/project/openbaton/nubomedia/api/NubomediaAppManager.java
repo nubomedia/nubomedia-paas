@@ -286,7 +286,7 @@ public class NubomediaAppManager {
 
     @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id) throws UnauthorizedException{ //TODO fix to throw it before
+    public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id) throws UnauthorizedException{
         logger.debug("starting callback for appId" + id);
         logger.info("Received event " + evt);
         Application app = appRepo.findFirstByAppID(id);
@@ -303,6 +303,7 @@ public class NubomediaAppManager {
             String cloudRepositoryIp = null;
             String cloudRepositoryUsername = null;
             String cloudRepositoryPassword = null;
+            String cloudRepositoryPort = null;
 
             for(VirtualNetworkFunctionRecord record : evt.getPayload().getVnfr()){
 
@@ -319,6 +320,9 @@ public class NubomediaAppManager {
                         }
                         if (parameter.getConfKey().equals("PASSWORD")){
                             cloudRepositoryPassword = parameter.getValue();
+                        }
+                        if (parameter.getConfKey().equals("PORT")){
+                            cloudRepositoryPort = parameter.getValue();
                         }
                     }
                 }
@@ -337,7 +341,7 @@ public class NubomediaAppManager {
                 }
 
                 logger.info("[PAAS]: CREATE_APP_OS " + new Date().getTime());
-                route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(),vnfrID,paaSProperties.getVnfmIP(),paaSProperties.getVnfmPort(),cloudRepositoryIp,cloudRepositoryUsername,cloudRepositoryPassword);
+                route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(),vnfrID,paaSProperties.getVnfmIP(),paaSProperties.getVnfmPort(),cloudRepositoryIp,cloudRepositoryUsername,cloudRepositoryPassword, cloudRepositoryPort);
                 logger.info("[PAAS]: SCHEDULED_APP_OS " + new Date().getTime());
             } catch (DuplicatedException e) {
                 app.setRoute(e.getMessage());
