@@ -3,6 +3,8 @@ package org.project.openbaton.nubomedia.api.messages;
 import org.project.openbaton.nubomedia.api.openbaton.Flavor;
 import org.project.openbaton.nubomedia.api.openbaton.QoS;
 
+import java.util.Arrays;
+
 /**
  * Created by maa on 28.09.15.
  */
@@ -163,5 +165,28 @@ public class NubomediaCreateAppRequest {
 
     public void setScale_out_threshold(double scale_out_threshold) {
         this.scale_out_threshold = scale_out_threshold;
+    }
+
+    @Override
+    public String toString() {
+        return "NubomediaCreateAppRequest{" +
+                "gitURL='" + gitURL + '\'' +
+                ", appName='" + appName + '\'' +
+                ", projectName='" + projectName + '\'' +
+                ", ports=" + Arrays.toString(ports) +
+                ", flavor=" + flavor +
+                ", replicasNumber=" + replicasNumber +
+                ", secretName='" + secretName + '\'' +
+                ", qualityOfService=" + qualityOfService +
+                ", cloudRepository=" + cloudRepository +
+                ", cloudRepoPort='" + cloudRepoPort + '\'' +
+                ", cloudRepoSecurity=" + cloudRepoSecurity +
+                ", turnServerIp='" + turnServerIp + '\'' +
+                ", turnServerUsername='" + turnServerUsername + '\'' +
+                ", turnServerPassword='" + turnServerPassword + '\'' +
+                ", scaleInOut=" + scaleInOut +
+                ", scale_in_threshold=" + scale_in_threshold +
+                ", scale_out_threshold=" + scale_out_threshold +
+                '}';
     }
 }

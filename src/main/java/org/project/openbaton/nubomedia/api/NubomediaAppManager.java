@@ -82,6 +82,8 @@ public class NubomediaAppManager {
             throw new DuplicatedException("Application with " + request.getAppName() + " already exist");
         }
 
+        logger.debug("REQUEST" + request.toString());
+
         List<String> protocols = new ArrayList<>();
         List<Integer> targetPorts = new ArrayList<>();
         List<Integer> ports = new ArrayList<>();

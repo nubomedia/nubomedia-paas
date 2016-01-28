@@ -35,4 +35,13 @@ public class NubomediaPort {
     public void setPort(int port) {
         this.port = port;
     }
+
+    @Override
+    public String toString() {
+        return "NubomediaPort{" +
+                "targetPort=" + targetPort +
+                ", protocol='" + protocol + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }
