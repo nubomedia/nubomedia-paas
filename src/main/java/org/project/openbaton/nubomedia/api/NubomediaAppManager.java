@@ -105,7 +105,7 @@ public class NubomediaAppManager {
 
         //Openbaton MediaServer Request
         logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
-        OpenbatonCreateServer openbatonCreateServer = obmanager.getMediaServerGroupID(request.getFlavor(),appID,paaSProperties.getInternalURL(),request.isCloudRepository(),request.getCloudRepoPort(),request.isCloudRepoSecurity(), request.getQualityOfService(),request.isTurnServerActivate(),request.getTurnServerIp(),request.getTurnServerUsername(),request.getTurnServerPassword(),request.isStunServerActivate(), request.getStunServerIp(), request.getStunServerPort(), request.getScaleInOut(),request.getScale_in_threshold(),request.getScale_out_threshold());
+        OpenbatonCreateServer openbatonCreateServer = obmanager.getMediaServerGroupID(request.getFlavor(),appID,paaSProperties.getInternalURL(),request.isCloudRepository(),request.getCloudRepoPort(),request.isCloudRepoSecurity(), request.getQualityOfService(),request.isTurnServerActivate(),request.getTurnServerUrl(),request.getTurnServerUsername(),request.getTurnServerPassword(),request.isStunServerActivate(), request.getStunServerIp(), request.getStunServerPort(), request.getScaleInOut(),request.getScale_in_threshold(),request.getScale_out_threshold());
         openbatonCreateServer.setToken(token);
 
         deploymentMap.put(appID,openbatonCreateServer);

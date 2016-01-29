@@ -22,7 +22,7 @@ public class NubomediaCreateAppRequest {
     private String cloudRepoPort;
     private boolean cloudRepoSecurity;
     private boolean turnServerActivate;
-    private String turnServerIp;
+    private String turnServerUrl;
     private String turnServerUsername;
     private String turnServerPassword;
     private boolean stunServerActivate;
@@ -131,12 +131,12 @@ public class NubomediaCreateAppRequest {
         this.turnServerActivate = turnServerActivate;
     }
 
-    public String getTurnServerIp() {
-        return turnServerIp;
+    public String getTurnServerUrl() {
+        return turnServerUrl;
     }
 
-    public void setTurnServerIp(String turnServerIp) {
-        this.turnServerIp = turnServerIp;
+    public void setTurnServerUrl(String turnServerUrl) {
+        this.turnServerUrl = turnServerUrl;
     }
 
     public String getTurnServerUsername() {
@@ -217,7 +217,7 @@ public class NubomediaCreateAppRequest {
                 ", cloudRepository=" + cloudRepository +
                 ", cloudRepoPort='" + cloudRepoPort + '\'' +
                 ", cloudRepoSecurity=" + cloudRepoSecurity +
-                ", turnServerIp='" + turnServerIp + '\'' +
+                ", turnServerIp='" + turnServerUrl + '\'' +
                 ", turnServerUsername='" + turnServerUsername + '\'' +
                 ", turnServerPassword='" + turnServerPassword + '\'' +
                 ", scaleInOut=" + scaleInOut +
