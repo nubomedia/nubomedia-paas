@@ -84,7 +84,11 @@
 
                             <div class="form-group" ng-repeat="(key,value) in appCreate"
                                  ng-if="key!='ports' && key!='projectName' && key!='flavor' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut'">
-                                <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+                                <label for="{{key}}" class="col-sm-4 control-label">
+                                    <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
+                                       data-toggle="tooltip" data-placement="top"
+                                       title="{{textInfo}}"> </i>
+                                    {{key}}</label>
 
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" id="{{key}}" name="{{key}}"
@@ -96,7 +100,11 @@
 
 
                             <div class="form-group">
-                                <label for="flavor" class="col-sm-4 control-label">flavor</label>
+                                <label for="flavor" class="col-sm-4 control-label">
+                                    <i class="fa fa-info-circle" ng-mouseover="getInfos('flavor')"
+                                       data-toggle="tooltip" data-placement="top"
+                                       title="{{textInfo}}"> </i>
+                                    flavor</label>
 
                                 <div class="col-sm-6">
                                     <select class="form-control modal-select" name="flavor" id="flavor"
@@ -109,7 +117,11 @@
 
 
                             <div class="form-group">
-                                <label for="projectKey" class="col-sm-4 control-label">secretName</label>
+                                <label for="projectKey" class="col-sm-4 control-label">
+                                    <i class="fa fa-info-circle" ng-mouseover="getInfos('secretName')"
+                                       data-toggle="tooltip" data-placement="top"
+                                       title="{{textInfo}}"> </i>
+                                    secretName</label>
 
                                 <div ng-class="row" class="col-sm-6">
                                     <div class="input-group">
@@ -127,7 +139,10 @@
                                 </div>
                             </div>
                             <div class="form-group" >
-                                <label for="scaleInOut" class="col-sm-4 control-label">scaleInOut</label>
+                                <label for="scaleInOut" class="col-sm-4 control-label">
+                                    <i class="fa fa-info-circle" ng-mouseover="getInfos('scaleInOut')"
+                                       title="{{textInfo}}"> </i>
+                                    scaleInOut </label>
                                 <div class="col-sm-6">
                                     <input type="number" class="form-control" id="scaleInOut" name="scaleInOut"
                                            ng-model="appCreate.scaleInOut"/>
@@ -143,7 +158,11 @@
                                         <div class="panel-body" ng-if="toggle.threshold">
                                             <div class="form-group" ng-repeat="(key,value) in _threshold"
                                                  ng-if="key!='turnServerPassword'">
-                                                <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+                                                <label for="{{key}}" class="col-sm-4 control-label">
+                                                    <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
+                                                       data-toggle="tooltip" data-placement="top"
+                                                 title="{{textInfo}}"> </i>
+                                                    {{key}}</label>
                                                 <div class="col-sm-6">
                                                     <input type="number" class="form-control" id="{{key}}" name="{{key}}"
                                                            ng-model="_threshold[key]"/>
@@ -168,12 +187,16 @@
 
 
                                     <div class="panel panel-default">
-                                        <div class="panel-heading"><b>Do you want to set the Cloud Repository?</b>
+                                        <div class="panel-heading"><b>Do you need a cloud repository for your app?</b>
                                             <input type="checkbox" id="cloudRepository" name="togglecloudRepository"
                                                    ng-model="appCreate.cloudRepository"></div>
                                         <div class="panel-body" ng-if="appCreate.cloudRepository">
                                             <div class="form-group" >
-                                            <label for="cloudRepoPort" class="col-sm-4 control-label">cloudRepoPort</label>
+                                            <label for="cloudRepoPort" class="col-sm-4 control-label">
+                                                <i class="fa fa-info-circle" ng-mouseover="getInfos('cloudRepoPort')"
+                                                   data-toggle="tooltip" data-placement="top"
+                                                   title="{{textInfo}}"> </i>
+                                                cloudRepoPort</label>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="cloudRepoPort" name="cloudRepoPort"
                                                        ng-model="cloudRepository.cloudRepoPort" ng-init="cloudRepository.cloudRepoPort = '27018'"/>
@@ -181,7 +204,11 @@
                                             </div>
                                             <div class="form-group" >
 
-                                            <label for="cloudRepoSecurity" class="col-sm-4 control-label">cloudRepoSecurity</label>
+                                            <label for="cloudRepoSecurity" class="col-sm-4 control-label">
+                                                <i class="fa fa-info-circle" ng-mouseover="getInfos('cloudRepoSecurity')"
+                                                   data-toggle="tooltip" data-placement="top"
+                                                   title="{{textInfo}}"> </i>
+                                                cloudRepoSecurity</label>
                                             <div class="col-sm-6">
                                                 <input type="checkbox" class="" id="cloudRepoSecurity" name="cloudRepoSecurity"
                                                        ng-model="cloudRepository.cloudRepoSecurity"/>
@@ -200,7 +227,11 @@
                                         <div class="panel-body" ng-if="appCreate.turnServerActivate">
                                             <div class="form-group" ng-repeat="(key,value) in _turnServer"
                                                  ng-if="key!='turnServerPassword'">
-                                                <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+                                                <label for="{{key}}" class="col-sm-4 control-label">
+                                                    <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
+                                                       data-toggle="tooltip" data-placement="top"
+                                                       title="{{textInfo}}"> </i>
+                                                    {{key}}</label>
                                                 <div class="col-sm-6">
                                                     <input type="text" class="form-control" id="{{key}}" name="{{key}}"
                                                            ng-model="_turnServer[key]"/>
@@ -208,7 +239,11 @@
 
                                             </div>
                                             <div class="form-group" >
-                                                <label for="turnServerPassword" class="col-sm-4 control-label">turnServerPassword</label>
+                                                <label for="turnServerPassword" class="col-sm-4 control-label">
+                                                    <i class="fa fa-info-circle" ng-mouseover="getInfos('turnServerPassword')"
+                                                       data-toggle="tooltip" data-placement="top"
+                                                       title="{{textInfo}}"> </i>
+                                                    turnServerPassword</label>
                                                 <div class="col-sm-6">
                                                     <input type="password" class="form-control" id="turnServerPassword" name="turnServerPassword"
                                                            ng-model="_turnServer.turnServerPassword"/>
@@ -224,7 +259,11 @@
                                 <div class="panel-body" ng-if="appCreate.stunServerActivate">
                                     <div class="form-group" ng-repeat="(key,value) in _stunServer"
                                          ng-if="key!='stunServerActivate'">
-                                        <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+                                        <label for="{{key}}" class="col-sm-4 control-label">
+                                            <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
+                                               data-toggle="tooltip" data-placement="top"
+                                               title="{{textInfo}}"> </i>
+                                            {{key}}</label>
                                         <div class="col-sm-6">
                                             <input type="text" class="form-control" id="{{key}}" name="{{key}}"
                                                    ng-model="_stunServer[key]"/>

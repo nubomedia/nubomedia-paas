@@ -25,6 +25,7 @@ angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCookies'])
     });
 
 
+
 /**
  *
  * Redirects an user not logged in
