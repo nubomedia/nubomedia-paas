@@ -21,9 +21,13 @@ public class NubomediaCreateAppRequest {
     private boolean cloudRepository;
     private String cloudRepoPort;
     private boolean cloudRepoSecurity;
+    private boolean turnServerActivate;
     private String turnServerIp;
     private String turnServerUsername;
     private String turnServerPassword;
+    private boolean stunServerActivate;
+    private String stunServerIp;
+    private String stunServerPort;
     private int scaleInOut;
     private double scale_in_threshold;
     private double scale_out_threshold;
@@ -119,6 +123,14 @@ public class NubomediaCreateAppRequest {
         this.cloudRepoSecurity = cloudRepoSecurity;
     }
 
+    public boolean isTurnServerActivate() {
+        return turnServerActivate;
+    }
+
+    public void setTurnServerActivate(boolean turnServerActivate) {
+        this.turnServerActivate = turnServerActivate;
+    }
+
     public String getTurnServerIp() {
         return turnServerIp;
     }
@@ -141,6 +153,30 @@ public class NubomediaCreateAppRequest {
 
     public void setTurnServerPassword(String turnServerPassword) {
         this.turnServerPassword = turnServerPassword;
+    }
+
+    public boolean isStunServerActivate() {
+        return stunServerActivate;
+    }
+
+    public void setStunServerActivate(boolean stunServerActivate) {
+        this.stunServerActivate = stunServerActivate;
+    }
+
+    public String getStunServerIp() {
+        return stunServerIp;
+    }
+
+    public void setStunServerIp(String stunServerIp) {
+        this.stunServerIp = stunServerIp;
+    }
+
+    public String getStunServerPort() {
+        return stunServerPort;
+    }
+
+    public void setStunServerPort(String stunServerPort) {
+        this.stunServerPort = stunServerPort;
     }
 
     public int getScaleInOut() {
