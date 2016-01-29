@@ -362,6 +362,7 @@ public class NubomediaAppManager {
 
             obmanager.deleteDescriptor(server.getNsdID());
             obmanager.deleteEvent(server.getEventID());
+            obmanager.deleteRecord(server.getMediaServerID());
             app.setStatus(BuildingStatus.FAILED);
             appRepo.save(app);
             deploymentMap.remove(app.getAppID());
