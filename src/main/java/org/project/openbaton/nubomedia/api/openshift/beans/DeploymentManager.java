@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -156,16 +157,16 @@ public class DeploymentManager {
         return mapper.fromJson(pods.getBody(),Pods.class);
     }
 
-    private boolean existRC(HttpEntity<String> reqEntity, String rcURL){
+    private boolean existRC(HttpEntity<String> reqEntity, String rcURL) throws UnauthorizedException {
 
-        ResponseEntity<String> rcEntity = template.exchange(rcURL,HttpMethod.GET,reqEntity,String.class);
-        if(rcEntity.getStatusCode().is2xxSuccessful()){
+        try {
+            ResponseEntity<String> rcEntity = template.exchange(rcURL, HttpMethod.GET, reqEntity, String.class);
+            if (rcEntity.getStatusCode() == HttpStatus.UNAUTHORIZED) throw new UnauthorizedException("Invalid Token");
             return true;
         }
-        else{
+        catch (HttpClientErrorException e){
             return false;
         }
-
     }
 
 }

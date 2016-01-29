@@ -16,6 +16,7 @@ import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openbaton.Flavor;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.QoS;
+import org.project.openbaton.nubomedia.api.openbaton.exceptions.StunServerException;
 import org.project.openbaton.nubomedia.api.openbaton.exceptions.turnServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,11 +71,11 @@ public class OpenbatonManager {
         this.records = new HashMap<>();
     }
 
-    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, String  cloudRepoPort, boolean cloudRepoSecurity, QoS qos,String serverTurnIp,String serverTurnUsername, String serverTurnPassword,int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws SDKException, turnServerException {
+    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, String  cloudRepoPort, boolean cloudRepoSecurity, QoS qos,boolean turnServerActivate, String serverTurnIp,String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
 
         logger.debug("FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
 
-        NetworkServiceDescriptor targetNSD = this.configureDescriptor(nsdFromFile,flavorID,qos,serverTurnIp,serverTurnUsername,serverTurnPassword,scaleInOut,scale_in_threshold,scale_out_threshold);
+        NetworkServiceDescriptor targetNSD = this.configureDescriptor(nsdFromFile,flavorID,qos,turnServerActivate, serverTurnIp,serverTurnUsername,serverTurnPassword,stunServerActivate, stunServerIp, stunServerPort, scaleInOut,scale_in_threshold,scale_out_threshold);
 
         if (cloudRepositorySet){
             VirtualNetworkFunctionDescriptor cloudRepoDef = this.configureCloudRepo(cloudRepository,cloudRepoPort,cloudRepoSecurity);
@@ -198,7 +199,7 @@ public class OpenbatonManager {
         return cloudRepository;
     }
 
-    private NetworkServiceDescriptor configureDescriptor(NetworkServiceDescriptor nsd, Flavor flavor, QoS Qos, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws turnServerException {
+    private NetworkServiceDescriptor configureDescriptor(NetworkServiceDescriptor nsd, Flavor flavor, QoS Qos, boolean turnServerActivate, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, boolean stunServerActivate, String stunServerAddress, String stunServerPort, int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws turnServerException, StunServerException {
         logger.debug("Start configure");
         nsd = this.injectFlavor(flavor.getValue(),scaleInOut,nsd);
         logger.debug("After flavor the nsd is\n" + nsd.toString() + "\n****************************");
@@ -209,15 +210,9 @@ public class OpenbatonManager {
             logger.debug("After QOS the nsd is\n" + nsd.toString() + "\n############################");
         }
 
-        if (mediaServerTurnIP != null){
-
-            if (mediaServerTurnUsername == null || mediaServerTurnPassword == null){
-                throw new turnServerException("No Authentication for Turn Server");
-            }
-            logger.debug("Setting Turn Server");
-            nsd = this.setStunServer(mediaServerTurnIP,mediaServerTurnUsername, mediaServerTurnPassword, nsd);
-            logger.debug("After Turn Server the nsd is\n" + nsd.toString() + "\n---------------------------");
-        }
+        logger.debug("Setting Configuration parameters for mediaserver");
+        nsd = this.setConfigurationParameters(turnServerActivate,mediaServerTurnIP,mediaServerTurnUsername,mediaServerTurnPassword,stunServerActivate,stunServerAddress,stunServerPort,nsd);
+        logger.debug("Settled Configuration parameters for mediaserver, the new NSD is " + nsd.toString());
 
         if (scale_in_threshold > 0){
             logger.debug("Setting scale_in_threshold");
@@ -281,27 +276,67 @@ public class OpenbatonManager {
         return nsd;
     }
 
-    private NetworkServiceDescriptor setStunServer(String mediaServerStunIP, String mediaServerTurnUsername, String mediaServerTurnPassword, NetworkServiceDescriptor nsd) {
-
+    private NetworkServiceDescriptor setConfigurationParameters(boolean turnServerActivate, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, boolean stunServerActivate, String stunServerAddress, String stunServerPort, NetworkServiceDescriptor nsd) throws turnServerException, StunServerException {
         Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
 
         for (VirtualNetworkFunctionDescriptor vnfd : nsd.getVnfd()) {
             if (vnfd.getEndpoint().equals("media-server")){
-                ConfigurationParameter cpIp = new ConfigurationParameter();
-                cpIp.setConfKey("mediaserver.stun.url");
-                cpIp.setValue(mediaServerStunIP);
-                ConfigurationParameter cpUser = new ConfigurationParameter();
-                cpUser.setConfKey("mediaserver.turn-server.username");
-                cpUser.setValue(mediaServerTurnUsername);
-                ConfigurationParameter cpPassword = new ConfigurationParameter();
-                cpPassword.setConfKey("mediaserver.turn-server.password");
-                cpPassword.setValue(mediaServerTurnPassword);
+
                 org.openbaton.catalogue.nfvo.Configuration configuration = new org.openbaton.catalogue.nfvo.Configuration();
                 configuration.setName("mediaserver");
                 HashSet<ConfigurationParameter> cps = new HashSet<>();
-                cps.add(cpIp);
-                cps.add(cpUser);
-                cps.add(cpPassword);
+
+                if (turnServerActivate) {
+                    ConfigurationParameter cpTurnActivate = new ConfigurationParameter();
+                    cpTurnActivate.setConfKey("mediaserver.stun.url");
+                    cpTurnActivate.setValue("true");
+                    cps.add(cpTurnActivate);
+
+                    if (mediaServerTurnIP != null) {
+
+                        if (mediaServerTurnUsername == null || mediaServerTurnPassword == null) {
+                            throw new turnServerException("No Authentication for Turn Server");
+                        }
+                        ConfigurationParameter cpIp = new ConfigurationParameter();
+                        cpIp.setConfKey("mediaserver.stun.url");
+                        cpIp.setValue(mediaServerTurnIP);
+                        cps.add(cpIp);
+
+                        ConfigurationParameter cpUser = new ConfigurationParameter();
+                        cpUser.setConfKey("mediaserver.turn-server.username");
+                        cpUser.setValue(mediaServerTurnUsername);
+                        cps.add(cpUser);
+
+                        ConfigurationParameter cpPassword = new ConfigurationParameter();
+                        cpPassword.setConfKey("mediaserver.turn-server.password");
+                        cpPassword.setValue(mediaServerTurnPassword);
+                        cps.add(cpPassword);
+                    }
+                }
+
+                if (stunServerActivate){
+                    ConfigurationParameter cpStunAct = new ConfigurationParameter();
+                    cpStunAct.setConfKey("mediaserver.stun-server.activate");
+                    cpStunAct.setValue("true");
+                    cps.add(cpStunAct);
+
+                    if ((stunServerAddress != null && stunServerPort == null) || (stunServerAddress == null && stunServerPort != null)){
+                        throw new StunServerException("Is mandatory to specify Stun server address and Stun server port");
+                    }
+                    else if (stunServerAddress != null && stunServerPort != null){
+                        ConfigurationParameter cpStunAddr = new ConfigurationParameter();
+                        cpStunAddr.setConfKey("mediaserver.stun-server.address");
+                        cpStunAddr.setValue(stunServerAddress);
+                        cps.add(cpStunAddr);
+
+                        ConfigurationParameter cpStunPort = new ConfigurationParameter();
+                        cpStunPort.setConfKey("mediaserver.stun-server.port");
+                        cpStunPort.setValue(stunServerPort);
+                        cps.add(cpStunPort);
+                    }
+
+                }
+
                 configuration.setConfigurationParameters(cps);
                 vnfd.setConfigurations(configuration);
                 vnfds.add(vnfd);

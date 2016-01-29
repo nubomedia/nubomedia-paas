@@ -1,8 +1,9 @@
 package org.project.openbaton.nubomedia.api;
 
-import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
-import org.project.openbaton.nubomedia.api.messages.*;
+import org.project.openbaton.nubomedia.api.messages.NubomediaAppNotFoundMessage;
+import org.project.openbaton.nubomedia.api.messages.NubomediaDupMessage;
+import org.project.openbaton.nubomedia.api.messages.NubomediaUnauthorizedMessage;
 import org.project.openbaton.nubomedia.api.openbaton.exceptions.turnServerException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.NameStructureException;

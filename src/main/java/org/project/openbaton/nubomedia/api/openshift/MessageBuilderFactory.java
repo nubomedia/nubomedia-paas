@@ -13,7 +13,7 @@ public class MessageBuilderFactory {
     }
 
     public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL,String secretName,String mediaServerGID, String mediaServerIP, String mediaServerPort,String cloudRepositoryIp, String cloudRepositoryUser, String cloudRepositoryPassword,String cloudRepoPort) {
-        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("VNFR_ID",mediaServerGID),new EnviromentVariable("VNFM_IP",mediaServerIP),new EnviromentVariable("VNFM_PORT",mediaServerPort),new EnviromentVariable("CLOUDREPO_IP",cloudRepositoryIp),new EnviromentVariable("CLOUDREPO_USER",cloudRepositoryUser),new EnviromentVariable("CLOUDREPO_PASSWORD",cloudRepositoryPassword),new EnviromentVariable("CLOUDREPO_PORT",cloudRepoPort)},null);
+        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("BUILD_LOGLEVEL","5"),new EnviromentVariable("VNFR_ID",mediaServerGID),new EnviromentVariable("VNFM_IP",mediaServerIP),new EnviromentVariable("VNFM_PORT",mediaServerPort),new EnviromentVariable("CLOUDREPO_IP",cloudRepositoryIp),new EnviromentVariable("CLOUDREPO_USER",cloudRepositoryUser),new EnviromentVariable("CLOUDREPO_PASSWORD",cloudRepositoryPassword),new EnviromentVariable("CLOUDREPO_PORT",cloudRepoPort)},null);
         DockerBuildStrategy strategy = new DockerBuildStrategy(ds);
         Source.SourceSecret secret;
 

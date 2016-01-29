@@ -14,7 +14,7 @@ public class EnvironmentVariableSerializer extends TypeAdapter<EnviromentVariabl
     @Override
     public void write(JsonWriter out, EnviromentVariable value) throws IOException {
         if (value.getValue() == null){
-            out.nullValue();
+            return;
         }
         else{
             out.beginObject();
@@ -31,6 +31,7 @@ public class EnvironmentVariableSerializer extends TypeAdapter<EnviromentVariabl
 
         EnviromentVariable env = new EnviromentVariable();
 
+        in.beginObject();
         while (in.hasNext()){
             if (in.nextName().equals("name")){
                 env.setName(in.nextString());
@@ -39,6 +40,7 @@ public class EnvironmentVariableSerializer extends TypeAdapter<EnviromentVariabl
                 env.setValue(in.nextString());
             }
         }
+        in.endObject();
 
         return env;
     }

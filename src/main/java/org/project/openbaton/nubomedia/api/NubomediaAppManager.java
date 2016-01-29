@@ -14,6 +14,7 @@ import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundExcepti
 import org.project.openbaton.nubomedia.api.messages.*;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonEvent;
+import org.project.openbaton.nubomedia.api.openbaton.exceptions.StunServerException;
 import org.project.openbaton.nubomedia.api.openbaton.exceptions.turnServerException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.NameStructureException;
@@ -60,7 +61,7 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app",  method = RequestMethod.POST)
-    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException {
+    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException, StunServerException {
 
         if(token == null){
             throw new UnauthorizedException("no auth-token header");
@@ -104,7 +105,7 @@ public class NubomediaAppManager {
 
         //Openbaton MediaServer Request
         logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
-        OpenbatonCreateServer openbatonCreateServer = obmanager.getMediaServerGroupID(request.getFlavor(),appID,paaSProperties.getInternalURL(),request.isCloudRepository(),request.getCloudRepoPort(),request.isCloudRepoSecurity(), request.getQualityOfService(),request.getTurnServerIp(),request.getTurnServerUsername(),request.getTurnServerPassword(),request.getScaleInOut(),request.getScale_in_threshold(),request.getScale_out_threshold());
+        OpenbatonCreateServer openbatonCreateServer = obmanager.getMediaServerGroupID(request.getFlavor(),appID,paaSProperties.getInternalURL(),request.isCloudRepository(),request.getCloudRepoPort(),request.isCloudRepoSecurity(), request.getQualityOfService(),request.isTurnServerActivate(),request.getTurnServerIp(),request.getTurnServerUsername(),request.getTurnServerPassword(),request.isStunServerActivate(), request.getStunServerIp(), request.getStunServerPort(), request.getScaleInOut(),request.getScale_in_threshold(),request.getScale_out_threshold());
         openbatonCreateServer.setToken(token);
 
         deploymentMap.put(appID,openbatonCreateServer);
@@ -344,6 +345,7 @@ public class NubomediaAppManager {
                 }
 
                 logger.info("[PAAS]: CREATE_APP_OS " + new Date().getTime());
+                logger.debug("cloudRepositoryUsername " + cloudRepositoryUsername + " cloudRepositoryPassword " + cloudRepositoryPassword + " cloudRepositoryPort "+ cloudRepositoryPort + " IP " + cloudRepositoryIp);
                 route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(),vnfrID,paaSProperties.getVnfmIP(),paaSProperties.getVnfmPort(),cloudRepositoryIp,cloudRepositoryUsername,cloudRepositoryPassword, cloudRepositoryPort);
                 logger.info("[PAAS]: SCHEDULED_APP_OS " + new Date().getTime());
             } catch (DuplicatedException e) {
@@ -362,6 +364,7 @@ public class NubomediaAppManager {
 
             obmanager.deleteDescriptor(server.getNsdID());
             obmanager.deleteEvent(server.getEventID());
+            obmanager.deleteRecord(server.getMediaServerID());
             app.setStatus(BuildingStatus.FAILED);
             appRepo.save(app);
             deploymentMap.remove(app.getAppID());
