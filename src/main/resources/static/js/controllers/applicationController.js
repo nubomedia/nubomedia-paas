@@ -107,6 +107,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 $scope.appCreate.qualityOfService = $scope.qosValue._qos;
 
             }
+            if($scope.appCreate.secretName ==="")
+            delete $scope.appCreate.secretName;
 
 
             console.log(JSON.stringify($scope.appCreate));
