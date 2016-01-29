@@ -8,9 +8,13 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         $scope.flavors = ["SMALL", "MEDIUM", "LARGE"];
         $scope._qualityOfService = ["BRONZE", "SILVER", "GOLD"];
         $scope._turnServer = {
-            'turnServerIp': 'turn:127.0.0.1',
-            'turnServerUsername': 'test',
-            'turnServerPassword': 'test'
+            'turnServerIp': '',
+            'turnServerUsername': '',
+            'turnServerPassword': ''
+        };
+        $scope._stunServer = {
+            'stunServerIp': '',
+            'stunServerPort': ''
         };
         $scope.qosValue = {_qos: ''};
         $scope._threshold = {
@@ -85,11 +89,20 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             var sendOk = true;
 
 
-            if ($scope.toggle.turnServer) {
-                $scope.appCreate.turnServerIp = $scope._turnServer.turnServerIp;
-                $scope.appCreate.turnServerUsername = $scope._turnServer.turnServerUsername;
-                $scope.appCreate.turnServerPassword = $scope._turnServer.turnServerPassword;
+            if ($scope.appCreate.stunServerActivate) {
+                if ($scope._stunServer.stunServerIp !== '')
+                    $scope.appCreate.stunServerIp = $scope._stunServer.stunServerIp;
+                if ($scope._stunServer.stunServerPort !== '')
+                    $scope.appCreate.stunServerPort = $scope._stunServer.stunServerPort;
 
+            }
+            if ($scope.appCreate.turnServerActivate) {
+                if ($scope._turnServer.turnServerIp !== '')
+                    $scope.appCreate.turnServerIp = $scope._turnServer.turnServerIp;
+                if ($scope._turnServer.turnServerUsername !== '')
+                    $scope.appCreate.turnServerUsername = $scope._turnServer.turnServerUsername;
+                if ($scope._turnServer.turnServerPassword !== '')
+                    $scope.appCreate.turnServerPassword = $scope._turnServer.turnServerPassword;
             }
             if ($scope.toggle.threshold) {
                 $scope.appCreate.scale_in_threshold = $scope._threshold.scale_in_threshold;
@@ -107,8 +120,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 $scope.appCreate.qualityOfService = $scope.qosValue._qos;
 
             }
-            if($scope.appCreate.secretName ==="")
-            delete $scope.appCreate.secretName;
+            if ($scope.appCreate.secretName === "")
+                delete $scope.appCreate.secretName;
 
 
             console.log(JSON.stringify($scope.appCreate));
@@ -225,21 +238,22 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             }).then(function (bool) {
                 console.log('is TURN server active? ', bool ? 'yes' : 'no');
                 if (bool)
-               changeDivPane('panel-success')
+                    changeDivPane('panel-success')
 
                 else
-                changeDivPane('panel-danger')
+                    changeDivPane('panel-danger')
 
 
             }).catch(console.error.bind(console));
 
         };
-        function changeDivPane(classValue){
+        function changeDivPane(classValue) {
             $scope.$apply(function () {
                 $scope.classVar = classValue;
             });
 
         }
+
         function checkTURNServer(turnConfig, timeout) {
 
             return new Promise(function (resolve, reject) {

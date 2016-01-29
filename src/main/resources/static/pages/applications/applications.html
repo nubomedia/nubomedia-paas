@@ -196,8 +196,8 @@
                                     <div class="panel " ng-class="classVar">
                                         <div class="panel-heading"><b>Do you want to set the Turn Server?</b> <div class="pull-right"><a title="check if the turn server is running" ng-click="checkTurn()" href=""><i class="fa fa-check"> check</i></a></div>
                                             <input type="checkbox" id="turnServer" name="turnServer"
-                                                   ng-model="toggle.turnServer"></div>
-                                        <div class="panel-body" ng-if="toggle.turnServer">
+                                                   ng-model="appCreate.turnServerActivate"></div>
+                                        <div class="panel-body" ng-if="appCreate.turnServerActivate">
                                             <div class="form-group" ng-repeat="(key,value) in _turnServer"
                                                  ng-if="key!='turnServerPassword'">
                                                 <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
@@ -217,7 +217,23 @@
                                             </div>
                                         </div>
                                     </div>
+                            <div class="panel panel-default" >
+                                <div class="panel-heading"><b>Do you want to set the Stun Server?</b>
+                                    <input type="checkbox" id="turnServer" name="turnServer"
+                                           ng-model="appCreate.stunServerActivate"></div>
+                                <div class="panel-body" ng-if="appCreate.stunServerActivate">
+                                    <div class="form-group" ng-repeat="(key,value) in _stunServer"
+                                         ng-if="key!='stunServerActivate'">
+                                        <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="{{key}}" name="{{key}}"
+                                                   ng-model="_stunServer[key]"/>
+                                        </div>
 
+                                    </div>
+
+                                </div>
+                            </div>
 
                             <h4>Ports <a href="" title="Add a new port">
                                 <li class="fa fa-plus-square" ng-click="addPort()"></li>

@@ -18,5 +18,7 @@
   ],
   "scaleInOut":1,
   "replicasNumber":2,
-  "secretName":""
+  "secretName":"",
+  "turnServerActivate":false,
+  "stunServerActivate":false
 }
