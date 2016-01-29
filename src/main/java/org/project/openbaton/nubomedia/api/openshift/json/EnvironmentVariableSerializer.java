@@ -1,23 +1,45 @@
 package org.project.openbaton.nubomedia.api.openshift.json;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
 
 /**
  * Created by maa on 26.01.16.
  */
-public class EnvironmentVariableSerializer implements JsonSerializer<EnviromentVariable> {
-    @Override
-    public JsonElement serialize(EnviromentVariable src, Type typeOfSrc, JsonSerializationContext context) {
+public class EnvironmentVariableSerializer extends TypeAdapter<EnviromentVariable> {
 
-        if (src.getValue() == null){
-            return null;
+    @Override
+    public void write(JsonWriter out, EnviromentVariable value) throws IOException {
+        if (value.getValue() == null){
+            out.nullValue();
         }
-        else {
-            return context.serialize(src);
+        else{
+            out.beginObject();
+            out.name("name");
+            out.value(value.getName());
+            out.name("value");
+            out.value(value.getValue());
+            out.endObject();
         }
+    }
+
+    @Override
+    public EnviromentVariable read(JsonReader in) throws IOException {
+
+        EnviromentVariable env = new EnviromentVariable();
+
+        while (in.hasNext()){
+            if (in.nextName().equals("name")){
+                env.setName(in.nextString());
+            }
+            if (in.nextName().equals("value")){
+                env.setValue(in.nextString());
+            }
+        }
+
+        return env;
     }
 }
