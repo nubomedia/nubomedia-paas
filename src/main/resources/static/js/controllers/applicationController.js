@@ -8,7 +8,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         $scope.flavors = ["SMALL", "MEDIUM", "LARGE"];
         $scope._qualityOfService = ["BRONZE", "SILVER", "GOLD"];
         $scope._turnServer = {
-            'turnServerIp': '',
+            'turnServerUrl': '',
             'turnServerUsername': '',
             'turnServerPassword': ''
         };
@@ -30,6 +30,18 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             $('#modalT').modal('show');
         };
 
+
+        $http.get('json/infos.json')
+            .then(function (res) {
+                console.log(res.data);
+                $scope.infosObj = angular.copy(res.data);
+            });
+
+        $scope.getInfos = function(key){
+            console.log($scope.infosObj[key]);
+            console.log(key);
+            $scope.textInfo = $scope.infosObj[key];
+        };
         $scope.privateKeyReq = {
             projectName: 'nubomedia',
             privateKey: ''
@@ -97,8 +109,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
             }
             if ($scope.appCreate.turnServerActivate) {
-                if ($scope._turnServer.turnServerIp !== '')
-                    $scope.appCreate.turnServerIp = $scope._turnServer.turnServerIp;
+                if ($scope._turnServer.turnServerUrl !== '')
+                    $scope.appCreate.turnServerUrl = $scope._turnServer.turnServerUrl;
                 if ($scope._turnServer.turnServerUsername !== '')
                     $scope.appCreate.turnServerUsername = $scope._turnServer.turnServerUsername;
                 if ($scope._turnServer.turnServerPassword !== '')
@@ -232,7 +244,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         $scope.checkTurn = function () {
             console.log($scope._turnServer);
             checkTURNServer({
-                url: $scope._turnServer.turnServerIp,
+                url: 'turn:'+$scope._turnServer.turnServerUrl,
                 username: $scope._turnServer.turnServerUsername,
                 credential: $scope._turnServer.turnServerPassword
             }).then(function (bool) {
@@ -284,6 +296,16 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 };
             });
         }
+
+        $(document).ready(function(){
+            $('[data-toggle=tooltip]').hover(function(){
+                // on mouseenter
+                $(this).tooltip('show');
+            }, function(){
+                // on mouseleave
+                $(this).tooltip('hide');
+            });
+        });
 
 //# example usage:
 
