@@ -118,7 +118,6 @@ public class DeploymentManager {
         return deleteEntity.getStatusCode();
     }
 
-
     public BuildingStatus getDeployStatus(String kubernetesBaseURL, String appName, String namespace, HttpHeaders authHeader){
 
         BuildingStatus res = BuildingStatus.RUNNING; //if deploy pod will not exist is because the application is already deployed or the build is already failed :P

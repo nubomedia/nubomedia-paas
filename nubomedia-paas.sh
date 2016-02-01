@@ -71,15 +71,15 @@ function start {
 	#screen -c screenrc -d -m -S ms-vnfm -t ms-vnfm java -jar "build/libs/ms-vnfm-$_version.jar"
 	pushd "${_nubomedia_paas_base}"
 	#                                                                   build/libs/nubomedia-paas-api-0.1-SNAPSHOT.jar
-	screen -d -m -S nubomedia-paas -t nubomedia-paas-manager java -jar "/opt/nubomedia/nubomedia-paas/build/libs/nubomedia-paas-api-$_version.jar" --spring.config.location=file:${_nubomedia_config_file}
+	screen -d -m -S paas-manager -t nubomedia-paas-manager java -jar "/opt/nubomedia/nubomedia-paas/build/libs/nubomedia-paas-api-$_version.jar" --spring.config.location=file:${_nubomedia_config_file}
 	    #screen -c screenrc -r -p 0
 	popd
     #fi
 }
 
 function stop {
-    if screen -list | grep "nubomedia"; then
-	    screen -S nubomedia -p 0 -X stuff "exit$(printf \\r)"
+    if screen -list | grep "paas-manager"; then
+	    screen -S paas-manager -p 0 -X stuff "exit$(printf \\r)"
     fi
 }
 
@@ -90,8 +90,8 @@ function restart {
 
 
 function kill {
-    if screen -list | grep "nubomedia"; then
-	    screen -ls | grep nubomedia | cut -d. -f1 | awk '{print $1}' | xargs kill
+    if screen -list | grep "paas-manager"; then
+	    screen -ls | grep paas-manager | cut -d. -f1 | awk '{print $1}' | xargs kill
     fi
 }
 
