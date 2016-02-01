@@ -288,7 +288,7 @@ public class OpenbatonManager {
 
                 if (turnServerActivate) {
                     ConfigurationParameter cpTurnActivate = new ConfigurationParameter();
-                    cpTurnActivate.setConfKey("mediaserver.stun.url");
+                    cpTurnActivate.setConfKey("mediaserver.turn-server.activate");
                     cpTurnActivate.setValue("true");
                     cps.add(cpTurnActivate);
 
@@ -298,7 +298,7 @@ public class OpenbatonManager {
                             throw new turnServerException("No Authentication for Turn Server");
                         }
                         ConfigurationParameter cpIp = new ConfigurationParameter();
-                        cpIp.setConfKey("mediaserver.stun.url");
+                        cpIp.setConfKey("mediaserver.turn-server.url");
                         cpIp.setValue(mediaServerTurnIP);
                         cps.add(cpIp);
 
