@@ -83,7 +83,7 @@
                             <br/>
 
                             <div class="form-group" ng-repeat="(key,value) in appCreate"
-                                 ng-if="key!='ports' && key!='projectName' && key!='flavor' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut'">
+                                 ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut'">
                                 <label for="{{key}}" class="col-sm-4 control-label">
                                     <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
                                        data-toggle="tooltip" data-placement="top"
@@ -222,15 +222,21 @@
 
                                     <div class="panel " ng-class="classVar">
                                         <div class="panel-heading"><b>Do you want to set the Turn Server?</b> <div class="pull-right"><a title="check if the turn server is running" ng-click="checkTurn()" href=""><i class="fa fa-check"> check</i></a></div>
-                                            <input type="checkbox" id="turnServer" name="turnServer"
+                                            <input type="checkbox" id="turnServer" name="turnServer" ng-change="changedTurnServerBool()"
                                                    ng-model="appCreate.turnServerActivate"></div>
+                                        <div ng-if="disableButton" class="alert alert-danger" role="alert">
+                                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                            Turn server should running or leave the credentials empty</div>
                                         <div class="panel-body" ng-if="appCreate.turnServerActivate">
                                             <div class="form-group" ng-repeat="(key,value) in _turnServer"
                                                  ng-if="key!='turnServerPassword'">
                                                 <label for="{{key}}" class="col-sm-4 control-label">
+
+
+
+
                                                     <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
-                                                       data-toggle="tooltip" data-placement="top"
-                                                       title="{{textInfo}}"> </i>
+                                                       title="{{textInfo}}" bs-tooltip> </i>
                                                     {{key}}</label>
                                                 <div class="col-sm-6">
                                                     <input type="text" class="form-control" id="{{key}}" name="{{key}}"
@@ -342,7 +348,7 @@
                 </button>
                 <button type="button" id="sendTemplate"
                         data-dismiss="modal"
-                        class="btn btn-primary" ng-click="sendApp()">Create App
+                        class="btn btn-primary" ng-class="{'disabled': disableButton}"  ng-click="sendApp()">Create App
                 </button>
             </div>
         </div>
