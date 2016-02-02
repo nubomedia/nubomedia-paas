@@ -20,7 +20,7 @@
   "vdu":[
     {
       "vm_image":[
-        "ubuntu-cloud-64bit"
+        "ubuntu-image-14.04-11-15"
       ],
       "vimInstanceName":"nubomedia-vim",
       "scale_in_out":4,
