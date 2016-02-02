@@ -313,6 +313,12 @@ public class OpenbatonManager {
                         cps.add(cpPassword);
                     }
                 }
+                else{
+                    ConfigurationParameter cpTurnActivate = new ConfigurationParameter();
+                    cpTurnActivate.setConfKey("mediaserver.turn-server.activate");
+                    cpTurnActivate.setValue("false");
+                    cps.add(cpTurnActivate);
+                }
 
                 if (stunServerActivate){
                     ConfigurationParameter cpStunAct = new ConfigurationParameter();
@@ -335,6 +341,11 @@ public class OpenbatonManager {
                         cps.add(cpStunPort);
                     }
 
+                }else{
+                    ConfigurationParameter cpStunAct = new ConfigurationParameter();
+                    cpStunAct.setConfKey("mediaserver.stun-server.activate");
+                    cpStunAct.setValue("false");
+                    cps.add(cpStunAct);
                 }
 
                 configuration.setConfigurationParameters(cps);
