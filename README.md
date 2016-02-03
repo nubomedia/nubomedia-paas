@@ -1,5 +1,4 @@
 # Nubomedia PaaS Manager
-This project is part of the [NUBOMEDIA](http://www.nubomedia.eu/) research initiative.
 
 This project is part of the [NUBOMEDIA](http://www.nubomedia.eu/) research initiative.
 
