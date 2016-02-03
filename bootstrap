@@ -10,7 +10,7 @@ export DEBIAN_FRONTEND=noninteractive
 _dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 _nubomedia_paas_base_repo="https://github.com/fhg-fokus-nubomedia/nubomedia-paas.git"
-_tag="develop"
+#_tag="develop"
 #_tag="tags/1.1"
 
 
