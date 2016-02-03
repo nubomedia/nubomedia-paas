@@ -1,5 +1,7 @@
 package org.project.openbaton.nubomedia.api.openshift.json;
 
+import java.util.List;
+
 /**
  * Created by maa on 01.10.15.
  */
@@ -8,13 +10,13 @@ public class ServiceAccount {
     private final String kind = "ServiceAccount";
     private final String apiVersion = "v1";
     private Metadata metadata;
-    private SecretID[] secrets;
-    private SecretID[] imagePullSecrets;
+    private List<SecretID> secrets;
+    private List<SecretID> imagePullSecrets;
 
     public ServiceAccount() {
     }
 
-    public ServiceAccount(Metadata metadata, SecretID[] secrets, SecretID[] imagePullSecrets) {
+    public ServiceAccount(Metadata metadata, List<SecretID> secrets, List<SecretID> imagePullSecrets) {
         this.metadata = metadata;
         this.secrets = secrets;
         this.imagePullSecrets = imagePullSecrets;
@@ -28,11 +30,11 @@ public class ServiceAccount {
         return apiVersion;
     }
 
-    public SecretID[] getSecrets() {
+    public List<SecretID> getSecrets() {
         return secrets;
     }
 
-    public void setSecrets(SecretID[] secrets) {
+    public void setSecrets(List<SecretID> secrets) {
         this.secrets = secrets;
     }
 
@@ -44,11 +46,11 @@ public class ServiceAccount {
         this.metadata = metadata;
     }
 
-    public SecretID[] getImagePullSecrets() {
+    public List<SecretID> getImagePullSecrets() {
         return imagePullSecrets;
     }
 
-    public void setImagePullSecrets(SecretID[] imagePullSecrets) {
+    public void setImagePullSecrets(List<SecretID> imagePullSecrets) {
         this.imagePullSecrets = imagePullSecrets;
     }
 

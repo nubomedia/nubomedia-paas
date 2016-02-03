@@ -10,7 +10,7 @@ var app = angular.module('app');
 app.controller('LoginController', function ($scope, AuthService, Session, $rootScope, $location, $cookieStore, $http) {
     $scope.currentUser = null;
     //$scope.URL = 'http://localhost:8080';
-    //$scope.URL= 'http://80.96.122.80:8081';
+    //$scope.URL= 'http://80.96.122.84:8081';
     $scope.URL = '';
     $scope.credential = {
         "username": '',
@@ -58,11 +58,15 @@ app.controller('LoginController', function ($scope, AuthService, Session, $rootS
      */
     $scope.login = function (credential) {
         AuthService.login(credential, $scope.URL);
-        $scope.loginError = angular.isUndefined($cookieStore.get('loggedNb'));
-        console.log($cookieStore.get('loggedNb'))
+        setTimeout(showLoginError, 2000);
     };
 
-
+    function showLoginError() {
+        $scope.$apply(function () {
+            $scope.loginError = angular.isUndefined($cookieStore.get('loggedNb'));
+            console.log($scope.loginError);
+        });
+    }
 });
 
 

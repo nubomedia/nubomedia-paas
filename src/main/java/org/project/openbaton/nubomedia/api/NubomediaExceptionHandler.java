@@ -1,8 +1,10 @@
 package org.project.openbaton.nubomedia.api;
 
-import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
-import org.project.openbaton.nubomedia.api.messages.*;
+import org.project.openbaton.nubomedia.api.messages.NubomediaAppNotFoundMessage;
+import org.project.openbaton.nubomedia.api.messages.NubomediaDupMessage;
+import org.project.openbaton.nubomedia.api.messages.NubomediaUnauthorizedMessage;
+import org.project.openbaton.nubomedia.api.openbaton.exceptions.turnServerException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.NameStructureException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
@@ -47,16 +49,6 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e,body,headers,HttpStatus.UNAUTHORIZED,request);
     }
 
-    @ExceptionHandler({SDKException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ResponseEntity<Object> handleSDK (Exception e, WebRequest request){
-        logger.info("handling SDKException from " + request.getDescription(true));
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        NubomediaOpenbatonMessage body = new NubomediaOpenbatonMessage("Bad Request",e.getMessage());
-        return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
-    }
-
     @ExceptionHandler({DuplicatedException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     protected ResponseEntity<Object> handleDup (Exception e, WebRequest request){
@@ -76,5 +68,16 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
         String body = e.getMessage();
         return handleExceptionInternal(e,body,headers,HttpStatus.BAD_REQUEST,request);
     }
+
+    @ExceptionHandler({turnServerException.class})
+    @ResponseStatus(HttpStatus.PRECONDITION_REQUIRED)
+    protected ResponseEntity<Object> handleTurnParametersException(Exception e, WebRequest request){
+        logger.info("Handling parameters from" + request.getDescription(true));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String body = "Turn server requires authentication parameters";
+        return handleExceptionInternal(e,body,headers,HttpStatus.PRECONDITION_REQUIRED,request);
+    }
+
 
 }

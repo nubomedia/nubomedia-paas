@@ -1,12 +1,21 @@
 package org.project.openbaton.nubomedia.api;
 
+import org.openbaton.catalogue.mano.common.Ip;
+import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
+import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
+import org.openbaton.catalogue.mano.record.VNFCInstance;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
+import org.openbaton.catalogue.nfvo.Configuration;
+import org.openbaton.catalogue.nfvo.ConfigurationParameter;
 import org.openbaton.sdk.api.exception.SDKException;
+import org.project.openbaton.nubomedia.api.configuration.PaaSProperties;
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.api.messages.*;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonCreateServer;
 import org.project.openbaton.nubomedia.api.openbaton.OpenbatonEvent;
+import org.project.openbaton.nubomedia.api.openbaton.exceptions.StunServerException;
+import org.project.openbaton.nubomedia.api.openbaton.exceptions.turnServerException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.NameStructureException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
@@ -42,6 +51,7 @@ public class NubomediaAppManager {
     @Autowired private OpenshiftManager osmanager;
     @Autowired private OpenbatonManager obmanager;
     @Autowired private ApplicationRepository appRepo;
+    @Autowired private PaaSProperties paaSProperties;
 
     @PostConstruct
     private void init() {
@@ -51,7 +61,7 @@ public class NubomediaAppManager {
     }
 
     @RequestMapping(value = "/app",  method = RequestMethod.POST)
-    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException {
+    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException, StunServerException {
 
         if(token == null){
             throw new UnauthorizedException("no auth-token header");
@@ -73,6 +83,8 @@ public class NubomediaAppManager {
             throw new DuplicatedException("Application with " + request.getAppName() + " already exist");
         }
 
+        logger.debug("REQUEST" + request.toString());
+
         List<String> protocols = new ArrayList<>();
         List<Integer> targetPorts = new ArrayList<>();
         List<Integer> ports = new ArrayList<>();
@@ -93,7 +105,7 @@ public class NubomediaAppManager {
 
         //Openbaton MediaServer Request
         logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
-        OpenbatonCreateServer openbatonCreateServer = obmanager.getMediaServerGroupID(request.getFlavor(),appID);
+        OpenbatonCreateServer openbatonCreateServer = obmanager.getMediaServerGroupID(request.getFlavor(),appID,paaSProperties.getInternalURL(),request.isCloudRepository(),request.getCloudRepoPort(),request.isCloudRepoSecurity(), request.getQualityOfService(),request.isTurnServerActivate(),request.getTurnServerUrl(),request.getTurnServerUsername(),request.getTurnServerPassword(),request.isStunServerActivate(), request.getStunServerIp(), request.getStunServerPort(), request.getScaleInOut(),request.getScale_in_threshold(),request.getScale_out_threshold());
         openbatonCreateServer.setToken(token);
 
         deploymentMap.put(appID,openbatonCreateServer);
@@ -278,7 +290,7 @@ public class NubomediaAppManager {
 
     @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id) throws UnauthorizedException{ //TODO fix to throw it before
+    public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id) throws UnauthorizedException{
         logger.debug("starting callback for appId" + id);
         logger.info("Received event " + evt);
         Application app = appRepo.findFirstByAppID(id);
@@ -292,11 +304,32 @@ public class NubomediaAppManager {
             appRepo.save(app);
 
             String vnfrID ="";
+            String cloudRepositoryIp = null;
+            String cloudRepositoryUsername = null;
+            String cloudRepositoryPassword = null;
+            String cloudRepositoryPort = null;
 
             for(VirtualNetworkFunctionRecord record : evt.getPayload().getVnfr()){
 
                 if(record.getEndpoint().equals("media-server"))
                     vnfrID = record.getId();
+
+                if(record.getName().contains("mongodb")){
+                    cloudRepositoryIp = this.getCloudRepoIP(record);
+
+                    Configuration configuration = record.getConfigurations();
+                    for (ConfigurationParameter parameter : configuration.getConfigurationParameters()){
+                        if (parameter.getConfKey().equals("USERNAME_MD")){
+                            cloudRepositoryUsername = parameter.getValue();
+                        }
+                        if (parameter.getConfKey().equals("PASSWORD")){
+                            cloudRepositoryPassword = parameter.getValue();
+                        }
+                        if (parameter.getConfKey().equals("PORT")){
+                            cloudRepositoryPort = parameter.getValue();
+                        }
+                    }
+                }
 
             }
 
@@ -312,7 +345,8 @@ public class NubomediaAppManager {
                 }
 
                 logger.info("[PAAS]: CREATE_APP_OS " + new Date().getTime());
-                route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(),vnfrID);
+                logger.debug("cloudRepositoryUsername " + cloudRepositoryUsername + " cloudRepositoryPassword " + cloudRepositoryPassword + " cloudRepositoryPort "+ cloudRepositoryPort + " IP " + cloudRepositoryIp);
+                route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(),vnfrID,paaSProperties.getVnfmIP(),paaSProperties.getVnfmPort(),cloudRepositoryIp,cloudRepositoryUsername,cloudRepositoryPassword, cloudRepositoryPort);
                 logger.info("[PAAS]: SCHEDULED_APP_OS " + new Date().getTime());
             } catch (DuplicatedException e) {
                 app.setRoute(e.getMessage());
@@ -320,6 +354,7 @@ public class NubomediaAppManager {
                 appRepo.save(app);
                 return;
             }
+            obmanager.deleteDescriptor(server.getNsdID());
             obmanager.deleteEvent(server.getEventID());
             app.setRoute(route);
             appRepo.save(app);
@@ -327,11 +362,29 @@ public class NubomediaAppManager {
         }
         else if (evt.getAction().equals(Action.ERROR)){
 
+            obmanager.deleteDescriptor(server.getNsdID());
+            obmanager.deleteEvent(server.getEventID());
+            obmanager.deleteRecord(server.getMediaServerID());
             app.setStatus(BuildingStatus.FAILED);
             appRepo.save(app);
-
+            deploymentMap.remove(app.getAppID());
         }
 
+    }
+
+    private String getCloudRepoIP(VirtualNetworkFunctionRecord record) {
+
+        for (VirtualDeploymentUnit vdu : record.getVdu()){
+            for (VNFCInstance instance : vdu.getVnfc_instance()){
+                for (Ip ip : instance.getFloatingIps()){
+                    if (ip != null){
+                        return ip.getIp();
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
 //    @Scheduled(initialDelay = 0,fixedDelay = 200)

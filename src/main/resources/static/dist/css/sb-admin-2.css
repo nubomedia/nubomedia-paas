@@ -392,6 +392,14 @@ select.form-control.ng-valid.ng-dirty {
 /*}*/
 /*}*/
 
+/*#modalPrivateKey{*/
+    /*z-index: 1042;*/
+/*}*/
+.inputKeyP{
+    margin-left:20px;
+    margin-right:20px;
+}
+
 #footer{
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: small;

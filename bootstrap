@@ -59,37 +59,37 @@ function compileProperties {
     export baseUrl
     read -p "Enter the PaaS ip [https://localhost:8443]: " baseUrl
     if [[ "$baseUrl" != "" ]]; then
-        $_ex 'sed -i "s|baseURL=https://localhost:8443|baseURL=$baseUrl|g" /etc/nubomedia/paas.properties'
+        $_ex 'sed -i "s|openshift.baseURL=https://localhost:8443|openshift.baseURL=$baseUrl|g" /etc/nubomedia/paas.properties'
     fi
 
     export paasIp
     read -p "Enter the PaaS API ip [http://localhost:8081]: " paasIp
     if [[ "$paasIp" != "" ]]; then
-        $_ex 'sed -i "s|internalURL=http://localhost:8081|internalURL=$paasIp|g" /etc/nubomedia/paas.properties'
+        $_ex 'sed -i "s|paas.internalURL=http://localhost:8081|paas.internalURL=$paasIp|g" /etc/nubomedia/paas.properties'
     fi
 
     export vnfmIp
     read -p "Enter the Vnfm ip [localhost]: " vnfmIp
     if [[ $vnfmIp != "" ]]; then
-        $_ex 'sed -i "s/vnfmIP=localhost/vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
+        $_ex 'sed -i "s/paas.vnfmIP=localhost/paas.vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoIp
     read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
     if [[ $nfvoIp != "" ]]; then
-         $_ex 'sed -i "s/openbatonIP=localhost/openbatonIP=$nfvoIp/g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s/nfvo.openbatonIP=localhost/nfvo.openbatonIP=$nfvoIp/g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoUsername
     read -p "Enter the Orchestrator username [admin]: " nfvoUsername
     if [[ $nfvoUsername != "" ]]; then
-         $_ex 'sed -i "s/openbatonUsername=admin/openbatonUsername=$nfvoUsername/g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s/nfvo.openbatonUsername=admin/nfvo.openbatonUsername=$nfvoUsername/g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoPassword
     read -p "Enter the Orchestrator password [openbaton]: " nfvoPassword
     if [[ $nfvoPassword != "" ]]; then
-         $_ex 'sed -i "s/openbatonPasswd=openbaton/openbatonPasswd=$nfvoPassword/g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s/nfvo.openbatonPasswd=openbaton/nfvo.openbatonPasswd=$nfvoPassword/g" /etc/nubomedia/paas.properties'
     fi
 
     export keystorePath
@@ -101,31 +101,31 @@ function compileProperties {
     export authURL
     read -p "Enter the Vim Auth URL (http://localhost:5000/v2.0): " authURL
     if [[ "$authURL" != "" ]]; then
-        $_ex 'sed -i "s|\"authUrl\":\"http://localhost:5000/v2.0\"|\"authUrl\":\"$authURL\"|g" /etc/nubomedia/vim-instance.json'
+        $_ex 'sed -i "s|vim.authURL=http://localhost:5000/v2.0|vim.authURL:$authURL|g" /etc/nubomedia/paas.properties'
     fi
 
     export tenantName
     read -p "Enter the tenant name (nubomedia): " tenantName
     if [[ $tenantName != "" ]]; then
-        $_ex 'sed -i "s/\"tenant\":\"nubomedia\"/\"tenant\":\"$tenantName\"/g" /etc/nubomedia/vim-instance.json'
+        $_ex 'sed -i "s/vim.tenant=nubomedia/vim.tenant=$tenantName/g" /etc/nubomedia/paas.properties'
     fi
 
     export username
     read -p "Enter the vim username (nubomedia): " username
     if [[ $username != "" ]]; then
-        $_ex 'sed -i "s/\"username\":\"nubomedia\"/\"username\":\"$username\"/g" /etc/nubomedia/vim-instance.json'
+        $_ex 'sed -i "s/vim.username=nubomedia/vim.username=$username/g" /etc/nubomedia/paas.properties'
     fi
 
     export password
     read -p "Enter the vim password (changeme): " password
     if [[ $password != "" ]]; then
-        $_ex 'sed -i "s/\"password\":\"changeme\"/\"password\":\"$password\"/g" /etc/nubomedia/vim-instance.json'
+        $_ex 'sed -i "s/vim.password=changeme/vim.password=$password/g" /etc/nubomedia/paas.properties'
     fi
 
     export keyPair
     read -p "Enter the vim keyPair (nubomedia): " keyPair
     if [[ $keyPair != "" ]]; then
-        $_ex 'sed -i "s/\"keyPair\":\"nubomedia\"/\"keyPair\":\"$keyPair\"/g" /etc/nubomedia/vim-instance.json'
+        $_ex 'sed -i "s/vim.keypair=nubomedia/vim.keypair=$keyPair/g" /etc/nubomedia/paas.properties'
     fi
 }
 
@@ -136,10 +136,10 @@ function checkoutNubomediaPaaS {
     pushd "${_nubomedia_paas}"
     git checkout ${_tag}
     popd
-    $_ex 'rm -rf "/etc/nubomedia"; mkdir "/etc/nubomedia"'
+    $_ex 'mkdir -p "/etc/nubomedia"'
     echo "created properties folder"
     $_ex 'cp '"${_nubomedia_paas}/src/main/resources/paas.properties /etc/nubomedia/paas.properties"
-    $_ex 'cp '"${_nubomedia_paas}/resource/vim-instance.json /etc/nubomedia/vim-instance.json"
+    $_ex 'cp '"${_nubomedia_paas}/resource/cloudrepo-vnfd.json /etc/nubomedia/cloudrepo-vnfd.json"
     $_ex 'cp '"${_nubomedia_paas}/resource/nubomedia-nsd.json /etc/nubomedia/nubomedia-nsd.json"
     echo "copied properties file, now modifing..."
 }
@@ -173,7 +173,7 @@ function bootstrap {
     compileProperties
     # deploy and compile Nubomedia PaaS API
     deployNubomediaPaaS
-    echo "Nubomedia PaaS API is up and running now. Check screen -x nubomedia-paas..."
+    echo "Nubomedia PaaS API is up and running now. Check screen -x paas-manager..."
 
 }
 
