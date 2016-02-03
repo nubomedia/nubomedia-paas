@@ -5,20 +5,22 @@ package org.project.openbaton.nubomedia.api.openshift.json;
  */
 public class RouteSpec {
 
+    public static class Status{
+        //TODO: add status information in case of status request
+    }
+
     private String host;
     private BuildElements to;
+    private RouteTls tls;
     private Status status;
 
     public RouteSpec(){}
 
-    public RouteSpec(String host, BuildElements to, Status status) {
+    public RouteSpec(String host, BuildElements to, RouteTls tls, Status status) {
         this.host = host;
         this.to = to;
+        this.tls = tls;
         this.status = status;
-    }
-
-    public static class Status{
-        //TODO: add status information in case of status request
     }
 
     public String getHost() {
@@ -35,6 +37,14 @@ public class RouteSpec {
 
     public void setTo(BuildElements to) {
         this.to = to;
+    }
+
+    public RouteTls getTls() {
+        return tls;
+    }
+
+    public void setTls(RouteTls tls) {
+        this.tls = tls;
     }
 
     public Status getStatus() {
