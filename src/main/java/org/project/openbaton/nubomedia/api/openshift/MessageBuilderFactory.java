@@ -54,7 +54,9 @@ public class MessageBuilderFactory {
     }
 
     public static RouteConfig getRouteMessage(String name, String appID) {
-        RouteMessageBuilder rmb = new RouteMessageBuilder(name, appID);
+
+        RouteTls tls = new RouteTls("passthrough",null,null,null,null);
+        RouteMessageBuilder rmb = new RouteMessageBuilder(name, appID, tls);
         return rmb.buildMessage();
     }
 
