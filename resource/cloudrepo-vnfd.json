@@ -51,7 +51,8 @@
     {
       "event":"START",
       "lifecycle_events":[
-        "start-single-mongo.sh"
+        "start-single-mongo.sh",
+        "start-kurento-repo-server.sh"
       ]
     }
   ],
