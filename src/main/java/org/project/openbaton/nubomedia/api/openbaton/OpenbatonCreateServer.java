@@ -6,7 +6,8 @@ package org.project.openbaton.nubomedia.api.openbaton;
 public class OpenbatonCreateServer {
 
     private String mediaServerID;
-    private String eventID;
+    private String eventAllocatedID;
+    private String eventErrorID;
     private String nsdID;
     private String token;
 
@@ -29,12 +30,20 @@ public class OpenbatonCreateServer {
         this.mediaServerID = mediaServerID;
     }
 
-    public String getEventID() {
-        return eventID;
+    public String getEventAllocatedID() {
+        return eventAllocatedID;
     }
 
-    public void setEventID(String eventID) {
-        this.eventID = eventID;
+    public void setEventAllocatedID(String eventAllocatedID) {
+        this.eventAllocatedID = eventAllocatedID;
+    }
+
+    public String getEventErrorID() {
+        return eventErrorID;
+    }
+
+    public void setEventErrorID(String eventErrorID) {
+        this.eventErrorID = eventErrorID;
     }
 
     public String getToken(){
@@ -48,8 +57,10 @@ public class OpenbatonCreateServer {
     @Override
     public String toString() {
         return "OpenbatonCreateServer{" +
-                ", mediaServerID='" + mediaServerID + '\'' +
-                ", eventID='" + eventID + '\'' +
+                "mediaServerID='" + mediaServerID + '\'' +
+                ", eventAllocatedID='" + eventAllocatedID + '\'' +
+                ", eventErrorID='" + eventErrorID + '\'' +
+                ", nsdID='" + nsdID + '\'' +
                 ", token='" + token + '\'' +
                 '}';
     }

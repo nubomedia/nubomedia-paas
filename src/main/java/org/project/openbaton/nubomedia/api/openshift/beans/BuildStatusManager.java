@@ -49,16 +49,21 @@ public class BuildStatusManager {
             }
         }
 
-        switch (status.getPhase()){
-            case "Running":
-                res = BuildingStatus.BUILDING;
-                break;
-            case "Failed":
-                res = BuildingStatus.FAILED;
-                break;
-            case "Complete":
-                res = BuildingStatus.BUILD_OK;
-                break;
+        if (status != null) {
+            switch (status.getPhase()){
+                case "Running":
+                    res = BuildingStatus.BUILDING;
+                    break;
+                case "Failed":
+                    res = BuildingStatus.FAILED;
+                    break;
+                case "Complete":
+                    res = BuildingStatus.BUILD_OK;
+                    break;
+            }
+        }
+        else{
+            res = BuildingStatus.PAAS_RESOURCE_MISSING;
         }
 
         return res;
