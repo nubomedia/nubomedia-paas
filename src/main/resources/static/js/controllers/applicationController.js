@@ -122,7 +122,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             }
             $scope.cloudRepository = {
                 cloudRepoPort: '27018',
-                cloudRepoSecurity: true
+                cloudRepoSecurity: false
             };
             if ($scope.appCreate.cloudRepository) {
                 $scope.appCreate.cloudRepoPort = $scope.cloudRepository.cloudRepoPort;
