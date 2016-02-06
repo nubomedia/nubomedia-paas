@@ -164,6 +164,9 @@ public class OpenshiftManager {
             case BUILD_OK:
                 res = deploymentManager.getDeployStatus(kubernetesBaseURL,appName,namespace,authHeader);
                 break;
+            case PAAS_RESOURCE_MISSING:
+                res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                break;
         }
 
         return res;
