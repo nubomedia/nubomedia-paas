@@ -176,6 +176,9 @@ public class NubomediaAppManager {
                     app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
                 }
                 break;
+            case PAAS_RESOURCE_MISSING:
+                app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                break;
         }
 
         appRepo.save(app);
@@ -217,11 +220,41 @@ public class NubomediaAppManager {
             return res;
         }
 
+        if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)){
+            res.setId(id);
+            res.setAppName(app.getAppName());
+            res.setProjectName(app.getProjectName());
+            res.setLog("PaaS components are missing, send an email to the administrator to chekc the PaaS status");
+
+            return res;
+        }
+
         res.setId(id);
         res.setAppName(app.getAppName());
         res.setProjectName(app.getProjectName());
         res.setLog(osmanager.getBuildLogs(token,app.getAppName(),app.getProjectName()));
         return res;
+    }
+
+    @RequestMapping(value = "/app/{id}/logs", method = RequestMethod.GET)
+    public @ResponseBody String getApplicationLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException, ApplicationNotFoundException {
+
+        if(token == null){
+            throw new UnauthorizedException("no auth-token header");
+        }
+
+        if(!appRepo.exists(id)){
+            throw new ApplicationNotFoundException("Application with ID not found");
+        }
+
+        Application app = appRepo.findFirstByAppID(id);
+
+        if(!app.getStatus().equals(BuildingStatus.RUNNING)){
+            return "Application Status " + app.getStatus() + ", logs not available until the status is RUNNING";
+        }
+
+        return osmanager.getApplicationLog(token,app.getAppName(),app.getProjectName());
+
     }
 
     @RequestMapping(value = "/app", method = RequestMethod.GET)
@@ -275,6 +308,12 @@ public class NubomediaAppManager {
             appRepo.delete(app);
             return new NubomediaDeleteAppResponse(id,name,projectName,200);
 
+        }
+
+        if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)){
+            obmanager.deleteRecord(app.getNsrID());
+
+            return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),200);
         }
 
 //        if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
