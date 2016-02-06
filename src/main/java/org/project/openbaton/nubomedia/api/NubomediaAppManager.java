@@ -312,6 +312,7 @@ public class NubomediaAppManager {
 
         if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)){
             obmanager.deleteRecord(app.getNsrID());
+            appRepo.delete(app);
 
             return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),200);
         }
