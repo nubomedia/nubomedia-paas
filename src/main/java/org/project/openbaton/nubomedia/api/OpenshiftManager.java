@@ -12,10 +12,7 @@ import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-<<<<<<< HEAD
-=======
 import org.springframework.http.HttpEntity;
->>>>>>> develop
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +37,6 @@ public class OpenshiftManager {
     @Autowired private ServiceManager serviceManager;
     @Autowired private RouteManager routeManager;
     @Autowired private AuthenticationManager authManager;
-//    private Properties config;
     @ Autowired private OpenshiftProperties properties;
     private Logger logger;
     private String openshiftBaseURL;
@@ -49,7 +45,6 @@ public class OpenshiftManager {
 
     @PostConstruct
     private void init() throws IOException {
-//        this.config = ConfigReader.loadProperties();
         this.logger = LoggerFactory.getLogger(this.getClass());
         this.openshiftBaseURL = properties.getBaseURL() + "/oapi/v1/namespaces/";
         this.kubernetesBaseURL = properties.getBaseURL() + "/api/v1/namespaces/";

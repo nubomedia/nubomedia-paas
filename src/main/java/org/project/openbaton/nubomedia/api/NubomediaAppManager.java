@@ -1,10 +1,6 @@
 package org.project.openbaton.nubomedia.api;
 
 import org.openbaton.catalogue.mano.common.Ip;
-<<<<<<< HEAD
-import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
-=======
->>>>>>> develop
 import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.record.VNFCInstance;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
@@ -434,9 +430,7 @@ public class NubomediaAppManager {
 
                 logger.info("[PAAS]: CREATE_APP_OS " + new Date().getTime());
                 logger.debug("cloudRepositoryUsername " + cloudRepositoryUsername + " cloudRepositoryPassword " + cloudRepositoryPassword + " cloudRepositoryPort "+ cloudRepositoryPort + " IP " + cloudRepositoryIp);
-<<<<<<< HEAD
                 route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(),vnfrID,paaSProperties.getVnfmIP(),paaSProperties.getVnfmPort(),cloudRepositoryIp,cloudRepositoryUsername,cloudRepositoryPassword, cloudRepositoryPort);
-=======
 
                 try {
                     route = osmanager.buildApplication(server.getToken(), app.getAppID(), app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(), vnfrID, paaSProperties.getVnfmIP(), paaSProperties.getVnfmPort(), cloudRepositoryIp, cloudRepositoryUsername, cloudRepositoryPassword, cloudRepositoryPort);
@@ -449,8 +443,6 @@ public class NubomediaAppManager {
                     appRepo.save(app);
                     deploymentMap.remove(app.getAppID());
                 }
-
->>>>>>> develop
                 logger.info("[PAAS]: SCHEDULED_APP_OS " + new Date().getTime());
             } catch (DuplicatedException e) {
                 app.setRoute(e.getMessage());
@@ -459,12 +451,9 @@ public class NubomediaAppManager {
                 return;
             }
             obmanager.deleteDescriptor(server.getNsdID());
-<<<<<<< HEAD
-            obmanager.deleteEvent(server.getEventID());
-=======
+
             obmanager.deleteEvent(server.getEventAllocatedID());
             obmanager.deleteEvent(server.getEventErrorID());
->>>>>>> develop
             app.setRoute(route);
             appRepo.save(app);
             deploymentMap.remove(app.getAppID());
@@ -472,26 +461,16 @@ public class NubomediaAppManager {
         else if (evt.getAction().equals(Action.ERROR)){
 
             obmanager.deleteDescriptor(server.getNsdID());
-<<<<<<< HEAD
-            obmanager.deleteEvent(server.getEventID());
-=======
             obmanager.deleteEvent(server.getEventErrorID());
             obmanager.deleteEvent(server.getEventAllocatedID());
->>>>>>> develop
             obmanager.deleteRecord(server.getMediaServerID());
             app.setStatus(BuildingStatus.FAILED);
             appRepo.save(app);
             deploymentMap.remove(app.getAppID());
         }
-<<<<<<< HEAD
 
     }
 
-=======
-
-    }
-
->>>>>>> develop
     private String getCloudRepoIP(VirtualNetworkFunctionRecord record) {
 
         for (VirtualDeploymentUnit vdu : record.getVdu()){

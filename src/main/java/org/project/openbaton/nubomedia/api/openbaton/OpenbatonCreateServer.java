@@ -6,12 +6,8 @@ package org.project.openbaton.nubomedia.api.openbaton;
 public class OpenbatonCreateServer {
 
     private String mediaServerID;
-<<<<<<< HEAD
-    private String eventID;
-=======
     private String eventAllocatedID;
     private String eventErrorID;
->>>>>>> develop
     private String nsdID;
     private String token;
 
