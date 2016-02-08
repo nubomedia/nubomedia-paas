@@ -40,9 +40,15 @@
 </div>
 <div class="row" ng-show="application">
     <div class="col-lg-12">
-        <button id="btn_create_topology" class="btn btn-primary pull-right"
-                title="Create a new App" ng-click="loadLog()">Load Log
-        </button>
+        <div class="pull-right">
+            <button id="get_log" class="btn btn-primary"
+                    title="Loads the buildlogs" ng-click="loadLog()">Load Log
+            </button>
+
+            <button style="padding-left: 20px" id="get_log_app" class="btn btn-primary" ng-disable="checkStatus()"
+                    title="Loads the App logs" ng-click="loadAppLog()">App Log
+            </button>
+        </div>
     </div>
 </div>
 <br/>
