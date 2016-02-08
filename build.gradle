@@ -62,7 +62,7 @@ repositories {
 }
 dependencies {
     compile 'org.openbaton:sdk:0.16-SNAPSHOT'
-    //compile 'commons-dbcp:commons-dbcp:1.4'
+    compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'mysql:mysql-connector-java:5.1.35'
     compile 'org.springframework.boot:spring-boot-starter-test:' + springBootVersion
     compile 'org.springframework.boot:spring-boot:' + springBootVersion

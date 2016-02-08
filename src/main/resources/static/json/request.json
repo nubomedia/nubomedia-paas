@@ -1,5 +1,5 @@
 {
-  "gitURL":"https://gitlab.fokus.fraunhofer.de/maa/nubomedia-magic-mirror.git",
+  "gitURL":"https://github.com/fhg-fokus-nubomedia/nubomedia-magic-mirror.git",
   "appName":"nubo-magic-mirror",
   "projectName":"nubomedia",
   "cloudRepository":false,

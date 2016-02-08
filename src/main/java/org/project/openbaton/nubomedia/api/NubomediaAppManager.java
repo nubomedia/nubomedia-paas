@@ -1,7 +1,6 @@
 package org.project.openbaton.nubomedia.api;
 
 import org.openbaton.catalogue.mano.common.Ip;
-import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
 import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.record.VNFCInstance;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
@@ -27,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
@@ -142,19 +142,42 @@ public class NubomediaAppManager {
                 app.setStatus(obmanager.getStatus(app.getNsrID()));
                 break;
             case INITIALISED:
-                app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
+                try {
+                    app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                }catch (ResourceAccessException e){
+                    app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                }
                 break;
             case BUILDING:
-                app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
+                try{
+                    app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
+                }catch (ResourceAccessException e){
+                    app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                }
                 break;
             case DEPLOYNG:
-                app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
+                try{
+                    app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
+                }catch (ResourceAccessException e){
+                    app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                }
                 break;
             case FAILED:
-                app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
+                try{
+                    app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
+                }catch (ResourceAccessException e){
+                    app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                }
                 break;
             case RUNNING:
-                app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
+                try{
+                    app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
+                }catch (ResourceAccessException e){
+                    app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                }
+                break;
+            case PAAS_RESOURCE_MISSING:
+                app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
                 break;
         }
 
@@ -197,6 +220,15 @@ public class NubomediaAppManager {
             return res;
         }
 
+        if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)){
+            res.setId(id);
+            res.setAppName(app.getAppName());
+            res.setProjectName(app.getProjectName());
+            res.setLog("PaaS components are missing, send an email to the administrator to chekc the PaaS status");
+
+            return res;
+        }
+
         res.setId(id);
         res.setAppName(app.getAppName());
         res.setProjectName(app.getProjectName());
@@ -204,14 +236,42 @@ public class NubomediaAppManager {
         return res;
     }
 
-    @RequestMapping(value = "/app", method = RequestMethod.GET)
-    public @ResponseBody Iterable<Application> getApps(@RequestHeader("Auth-token") String token) throws UnauthorizedException {
+    @RequestMapping(value = "/app/{id}/logs", method = RequestMethod.GET)
+    public @ResponseBody String getApplicationLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException, ApplicationNotFoundException {
 
         if(token == null){
             throw new UnauthorizedException("no auth-token header");
         }
 
-        return this.appRepo.findAll();
+        if(!appRepo.exists(id)){
+            throw new ApplicationNotFoundException("Application with ID not found");
+        }
+
+        Application app = appRepo.findFirstByAppID(id);
+
+        if(!app.getStatus().equals(BuildingStatus.RUNNING)){
+            return "Application Status " + app.getStatus() + ", logs not available until the status is RUNNING";
+        }
+
+        return osmanager.getApplicationLog(token,app.getAppName(),app.getProjectName());
+
+    }
+
+    @RequestMapping(value = "/app", method = RequestMethod.GET)
+    public @ResponseBody Iterable<Application> getApps(@RequestHeader("Auth-token") String token) throws UnauthorizedException, ApplicationNotFoundException {
+
+        if(token == null){
+            throw new UnauthorizedException("no auth-token header");
+        }
+        //BETA
+        Iterable<Application> applications = this.appRepo.findAll();
+
+        for (Application app : applications){
+            app.setStatus(this.getApp(token,app.getAppID()).getStatus());
+        }
+        this.appRepo.save(applications);
+
+        return applications;
     }
 
     @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
@@ -234,20 +294,44 @@ public class NubomediaAppManager {
 
             String name = app.getAppName();
             String projectName = app.getProjectName();
+
+            if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
+                OpenbatonCreateServer server = deploymentMap.get(id);
+                obmanager.deleteDescriptor(server.getNsdID());
+                obmanager.deleteEvent(server.getEventAllocatedID());
+                obmanager.deleteEvent(server.getEventErrorID());
+                obmanager.deleteRecord(app.getNsrID());
+                deploymentMap.remove(server);
+
+            }
+
             appRepo.delete(app);
             return new NubomediaDeleteAppResponse(id,name,projectName,200);
 
         }
 
-        if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
-
+        if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)){
             obmanager.deleteRecord(app.getNsrID());
-            return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),200);
+            appRepo.delete(app);
 
+            return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),200);
         }
 
+//        if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
+//
+//            obmanager.deleteRecord(app.getNsrID());
+//            return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),200);
+//
+//        }
+
+
         obmanager.deleteRecord(app.getNsrID());
-        HttpStatus resDelete = osmanager.deleteApplication(token, app.getAppName(), app.getProjectName());
+        HttpStatus resDelete = HttpStatus.BAD_REQUEST;
+        try {
+            resDelete = osmanager.deleteApplication(token, app.getAppName(), app.getProjectName());
+        } catch (ResourceAccessException e){
+            logger.info("PaaS Missing");
+        }
 
         appRepo.delete(app);
 
@@ -346,7 +430,19 @@ public class NubomediaAppManager {
 
                 logger.info("[PAAS]: CREATE_APP_OS " + new Date().getTime());
                 logger.debug("cloudRepositoryUsername " + cloudRepositoryUsername + " cloudRepositoryPassword " + cloudRepositoryPassword + " cloudRepositoryPort "+ cloudRepositoryPort + " IP " + cloudRepositoryIp);
-                route = osmanager.buildApplication(server.getToken(), app.getAppID(),app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(),vnfrID,paaSProperties.getVnfmIP(),paaSProperties.getVnfmPort(),cloudRepositoryIp,cloudRepositoryUsername,cloudRepositoryPassword, cloudRepositoryPort);
+
+                try {
+                    route = osmanager.buildApplication(server.getToken(), app.getAppID(), app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(), vnfrID, paaSProperties.getVnfmIP(), paaSProperties.getVnfmPort(), cloudRepositoryIp, cloudRepositoryUsername, cloudRepositoryPassword, cloudRepositoryPort);
+
+                } catch (ResourceAccessException e){
+                    obmanager.deleteDescriptor(server.getNsdID());
+                    obmanager.deleteEvent(server.getEventAllocatedID());
+                    obmanager.deleteEvent(server.getEventErrorID());
+                    app.setStatus(BuildingStatus.FAILED);
+                    appRepo.save(app);
+                    deploymentMap.remove(app.getAppID());
+                }
+
                 logger.info("[PAAS]: SCHEDULED_APP_OS " + new Date().getTime());
             } catch (DuplicatedException e) {
                 app.setRoute(e.getMessage());
@@ -355,7 +451,8 @@ public class NubomediaAppManager {
                 return;
             }
             obmanager.deleteDescriptor(server.getNsdID());
-            obmanager.deleteEvent(server.getEventID());
+            obmanager.deleteEvent(server.getEventAllocatedID());
+            obmanager.deleteEvent(server.getEventErrorID());
             app.setRoute(route);
             appRepo.save(app);
             deploymentMap.remove(app.getAppID());
@@ -363,7 +460,8 @@ public class NubomediaAppManager {
         else if (evt.getAction().equals(Action.ERROR)){
 
             obmanager.deleteDescriptor(server.getNsdID());
-            obmanager.deleteEvent(server.getEventID());
+            obmanager.deleteEvent(server.getEventErrorID());
+            obmanager.deleteEvent(server.getEventAllocatedID());
             obmanager.deleteRecord(server.getMediaServerID());
             app.setStatus(BuildingStatus.FAILED);
             appRepo.save(app);

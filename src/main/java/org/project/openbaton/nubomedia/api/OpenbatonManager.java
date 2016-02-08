@@ -90,19 +90,28 @@ public class OpenbatonManager {
         OpenbatonCreateServer res = new OpenbatonCreateServer();
         res.setNsdID(targetNSD.getId());
         NetworkServiceRecord nsr = null;
-        EventEndpoint eventEndpoint = new EventEndpoint();
-        eventEndpoint.setType(EndpointType.REST);
-        eventEndpoint.setEndpoint(callbackUrl + apiPath + "/openbaton/" + appID);
-        eventEndpoint.setEvent(Action.INSTANTIATE_FINISH);
+        EventEndpoint eventEndpointCreation = new EventEndpoint();
+        eventEndpointCreation.setType(EndpointType.REST);
+        eventEndpointCreation.setEndpoint(callbackUrl + apiPath + "/openbaton/" + appID);
+        eventEndpointCreation.setEvent(Action.INSTANTIATE_FINISH);
+
+        EventEndpoint eventEndpointError = new EventEndpoint();
+        eventEndpointError.setType(EndpointType.REST);
+        eventEndpointError.setEndpoint(callbackUrl + apiPath + "/openbaton/" + appID);
+        eventEndpointError.setEvent(Action.ERROR);
 
         nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
         logger.debug("NSR " + nsr.toString());
         this.records.put(nsr.getId(), nsr);
-        eventEndpoint.setNetworkServiceId(nsr.getId());
+        eventEndpointCreation.setNetworkServiceId(nsr.getId());
+        eventEndpointError.setNetworkServiceId(nsr.getId());
         res.setMediaServerID(nsr.getId());
 
-        eventEndpoint = this.nfvoRequestor.getEventAgent().create(eventEndpoint);
-        res.setEventID(eventEndpoint.getId());
+        eventEndpointCreation = this.nfvoRequestor.getEventAgent().create(eventEndpointCreation);
+        res.setEventAllocatedID(eventEndpointCreation.getId());
+
+        eventEndpointError = this.nfvoRequestor.getEventAgent().create(eventEndpointError);
+        res.setEventErrorID(eventEndpointError.getId());
 
         logger.debug("Result " + res.toString());
         return res;

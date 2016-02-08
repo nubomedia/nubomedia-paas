@@ -149,6 +149,56 @@ public class DeploymentManager {
 
     }
 
+    public String getPodLogs(String kubernetesBaseURL, String namespace, String appName, HttpEntity<String> requestEntity) throws UnauthorizedException {
+        String podsURL = kubernetesBaseURL + namespace + podSuffix;
+        String targetPod = null;
+        Pods podList = this.getPodsList(podsURL,requestEntity);
+        logger.debug("POD LIST IS " + podList.toString());
+
+        for(String pod : podList.getPodNames()){
+            logger.debug("CURRENT POD IS " + pod);
+            if (pod.contains(appName)) {
+                if (!pod.contains("bc-1-build") || !pod.contains("dc-1-deploy")) {
+                    targetPod = pod;
+                    logger.debug("Target pod is " + targetPod);
+                }
+            }
+        }
+
+        String targetUrl = podsURL + targetPod + "/log";
+        ResponseEntity<String> logEntity = template.exchange(targetUrl,HttpMethod.GET,requestEntity,String.class);
+
+        if(!logEntity.getStatusCode().is2xxSuccessful()) logger.debug("FAILED TO RETRIEVE LOGS " + logEntity.getBody());
+
+        if(logEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
+        logger.debug("LOG IS " + logEntity.getBody());
+        return logEntity.getBody();
+
+    }
+
+    public HorizontalPodAutoscaler createHpa (String paasUrl, String appName, String namespace, int replicasNumber, int targetPerc, HttpHeaders authHeader) throws UnauthorizedException, DuplicatedException {
+
+        String url = paasUrl + "/apis/extensions/v1beta1/namespaces/" + namespace + "/horizontalpodautoscalers";
+        HorizontalPodAutoscaler body = MessageBuilderFactory.getHpa(appName,replicasNumber,targetPerc);
+        HttpEntity<String> hpaEntity = new HttpEntity<>(mapper.toJson(body,HorizontalPodAutoscaler.class),authHeader);
+        ResponseEntity<String> createHpa = template.exchange(url,HttpMethod.POST,hpaEntity,String.class);
+
+        if(createHpa.getStatusCode().equals(HttpStatus.CONFLICT)){
+            throw new DuplicatedException("Application with " + appName + " is already present");
+        }
+
+        if(createHpa.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
+        return mapper.fromJson(createHpa.getBody(),HorizontalPodAutoscaler.class);
+    }
+
     private Pods getPodsList(String podsURL, HttpEntity<String> requestEntity) {
 
         ResponseEntity<String> pods = template.exchange(podsURL,HttpMethod.GET,requestEntity,String.class);

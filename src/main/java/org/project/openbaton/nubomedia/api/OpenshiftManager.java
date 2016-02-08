@@ -12,6 +12,7 @@ import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -163,9 +164,21 @@ public class OpenshiftManager {
             case BUILD_OK:
                 res = deploymentManager.getDeployStatus(kubernetesBaseURL,appName,namespace,authHeader);
                 break;
+            case PAAS_RESOURCE_MISSING:
+                res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                break;
         }
 
         return res;
+    }
+
+    public String getApplicationLog(String token, String appName, String namespace) throws UnauthorizedException {
+
+        HttpHeaders authHeader = new HttpHeaders();
+        authHeader.add("Authorization", "Bearer " + token);
+        HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
+
+        return deploymentManager.getPodLogs(kubernetesBaseURL,namespace,appName,requestEntity);
     }
 
     public String getBuildLogs(String token, String appName,String namespace) throws UnauthorizedException {
