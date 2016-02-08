@@ -58,7 +58,7 @@
   ],
   "deployment_flavour":[
     {
-      "flavour_key":"m1.small"
+      "flavour_key":"m3.medium"
     }
   ],
   "vnfPackageLocation":"https://github.com/tub-nubomedia/cloud-repository-scripts.git"
