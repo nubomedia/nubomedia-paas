@@ -2,6 +2,9 @@ package org.project.openbaton.nubomedia.api.openshift;
 
 import org.project.openbaton.nubomedia.api.openshift.json.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by maa on 26/09/2015.
  */
@@ -35,7 +38,10 @@ public class MessageBuilderFactory {
         for (int i = 0; i < ports.length; i++) {
             cports[i] = new Container.Port(protocols[i], ports[i]);
         }
-        Container container = new Container(name + "-cnt", dockerRepo + ":latest", cports);
+        List<ContainerVolume> volumes = new ArrayList<>();
+        ContainerVolume sharedMemory = new ContainerVolume("dshm",false,"/dev/shm");
+        volumes.add(sharedMemory);
+        Container container = new Container(name + "-cnt", dockerRepo + ":latest", cports,volumes);
         ImageChangeTrigger.ImageChangeParams params = new ImageChangeTrigger.ImageChangeParams(true,new BuildElements("ImageStream",name),new String[]{container.getName()});
         ImageChangeTrigger trigger = new ImageChangeTrigger("ImageChange",params);
         DeploymentMessageBuilder builder = new DeploymentMessageBuilder(name, new Container[]{container}, replicasNumber, new ImageChangeTrigger[]{trigger}, "Rolling");
