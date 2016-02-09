@@ -208,6 +208,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         $scope.loadAppLog = function () {
             http.get(url + $routeParams.applicationId + '/logs')
                 .success(function (response) {
+
                     $scope.log = $sce.trustAsHtml(n2br(response));
                 })
                 .error(function (data, status) {
@@ -240,7 +241,14 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
 
         function n2br(str) {
-            return str.replace(/\n/g, "<br />");
+            str = str.replace(/(?:\\[rn]|[\r\n]+)+/g, "<br />");
+            //return str.replace(/\r\n|\r|\n//g, "<br />");
+            var x = str;
+            var r = /\\u([\d\w]{4})/gi;
+            x = x.replace(r, function (match, grp) {
+                return String.fromCharCode(parseInt(grp, 16)); } );
+            x = unescape(x);
+                return x
         }
 
         function showError(status, data) {
