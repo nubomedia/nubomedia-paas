@@ -295,7 +295,7 @@ public class NubomediaAppManager {
             String name = app.getAppName();
             String projectName = app.getProjectName();
 
-            if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
+            if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
                 OpenbatonCreateServer server = deploymentMap.get(id);
                 obmanager.deleteDescriptor(server.getNsdID());
                 obmanager.deleteEvent(server.getEventAllocatedID());

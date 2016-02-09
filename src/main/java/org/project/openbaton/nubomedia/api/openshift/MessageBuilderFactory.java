@@ -65,4 +65,10 @@ public class MessageBuilderFactory {
         return secretKeyMessageBuilder.buildMessage();
     }
 
+    public static HorizontalPodAutoscaler getHpa(String appName, int replicasNumber, int targetPerc){
+
+        HorizontalPodAutoscalerMessageBuilder builder = new HorizontalPodAutoscalerMessageBuilder(appName,1,replicasNumber,targetPerc);
+        return builder.buildMessage();
+    }
+
 }

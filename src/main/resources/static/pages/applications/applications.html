@@ -11,7 +11,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-12 ">
         <button id="btn_create_topology" class="btn btn-primary pull-right"
                 title="Create a new App" ng-click="createApp()">Create App
         </button>
@@ -117,9 +117,9 @@
                                     flavor</label>
 
                                 <div class="col-sm-6">
-                                    <select class="form-control modal-select" name="flavor" id="flavor"
-                                            ng-model="appCreate.flavor">
-                                        <option ng-repeat="flavor in flavors" value="{{flavor}}">{{flavor}}</option>
+
+                                    <select ng-model="appCreate.flavor"  class="form-control modal-select" name="flavor" id="flavor">
+                                        <option ng-repeat="flavor in flavors track by $index" ng-init="appCreate.flavor = flavors[0]" value="{{flavor}}">{{flavor}}</option>
                                     </select>
                                 </div>
                             </div>

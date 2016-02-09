@@ -180,6 +180,25 @@ public class DeploymentManager {
 
     }
 
+    public HorizontalPodAutoscaler createHpa (String paasUrl, String appName, String namespace, int replicasNumber, int targetPerc, HttpHeaders authHeader) throws UnauthorizedException, DuplicatedException {
+
+        String url = paasUrl + "/apis/extensions/v1beta1/namespaces/" + namespace + "/horizontalpodautoscalers";
+        HorizontalPodAutoscaler body = MessageBuilderFactory.getHpa(appName,replicasNumber,targetPerc);
+        HttpEntity<String> hpaEntity = new HttpEntity<>(mapper.toJson(body,HorizontalPodAutoscaler.class),authHeader);
+        ResponseEntity<String> createHpa = template.exchange(url,HttpMethod.POST,hpaEntity,String.class);
+
+        if(createHpa.getStatusCode().equals(HttpStatus.CONFLICT)){
+            throw new DuplicatedException("Application with " + appName + " is already present");
+        }
+
+        if(createHpa.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+
+        return mapper.fromJson(createHpa.getBody(),HorizontalPodAutoscaler.class);
+    }
+
     private Pods getPodsList(String podsURL, HttpEntity<String> requestEntity) {
 
         ResponseEntity<String> pods = template.exchange(podsURL,HttpMethod.GET,requestEntity,String.class);

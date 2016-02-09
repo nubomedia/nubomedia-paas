@@ -5,7 +5,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         $scope.alerts = [];
         $scope.apllications = [];
-        $scope.flavors = ["SMALL", "MEDIUM", "LARGE"];
+        $scope.flavors = ["MEDIUM", "LARGE"];
         $scope._qualityOfService = ["BRONZE", "SILVER", "GOLD"];
         $scope._turnServer = {
             'turnServerUrl': '',
@@ -203,6 +203,23 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 .error(function (data, status) {
                     showError(status, data);
                 });
+        };
+
+        $scope.loadAppLog = function () {
+            http.get(url + $routeParams.applicationId + '/logs')
+                .success(function (response) {
+                    $scope.log = $sce.trustAsHtml(n2br(response));
+                })
+                .error(function (data, status) {
+                    showError(status, data);
+                });
+        };
+
+        $scope.checkStatus = function () {
+            console.log(($scope.application.status !== 'RUNNING'));
+            if ($scope.application.status !== 'RUNNING')
+                return true;
+            else return false;
         };
 
         $scope.setFile = function (element) {
