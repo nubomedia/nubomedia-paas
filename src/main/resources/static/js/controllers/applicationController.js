@@ -151,7 +151,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             }
             console.log(postTopology);
 
-            if (false) {
+            if (sendOk) {
                 console.log(JSON.stringify(postTopology));
                 http.post(url, $scope.appCreate)
                     .success(function (response) {
