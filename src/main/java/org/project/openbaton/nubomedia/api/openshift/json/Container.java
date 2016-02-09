@@ -48,6 +48,12 @@ public class Container {
         this.volumeMounts = volumeMounts;
     }
 
+    public Container(String name, String image, Port[] ports) {
+        this.name = name;
+        this.image = image;
+        this.ports = ports;
+    }
+
     public Container() {
     }
 
