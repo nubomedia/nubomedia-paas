@@ -62,6 +62,12 @@ function compileProperties {
         $_ex 'sed -i "s|openshift.baseURL=https://localhost:8443|openshift.baseURL=$baseUrl|g" /etc/nubomedia/paas.properties'
     fi
 
+    export domainName
+    read -p "Enter the domain name for the applications [example.com]: " domainName
+    if [[ "$domainName" != "" ]]; then
+        $_ex 'sed -i "s|openshift.domainName=example.com|openshift.domainName=$domainName|g" /etc/nubomedia/paas.properties'
+    fi
+
     export paasIp
     read -p "Enter the PaaS API ip [http://localhost:8081]: " paasIp
     if [[ "$paasIp" != "" ]]; then
