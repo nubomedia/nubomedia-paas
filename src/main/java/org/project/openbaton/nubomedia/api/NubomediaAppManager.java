@@ -177,7 +177,7 @@ public class NubomediaAppManager {
                 }
                 break;
             case PAAS_RESOURCE_MISSING:
-                app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                app.setStatus(osmanager.getStatus(token,app.getAppName(),app.getProjectName()));
                 break;
         }
 
@@ -534,7 +534,7 @@ public class NubomediaAppManager {
                 }
                 break;
             case PAAS_RESOURCE_MISSING:
-                res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                res = osmanager.getStatus(token, app.getAppName(),app.getProjectName());
                 break;
         }
 

@@ -118,7 +118,6 @@ public class OpenshiftManager {
         res = deploymentManager.deleteDeployment(openshiftBaseURL, appName, namespace, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
-        //FIX for FAIL BUILD
         res = deploymentManager.deletePodsRC(kubernetesBaseURL, appName, namespace, deleteHeader);
         if (!res.is2xxSuccessful() && !res.equals(HttpStatus.NOT_FOUND)) return res;
         if (res.equals(HttpStatus.NOT_FOUND)) logger.debug("No Replication controller, build probably failed");
