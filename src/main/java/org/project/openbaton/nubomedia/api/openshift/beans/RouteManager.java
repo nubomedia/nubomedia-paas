@@ -52,6 +52,8 @@ public class RouteManager {
             throw new UnauthorizedException("Invalid or expired token");
         }
 
+        logger.debug("ROUTE BODY IS " + response.getBody());
+
         return response;
     }
 
