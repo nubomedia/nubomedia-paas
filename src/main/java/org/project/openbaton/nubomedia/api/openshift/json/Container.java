@@ -1,5 +1,7 @@
 package org.project.openbaton.nubomedia.api.openshift.json;
 
+import java.util.List;
+
 /**
  * Created by maa on 25/09/2015.
  */
@@ -8,6 +10,7 @@ public class Container {
     private String name;
     private String image;
     private Port[] ports;
+    private List<ContainerVolume> volumeMounts;
 
     public static class Port{
         String protocol;
@@ -36,6 +39,13 @@ public class Container {
         public void setContainerPort(int containerPort) {
             this.containerPort = containerPort;
         }
+    }
+
+    public Container(String name, String image, Port[] ports, List<ContainerVolume> volumeMounts) {
+        this.name = name;
+        this.image = image;
+        this.ports = ports;
+        this.volumeMounts = volumeMounts;
     }
 
     public Container(String name, String image, Port[] ports) {
@@ -69,5 +79,13 @@ public class Container {
 
     public void setPorts(Port[] ports) {
         this.ports = ports;
+    }
+
+    public List<ContainerVolume> getVolumeMounts() {
+        return volumeMounts;
+    }
+
+    public void setVolumeMounts(List<ContainerVolume> volumeMounts) {
+        this.volumeMounts = volumeMounts;
     }
 }

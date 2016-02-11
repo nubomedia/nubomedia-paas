@@ -33,6 +33,7 @@ public class OpenshiftConfiguration {
                 .registerTypeAdapter(Status.class,new StatusDeserializer())
                 .registerTypeAdapter(Pod.class,new PodDeserializer())
                 .registerTypeAdapter(Pods.class, new PodsDeserializer())
-                .registerTypeAdapter(EnviromentVariable.class,new EnvironmentVariableSerializer()).create();
+                .registerTypeAdapter(EnviromentVariable.class,new EnvironmentVariableSerializer())
+                .disableHtmlEscaping().create();
     }
 }

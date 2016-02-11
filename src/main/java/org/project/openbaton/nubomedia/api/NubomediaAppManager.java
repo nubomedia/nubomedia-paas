@@ -267,8 +267,9 @@ public class NubomediaAppManager {
         Iterable<Application> applications = this.appRepo.findAll();
 
         for (Application app : applications){
-            app.setStatus(this.getApp(token,app.getAppID()).getStatus());
+            app.setStatus(this.getStatus(token,app));
         }
+
         this.appRepo.save(applications);
 
         return applications;
@@ -288,6 +289,7 @@ public class NubomediaAppManager {
         }
 
         Application app = appRepo.findFirstByAppID(id);
+        app.setStatus(this.getStatus(token,app));
         logger.debug("Deleting " + app.toString());
 
         if (!app.isResourceOK()){
@@ -484,6 +486,60 @@ public class NubomediaAppManager {
         }
 
         return null;
+    }
+
+    private BuildingStatus getStatus(String token, Application app) throws UnauthorizedException {
+
+        BuildingStatus res = null;
+
+        switch (app.getStatus()){
+            case CREATED:
+                res =  obmanager.getStatus(app.getNsrID());
+                break;
+            case INITIALIZING:
+                res = obmanager.getStatus(app.getNsrID());
+                break;
+            case INITIALISED:
+                try {
+                    res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
+                }catch (ResourceAccessException e){
+                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                }
+                break;
+            case BUILDING:
+                try{
+                    res = osmanager.getStatus(token, app.getAppName(),app.getProjectName());
+                }catch (ResourceAccessException e){
+                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                }
+                break;
+            case DEPLOYNG:
+                try{
+                    res = osmanager.getStatus(token, app.getAppName(),app.getProjectName());
+                }catch (ResourceAccessException e){
+                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                }
+                break;
+            case FAILED:
+                try{
+                    res = osmanager.getStatus(token, app.getAppName(),app.getProjectName());
+                }catch (ResourceAccessException e){
+                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                }
+                break;
+            case RUNNING:
+                try{
+                    res = osmanager.getStatus(token, app.getAppName(),app.getProjectName());
+                }catch (ResourceAccessException e){
+                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                }
+                break;
+            case PAAS_RESOURCE_MISSING:
+                res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                break;
+        }
+
+        return res;
     }
 
 //    @Scheduled(initialDelay = 0,fixedDelay = 200)
