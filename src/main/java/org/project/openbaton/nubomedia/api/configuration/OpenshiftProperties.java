@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class OpenshiftProperties {
 
     private String baseURL;
+    private String domainName;
 
     public String getBaseURL() {
         return baseURL;
@@ -21,4 +22,11 @@ public class OpenshiftProperties {
         this.baseURL = baseURL;
     }
 
+    public String getDomainName() {
+        return domainName;
+    }
+
+    public void setDomainName(String domainName) {
+        this.domainName = domainName;
+    }
 }

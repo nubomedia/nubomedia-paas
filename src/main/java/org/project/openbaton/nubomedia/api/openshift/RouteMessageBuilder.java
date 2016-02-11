@@ -9,11 +9,13 @@ public class RouteMessageBuilder {
 
     private String name;
     private String appID;
+    private String domainName;
     private RouteTls tls;
 
-    public RouteMessageBuilder(String name, String appID, RouteTls tls){
+    public RouteMessageBuilder(String name, String appID, String domainName, RouteTls tls){
         this.name = name;
         this.appID = appID;
+        this.domainName = domainName;
         this.tls = tls;
     }
 
@@ -21,7 +23,7 @@ public class RouteMessageBuilder {
 
         Metadata metadata = new Metadata(name + "-route","","");
         BuildElements be = new BuildElements("Service",name+"-svc");
-        RouteSpec spec = new RouteSpec(name+ appID + ".paas.nubomedia.eu",be,tls,new RouteSpec.Status());
+        RouteSpec spec = new RouteSpec(name+ appID + "." + domainName,be,tls,new RouteSpec.Status());
 
         return new RouteConfig(metadata,spec);
     }

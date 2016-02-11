@@ -90,7 +90,7 @@ public class OpenshiftManager {
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = routeManager.makeRoute(openshiftBaseURL, appID, appName, namespace, creationHeader);
+        appBuilEntity = routeManager.makeRoute(openshiftBaseURL, appID, appName, namespace, properties.getDomainName(), creationHeader);
         if(!appBuilEntity.getStatusCode().is2xxSuccessful()){
             logger.debug("Failed creation of route " + appBuilEntity.toString());
             return appBuilEntity.getBody();

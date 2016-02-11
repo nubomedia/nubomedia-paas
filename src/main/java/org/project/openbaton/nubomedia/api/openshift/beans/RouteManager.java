@@ -34,8 +34,8 @@ public class RouteManager {
         this.suffix = "/routes/";
     }
 
-    public ResponseEntity<String> makeRoute(String baseURL,String appID, String name, String namespace, HttpHeaders authHeader) throws DuplicatedException, UnauthorizedException {
-        RouteConfig message = MessageBuilderFactory.getRouteMessage(name, appID);
+    public ResponseEntity<String> makeRoute(String baseURL,String appID, String name, String namespace, String domainName, HttpHeaders authHeader) throws DuplicatedException, UnauthorizedException {
+        RouteConfig message = MessageBuilderFactory.getRouteMessage(name, appID, domainName);
 
         logger.debug("Route message " + mapper.toJson(message,RouteConfig.class));
 
