@@ -117,10 +117,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Support
--------
+Support and Contribution
+-------------------------
 
-Need some support, then get in contact with us!
+Need some support, wish to contribute? Then get in contact with us via our [mailinglist](mailto:nubomedia@fokus.fraunhofer.de)!
 
 [orchestrator]:http://openbaton.github.io
 [vnfm]:https://github.com/tub-nubomedia/ms-vnfm
@@ -151,8 +151,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-Support
--------
-
-Need some support, then get in contact with us!
