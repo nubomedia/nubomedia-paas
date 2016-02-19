@@ -85,11 +85,7 @@
                             <div class="form-group" ng-repeat="(key,value) in appCreate"
                                  ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut'">
                                 <label for="{{key}}" class="col-sm-4 control-label">
-<!--<<<<<<< HEAD-->
-                                    <!--<i class="fa fa-info-circle" ng-mouseover="getInfos(key)"-->
-                                       <!--data-toggle="tooltip" data-placement="top"-->
-                                       <!--title="{{textInfo}}"> </i>-->
-<!--=======-->
+
                                     <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"
                                        ng-mouseover="getInfos(key)"> </i>
                                     {{key}}</label>
@@ -105,14 +101,9 @@
 
                             <div class="form-group">
                                 <label for="flavor" class="col-sm-4 control-label">
-<<<<<<< HEAD
-                                    <i class="fa fa-info-circle" ng-mouseover="getInfos('flavor')"
-                                       data-toggle="tooltip" data-placement="top"
-                                       title="{{textInfo}}"> </i>
-=======
+
                                     <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"
                                        ng-mouseover="getInfos('flavor')"> </i>
->>>>>>> develop
                                     flavor</label>
 
                                 <div class="col-sm-6">
@@ -128,12 +119,9 @@
                             <div class="form-group">
                                 <label for="projectKey" class="col-sm-4 control-label">
                                     <i class="fa fa-info-circle" ng-mouseover="getInfos('secretName')"
-<<<<<<< HEAD
-                                       data-toggle="tooltip" data-placement="top"
-                                       title="{{textInfo}}"> </i>
-=======
+
                                        popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
->>>>>>> develop
+
                                     secretName</label>
 
                                 <div ng-class="row" class="col-sm-6">
@@ -154,11 +142,9 @@
                             <div class="form-group" >
                                 <label for="scaleInOut" class="col-sm-4 control-label">
                                     <i class="fa fa-info-circle" ng-mouseover="getInfos('scaleInOut')"
-<<<<<<< HEAD
-                                       title="{{textInfo}}"> </i>
-=======
+
                                        popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
->>>>>>> develop
+
                                     scaleInOut </label>
                                 <div class="col-sm-6">
                                     <input type="number" class="form-control" id="scaleInOut" name="scaleInOut"
@@ -177,12 +163,9 @@
                                                  ng-if="key!='turnServerPassword'">
                                                 <label for="{{key}}" class="col-sm-4 control-label">
                                                     <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
-<<<<<<< HEAD
-                                                       data-toggle="tooltip" data-placement="top"
-                                                 title="{{textInfo}}"> </i>
-=======
+
                                                        popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
->>>>>>> develop
+
                                                     {{key}}</label>
                                                 <div class="col-sm-6">
                                                     <input type="number" class="form-control" id="{{key}}" name="{{key}}"
@@ -215,12 +198,9 @@
                                             <div class="form-group" >
                                             <label for="cloudRepoPort" class="col-sm-4 control-label">
                                                 <i class="fa fa-info-circle" ng-mouseover="getInfos('cloudRepoPort')"
-<<<<<<< HEAD
-                                                   data-toggle="tooltip" data-placement="top"
-                                                   title="{{textInfo}}"> </i>
-=======
+
                                                    popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
->>>>>>> develop
+
                                                 cloudRepoPort</label>
                                             <div class="col-sm-6">
                                                 <input type="text" class="form-control" id="cloudRepoPort" name="cloudRepoPort"
@@ -231,12 +211,9 @@
 
                                             <label for="cloudRepoSecurity" class="col-sm-4 control-label">
                                                 <i class="fa fa-info-circle" ng-mouseover="getInfos('cloudRepoSecurity')"
-<<<<<<< HEAD
-                                                   data-toggle="tooltip" data-placement="top"
-                                                   title="{{textInfo}}"> </i>
-=======
+
                                                    popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
->>>>>>> develop
+
                                                 cloudRepoSecurity</label>
                                             <div class="col-sm-6">
                                                 <input type="checkbox" class="" id="cloudRepoSecurity" name="cloudRepoSecurity"
@@ -265,11 +242,9 @@
 
 
                                                     <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
-<<<<<<< HEAD
-                                                       title="{{textInfo}}" bs-tooltip> </i>
-=======
+
                                                        popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
->>>>>>> develop
+
                                                     {{key}}</label>
                                                 <div class="col-sm-6">
                                                     <input type="text" class="form-control" id="{{key}}" name="{{key}}"
@@ -280,12 +255,9 @@
                                             <div class="form-group" >
                                                 <label for="turnServerPassword" class="col-sm-4 control-label">
                                                     <i class="fa fa-info-circle" ng-mouseover="getInfos('turnServerPassword')"
-<<<<<<< HEAD
-                                                       data-toggle="tooltip" data-placement="top"
-                                                       title="{{textInfo}}"> </i>
-=======
+
                                                        popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
->>>>>>> develop
+
                                                     turnServerPassword</label>
                                                 <div class="col-sm-6">
                                                     <input type="password" class="form-control" id="turnServerPassword" name="turnServerPassword"
@@ -304,12 +276,9 @@
                                          ng-if="key!='stunServerActivate'">
                                         <label for="{{key}}" class="col-sm-4 control-label">
                                             <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
-<<<<<<< HEAD
-                                               data-toggle="tooltip" data-placement="top"
-                                               title="{{textInfo}}"> </i>
-=======
+
                                                popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
->>>>>>> develop
+
                                             {{key}}</label>
                                         <div class="col-sm-6">
                                             <input type="text" class="form-control" id="{{key}}" name="{{key}}"
