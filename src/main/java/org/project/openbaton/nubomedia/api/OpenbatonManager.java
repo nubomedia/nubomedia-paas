@@ -61,6 +61,9 @@ public class OpenbatonManager {
                         if (!vimInstance.getAuthUrl().equals(instance.getAuthUrl()) && !vimInstance.getUsername().equals(instance.getUsername()) && !vimInstance.getPassword().equals(instance.getPassword())){
                             nfvoRequestor.getVimInstanceAgent().update(vimInstance,instance.getId());
                         }
+                        else{
+                            vimInstance = instance;
+                        }
                     }
                 }
             } catch (SDKException | ClassNotFoundException e1) {
@@ -215,7 +218,7 @@ public class OpenbatonManager {
 
     private NetworkServiceDescriptor configureDescriptor(NetworkServiceDescriptor nsd, Flavor flavor, QoS Qos, boolean turnServerActivate, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, boolean stunServerActivate, String stunServerAddress, String stunServerPort, int scaleInOut, double scale_in_threshold, double scale_out_threshold) throws turnServerException, StunServerException {
         logger.debug("Start configure");
-        nsd = this.injectFlavor(flavor.getValue(),scaleInOut,nsd);
+        nsd = this.injectFlavor(flavor.getValue(), scaleInOut, nfvoProperties.getImageName(), nsd);
         logger.debug("After flavor the nsd is\n" + nsd.toString() + "\n****************************");
 
         if (Qos != null){
@@ -397,7 +400,7 @@ public class OpenbatonManager {
         return nsd;
     }
 
-    private NetworkServiceDescriptor injectFlavor(String flavour,int scaleInOut, NetworkServiceDescriptor networkServiceDescriptor){
+    private NetworkServiceDescriptor injectFlavor(String flavour,int scaleInOut, String imageName, NetworkServiceDescriptor networkServiceDescriptor){
 
         Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
 
@@ -405,6 +408,9 @@ public class OpenbatonManager {
             if (vnfd.getEndpoint().equals("media-server")){
                 Set<VirtualDeploymentUnit> virtualDeploymentUnits = new HashSet<>();
                 for (VirtualDeploymentUnit vdu : vnfd.getVdu()){
+                    Set<String> images = new HashSet<>();
+                    images.add(imageName);
+                    vdu.setVm_image(images);
                     vdu.setScale_in_out(scaleInOut);
                     virtualDeploymentUnits.add(vdu);
                 }
@@ -421,7 +427,6 @@ public class OpenbatonManager {
         networkServiceDescriptor.setVnfd(vnfds);
         return networkServiceDescriptor;
     }
-
 
 //    @PreDestroy
 //    private void deleteNSD() throws SDKException {

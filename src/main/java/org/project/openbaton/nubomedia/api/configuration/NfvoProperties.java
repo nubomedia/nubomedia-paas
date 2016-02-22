@@ -14,6 +14,7 @@ public class NfvoProperties {
     private String openbatonPort;
     private String openbatonUsername;
     private String openbatonPasswd;
+    private String imageName;
 
     public String getOpenbatonIP() {
         return openbatonIP;
@@ -45,5 +46,13 @@ public class NfvoProperties {
 
     public void setOpenbatonPasswd(String openbatonPasswd) {
         this.openbatonPasswd = openbatonPasswd;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 }

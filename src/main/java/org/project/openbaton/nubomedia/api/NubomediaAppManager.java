@@ -38,8 +38,6 @@ import java.util.*;
  * Created by maa on 28.09.15.
  */
 
-//TODO remap all response messages with interface and codes
-
 @RestController
 @RequestMapping("/api/v1/nubomedia/paas")
 public class NubomediaAppManager {
