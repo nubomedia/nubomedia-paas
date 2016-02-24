@@ -42,7 +42,7 @@
               "metric":"CONSUMED_CAPACITY",
               "statistic":"avg",
               "comparisonOperator":">=",
-              "threshold":70,
+              "threshold":140,
               "weight":1
             }
           ],
@@ -66,7 +66,7 @@
               "metric":"CONSUMED_CAPACITY",
               "statistic":"avg",
               "comparisonOperator":"<=",
-              "threshold":30,
+              "threshold":60,
               "weight":1
             }
           ],

@@ -102,17 +102,15 @@ public class OpenbatonManager {
         eventEndpointCreation.setType(EndpointType.REST);
         eventEndpointCreation.setEndpoint(callbackUrl + apiPath + "/openbaton/" + appID);
         eventEndpointCreation.setEvent(Action.INSTANTIATE_FINISH);
+        eventEndpointCreation.setNetworkServiceId(nsr.getId());
 
         EventEndpoint eventEndpointError = new EventEndpoint();
         eventEndpointError.setType(EndpointType.REST);
         eventEndpointError.setEndpoint(callbackUrl + apiPath + "/openbaton/" + appID);
         eventEndpointError.setEvent(Action.ERROR);
-
-        nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
-        logger.debug("NSR " + nsr.toString());
-        this.records.put(nsr.getId(), nsr);
-        eventEndpointCreation.setNetworkServiceId(nsr.getId());
         eventEndpointError.setNetworkServiceId(nsr.getId());
+
+        this.records.put(nsr.getId(), nsr);
         res.setMediaServerID(nsr.getId());
 
         eventEndpointCreation = this.nfvoRequestor.getEventAgent().create(eventEndpointCreation);
@@ -427,19 +425,6 @@ public class OpenbatonManager {
         networkServiceDescriptor.setVnfd(vnfds);
         return networkServiceDescriptor;
     }
-
-//    @PreDestroy
-//    private void deleteNSD() throws SDKException {
-//        if (!this.records.isEmpty()) {
-//            for (String nsrId : records.keySet()) {
-//                this.nfvoRequestor.getNetworkServiceRecordAgent().delete(nsrId);
-//                this.records.remove(nsrId);
-//            }
-//        }
-//        this.nfvoRequestor.getNetworkServiceDescriptorAgent().delete(nsd.getId());
-//        this.nfvoRequestor.getVimInstanceAgent().delete(this.vimInstance.getId());
-//
-//    }
 
 
 }
