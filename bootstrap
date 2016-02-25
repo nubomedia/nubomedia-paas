@@ -98,6 +98,12 @@ function compileProperties {
          $_ex 'sed -i "s/nfvo.openbatonPasswd=openbaton/nfvo.openbatonPasswd=$nfvoPassword/g" /etc/nubomedia/paas.properties'
     fi
 
+    export nfvoImage
+    read -p "Enter the kurento media server Openstack image name [kurento-media-server]: " nfvoImage
+    if [[ $nfvoImage != "" ]]; then
+         $_ex 'sed -i "s/nfvo.imageName=kurento-media-server/nfvo.imageName=$nfvoImage/g" /etc/nubomedia/paas.properties'
+    fi
+
     export keystorePath
     read -p "Enter the Openshift Keystore location (including the filename): " keystorePath
     if [[ ! -z "$keystorePath" ]]; then
