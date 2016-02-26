@@ -20,7 +20,6 @@ public class NubomediaCreateAppRequest {
     private QoS qualityOfService;
     private boolean cloudRepository;
     private String cloudRepoPort;
-    private boolean cloudRepoSecurity;
     private boolean turnServerActivate;
     private String turnServerUrl;
     private String turnServerUsername;
@@ -29,7 +28,6 @@ public class NubomediaCreateAppRequest {
     private String stunServerIp;
     private String stunServerPort;
     private int scaleInOut;
-    private double scale_in_threshold;
     private double scale_out_threshold;
 
     public NubomediaCreateAppRequest() {
@@ -115,14 +113,6 @@ public class NubomediaCreateAppRequest {
         this.cloudRepoPort = cloudRepoPort;
     }
 
-    public boolean isCloudRepoSecurity() {
-        return cloudRepoSecurity;
-    }
-
-    public void setCloudRepoSecurity(boolean cloudRepoSecurity) {
-        this.cloudRepoSecurity = cloudRepoSecurity;
-    }
-
     public boolean isTurnServerActivate() {
         return turnServerActivate;
     }
@@ -187,14 +177,6 @@ public class NubomediaCreateAppRequest {
         this.scaleInOut = scaleInOut;
     }
 
-    public double getScale_in_threshold() {
-        return scale_in_threshold;
-    }
-
-    public void setScale_in_threshold(double scale_in_threshold) {
-        this.scale_in_threshold = scale_in_threshold;
-    }
-
     public double getScale_out_threshold() {
         return scale_out_threshold;
     }
@@ -216,12 +198,10 @@ public class NubomediaCreateAppRequest {
                 ", qualityOfService=" + qualityOfService +
                 ", cloudRepository=" + cloudRepository +
                 ", cloudRepoPort='" + cloudRepoPort + '\'' +
-                ", cloudRepoSecurity=" + cloudRepoSecurity +
                 ", turnServerIp='" + turnServerUrl + '\'' +
                 ", turnServerUsername='" + turnServerUsername + '\'' +
                 ", turnServerPassword='" + turnServerPassword + '\'' +
                 ", scaleInOut=" + scaleInOut +
-                ", scale_in_threshold=" + scale_in_threshold +
                 ", scale_out_threshold=" + scale_out_threshold +
                 '}';
     }
