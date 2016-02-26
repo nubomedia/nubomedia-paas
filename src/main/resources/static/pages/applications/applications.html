@@ -86,7 +86,8 @@
                                  ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut'">
                                 <label for="{{key}}" class="col-sm-4 control-label">
 
-                                    <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"
+                                    <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left"
+                                       popover-trigger="mouseenter"
                                        ng-mouseover="getInfos(key)"> </i>
                                     {{key}}</label>
 
@@ -98,29 +99,32 @@
                             </div>
 
 
-
                             <div class="form-group">
                                 <label for="flavor" class="col-sm-4 control-label">
 
-                                    <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"
+                                    <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left"
+                                       popover-trigger="mouseenter"
                                        ng-mouseover="getInfos('flavor')"> </i>
                                     flavor</label>
 
                                 <div class="col-sm-6">
 
-                                    <select ng-model="appCreate.flavor"  class="form-control modal-select" name="flavor" id="flavor">
-                                        <option ng-repeat="flavor in flavors track by $index" ng-init="appCreate.flavor = flavors[0]" value="{{flavor}}">{{flavor}}</option>
+                                    <select ng-model="appCreate.flavor" class="form-control modal-select" name="flavor"
+                                            id="flavor">
+                                        <option ng-repeat="flavor in flavors track by $index"
+                                                ng-init="appCreate.flavor = flavors[0]" value="{{flavor}}">{{flavor}}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
-
 
 
                             <div class="form-group">
                                 <label for="projectKey" class="col-sm-4 control-label">
                                     <i class="fa fa-info-circle" ng-mouseover="getInfos('secretName')"
 
-                                       popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
+                                       popover="{{textInfo}}" popover-placement="left"
+                                       popover-trigger="mouseenter"> </i>
 
                                     secretName</label>
 
@@ -139,135 +143,118 @@
                                     </a>
                                 </div>
                             </div>
-                            <div class="form-group" >
-                                <label for="scaleInOut" class="col-sm-4 control-label">
-                                    <i class="fa fa-info-circle" ng-mouseover="getInfos('scaleInOut')"
 
-                                       popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
 
-                                    scaleInOut </label>
-                                <div class="col-sm-6">
-                                    <input type="number" class="form-control" id="scaleInOut" name="scaleInOut"
-                                           ng-model="appCreate.scaleInOut"/>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><b>Do you want to set the scale IN/OUT threshold ?</b>
+                                    <input type="checkbox" id="inOutThreshold" name="inOutThreshold"
+                                           ng-model="toggle.threshold"></div>
+                                <div class="panel-body" ng-if="toggle.threshold">
+                                    <div class="form-group" ng-repeat="(key,value) in _threshold"
+                                         ng-if="key!='turnServerPassword'">
+                                        <label for="{{key}}" class="col-sm-4 control-label">
+                                            <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
+
+                                               popover="{{textInfo}}" popover-placement="left"
+                                               popover-trigger="mouseenter"> </i>
+
+                                            {{key}}</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" class="form-control" id="{{key}}" name="{{key}}"
+                                                   ng-model="_threshold[key]"/>
+                                        </div>
+
+                                    </div>
+
                                 </div>
-
                             </div>
 
 
-                                    <div class="panel panel-default" >
-                                        <div class="panel-heading"><b>Do you want to set the scale IN/OUT threshold ?</b>
-                                            <input type="checkbox" id="inOutThreshold" name="inOutThreshold"
-                                                   ng-model="toggle.threshold"></div>
-                                        <div class="panel-body" ng-if="toggle.threshold">
-                                            <div class="form-group" ng-repeat="(key,value) in _threshold"
-                                                 ng-if="key!='turnServerPassword'">
-                                                <label for="{{key}}" class="col-sm-4 control-label">
-                                                    <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><b>Do you want to set the Quality of Service?</b>
+                                    <input type="checkbox" id="qos" name="qos"
+                                           ng-model="toggle.qualityOfService"></div>
+                                <div class="panel-body" ng-if="toggle.qualityOfService">
+                                    <label ng-repeat="qos in _qualityOfService"
+                                           class="radio-inline">
+                                        <input type="radio" name="optradio" ng-model="qosValue._qos" value="{{qos}}">{{qos}}</label>
+                                </div>
+                            </div>
 
-                                                       popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
 
-                                                    {{key}}</label>
-                                                <div class="col-sm-6">
-                                                    <input type="number" class="form-control" id="{{key}}" name="{{key}}"
-                                                           ng-model="_threshold[key]"/>
-                                                </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><b>Do you need a cloud repository for your app?</b>
+                                    <input type="checkbox" id="cloudRepository" name="togglecloudRepository"
+                                           ng-model="appCreate.cloudRepository"></div>
+                                <div class="panel-body" ng-if="appCreate.cloudRepository">
+                                    <div class="form-group">
+                                        <label for="cloudRepoPort" class="col-sm-4 control-label">
+                                            <i class="fa fa-info-circle" ng-mouseover="getInfos('cloudRepoPort')"
 
-                                            </div>
+                                               popover="{{textInfo}}" popover-placement="left"
+                                               popover-trigger="mouseenter"> </i>
 
+                                            cloudRepoPort</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="cloudRepoPort"
+                                                   name="cloudRepoPort"
+                                                   ng-model="cloudRepository.cloudRepoPort"
+                                                   ng-init="cloudRepository.cloudRepoPort = '27018'"/>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
 
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><b>Do you want to set the Quality of Service?</b>
-                                            <input type="checkbox" id="qos" name="qos"
-                                                   ng-model="toggle.qualityOfService"></div>
-                                        <div class="panel-body" ng-if="toggle.qualityOfService">
-                                            <label ng-repeat="qos in _qualityOfService"
-                                                   class="radio-inline">
-                                                <input type="radio" name="optradio" ng-model="qosValue._qos" value="{{qos}}">{{qos}}</label>
+                            <div class="panel " ng-class="classVar">
+                                <div class="panel-heading"><b>Do you want to set the Turn Server?</b>
+                                    <div class="pull-right"><a title="check if the turn server is running"
+                                                               ng-click="checkTurn()" href=""><i class="fa fa-check">
+                                        check</i></a></div>
+                                    <input type="checkbox" id="turnServer" name="turnServer"
+                                           ng-change="changedTurnServerBool()"
+                                           ng-model="appCreate.turnServerActivate"></div>
+                                <div ng-if="disableButton" class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    Turn server should running or leave the credentials empty
+                                </div>
+                                <div class="panel-body" ng-if="appCreate.turnServerActivate">
+                                    <div class="form-group" ng-repeat="(key,value) in _turnServer"
+                                         ng-if="key!='turnServerPassword'">
+                                        <label for="{{key}}" class="col-sm-4 control-label">
+
+
+                                            <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
+
+                                               popover="{{textInfo}}" popover-placement="left"
+                                               popover-trigger="mouseenter"> </i>
+
+                                            {{key}}</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="{{key}}" name="{{key}}"
+                                                   ng-model="_turnServer[key]"/>
                                         </div>
+
                                     </div>
+                                    <div class="form-group">
+                                        <label for="turnServerPassword" class="col-sm-4 control-label">
+                                            <i class="fa fa-info-circle" ng-mouseover="getInfos('turnServerPassword')"
 
+                                               popover="{{textInfo}}" popover-placement="left"
+                                               popover-trigger="mouseenter"> </i>
 
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><b>Do you need a cloud repository for your app?</b>
-                                            <input type="checkbox" id="cloudRepository" name="togglecloudRepository"
-                                                   ng-model="appCreate.cloudRepository"></div>
-                                        <div class="panel-body" ng-if="appCreate.cloudRepository">
-                                            <div class="form-group" >
-                                            <label for="cloudRepoPort" class="col-sm-4 control-label">
-                                                <i class="fa fa-info-circle" ng-mouseover="getInfos('cloudRepoPort')"
-
-                                                   popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
-
-                                                cloudRepoPort</label>
-                                            <div class="col-sm-6">
-                                                <input type="text" class="form-control" id="cloudRepoPort" name="cloudRepoPort"
-                                                       ng-model="cloudRepository.cloudRepoPort" ng-init="cloudRepository.cloudRepoPort = '27018'"/>
-                                            </div>
-                                            </div>
-                                            <div class="form-group" >
-
-                                            <label for="cloudRepoSecurity" class="col-sm-4 control-label">
-                                                <i class="fa fa-info-circle" ng-mouseover="getInfos('cloudRepoSecurity')"
-
-                                                   popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
-
-                                                cloudRepoSecurity</label>
-                                            <div class="col-sm-6">
-                                                <input type="checkbox" class="" id="cloudRepoSecurity" name="cloudRepoSecurity"
-                                                       ng-model="cloudRepository.cloudRepoSecurity"/>
-                                            </div>
-                                            </div>
+                                            turnServerPassword</label>
+                                        <div class="col-sm-6">
+                                            <input type="password" class="form-control" id="turnServerPassword"
+                                                   name="turnServerPassword"
+                                                   ng-model="_turnServer.turnServerPassword"/>
                                         </div>
+
                                     </div>
-
-
-
-
-                                    <div class="panel " ng-class="classVar">
-                                        <div class="panel-heading"><b>Do you want to set the Turn Server?</b> <div class="pull-right"><a title="check if the turn server is running" ng-click="checkTurn()" href=""><i class="fa fa-check"> check</i></a></div>
-                                            <input type="checkbox" id="turnServer" name="turnServer" ng-change="changedTurnServerBool()"
-                                                   ng-model="appCreate.turnServerActivate"></div>
-                                        <div ng-if="disableButton" class="alert alert-danger" role="alert">
-                                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                            Turn server should running or leave the credentials empty</div>
-                                        <div class="panel-body" ng-if="appCreate.turnServerActivate">
-                                            <div class="form-group" ng-repeat="(key,value) in _turnServer"
-                                                 ng-if="key!='turnServerPassword'">
-                                                <label for="{{key}}" class="col-sm-4 control-label">
-
-
-
-
-                                                    <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
-
-                                                       popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
-
-                                                    {{key}}</label>
-                                                <div class="col-sm-6">
-                                                    <input type="text" class="form-control" id="{{key}}" name="{{key}}"
-                                                           ng-model="_turnServer[key]"/>
-                                                </div>
-
-                                            </div>
-                                            <div class="form-group" >
-                                                <label for="turnServerPassword" class="col-sm-4 control-label">
-                                                    <i class="fa fa-info-circle" ng-mouseover="getInfos('turnServerPassword')"
-
-                                                       popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
-
-                                                    turnServerPassword</label>
-                                                <div class="col-sm-6">
-                                                    <input type="password" class="form-control" id="turnServerPassword" name="turnServerPassword"
-                                                           ng-model="_turnServer.turnServerPassword"/>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                            <div class="panel panel-default" >
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
                                 <div class="panel-heading"><b>Do you want to set the Stun Server?</b>
                                     <input type="checkbox" id="turnServer" name="turnServer"
                                            ng-model="appCreate.stunServerActivate"></div>
@@ -277,7 +264,8 @@
                                         <label for="{{key}}" class="col-sm-4 control-label">
                                             <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
 
-                                               popover="{{textInfo}}" popover-placement="left" popover-trigger="mouseenter"> </i>
+                                               popover="{{textInfo}}" popover-placement="left"
+                                               popover-trigger="mouseenter"> </i>
 
                                             {{key}}</label>
                                         <div class="col-sm-6">
@@ -358,7 +346,7 @@
                 </button>
                 <button type="button" id="sendTemplate"
                         data-dismiss="modal"
-                        class="btn btn-primary" ng-class="{'disabled': disableButton}"  ng-click="sendApp()">Create App
+                        class="btn btn-primary" ng-class="{'disabled': disableButton}" ng-click="sendApp()">Create App
                 </button>
             </div>
         </div>

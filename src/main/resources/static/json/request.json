@@ -16,7 +16,6 @@
       "protocol":"TCP"
     }
   ],
-  "scaleInOut":1,
   "replicasNumber":2,
   "secretName":"",
   "turnServerActivate":false,

@@ -18,7 +18,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
         $scope.qosValue = {_qos: ''};
         $scope._threshold = {
-            'scale_in_threshold': 0,
+            'scaleInOut' : 0,
             'scale_out_threshold': 0
         };
         $scope.createApp = function () {
@@ -117,16 +117,14 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     $scope.appCreate.turnServerPassword = $scope._turnServer.turnServerPassword;
             }
             if ($scope.toggle.threshold) {
-                $scope.appCreate.scale_in_threshold = $scope._threshold.scale_in_threshold;
+                $scope.appCreate.scaleInOut = $scope._threshold.scaleInOut;
                 $scope.appCreate.scale_out_threshold = $scope._threshold.scale_out_threshold;
             }
             $scope.cloudRepository = {
-                cloudRepoPort: '27018',
-                cloudRepoSecurity: false
+                cloudRepoPort: '27018'
             };
             if ($scope.appCreate.cloudRepository) {
                 $scope.appCreate.cloudRepoPort = $scope.cloudRepository.cloudRepoPort;
-                $scope.appCreate.cloudRepoSecurity = $scope.cloudRepository.cloudRepoSecurity;
             }
             if ($scope.toggle.qualityOfService) {
                 $scope.appCreate.qualityOfService = $scope.qosValue._qos;
