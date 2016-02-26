@@ -2,6 +2,7 @@
   "gitURL": "git repository where the jar and Dockerfile (and even other files that are necessary for the application) are commited (if the repository is public the link has to be the https version, if is private has to be the ssh version)",
   "appName": "the application name that will be used also to create the DNS entry to use your application",
   "cloudRepository": "boolean value to require the Cloud Repository;",
+  "cloudRepoPort": "represent the port number for the Cloud Repository, is used as configuration parameter for the script",
   "qualityOfService": "optional value to require the QoS for intra-mediaserver communication",
   "flavor": "enumerative to set the flavor of the mediaserver, MEDIUM has 2 VCPU and LARGE has 4VCPU, the capacity is defined as 100 point for VCPU",
   "ports": "an object that maps the ports that are used from container to the ports that has to be exposed to outside, with relative protocol",
@@ -16,6 +17,5 @@
   "stunServerIp": "the stun server ip, if is settled also the stunServerPort has to be settled;",
   "stunServerPort": "the stun server port (as string), is mandatory if the stunServerAddress is settled",
   "scaleInOut": "the maximum number of mediaserver instances for scaling (for example 3 means that the maximum number of VMs after scale out is 3)",
-  "scale_in_threshold": "the maximum point number(threshold) of the media server to scale in, it is represented by the average of points used over all media servers, CHECK which flavor you are going to use before define this threshold",
   "scale_out_threshold": "the minimum point number(threshold) of the media server to scale out, it is represented by the average of points used over all media servers, CHECK which flavor you are going to use before define this threshold"
 }

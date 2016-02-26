@@ -15,7 +15,7 @@
             "nubomedia/kurento-media-server"
           ],
           "vimInstanceName":"nubomedia-vim",
-          "scale_in_out":3,
+          "scale_in_out":1,
           "vnfc":[
             {
               "connection_point":[
@@ -24,56 +24,6 @@
                   "virtual_link_reference":"internal_nubomedia"
                 }
               ]
-            }
-          ]
-        }
-      ],
-      "auto_scale_policy": [
-        {
-          "name":"scale-out",
-          "threshold":100,
-          "comparisonOperator":">=",
-          "period":30,
-          "cooldown":60,
-          "mode":"REACTIVE",
-          "type":"VOTED",
-          "alarms": [
-            {
-              "metric":"CONSUMED_CAPACITY",
-              "statistic":"avg",
-              "comparisonOperator":">=",
-              "threshold":140,
-              "weight":1
-            }
-          ],
-          "actions": [
-            {
-              "type":"SCALE_OUT",
-              "value":"2"
-            }
-          ]
-        },
-        {
-          "name":"scale-in",
-          "threshold":100,
-          "comparisonOperator":">=",
-          "period":30,
-          "cooldown":60,
-          "mode":"REACTIVE",
-          "type":"VOTED",
-          "alarms": [
-            {
-              "metric":"CONSUMED_CAPACITY",
-              "statistic":"avg",
-              "comparisonOperator":"<=",
-              "threshold":60,
-              "weight":1
-            }
-          ],
-          "actions": [
-            {
-              "type":"SCALE_IN",
-              "value":"2"
             }
           ]
         }
