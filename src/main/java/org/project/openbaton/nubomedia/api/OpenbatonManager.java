@@ -73,17 +73,15 @@ public class OpenbatonManager {
         this.records = new HashMap<>();
     }
 
-    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, String  cloudRepoPort, QoS qos,boolean turnServerActivate, String serverTurnIp,String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
+    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, QoS qos,boolean turnServerActivate, String serverTurnIp,String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
 
         logger.debug("FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
 
         NetworkServiceDescriptor targetNSD = this.configureDescriptor(nsdFromFile,flavorID,qos,turnServerActivate, serverTurnIp,serverTurnUsername,serverTurnPassword,stunServerActivate, stunServerIp, stunServerPort, scaleInOut,scale_out_threshold);
 
         if (cloudRepositorySet){
-            VirtualNetworkFunctionDescriptor cloudRepoDef = this.configureCloudRepo(cloudRepository,cloudRepoPort);
-            logger.debug("CLOUD REPOSITORY WITH NEW PASSWORD IS " + cloudRepoDef.toString());
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
-            vnfds.add(cloudRepoDef);
+            vnfds.add(cloudRepository);
             logger.debug("VNFDS " + vnfds.toString());
             targetNSD.setVnfd(vnfds);
         }
@@ -174,26 +172,6 @@ public class OpenbatonManager {
         } catch (SDKException e){
             e.printStackTrace();
         }
-    }
-
-    public VirtualNetworkFunctionDescriptor configureCloudRepo(VirtualNetworkFunctionDescriptor cloudRepository,String cloudRepoPort){
-
-        SecureRandom random = new SecureRandom();
-        Configuration configuration = cloudRepository.getConfigurations();
-        Set<ConfigurationParameter> parameters = configuration.getConfigurationParameters();
-
-        if (cloudRepoPort != null) {
-            for (ConfigurationParameter configurationParameter : parameters) {
-                if (configurationParameter.getConfKey().equals("PORT")) {
-                    configurationParameter.setValue(cloudRepoPort);
-                }
-                parameters.add(configurationParameter);
-            }
-        }
-
-        configuration.setConfigurationParameters(parameters);
-        cloudRepository.setConfigurations(configuration);
-        return cloudRepository;
     }
 
     private NetworkServiceDescriptor configureDescriptor(NetworkServiceDescriptor nsd, Flavor flavor, QoS Qos, boolean turnServerActivate, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, boolean stunServerActivate, String stunServerAddress, String stunServerPort, int scaleInOut, double scale_out_threshold) throws turnServerException, StunServerException {
@@ -292,29 +270,6 @@ public class OpenbatonManager {
             virtualNetworkFunctionDescriptors.add(vnfd);
         }
         nsd.setVnfd(virtualNetworkFunctionDescriptors);
-
-        return nsd;
-    }
-
-    private NetworkServiceDescriptor setScaleOutThreshold(double scale_out_threshold, NetworkServiceDescriptor nsd) {
-        Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
-
-        for (VirtualNetworkFunctionDescriptor vnfd : nsd.getVnfd()){
-            Set<AutoScalePolicy> autoScalePolicy = vnfd.getAuto_scale_policy();
-
-            for (AutoScalePolicy policy : autoScalePolicy){
-                if (policy.getName().equals("scale-out")){
-                    for (ScalingAlarm alarm : policy.getAlarms()){
-                        if (alarm.getMetric().equals("CONSUMED_CAPACITY")){
-                            alarm.setThreshold(scale_out_threshold);
-                        }
-                    }
-                }
-            }
-            vnfd.setAuto_scale_policy(autoScalePolicy);
-            vnfds.add(vnfd);
-        }
-        nsd.setVnfd(vnfds);
 
         return nsd;
     }

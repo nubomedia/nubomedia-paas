@@ -19,7 +19,6 @@ public class NubomediaCreateAppRequest {
     private String secretName;
     private QoS qualityOfService;
     private boolean cloudRepository;
-    private String cloudRepoPort;
     private boolean turnServerActivate;
     private String turnServerUrl;
     private String turnServerUsername;
@@ -103,14 +102,6 @@ public class NubomediaCreateAppRequest {
 
     public void setCloudRepository(boolean cloudRepository) {
         this.cloudRepository = cloudRepository;
-    }
-
-    public String getCloudRepoPort() {
-        return cloudRepoPort;
-    }
-
-    public void setCloudRepoPort(String cloudRepoPort) {
-        this.cloudRepoPort = cloudRepoPort;
     }
 
     public boolean isTurnServerActivate() {
@@ -197,7 +188,6 @@ public class NubomediaCreateAppRequest {
                 ", secretName='" + secretName + '\'' +
                 ", qualityOfService=" + qualityOfService +
                 ", cloudRepository=" + cloudRepository +
-                ", cloudRepoPort='" + cloudRepoPort + '\'' +
                 ", turnServerIp='" + turnServerUrl + '\'' +
                 ", turnServerUsername='" + turnServerUsername + '\'' +
                 ", turnServerPassword='" + turnServerPassword + '\'' +
