@@ -186,23 +186,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading"><b>Do you need a cloud repository for your app?</b>
                                     <input type="checkbox" id="cloudRepository" name="togglecloudRepository"
-                                           ng-model="appCreate.cloudRepository"></div>
-                                <div class="panel-body" ng-if="appCreate.cloudRepository">
-                                    <div class="form-group">
-                                        <label for="cloudRepoPort" class="col-sm-4 control-label">
-                                            <i class="fa fa-info-circle" ng-mouseover="getInfos('cloudRepoPort')"
-
-                                               popover="{{textInfo}}" popover-placement="left"
-                                               popover-trigger="mouseenter"> </i>
-
-                                            cloudRepoPort</label>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control" id="cloudRepoPort"
-                                                   name="cloudRepoPort"
-                                                   ng-model="cloudRepository.cloudRepoPort"
-                                                   ng-init="cloudRepository.cloudRepoPort = '27018'"/>
-                                        </div>
-                                    </div>
+                                           ng-model="appCreate.cloudRepository">
                                 </div>
                             </div>
 

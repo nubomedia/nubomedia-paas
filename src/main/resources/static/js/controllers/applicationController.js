@@ -120,12 +120,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 $scope.appCreate.scaleInOut = $scope._threshold.scaleInOut;
                 $scope.appCreate.scale_out_threshold = $scope._threshold.scale_out_threshold;
             }
-            $scope.cloudRepository = {
-                cloudRepoPort: '27018'
-            };
-            if ($scope.appCreate.cloudRepository) {
-                $scope.appCreate.cloudRepoPort = $scope.cloudRepository.cloudRepoPort;
-            }
+
+
             if ($scope.toggle.qualityOfService) {
                 $scope.appCreate.qualityOfService = $scope.qosValue._qos;
 
