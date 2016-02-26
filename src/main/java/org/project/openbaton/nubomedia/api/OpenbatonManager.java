@@ -211,7 +211,7 @@ public class OpenbatonManager {
         nsd = this.setConfigurationParameters(turnServerActivate,mediaServerTurnIP,mediaServerTurnUsername,mediaServerTurnPassword,stunServerActivate,stunServerAddress,stunServerPort,nsd);
         logger.debug("Settled Configuration parameters for mediaserver, the new NSD is " + nsd.toString());
 
-        if (scaleInOut > 0) {
+        if (scaleInOut > 1) {
             logger.debug("Setting autoscaling policies");
             nsd = this.enableAutoscaling(scaleInOut,scale_out_threshold,nsd);
         }
