@@ -151,19 +151,24 @@ public class OpenshiftManager {
 
         BuildingStatus status = buildManager.getApplicationStatus(openshiftBaseURL, appName, namespace, authHeader);
 
-        switch (status){
-            case BUILDING:
-                res = BuildingStatus.BUILDING;
-                break;
-            case FAILED:
-                res = BuildingStatus.FAILED;
-                break;
-            case BUILD_OK:
-                res = deploymentManager.getDeployStatus(kubernetesBaseURL,appName,namespace,authHeader);
-                break;
-            case PAAS_RESOURCE_MISSING:
-                res = BuildingStatus.PAAS_RESOURCE_MISSING;
-                break;
+        if (status != null) {
+            switch (status) {
+                case BUILDING:
+                    res = BuildingStatus.BUILDING;
+                    break;
+                case FAILED:
+                    res = BuildingStatus.FAILED;
+                    break;
+                case BUILD_OK:
+                    res = deploymentManager.getDeployStatus(kubernetesBaseURL, appName, namespace, authHeader);
+                    break;
+                case PAAS_RESOURCE_MISSING:
+                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                    break;
+            }
+        }
+        else{
+            res = BuildingStatus.BUILDING;
         }
 
         return res;
