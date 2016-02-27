@@ -164,7 +164,6 @@ public class NubomediaAppManager {
                 logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
                 if (!app.isResourceOK()){
                     app.setStatus(BuildingStatus.FAILED);
-                    break;
                 }
                 else {
                     try {
@@ -520,7 +519,6 @@ public class NubomediaAppManager {
                 logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
                 if (!app.isResourceOK()){
                     app.setStatus(BuildingStatus.FAILED);
-                    break;
                 }
                 else {
                     try {
