@@ -126,7 +126,8 @@ public class OpenbatonManager {
         try {
             nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID);
         } catch (SDKException | ClassNotFoundException e) {
-            e.printStackTrace();
+            logger.debug("no NSR found");
+            res = BuildingStatus.FAILED;
         }
 
         if (nsr != null) {

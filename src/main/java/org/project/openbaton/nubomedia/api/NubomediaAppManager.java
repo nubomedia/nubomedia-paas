@@ -130,7 +130,7 @@ public class NubomediaAppManager {
         }
 
         Application app = appRepo.findFirstByAppID(id);
-        logger.debug("Retrieving status for " + app.toString());
+        logger.debug("Retrieving status for " + app.toString() + "\nwith status " + app.getStatus());
 
         switch (app.getStatus()){
             case CREATED:
@@ -161,6 +161,7 @@ public class NubomediaAppManager {
                 }
                 break;
             case FAILED:
+                logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
                 if (!app.isResourceOK()){
                     app.setStatus(BuildingStatus.FAILED);
                 }
