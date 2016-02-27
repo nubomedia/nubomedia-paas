@@ -164,6 +164,7 @@ public class NubomediaAppManager {
                 logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
                 if (!app.isResourceOK()){
                     app.setStatus(BuildingStatus.FAILED);
+                    break;
                 }
                 else {
                     try {
@@ -518,13 +519,14 @@ public class NubomediaAppManager {
             case FAILED:
                 logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
                 if (!app.isResourceOK()){
-                    app.setStatus(BuildingStatus.FAILED);
+                    res = BuildingStatus.FAILED;
+                    break;
                 }
                 else {
                     try {
-                        app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                        res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
                     } catch (ResourceAccessException e) {
-                        app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                        res = BuildingStatus.PAAS_RESOURCE_MISSING;
                     }
                 }
                 break;
