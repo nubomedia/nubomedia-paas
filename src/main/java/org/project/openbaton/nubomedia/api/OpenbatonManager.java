@@ -231,10 +231,11 @@ public class OpenbatonManager {
         scaleOutPolicy.setComparisonOperator(">=");
         scaleOutPolicy.setPeriod(30);
         scaleOutPolicy.setCooldown(60);
+        scaleOutPolicy.setThreshold(100);
         scaleOutPolicy.setMode(ScalingMode.REACTIVE);
         scaleOutPolicy.setType(ScalingType.VOTED);
         ScalingAlarm scaleOutAlarm = new ScalingAlarm();
-        scaleOutAlarm.setComparisonOperator(">=");
+        scaleOutAlarm.setComparisonOperator("<=");
         scaleOutAlarm.setStatistic("avg");
         scaleOutAlarm.setMetric("CONSUMED_CAPACITY");
 
@@ -250,7 +251,7 @@ public class OpenbatonManager {
         Set<ScalingAction> scaleOutActions = new HashSet<>();
         ScalingAction scaleOutAction = new ScalingAction();
         scaleOutAction.setType(ScalingActionType.SCALE_OUT);
-        scaleOutAction.setValue("2");
+        scaleOutAction.setValue("1");
         scaleOutActions.add(scaleOutAction);
         scaleOutPolicy.setActions(scaleOutActions);
         scaleOutPolicy.setAlarms(scaleOutalarms);
@@ -261,10 +262,11 @@ public class OpenbatonManager {
         scaleInPolicy.setComparisonOperator(">=");
         scaleInPolicy.setPeriod(30);
         scaleInPolicy.setCooldown(60);
+        scaleInPolicy.setThreshold(100);
         scaleInPolicy.setMode(ScalingMode.REACTIVE);
         scaleInPolicy.setType(ScalingType.VOTED);
         ScalingAlarm scaleInAlarm = new ScalingAlarm();
-        scaleInAlarm.setComparisonOperator(">=");
+        scaleInAlarm.setComparisonOperator("<=");
         scaleInAlarm.setStatistic("avg");
         scaleInAlarm.setMetric("CONSUMED_CAPACITY");
         scaleInAlarm.setThreshold(60);
@@ -274,7 +276,7 @@ public class OpenbatonManager {
         Set<ScalingAction> scaleInActions = new HashSet<>();
         ScalingAction scaleInAction = new ScalingAction();
         scaleInAction.setType(ScalingActionType.SCALE_IN);
-        scaleInAction.setValue("2");
+        scaleInAction.setValue("1");
         scaleInActions.add(scaleInAction);
         scaleInPolicy.setAlarms(scaleInalarms);
         scaleInPolicy.setActions(scaleInActions);
