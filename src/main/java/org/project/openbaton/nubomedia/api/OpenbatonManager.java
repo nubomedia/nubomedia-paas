@@ -235,7 +235,7 @@ public class OpenbatonManager {
         scaleOutPolicy.setMode(ScalingMode.REACTIVE);
         scaleOutPolicy.setType(ScalingType.VOTED);
         ScalingAlarm scaleOutAlarm = new ScalingAlarm();
-        scaleOutAlarm.setComparisonOperator("<=");
+        scaleOutAlarm.setComparisonOperator(">=");
         scaleOutAlarm.setStatistic("avg");
         scaleOutAlarm.setMetric("CONSUMED_CAPACITY");
 
