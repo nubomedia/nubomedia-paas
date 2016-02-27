@@ -302,13 +302,16 @@ public class NubomediaAppManager {
             String name = app.getAppName();
             String projectName = app.getProjectName();
 
-            if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING) || app.getStatus().equals(BuildingStatus.INITIALIZING) || app.getStatus().equals(BuildingStatus.FAILED)){
+            if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING) || app.getStatus().equals(BuildingStatus.FAILED)){
                 OpenbatonCreateServer server = deploymentMap.get(id);
                 obmanager.deleteDescriptor(server.getNsdID());
                 obmanager.deleteEvent(server.getEventAllocatedID());
                 obmanager.deleteEvent(server.getEventErrorID());
-                obmanager.deleteRecord(app.getNsrID());
-                deploymentMap.remove(server);
+
+                if (!app.getStatus().equals(BuildingStatus.FAILED) && obmanager.existRecord(server.getMediaServerID())) {
+                    obmanager.deleteRecord(app.getNsrID());
+                }
+                deploymentMap.remove(app.getAppID());
 
             }
 

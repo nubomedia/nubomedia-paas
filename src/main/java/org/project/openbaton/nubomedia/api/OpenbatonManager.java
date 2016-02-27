@@ -159,6 +159,23 @@ public class OpenbatonManager {
         return res;
     }
 
+    public boolean existRecord(String nsrID){
+
+        try {
+            if (nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID) != null){
+                return true;
+            }
+            else{
+                return false;
+            }
+        } catch (SDKException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public void deleteRecord(String nsrID) {
         try {
             records.remove(nsrID);
