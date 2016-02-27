@@ -145,6 +145,9 @@ public class OpenbatonManager {
                     break;
             }
         }
+        else{
+            res = BuildingStatus.FAILED;
+        }
 
         return res;
     }
