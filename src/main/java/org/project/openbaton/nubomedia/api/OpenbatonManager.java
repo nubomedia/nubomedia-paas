@@ -130,24 +130,30 @@ public class OpenbatonManager {
         }
 
         if (nsr != null) {
-            switch (nsr.getStatus()) {
-                case NULL:
-                    res = BuildingStatus.CREATED;
-                    break;
-                case INITIALIZED:
-                    res = BuildingStatus.INITIALIZING;
-                    break;
-                case ERROR:
-                    res = BuildingStatus.FAILED;
-                    break;
-                case ACTIVE:
-                    res = BuildingStatus.INITIALISED;
-                    break;
+            if(nsr.getStatus() != null) {
+                switch (nsr.getStatus()) {
+                    case NULL:
+                        res = BuildingStatus.CREATED;
+                        break;
+                    case INITIALIZED:
+                        res = BuildingStatus.INITIALIZING;
+                        break;
+                    case ERROR:
+                        res = BuildingStatus.FAILED;
+                        break;
+                    case ACTIVE:
+                        res = BuildingStatus.INITIALISED;
+                        break;
+                }
+            }
+            else{
+                res = BuildingStatus.FAILED;
             }
         }
         else{
             res = BuildingStatus.FAILED;
         }
+
 
         return res;
     }
