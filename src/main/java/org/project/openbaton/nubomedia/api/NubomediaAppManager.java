@@ -161,10 +161,15 @@ public class NubomediaAppManager {
                 }
                 break;
             case FAILED:
-                try{
-                    app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
-                }catch (ResourceAccessException e){
-                    app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                if (!app.isResourceOK()){
+                    app.setStatus(BuildingStatus.FAILED);
+                }
+                else {
+                    try {
+                        app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                    } catch (ResourceAccessException e) {
+                        app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                    }
                 }
                 break;
             case RUNNING:
