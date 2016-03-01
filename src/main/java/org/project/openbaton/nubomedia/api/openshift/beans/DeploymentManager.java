@@ -5,13 +5,17 @@ import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
-import org.project.openbaton.nubomedia.api.openshift.json.*;
+import org.project.openbaton.nubomedia.api.openshift.json.DeploymentConfig;
+import org.project.openbaton.nubomedia.api.openshift.json.HorizontalPodAutoscaler;
+import org.project.openbaton.nubomedia.api.openshift.json.Pod;
+import org.project.openbaton.nubomedia.api.openshift.json.Pods;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -166,7 +170,13 @@ public class DeploymentManager {
         }
 
         String targetUrl = podsURL + targetPod + "/log";
-        ResponseEntity<String> logEntity = template.exchange(targetUrl,HttpMethod.GET,requestEntity,String.class);
+        ResponseEntity<String> logEntity = null;
+        try {
+
+            logEntity = template.exchange(targetUrl, HttpMethod.GET, requestEntity, String.class);
+        } catch (HttpServerErrorException e ){
+            return "No log available for the application " + appName;
+        }
 
         if(!logEntity.getStatusCode().is2xxSuccessful()) logger.debug("FAILED TO RETRIEVE LOGS " + logEntity.getBody());
 
