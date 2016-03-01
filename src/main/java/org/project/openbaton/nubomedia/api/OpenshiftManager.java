@@ -151,7 +151,7 @@ public class OpenshiftManager {
 
         BuildingStatus status = buildManager.getApplicationStatus(openshiftBaseURL, appName, namespace, authHeader);
 
-        if (status != null) {
+        try {
             switch (status) {
                 case BUILDING:
                     res = BuildingStatus.BUILDING;
@@ -167,7 +167,7 @@ public class OpenshiftManager {
                     break;
             }
         }
-        else{
+        catch (NullPointerException e){
             res = BuildingStatus.BUILDING;
         }
 
