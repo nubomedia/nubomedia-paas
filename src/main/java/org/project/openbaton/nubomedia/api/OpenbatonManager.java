@@ -168,9 +168,7 @@ public class OpenbatonManager {
             else{
                 return false;
             }
-        } catch (SDKException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SDKException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return false;

@@ -161,8 +161,8 @@ public class DeploymentManager {
 
         for(String pod : podList.getPodNames()){
             logger.debug("CURRENT POD IS " + pod);
-            if (pod.contains(appName)) {
-                if (!pod.contains("bc-1-build") || !pod.contains("dc-1-deploy")) {
+            if (pod.contains(appName + "dc-1)")) {
+                if (!pod.contains("bc-1-build") || !pod.contains("-deploy")) {
                     targetPod = pod;
                     logger.debug("Target pod is " + targetPod);
                 }
