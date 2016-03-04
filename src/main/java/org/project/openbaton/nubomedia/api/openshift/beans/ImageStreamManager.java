@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -40,8 +41,14 @@ public class ImageStreamManager {
         logger.debug("Sending message " + mapper.toJson(message,ImageStreamConfig.class));
         String URL = baseURL + namespace + suffix;
         HttpEntity<String> imageStreamEntity = new HttpEntity<String>(mapper.toJson(message,ImageStreamConfig.class),authHeader);
-        ResponseEntity response = template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
-        logger.debug("response " + response.getBody());
+        ResponseEntity response = null;
+        try {
+            response = template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
+            logger.debug("response " + response.getBody());
+        }
+        catch (HttpClientErrorException e){
+            logger.debug(e.getMessage());
+        }
 
         if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
             throw new DuplicatedException("Application with " + appName + " is already present");
