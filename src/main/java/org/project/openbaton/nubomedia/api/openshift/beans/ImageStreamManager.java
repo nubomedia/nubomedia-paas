@@ -41,18 +41,10 @@ public class ImageStreamManager {
         logger.debug("Sending message " + mapper.toJson(message,ImageStreamConfig.class));
         String URL = baseURL + namespace + suffix;
         HttpEntity<String> imageStreamEntity = new HttpEntity<String>(mapper.toJson(message,ImageStreamConfig.class),authHeader);
-        ResponseEntity<String> response = null;
-        try {
-            response = template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
-            logger.debug("response " + response.getBody());
-        }
-        catch (HttpClientErrorException e){
-            logger.debug(e.getResponseBodyAsString());
 
-            if (e.getStatusCode().equals(HttpStatus.UNPROCESSABLE_ENTITY)){
-                e.printStackTrace();
-            }
-        }
+        ResponseEntity<String> response = template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
+        logger.debug("response " + response.getBody());
+
 
         if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
             throw new DuplicatedException("Application with " + appName + " is already present");

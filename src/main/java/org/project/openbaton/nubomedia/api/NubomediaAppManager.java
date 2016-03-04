@@ -62,19 +62,23 @@ public class NubomediaAppManager {
     public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException, StunServerException {
 
         if(token == null){
-            throw new UnauthorizedException("no auth-token header");
+            throw new UnauthorizedException("No auth-token header");
         }
 
         if(request.getAppName().length() > 18){
 
-            throw new NameStructureException("name is too long");
+            throw new NameStructureException("Name is too long");
 
         }
 
         if(request.getAppName().contains(".")){
 
-            throw new NameStructureException("name can't contains dots");
+            throw new NameStructureException("Name can't contains dots");
 
+        }
+
+        if(!request.getAppName().matches("[a-z0-9]+(?:[._-][a-z0-9]+)*")){
+            throw new NameStructureException("Name must match [a-z0-9]+(?:[._-][a-z0-9]+)*");
         }
 
         if(!appRepo.findByAppName(request.getAppName()).isEmpty()){
