@@ -47,10 +47,10 @@ public class ImageStreamManager {
             logger.debug("response " + response.getBody());
         }
         catch (HttpClientErrorException e){
-            logger.debug(e.getMessage());
+            logger.debug(e.getResponseBodyAsString());
 
             if (e.getStatusCode().equals(HttpStatus.UNPROCESSABLE_ENTITY)){
-                logger.debug(response.getBody());
+                e.printStackTrace();
             }
         }
 
