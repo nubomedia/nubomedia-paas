@@ -412,13 +412,7 @@ public class NubomediaAppManager {
 
                 if(record.getName().contains("mongodb")){
                     cloudRepositoryIp = this.getCloudRepoIP(record);
-
-                    Configuration configuration = record.getConfigurations();
-                    for (ConfigurationParameter parameter : configuration.getConfigurationParameters()){
-                        if (parameter.getConfKey().equals("PORT")){
-                            cloudRepositoryPort = parameter.getValue();
-                        }
-                    }
+                    cloudRepositoryPort = "7676";
                 }
 
             }
