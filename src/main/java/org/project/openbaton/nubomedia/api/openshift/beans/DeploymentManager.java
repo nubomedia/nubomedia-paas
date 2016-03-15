@@ -161,7 +161,8 @@ public class DeploymentManager {
 
         for(String pod : podList.getPodNames()){
             logger.debug("CURRENT POD IS " + pod);
-            if (pod.contains(appName + "dc-1)")) {
+            if (pod.contains(appName + "-dc-1)")) {
+                logger.debug("Running with pod " + pod);
                 if (!pod.contains("bc-1-build") || !pod.contains("-deploy")) {
                     targetPod = pod;
                     logger.debug("Target pod is " + targetPod);
@@ -174,7 +175,7 @@ public class DeploymentManager {
         try {
 
             logEntity = template.exchange(targetUrl, HttpMethod.GET, requestEntity, String.class);
-        } catch (HttpServerErrorException e ){
+        } catch (HttpClientErrorException e ){
             return "No log available for the application " + appName;
         }
 
