@@ -259,7 +259,7 @@ public class NubomediaAppManager {
         Application app = appRepo.findFirstByAppID(id);
 
         if(!app.getStatus().equals(BuildingStatus.RUNNING)){
-            return "Application Status " + app.getStatus() + ", logs not available until the status is RUNNING";
+            return "Application Status " + app.getStatus() + ", logs are not available until the status is RUNNING";
         }
 
         return osmanager.getApplicationLog(token,app.getAppName(),app.getProjectName());

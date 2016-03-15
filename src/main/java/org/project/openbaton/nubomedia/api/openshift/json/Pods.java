@@ -23,4 +23,11 @@ public class Pods {
     public void setPodNames(List<String> podNames) {
         this.podNames = podNames;
     }
+
+    @Override
+    public String toString() {
+        return "Pods{" +
+                "podNames=" + podNames +
+                '}';
+    }
 }
