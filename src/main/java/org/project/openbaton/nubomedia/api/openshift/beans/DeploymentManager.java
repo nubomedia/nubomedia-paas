@@ -163,7 +163,7 @@ public class DeploymentManager {
             logger.debug("CURRENT POD IS " + pod);
             CharSequence sequence = appName + "-dc-1";
             logger.debug("Pod satisfy the requirements? " + pod.contains(sequence));
-            if (pod.contains(appName + "-dc-1)")) {
+            if (pod.contains(sequence)) {
                 logger.debug("Running with pod " + pod);
                 if (!pod.contains("bc-1-build") || !pod.contains("-deploy")) {
                     targetPod = pod;
