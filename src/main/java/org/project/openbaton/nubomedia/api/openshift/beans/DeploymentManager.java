@@ -179,7 +179,7 @@ public class DeploymentManager {
         } catch (HttpClientErrorException e ){
             return "No log available for the application " + appName;
         } catch (HttpServerErrorException e){
-            return "Pod(s) crashed for too long time, log not anymore available";
+            return "Pod(s) crashed for too long time, logs are not anymore available";
         }
 
         if(!logEntity.getStatusCode().is2xxSuccessful()) logger.debug("FAILED TO RETRIEVE LOGS " + logEntity.getBody());
