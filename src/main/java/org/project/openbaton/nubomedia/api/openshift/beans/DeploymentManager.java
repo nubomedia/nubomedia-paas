@@ -178,6 +178,8 @@ public class DeploymentManager {
             logEntity = template.exchange(targetUrl, HttpMethod.GET, requestEntity, String.class);
         } catch (HttpClientErrorException e ){
             return "No log available for the application " + appName;
+        } catch (HttpServerErrorException e){
+            return "Pod(s) crashed for too long time, log not anymore available";
         }
 
         if(!logEntity.getStatusCode().is2xxSuccessful()) logger.debug("FAILED TO RETRIEVE LOGS " + logEntity.getBody());
