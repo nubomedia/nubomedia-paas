@@ -107,7 +107,6 @@ public class OpenbatonManager {
         eventEndpointError.setEvent(Action.ERROR);
         eventEndpointError.setNetworkServiceId(nsr.getId());
 
-        this.records.put(nsr.getId(), nsr);
         res.setMediaServerID(nsr.getId());
 
         eventEndpointCreation = this.nfvoRequestor.getEventAgent().create(eventEndpointCreation);
