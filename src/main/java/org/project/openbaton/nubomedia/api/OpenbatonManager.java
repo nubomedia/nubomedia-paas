@@ -41,7 +41,6 @@ public class OpenbatonManager {
     private Logger logger;
     private NFVORequestor nfvoRequestor;
     private String apiPath;
-    private Map<String, NetworkServiceRecord> records;
 
     @PostConstruct
     private void init() throws IOException {
@@ -69,8 +68,6 @@ public class OpenbatonManager {
                 e1.printStackTrace();
             }
         }
-
-        this.records = new HashMap<>();
     }
 
     public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, QoS qos,boolean turnServerActivate, String serverTurnIp,String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
@@ -93,7 +90,6 @@ public class OpenbatonManager {
 
         nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
         logger.debug("NSR " + nsr.toString());
-        this.records.put(nsr.getId(), nsr);
 
         EventEndpoint eventEndpointCreation = new EventEndpoint();
         eventEndpointCreation.setType(EndpointType.REST);
@@ -175,7 +171,6 @@ public class OpenbatonManager {
 
     public void deleteRecord(String nsrID) {
         try {
-            records.remove(nsrID);
             nfvoRequestor.getNetworkServiceRecordAgent().delete(nsrID);
         } catch (SDKException e) {
             e.printStackTrace();
