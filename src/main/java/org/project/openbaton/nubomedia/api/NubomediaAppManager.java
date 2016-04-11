@@ -387,6 +387,9 @@ public class NubomediaAppManager {
         if (token.equals("Unauthorized")){
             return new NubomediaAuthorizationResponse(token,401);
         }
+        else if (token.equals("PaaS Missing")){
+            return new NubomediaAuthorizationResponse(token,404);
+        }
         else{
             return new NubomediaAuthorizationResponse(token,200);
         }
