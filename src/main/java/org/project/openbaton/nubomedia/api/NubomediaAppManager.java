@@ -241,7 +241,13 @@ public class NubomediaAppManager {
         res.setId(id);
         res.setAppName(app.getAppName());
         res.setProjectName(app.getProjectName());
-        res.setLog(osmanager.getBuildLogs(token,app.getAppName(),app.getProjectName()));
+        try {
+            res.setLog(osmanager.getBuildLogs(token, app.getAppName(), app.getProjectName()));
+        } catch (ResourceAccessException e){
+            app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+            appRepo.save(app);
+            res.setLog("Openshift is not responding, app "  + app.getAppName() + " is not anymore available");
+        }
         return res;
     }
 
