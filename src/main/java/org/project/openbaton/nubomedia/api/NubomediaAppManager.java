@@ -241,7 +241,13 @@ public class NubomediaAppManager {
         res.setId(id);
         res.setAppName(app.getAppName());
         res.setProjectName(app.getProjectName());
-        res.setLog(osmanager.getBuildLogs(token,app.getAppName(),app.getProjectName()));
+        try {
+            res.setLog(osmanager.getBuildLogs(token, app.getAppName(), app.getProjectName()));
+        } catch (ResourceAccessException e){
+            app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+            appRepo.save(app);
+            res.setLog("Openshift is not responding, app "  + app.getAppName() + " is not anymore available");
+        }
         return res;
     }
 
@@ -380,6 +386,9 @@ public class NubomediaAppManager {
         String token = osmanager.authenticate(request.getUsername(),request.getPassword());
         if (token.equals("Unauthorized")){
             return new NubomediaAuthorizationResponse(token,401);
+        }
+        else if (token.equals("PaaS Missing")){
+            return new NubomediaAuthorizationResponse(token,404);
         }
         else{
             return new NubomediaAuthorizationResponse(token,200);
