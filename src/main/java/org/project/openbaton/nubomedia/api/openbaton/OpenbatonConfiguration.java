@@ -77,7 +77,7 @@ public class OpenbatonConfiguration {
     }
 
     @Bean
-    public NetworkServiceDescriptor getDescriptor(){
+    public NetworkServiceDescriptor networkServiceDescriptor(){
         logger.debug("Reading descriptor");
         NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
         Gson mapper = new GsonBuilder().create();
