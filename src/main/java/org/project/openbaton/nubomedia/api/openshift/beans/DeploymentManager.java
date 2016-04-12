@@ -19,6 +19,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by maa on 08.10.15.
@@ -151,6 +153,28 @@ public class DeploymentManager {
 
         return res;
 
+    }
+
+    public List<String> getPodNameList(String kubernatesBaseURL, String namespace, String appName, HttpEntity<String> requestEntity, int replicasNumber) throws UnauthorizedException{
+        String podsURL = kubernatesBaseURL + namespace + podSuffix;
+        Pods podList = this.getPodsList(podsURL,requestEntity);
+        logger.debug("POD LIST is " + podList.toString());
+        List<String> res = new ArrayList<>(replicasNumber);
+
+        for (String podName : podList.getPodNames()){
+            logger.debug("Current pod is " + podName);
+            CharSequence sequence = appName + "-dc-1";
+            if(podName.contains(sequence)) {
+                logger.debug("Probably found target " + podName);
+                if (!podName.contains("bc-1-build") || !podName.contains("-deploy")) {
+                    logger.debug("Find compatible pod with name " + podName);
+                    res.add(podName);
+                }
+            }
+        }
+
+        logger.debug("RES is " + res.toString());
+        return res;
     }
 
     public String getPodLogs(String kubernetesBaseURL, String namespace, String appName, HttpEntity<String> requestEntity) throws UnauthorizedException {
