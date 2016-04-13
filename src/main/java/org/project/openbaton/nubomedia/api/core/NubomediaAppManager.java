@@ -210,43 +210,41 @@ public class NubomediaAppManager {
 
         Application app = appRepo.findFirstByAppID(id);
 
-        if(!app.isResourceOK()){
+        if(app.getStatus().equals(BuildingStatus.FAILED) && !app.isResourceOK()){
 
             res.setId(id);
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
             res.setLog("Something wrong on retrieving resources");
 
-        }
-
-        if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
+        } else if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
             res.setId(id);
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
             res.setLog("The application is retrieving resources " + app.getStatus());
 
             return res;
-        }
-
-        if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)){
+        } else if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)){
             res.setId(id);
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
             res.setLog("PaaS components are missing, send an email to the administrator to chekc the PaaS status");
 
             return res;
+        } else {
+
+            res.setId(id);
+            res.setAppName(app.getAppName());
+            res.setProjectName(app.getProjectName());
+            try {
+                res.setLog(osmanager.getBuildLogs(token, app.getAppName(), app.getProjectName()));
+            } catch (ResourceAccessException e) {
+                app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                appRepo.save(app);
+                res.setLog("Openshift is not responding, app " + app.getAppName() + " is not anymore available");
+            }
         }
 
-        res.setId(id);
-        res.setAppName(app.getAppName());
-        res.setProjectName(app.getProjectName());
-        try {
-            res.setLog(osmanager.getBuildLogs(token, app.getAppName(), app.getProjectName()));
-        } catch (ResourceAccessException e){
-            app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
-            appRepo.save(app);
-            res.setLog("Openshift is not responding, app "  + app.getAppName() + " is not anymore available");
-        }
         return res;
     }
 
