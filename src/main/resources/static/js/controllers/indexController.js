@@ -9,7 +9,7 @@ var app = angular.module('app');
 
 app.controller('LoginController', function ($scope, AuthService, Session, $rootScope, $location, $cookieStore, $http) {
     $scope.currentUser = null;
-    //$scope.URL = 'http://localhost:8080';
+    //$scope.URL = 'http://localhost:8081';
     //$scope.URL= 'http://80.96.122.73:8081';
     $scope.URL = '';
     $scope.credential = {
