@@ -3,14 +3,8 @@ package org.project.openbaton.nubomedia.api.openbaton;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.openbaton.catalogue.mano.common.AutoScalePolicy;
-import org.openbaton.catalogue.mano.common.ScalingAlarm;
-import org.openbaton.catalogue.mano.common.VNFDeploymentFlavour;
-import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
 import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
-import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
-import org.openbaton.catalogue.nfvo.ConfigurationParameter;
 import org.openbaton.catalogue.nfvo.Location;
 import org.openbaton.catalogue.nfvo.VimInstance;
 import org.project.openbaton.nubomedia.api.configuration.VimProperties;
@@ -23,8 +17,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by maa on 13.10.15.

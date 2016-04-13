@@ -6,7 +6,6 @@ import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
-import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.*;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
@@ -24,9 +23,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by lto on 24/09/15.
@@ -34,10 +33,13 @@ import java.util.*;
 @Service
 public class OpenbatonManager {
 
-    @Autowired private VimInstance vimInstance;
+    @Autowired
+    private VimInstance vimInstance;
     @Autowired private NfvoProperties nfvoProperties;
-    @Autowired private VirtualNetworkFunctionDescriptor cloudRepository;
-    @Autowired private NetworkServiceDescriptor nsdFromFile;
+    @Autowired
+    private VirtualNetworkFunctionDescriptor cloudRepository;
+    @Autowired
+    private NetworkServiceDescriptor nsdFromFile;
     private Logger logger;
     private NFVORequestor nfvoRequestor;
     private String apiPath;

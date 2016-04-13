@@ -14,8 +14,8 @@ import org.springframework.test.context.ContextConfiguration;
 @SpringBootApplication
 @ContextConfiguration(classes = OpenshiftConfiguration.class)
 @EnableJpaRepositories ("org.project.openbaton.nubomedia.api")
-@EntityScan (basePackages = "org.project.openbaton.nubomedia.api")
-@ComponentScan
+@EntityScan (basePackages = "org.project.openbaton")
+@ComponentScan(basePackages = "org.project.openbaton")
 // /@EnableScheduling
 public class Main {
 
