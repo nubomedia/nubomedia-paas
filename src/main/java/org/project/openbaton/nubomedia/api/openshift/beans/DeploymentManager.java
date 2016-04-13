@@ -155,11 +155,11 @@ public class DeploymentManager {
 
     }
 
-    public List<String> getPodNameList(String kubernatesBaseURL, String namespace, String appName, HttpEntity<String> requestEntity, int replicasNumber) throws UnauthorizedException{
+    public List<String> getPodNameList(String kubernatesBaseURL, String namespace, String appName, HttpEntity<String> requestEntity) throws UnauthorizedException{
         String podsURL = kubernatesBaseURL + namespace + podSuffix;
         Pods podList = this.getPodsList(podsURL,requestEntity);
         logger.debug("POD LIST is " + podList.toString());
-        List<String> res = new ArrayList<>(replicasNumber);
+        List<String> res = new ArrayList<>();
 
         for (String podName : podList.getPodNames()){
             logger.debug("Current pod is " + podName);
@@ -177,9 +177,9 @@ public class DeploymentManager {
         return res;
     }
 
-    public String getPodLogs(String kubernetesBaseURL, String namespace, String appName, HttpEntity<String> requestEntity) throws UnauthorizedException {
+    public String getPodLogs(String kubernetesBaseURL, String namespace, String appName, String podName, HttpEntity<String> requestEntity) throws UnauthorizedException {
         String podsURL = kubernetesBaseURL + namespace + podSuffix;
-        String targetPod = null;
+/*        String targetPod = null;
         Pods podList = this.getPodsList(podsURL,requestEntity);
         logger.debug("POD LIST IS " + podList.toString());
 
@@ -193,9 +193,9 @@ public class DeploymentManager {
                     logger.debug("Target pod is " + targetPod);
                 }
             }
-        }
+        }*/
 
-        String targetUrl = podsURL + targetPod + "/log";
+        String targetUrl = podsURL + podName + "/log";
         ResponseEntity<String> logEntity = null;
         try {
 

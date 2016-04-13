@@ -112,7 +112,7 @@ public class NubomediaAppManager {
 
         deploymentMap.put(appID,openbatonCreateServer);
 
-        Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),"",openbatonCreateServer.getMediaServerID(), request.getGitURL(), targetPorts, ports, protocols,request.getReplicasNumber(),request.getSecretName(),false);
+        Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),"",openbatonCreateServer.getMediaServerID(), request.getGitURL(), targetPorts, ports, protocols,null, request.getReplicasNumber(),request.getSecretName(),false);
         appRepo.save(persistApp);
 
         res.setApp(persistApp);
@@ -181,6 +181,7 @@ public class NubomediaAppManager {
             case RUNNING:
                 try{
                     app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
+                    app.setPodList(osmanager.getPodList(token,app.getAppName(),app.getProjectName()));
                 }catch (ResourceAccessException e){
                     app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
                 }
@@ -251,8 +252,8 @@ public class NubomediaAppManager {
         return res;
     }
 
-    @RequestMapping(value = "/app/{id}/logs", method = RequestMethod.GET)
-    public @ResponseBody String getApplicationLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException, ApplicationNotFoundException {
+    @RequestMapping(value = "/app/{id}/logs/{podName}", method = RequestMethod.GET)
+    public @ResponseBody String getApplicationLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id,@PathVariable("podName") String podName) throws UnauthorizedException, ApplicationNotFoundException {
 
         if(token == null){
             throw new UnauthorizedException("no auth-token header");
@@ -268,7 +269,7 @@ public class NubomediaAppManager {
             return "Application Status " + app.getStatus() + ", logs are not available until the status is RUNNING";
         }
 
-        return osmanager.getApplicationLog(token,app.getAppName(),app.getProjectName());
+        return osmanager.getApplicationLog(token,app.getAppName(),app.getProjectName(),podName);
 
     }
 

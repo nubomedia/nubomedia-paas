@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -174,13 +175,13 @@ public class OpenshiftManager {
         return res;
     }
 
-    public String getApplicationLog(String token, String appName, String namespace) throws UnauthorizedException {
+    public String getApplicationLog(String token, String appName, String namespace,String podName) throws UnauthorizedException {
 
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
         HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
 
-        return deploymentManager.getPodLogs(kubernetesBaseURL,namespace,appName,requestEntity);
+        return deploymentManager.getPodLogs(kubernetesBaseURL,namespace,appName,podName, requestEntity);
     }
 
     public String getBuildLogs(String token, String appName,String namespace) throws UnauthorizedException {
@@ -188,6 +189,13 @@ public class OpenshiftManager {
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization","Bearer " + token);
         return buildManager.getBuildLogs(openshiftBaseURL, appName, namespace, authHeader);
+    }
+
+    public List<String> getPodList (String token, String appName, String namespace) throws UnauthorizedException{
+        HttpHeaders authHeader = new HttpHeaders();
+        authHeader.add("Authorization", "Bearer " + token);
+        HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
+        return deploymentManager.getPodNameList(kubernetesBaseURL,namespace,appName,requestEntity);
     }
 
 }

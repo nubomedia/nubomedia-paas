@@ -29,13 +29,15 @@ public class Application {
     private List<Integer> ports;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> protocols;
+    @ElementCollection (fetch = FetchType.EAGER)
+    private List<String> podList;
     private int replicasNumber;
     private String secretName;
     private Flavor flavor;
     private BuildingStatus status;
     @JsonIgnore private boolean resourceOK;
 
-    public Application(String appID,Flavor flavor, String appName, String projectName, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, int replicasNumber, String secretName,boolean resourceOK) {
+    public Application(String appID,Flavor flavor, String appName, String projectName, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, List<String> podList, int replicasNumber, String secretName,boolean resourceOK) {
         this.appID = appID;
         this.flavor = flavor;
         this.appName = appName;
@@ -52,6 +54,7 @@ public class Application {
             this.ports = ports;
         }
 
+        this.podList = podList;
         this.protocols = protocols;
         this.replicasNumber = replicasNumber;
         this.secretName = secretName;
@@ -172,6 +175,14 @@ public class Application {
 
     public void setProtocols(List<String> protocols) {
         this.protocols = protocols;
+    }
+
+    public List<String> getPodList() {
+        return podList;
+    }
+
+    public void setPodList(List<String> podList) {
+        this.podList = podList;
     }
 
     @Override
