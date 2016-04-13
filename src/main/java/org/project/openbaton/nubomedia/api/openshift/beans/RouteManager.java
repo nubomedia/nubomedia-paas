@@ -1,12 +1,9 @@
 package org.project.openbaton.nubomedia.api.openshift.beans;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.api.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
-import org.project.openbaton.nubomedia.api.openshift.json.Metadata;
-import org.project.openbaton.nubomedia.api.openshift.json.MetadataTypeAdapter;
 import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

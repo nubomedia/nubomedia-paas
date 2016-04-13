@@ -1,12 +1,10 @@
-package org.project.openbaton.nubomedia.api;
+package org.project.openbaton.nubomedia.api.core;
 
 import org.openbaton.catalogue.mano.common.Ip;
 import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.record.VNFCInstance;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
-import org.openbaton.catalogue.nfvo.Configuration;
-import org.openbaton.catalogue.nfvo.ConfigurationParameter;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.api.configuration.PaaSProperties;
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;

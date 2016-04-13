@@ -1,19 +1,15 @@
 package org.project.openbaton.nubomedia.api.openshift.beans;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.api.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.json.ImageStreamConfig;
-import org.project.openbaton.nubomedia.api.openshift.json.Metadata;
-import org.project.openbaton.nubomedia.api.openshift.json.MetadataTypeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;

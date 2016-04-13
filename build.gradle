@@ -50,7 +50,7 @@ project.ext {
     /**
      * gradle Related Vars
      */
-    mainClass = 'org.project.openbaton.nubomedia.api.Main'
+    mainClass = 'org.project.openbaton.nubomedia.api.core.Main'
     //------------------------------------------------//
 }
 

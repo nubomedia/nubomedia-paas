@@ -1,4 +1,4 @@
-package org.project.openbaton.nubomedia.api;
+package org.project.openbaton.nubomedia.api.core;
 
 import org.springframework.stereotype.Controller;
 

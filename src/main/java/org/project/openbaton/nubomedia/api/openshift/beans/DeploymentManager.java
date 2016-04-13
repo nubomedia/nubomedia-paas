@@ -2,7 +2,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 
 import com.google.gson.Gson;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
-import org.project.openbaton.nubomedia.api.openshift.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.api.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.json.DeploymentConfig;

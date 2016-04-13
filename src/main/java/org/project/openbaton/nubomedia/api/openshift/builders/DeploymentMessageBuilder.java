@@ -1,4 +1,4 @@
-package org.project.openbaton.nubomedia.api.openshift;
+package org.project.openbaton.nubomedia.api.openshift.builders;
 
 import org.project.openbaton.nubomedia.api.openshift.json.*;
 

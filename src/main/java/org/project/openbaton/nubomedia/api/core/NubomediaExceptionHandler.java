@@ -1,4 +1,4 @@
-package org.project.openbaton.nubomedia.api;
+package org.project.openbaton.nubomedia.api.core;
 
 import org.project.openbaton.nubomedia.api.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.api.messages.NubomediaAppNotFoundMessage;

@@ -1,4 +1,4 @@
-package org.project.openbaton.nubomedia.api;
+package org.project.openbaton.nubomedia.api.core;
 
 
 import com.google.gson.Gson;
