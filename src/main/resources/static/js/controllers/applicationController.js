@@ -2,6 +2,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
         var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
+        var urlMediaManager = 'http://80.96.122.73:9000/vnfr/';
 
         $scope.alerts = [];
         $scope.apllications = [];
@@ -18,7 +19,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
         $scope.qosValue = {_qos: ''};
         $scope._threshold = {
-            'scaleInOut' : 0,
+            'scaleInOut': 0,
             'scale_out_threshold': 0
         };
         $scope.createApp = function () {
@@ -30,6 +31,84 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             $('#modalT').modal('show');
         };
 
+        $scope.myData = [];
+        $scope.myChartOptions = {};
+
+        //
+        // Standard Chart Example
+        //
+
+        $scope.dataset = [{data: [], yaxis: 1, label: 'sin'}];
+        $scope.options = {
+            legend: {
+                container: '#legend',
+                show: true
+            }
+        };
+
+        for (var i = 0; i < 14; i += 0.5) {
+            $scope.dataset[0].data.push([i, Math.floor((Math.random() * 6) + 1)]);
+        }
+
+        //
+        // Categories Example
+        //
+
+        $scope.categoriesDataset = [[['January', 10], ['February', 8], ['March', 4], ['April', 13], ['May', 17], ['June', 9]]];
+        $scope.categoriesOptions = {
+            series: {
+                bars: {
+                    show: true,
+                    barWidth: 0.6,
+                    align: 'center'
+                }
+            },
+            xaxis: {
+                mode: 'categories',
+                tickLength: 0
+            }
+        };
+
+        //
+        // Pie Chart Example
+        //
+
+        $scope.pieDataset = [];
+        $scope.pieOptions = {
+            series: {
+                pie: {
+                    show: true
+                }
+            }
+        };
+
+        var pieSeries = Math.floor(Math.random() * 6) + 3;
+
+        for (i = 0; i < pieSeries; i++) {
+            $scope.pieDataset[i] = {
+                label: 'Series' + (i + 1),
+                data: Math.floor(Math.random() * 100) + 1
+            };
+        }
+
+        //
+        // Event example
+        //
+
+        $scope.eventDataset = angular.copy($scope.categoriesDataset);
+        $scope.eventOptions = angular.copy($scope.categoriesOptions);
+        $scope.eventOptions.grid = {
+            clickable: true,
+            hoverable: true
+        };
+
+        $scope.onEventExampleClicked = function (event, pos, item) {
+            alert('Click! ' + event.timeStamp + ' ' + pos.pageX + ' ' + pos.pageY);
+        };
+
+        $scope.onEventExampleHover = function (event, pos, item) {
+            console.log('Hover! ' + event.timeStamp + ' ' + pos.pageX + ' ' + pos.pageY);
+        };
 
         $http.get('json/infos.json')
             .then(function (res) {
@@ -70,6 +149,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     $scope.application = data;
                     $scope.applicationJSON = JSON.stringify(data, undefined, 4);
                 });
+
         }
         else {
             loadTable();
@@ -81,8 +161,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     $scope.apllications = response;
                     console.log(response);
                 }).error(function (data, status) {
-                    showError(status, data);
-                });
+                showError(status, data);
+            });
         }
 
         $scope.closeAlert = function (index) {
@@ -240,9 +320,10 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             var x = str;
             var r = /\\u([\d\w]{4})/gi;
             x = x.replace(r, function (match, grp) {
-                return String.fromCharCode(parseInt(grp, 16)); } );
+                return String.fromCharCode(parseInt(grp, 16));
+            });
             x = unescape(x);
-                return x
+            return x
         }
 
         function showError(status, data) {
@@ -321,7 +402,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     , myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection   //compatibility for firefox and chrome
                     , pc = new myPeerConnection({iceServers: [turnConfig]})
                     , noop = function () {
-                    };
+                };
                 pc.createDataChannel("");    //create a bogus data channel
                 pc.createOffer(function (sdp) {
                     if (sdp.sdp.indexOf('typ relay') > -1) { // sometimes sdp contains the ice candidates...
@@ -338,6 +419,147 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             });
         }
 
+
+        $scope.showPlot = function () {
+            if ($('#numberFlot').find('div.vis-timeline').length == 0) {
+                drawGraph('numberFlot');
+                drawGraph('capacityFlot');
+                loadMediaManeger()
+            }
+            //$(window).resize(function() {$.plot($('#graph_div'));});
+        };
+
+        $scope.vnfrId;
+        $scope.numberValue = 0;
+        $scope.loadValue = 0;
+        function loadMediaManeger() {
+            http.get(urlMediaManager)
+                .success(function (data) {
+                    //console.log(data);
+                    $scope.vnfrs = data;
+                    console.log($scope.vnfrs);
+                    angular.forEach($scope.vnfrs, function (vnfr, index) {
+                        if ($scope.application.nsrID === vnfr.nsrId) {
+                            console.log(vnfr);
+                            $scope.vnfrId = vnfr.vnfrId;
+
+                        }
+                    });
+
+                });
+        }
+
+
+        function getValue(type) {
+            console.log(urlMediaManager + $scope.vnfrId + '/media-server/' + type);
+            if (!angular.isUndefined($scope.vnfrId))
+                http.get(urlMediaManager + $scope.vnfrId + '/media-server/' + type)
+                    .success(function (data) {
+                        console.log(data);
+                        if (type === 'number')
+                            $scope.numberValue = data;
+                        else
+                            $scope.loadValue = data;
+
+                    });
+            if (type === 'number')
+                return $scope.numberValue;
+            else
+                return $scope.loadValue;
+        }
+
+
+        function drawGraph(id) {
+            var DELAY = 10000; // delay in ms to add new data points
+
+
+            // create a graph2d with an (currently empty) dataset
+            var container = document.getElementById(id);
+            console.log(id);
+            console.log(container);
+            var dataset = new vis.DataSet();
+
+            var options = {
+                start: vis.moment().add(-30, 'seconds'), // changed so its faster
+                end: vis.moment(),
+                dataAxis: {
+                    left: {
+                        range: {
+                            min: 0, max: 10
+                        }
+                    }
+                },
+                //style: 'bar',
+                drawPoints: {
+                    style: 'circle', // square, circle
+                    size: 10
+                },
+                shaded: {
+                    orientation: 'bottom' // top, bottom
+                }
+
+            };
+            /*   if(id==='capacityFlot'){
+             delete options.style;
+             }*/
+
+            if (id === 'numberFlot') {
+                delete options.shaded;
+            }
+
+
+            var graph2d = new vis.Graph2d(container, dataset, options);
+
+            console.log(graph2d);
+            // a function to generate data points
+            function y(x) {
+                if (id === 'capacityFlot')
+                    return getValue('load');
+                else
+                    return getValue('number');
+
+                //return getValue('load');
+                //return (Math.floor((Math.random() * 6) + 1));
+            }
+
+            function renderStep() {
+                // move the window (you can think of different strategies).
+                var now = vis.moment();
+                var range = graph2d.getWindow();
+                var interval = range.end - range.start;
+                graph2d.setWindow(now - interval, now, {animation: false});
+                setTimeout(renderStep, DELAY);
+
+            }
+
+            renderStep();
+
+            /**
+             * Add a new datapoint to the graph
+             */
+            function addDataPoint() {
+                // add a new data point to the dataset
+                var now = vis.moment();
+                dataset.add({
+                    x: now,
+                    y: y(now / 1000)
+                });
+
+                // remove all data points which are no longer visible
+                var range = graph2d.getWindow();
+                var interval = range.end - range.start;
+                var oldIds = dataset.getIds({
+                    filter: function (item) {
+                        return item.x < range.start - interval;
+                    }
+                });
+                dataset.remove(oldIds);
+
+                setTimeout(addDataPoint, DELAY);
+            }
+
+            addDataPoint();
+        }
 
 //# example usage:
 

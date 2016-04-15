@@ -409,3 +409,29 @@ select.form-control.ng-valid.ng-dirty {
     width: 250px;
     height: auto;
 }
+
+/*#plotarea*/
+/*{*/
+    /*max-width: 100%;*/
+    /*height: 400px;*/
+/*}*/
+/*#pie*/
+/*{*/
+    /*max-width: 100%;*/
+    /*height: 400px;*/
+/*}*/
+/*#barmonth*/
+/*{*/
+    /*max-width: 100%;*/
+    /*height: 400px;*/
+/*}*/
+/*#baryear*/
+/*{*/
+    /*max-width: 100%;*/
+    /*height: 400px;*/
+/*}*/
+
+/*.plotStyle{*/
+    /*max-width: 100%;*/
+    /*height: 400px;*/
+/*}*/

@@ -8,6 +8,7 @@ require({
         bootstrapJS: "../bower_components/bootstrap/dist/js/bootstrap.min",
         metisMenu: "../bower_components/metisMenu/dist/metisMenu.min",
         sb_admin_2: "../dist/js/sb-admin-2",
+        vis: "../dist/js/vis",
         underscore: "libs/underscore/underscore-min",
         angular: "libs/angular/angular.min",
         angular_route: "libs/angular/angular-route.min",
@@ -97,8 +98,9 @@ require({
     'underscore',
     'angular',
     'angular_route',
+    'vis',
     'indexController',
     'applicationController'
 ], function(require) {
-    return require(['bootstrap']);
+    return require(['bootstrap','vis']);
 });
