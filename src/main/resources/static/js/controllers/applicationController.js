@@ -2,8 +2,10 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
         var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
-        var urlMediaManager = 'http://80.96.122.73:9000/vnfr/';
+        //var urlMediaManager = 'http://80.96.122.73:9000/vnfr/';
+        var urlMediaManager = 'http://localhost:9000/vnfr/';
 
+        $scope.pods=['aAaaa','bdddd'];
         $scope.alerts = [];
         $scope.apllications = [];
         $scope.flavors = ["MEDIUM", "LARGE"];
@@ -279,8 +281,9 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 });
         };
 
-        $scope.loadAppLog = function () {
-            http.get(url + $routeParams.applicationId + '/logs')
+        $scope.loadAppLog = function (podName) {
+            console.log(podName);
+            http.get(url + $routeParams.applicationId + '/logs/'+ podName)
                 .success(function (response) {
 
                     $scope.log = $sce.trustAsHtml(n2br(response));
@@ -475,8 +478,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
             // create a graph2d with an (currently empty) dataset
             var container = document.getElementById(id);
-            console.log(id);
-            console.log(container);
+
             var dataset = new vis.DataSet();
 
             var options = {
@@ -489,7 +491,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                         }
                     }
                 },
-                //style: 'bar',
+
                 drawPoints: {
                     style: 'circle', // square, circle
                     size: 10
@@ -499,26 +501,22 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 }
 
             };
-            /*   if(id==='capacityFlot'){
-             delete options.style;
-             }*/
+
 
             if (id === 'numberFlot') {
                 delete options.shaded;
             }
-
+            if (id === 'capacityFlot') {
+                options.dataAxis.left.range.max= 100;
+            }
 
             var graph2d = new vis.Graph2d(container, dataset, options);
 
-            console.log(graph2d);
-            // a function to generate data points
             function y(x) {
                 if (id === 'capacityFlot')
                     return getValue('load');
                 else
                     return getValue('number');
-
-                //return getValue('load');
                 //return (Math.floor((Math.random() * 6) + 1));
             }
 
