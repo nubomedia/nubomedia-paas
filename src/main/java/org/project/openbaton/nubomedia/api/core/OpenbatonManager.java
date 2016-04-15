@@ -19,6 +19,7 @@ import org.project.openbaton.nubomedia.api.openbaton.exceptions.turnServerExcept
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -35,11 +36,16 @@ public class OpenbatonManager {
 
     @Autowired
     private VimInstance vimInstance;
-    @Autowired private NfvoProperties nfvoProperties;
+
+    @Autowired
+    private NfvoProperties nfvoProperties;
+
     @Autowired
     private VirtualNetworkFunctionDescriptor cloudRepository;
+
     @Autowired
-    private NetworkServiceDescriptor nsdFromFile;
+    @Qualifier("networkServiceDescriptorNubo")
+    private NetworkServiceDescriptor networkServiceDescriptorNubo;
     private Logger logger;
     private NFVORequestor nfvoRequestor;
     private String apiPath;
@@ -76,7 +82,7 @@ public class OpenbatonManager {
 
         logger.debug("FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
 
-        NetworkServiceDescriptor targetNSD = this.configureDescriptor(nsdFromFile,flavorID,qos,turnServerActivate, serverTurnIp,serverTurnUsername,serverTurnPassword,stunServerActivate, stunServerIp, stunServerPort, scaleInOut,scale_out_threshold);
+        NetworkServiceDescriptor targetNSD = this.configureDescriptor(networkServiceDescriptorNubo,flavorID,qos,turnServerActivate, serverTurnIp,serverTurnUsername,serverTurnPassword,stunServerActivate, stunServerIp, stunServerPort, scaleInOut,scale_out_threshold);
 
         if (cloudRepositorySet){
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
