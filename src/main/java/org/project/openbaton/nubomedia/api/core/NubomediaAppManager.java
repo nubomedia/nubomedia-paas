@@ -233,7 +233,7 @@ public class NubomediaAppManager {
             res.setId(id);
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
-            res.setLog("PaaS components are missing, send an email to the administrator to chekc the PaaS status");
+            res.setLog("PaaS components are missing, send an email to the administrator to check the PaaS status");
 
             return res;
         } else {
