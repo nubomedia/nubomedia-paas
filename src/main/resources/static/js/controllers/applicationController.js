@@ -4,6 +4,18 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
         var urlMediaManager = 'http://80.96.122.73:9000/vnfr/';
 
+        if (angular.isUndefined($cookieStore.get('server-ip'))) {
+            http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
+                .success(function (data) {
+                    var serverIpString = data.toString();
+                    var ip = serverIpString.substring(0, serverIpString.length - 6);
+                    console.log(ip);
+                    urlMediaManager = ip + ':9000/vnfr/';
+                    $cookieStore.put('server-ip', ip);
+                });
+        }
+
+
         $scope.alerts = [];
         $scope.apllications = [];
         $scope.flavors = ["MEDIUM", "LARGE"];
