@@ -19,6 +19,7 @@ public class NubomediaCreateAppRequest {
     private String secretName;
     private QoS qualityOfService;
     private boolean cloudRepository;
+    private boolean cdnConnector;
     private boolean turnServerActivate;
     private String turnServerUrl;
     private String turnServerUsername;
@@ -174,6 +175,14 @@ public class NubomediaCreateAppRequest {
 
     public void setScale_out_threshold(double scale_out_threshold) {
         this.scale_out_threshold = scale_out_threshold;
+    }
+
+    public boolean isCdnConnector() {
+        return cdnConnector;
+    }
+
+    public void setCdnConnector(boolean cdnConnector) {
+        this.cdnConnector = cdnConnector;
     }
 
     @Override

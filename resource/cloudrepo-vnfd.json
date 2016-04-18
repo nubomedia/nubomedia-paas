@@ -20,7 +20,7 @@
   "vdu":[
     {
       "vm_image":[
-        "cloud-repository"
+        "cloud-repo-cdn"
       ],
       "vimInstanceName":"nubomedia-vim",
       "scale_in_out":4,

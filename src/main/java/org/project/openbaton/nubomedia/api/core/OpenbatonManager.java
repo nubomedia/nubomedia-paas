@@ -78,7 +78,7 @@ public class OpenbatonManager {
         }
     }
 
-    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, QoS qos,boolean turnServerActivate, String serverTurnIp,String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
+    public OpenbatonCreateServer getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet,boolean cdnConnectorSet, QoS qos,boolean turnServerActivate, String serverTurnIp,String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
 
         logger.debug("FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
 
@@ -86,6 +86,19 @@ public class OpenbatonManager {
 
         if (cloudRepositorySet){
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
+
+            if (cdnConnectorSet){
+                Set<LifecycleEvent> lifecycleEvents = new HashSet<>();
+                for (LifecycleEvent lce : cloudRepository.getLifecycle_event()){
+                    if (lce.getEvent().name().equals("START")){
+                        List<String> lces = lce.getLifecycle_events();
+                        lces.add("start-cdn.sh");
+                    }
+                    lifecycleEvents.add(lce);
+                }
+                cloudRepository.setLifecycle_event(lifecycleEvents);
+            }
+
             vnfds.add(cloudRepository);
             logger.debug("VNFDS " + vnfds.toString());
             targetNSD.setVnfd(vnfds);
