@@ -182,16 +182,21 @@
                                 </div>
                             </div>
 
-
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><b>Do you need a CDN Connector?</b>
+                                    <input type="checkbox" id="cdnConnector" name="togglecloudRepository"
+                                           ng-model="appCreate.cdnConnector" ng-change="changeCdn()">
+                                </div>
+                            </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading"><b>Do you need a cloud repository for your app?</b>
                                     <input type="checkbox" id="cloudRepository" name="togglecloudRepository"
-                                           ng-model="appCreate.cloudRepository">
+                                           ng-model="appCreate.cloudRepository" ng-disabled="appCreate.cdnConnector">
                                 </div>
                             </div>
 
 
-                            <div class="panel " ng-class="classVar">
+                            <div class="panel panel-default" ng-class="classVar">
                                 <div class="panel-heading"><b>Do you want to set the Turn Server?</b>
                                     <div class="pull-right"><a title="check if the turn server is running"
                                                                ng-click="checkTurn()" href=""><i class="fa fa-check">

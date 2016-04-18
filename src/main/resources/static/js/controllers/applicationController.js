@@ -14,6 +14,9 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     $cookieStore.put('server-ip', ip);
                 });
         }
+        else {
+            urlMediaManager = $cookieStore.get('server-ip') + ':9000/vnfr/';
+        }
 
 
         $scope.alerts = [];
@@ -44,6 +47,13 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
 
 
+    $scope.checkCdn = function(){
+        return $scope.appCreate.cdnConnector;
+    };
+    $scope.changeCdn = function(){
+console.log("changedd");
+        $scope.appCreate.cloudRepository = $scope.appCreate.cdnConnector;
+    };
         $http.get('json/infos.json')
             .then(function (res) {
                 console.log(res.data);
@@ -356,6 +366,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
 
         $scope.showPlot = function () {
+
             if ($('#numberFlot').find('div.vis-timeline').length == 0) {
                 drawGraph('numberFlot');
                 drawGraph('capacityFlot');
@@ -363,6 +374,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             }
         };
 
+        //$scope.vnfrId = 'ed5c8629-36bb-402a-8481-49b3a8d3d6a3';
         $scope.vnfrId;
         $scope.numberValue = 1;
         $scope.loadValue = 0;
@@ -375,7 +387,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     angular.forEach($scope.vnfrs, function (vnfr, index) {
                         if ($scope.application.nsrID === vnfr.nsrId) {
                             console.log(vnfr);
-                            $scope.vnfrId = vnfr.vnfrId;
+                            //$scope.vnfrId = vnfr.vnfrId;
 
                         }
                     });
@@ -383,6 +395,42 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 });
         }
 
+
+        function loadNumberHistory() {
+            if (!angular.isUndefined($scope.vnfrId))
+                http.get(urlMediaManager + $scope.vnfrId + '/media-server/number/history')
+                    .success(function (data) {
+                        //console.log(data);
+                        $scope.numbersHistory = data;
+                        angular.forEach($scope.numbersHistory, function (number, index) {
+                            number.id = index;
+                            number.x = new Date(number.timestamp);
+                            number.y = number.value;
+
+                        });
+                        //console.log($scope.numbersHistory);
+
+                    });
+        }
+
+        function loadCapacityHistory() {
+            if (!angular.isUndefined($scope.vnfrId)) {
+                http.get(urlMediaManager + $scope.vnfrId + '/media-server/load/history')
+                    .success(function (data) {
+                        $scope.loadHistory = data;
+                        angular.forEach($scope.loadHistory, function (load, index) {
+                            load.id = index;
+                            load.x = new Date(load.timestamp);
+                            load.y = load.value;
+
+                        });
+                        //console.log($scope.loadHistory);
+                    });
+            }
+        }
+
+        loadCapacityHistory();
+        loadNumberHistory();
 
         function getValue(type) {
             console.log(urlMediaManager + $scope.vnfrId + '/media-server/' + type);
@@ -411,10 +459,9 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             // create a graph2d with an (currently empty) dataset
             var container = document.getElementById(id);
 
-            var dataset = new vis.DataSet();
 
             var options = {
-                start: vis.moment().add(-30, 'seconds'), // changed so its faster
+                start: vis.moment().add(-60, 'seconds'), // changed so its faster
                 end: vis.moment(),
                 dataAxis: {
                     left: {
@@ -437,9 +484,13 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
             if (id === 'numberFlot') {
                 delete options.shaded;
+                var dataset = new vis.DataSet($scope.numbersHistory);
+
             }
             if (id === 'capacityFlot') {
                 options.dataAxis.left.range.max = 100;
+                var dataset = new vis.DataSet($scope.loadHistory);
+
             }
 
             var graph2d = new vis.Graph2d(container, dataset, options);
@@ -465,6 +516,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             function renderStep() {
                 // move the window (you can think of different strategies).
                 var now = vis.moment();
+                console.log(now);
                 var range = graph2d.getWindow();
                 var interval = range.end - range.start;
                 graph2d.setWindow(now - interval, now, {animation: false});
@@ -486,6 +538,27 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 });
 
                 // remove all data points which are no longer visible
+                //var range = graph2d.getWindow();
+                //var interval = range.end - range.start;
+                ////var oldIds = dataset.getIds({
+                ////    filter: function (item) {
+                ////        return item.x < range.start - interval;
+                ////    }
+                ////});
+                ////dataset.remove(oldIds);
+
+                setTimeout(addDataPoint, DELAY);
+            }
+
+            function addHistory() {
+                // add a new data point to the dataset
+                var now = vis.moment();
+                dataset.add({
+                    x: now,
+                    y: y(now / 1000)
+                });
+
+                // remove all data points which are no longer visible
                 var range = graph2d.getWindow();
                 var interval = range.end - range.start;
                 var oldIds = dataset.getIds({
@@ -495,8 +568,10 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 });
                 dataset.remove(oldIds);
 
-                setTimeout(addDataPoint, DELAY);
+
             }
+
+            //addHistory();
 
             addDataPoint();
         }

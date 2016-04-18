@@ -19,5 +19,6 @@
   "replicasNumber":2,
   "secretName":"",
   "turnServerActivate":false,
-  "stunServerActivate":false
+  "stunServerActivate":false,
+  "cdnConnector":false
 }
