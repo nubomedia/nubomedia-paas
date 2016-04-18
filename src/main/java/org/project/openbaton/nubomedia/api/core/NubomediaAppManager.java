@@ -400,7 +400,7 @@ public class NubomediaAppManager {
     @RequestMapping(value = "/server-ip/", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public String getMediaServerIp() {
-        return paaSProperties.getInternalURL();
+        return paaSProperties.getVnfmIP();
     }
 
     @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
