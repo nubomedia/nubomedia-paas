@@ -84,25 +84,30 @@ public class OpenbatonManager {
 
         NetworkServiceDescriptor targetNSD = this.configureDescriptor(networkServiceDescriptorNubo,flavorID,qos,turnServerActivate, serverTurnIp,serverTurnUsername,serverTurnPassword,stunServerActivate, stunServerIp, stunServerPort, scaleInOut,scale_out_threshold);
 
-        if (cloudRepositorySet){
+
+
+        if (cloudRepositorySet && !cdnConnectorSet){
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
-
-            if (cdnConnectorSet){
-                Set<LifecycleEvent> lifecycleEvents = new HashSet<>();
-                for (LifecycleEvent lce : cloudRepository.getLifecycle_event()){
-                    if (lce.getEvent().name().equals("START")){
-                        List<String> lces = lce.getLifecycle_events();
-                        lces.add("start-cdn.sh");
-                    }
-                    lifecycleEvents.add(lce);
-                }
-                cloudRepository.setLifecycle_event(lifecycleEvents);
-            }
-
             vnfds.add(cloudRepository);
             logger.debug("VNFDS " + vnfds.toString());
             targetNSD.setVnfd(vnfds);
+        } else if (cdnConnectorSet) {
+            Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
+            VirtualNetworkFunctionDescriptor cdnConnectorVnfd = cloudRepository;
+            Set<LifecycleEvent> lifecycleEvents = new HashSet<>();
+            for (LifecycleEvent lce : cdnConnectorVnfd.getLifecycle_event()){
+                if (lce.getEvent().name().equals("START")){
+                    List<String> lces = lce.getLifecycle_events();
+                    lces.add("start-cdn.sh");
+                }
+                lifecycleEvents.add(lce);
+            }
+            cdnConnectorVnfd.setLifecycle_event(lifecycleEvents);
+
+            vnfds.add(cdnConnectorVnfd);
+            targetNSD.setVnfd(vnfds);
         }
+
         targetNSD = nfvoRequestor.getNetworkServiceDescriptorAgent().create(targetNSD);
 
         OpenbatonCreateServer res = new OpenbatonCreateServer();
