@@ -2,10 +2,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
         var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
-        //var urlMediaManager = 'http://80.96.122.73:9000/vnfr/';
-        var urlMediaManager = 'http://localhost:9000/vnfr/';
+        var urlMediaManager = 'http://80.96.122.73:9000/vnfr/';
 
-        $scope.pods=['aAaaa','bdddd'];
         $scope.alerts = [];
         $scope.apllications = [];
         $scope.flavors = ["MEDIUM", "LARGE"];
@@ -33,84 +31,6 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             $('#modalT').modal('show');
         };
 
-        $scope.myData = [];
-        $scope.myChartOptions = {};
-
-        //
-        // Standard Chart Example
-        //
-
-        $scope.dataset = [{data: [], yaxis: 1, label: 'sin'}];
-        $scope.options = {
-            legend: {
-                container: '#legend',
-                show: true
-            }
-        };
-
-        for (var i = 0; i < 14; i += 0.5) {
-            $scope.dataset[0].data.push([i, Math.floor((Math.random() * 6) + 1)]);
-        }
-
-        //
-        // Categories Example
-        //
-
-        $scope.categoriesDataset = [[['January', 10], ['February', 8], ['March', 4], ['April', 13], ['May', 17], ['June', 9]]];
-        $scope.categoriesOptions = {
-            series: {
-                bars: {
-                    show: true,
-                    barWidth: 0.6,
-                    align: 'center'
-                }
-            },
-            xaxis: {
-                mode: 'categories',
-                tickLength: 0
-            }
-        };
-
-        //
-        // Pie Chart Example
-        //
-
-        $scope.pieDataset = [];
-        $scope.pieOptions = {
-            series: {
-                pie: {
-                    show: true
-                }
-            }
-        };
-
-        var pieSeries = Math.floor(Math.random() * 6) + 3;
-
-        for (i = 0; i < pieSeries; i++) {
-            $scope.pieDataset[i] = {
-                label: 'Series' + (i + 1),
-                data: Math.floor(Math.random() * 100) + 1
-            };
-        }
-
-        //
-        // Event example
-        //
-
-        $scope.eventDataset = angular.copy($scope.categoriesDataset);
-        $scope.eventOptions = angular.copy($scope.categoriesOptions);
-        $scope.eventOptions.grid = {
-            clickable: true,
-            hoverable: true
-        };
-
-        $scope.onEventExampleClicked = function (event, pos, item) {
-            alert('Click! ' + event.timeStamp + ' ' + pos.pageX + ' ' + pos.pageY);
-        };
-
-        $scope.onEventExampleHover = function (event, pos, item) {
-            console.log('Hover! ' + event.timeStamp + ' ' + pos.pageX + ' ' + pos.pageY);
-        };
 
         $http.get('json/infos.json')
             .then(function (res) {
@@ -283,7 +203,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         $scope.loadAppLog = function (podName) {
             console.log(podName);
-            http.get(url + $routeParams.applicationId + '/logs/'+ podName)
+            http.get(url + $routeParams.applicationId + '/logs/' + podName)
                 .success(function (response) {
 
                     $scope.log = $sce.trustAsHtml(n2br(response));
@@ -429,11 +349,10 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 drawGraph('capacityFlot');
                 loadMediaManeger()
             }
-            //$(window).resize(function() {$.plot($('#graph_div'));});
         };
 
         $scope.vnfrId;
-        $scope.numberValue = 0;
+        $scope.numberValue = 1;
         $scope.loadValue = 0;
         function loadMediaManeger() {
             http.get(urlMediaManager)
@@ -467,8 +386,9 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     });
             if (type === 'number')
                 return $scope.numberValue;
-            else
+            else {
                 return $scope.loadValue;
+            }
         }
 
 
@@ -507,16 +427,26 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 delete options.shaded;
             }
             if (id === 'capacityFlot') {
-                options.dataAxis.left.range.max= 100;
+                options.dataAxis.left.range.max = 100;
             }
 
             var graph2d = new vis.Graph2d(container, dataset, options);
 
             function y(x) {
-                if (id === 'capacityFlot')
-                    return getValue('load');
-                else
+                if (id === 'capacityFlot') {
+                    var value = getValue('load');
+                    //value = (Math.floor((Math.random() * 1000) + 1));
+                    if (value > options.dataAxis.left.range.max) {
+                        options.dataAxis.left.range.max = value;
+                        console.log(value);
+                        graph2d.setOptions(options);
+                    }
+                    return value;
+
+                }
+                else {
                     return getValue('number');
+                }
                 //return (Math.floor((Math.random() * 6) + 1));
             }
 
