@@ -2,7 +2,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
         var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
-        var urlMediaManager = 'http://80.96.122.73:9000/vnfr/';
+        var urlMediaManager = 'http:///80.96.122.73:9000/vnfr/';
 
         if (angular.isUndefined($cookieStore.get('server-ip'))) {
             http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
@@ -17,7 +17,6 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         else {
             urlMediaManager = $cookieStore.get('server-ip') + ':9000/vnfr/';
         }
-
 
         $scope.alerts = [];
         $scope.apllications = [];
@@ -47,16 +46,12 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
 
 
-    $scope.checkCdn = function(){
-        return $scope.appCreate.cdnConnector;
-    };
     $scope.changeCdn = function(){
-console.log("changedd");
         $scope.appCreate.cloudRepository = $scope.appCreate.cdnConnector;
     };
         $http.get('json/infos.json')
             .then(function (res) {
-                console.log(res.data);
+                //console.log(res.data);
                 $scope.infosObj = angular.copy(res.data);
             });
 
@@ -400,7 +395,6 @@ console.log("changedd");
             if (!angular.isUndefined($scope.vnfrId))
                 http.get(urlMediaManager + $scope.vnfrId + '/media-server/number/history')
                     .success(function (data) {
-                        //console.log(data);
                         $scope.numbersHistory = data;
                         angular.forEach($scope.numbersHistory, function (number, index) {
                             number.id = index;
@@ -408,7 +402,7 @@ console.log("changedd");
                             number.y = number.value;
 
                         });
-                        //console.log($scope.numbersHistory);
+                        console.log($scope.numbersHistory);
 
                     });
         }
@@ -424,7 +418,7 @@ console.log("changedd");
                             load.y = load.value;
 
                         });
-                        //console.log($scope.loadHistory);
+                        console.log($scope.loadHistory);
                     });
             }
         }
@@ -433,7 +427,7 @@ console.log("changedd");
         loadNumberHistory();
 
         function getValue(type) {
-            console.log(urlMediaManager + $scope.vnfrId + '/media-server/' + type);
+            //console.log(urlMediaManager + $scope.vnfrId + '/media-server/' + type);
             if (!angular.isUndefined($scope.vnfrId))
                 http.get(urlMediaManager + $scope.vnfrId + '/media-server/' + type)
                     .success(function (data) {
@@ -444,6 +438,9 @@ console.log("changedd");
                             $scope.loadValue = data;
 
                     });
+            else
+                console.error('vnfrId == undefined');
+
             if (type === 'number')
                 return $scope.numberValue;
             else {
@@ -516,7 +513,6 @@ console.log("changedd");
             function renderStep() {
                 // move the window (you can think of different strategies).
                 var now = vis.moment();
-                console.log(now);
                 var range = graph2d.getWindow();
                 var interval = range.end - range.start;
                 graph2d.setWindow(now - interval, now, {animation: false});
@@ -550,28 +546,6 @@ console.log("changedd");
                 setTimeout(addDataPoint, DELAY);
             }
 
-            function addHistory() {
-                // add a new data point to the dataset
-                var now = vis.moment();
-                dataset.add({
-                    x: now,
-                    y: y(now / 1000)
-                });
-
-                // remove all data points which are no longer visible
-                var range = graph2d.getWindow();
-                var interval = range.end - range.start;
-                var oldIds = dataset.getIds({
-                    filter: function (item) {
-                        return item.x < range.start - interval;
-                    }
-                });
-                dataset.remove(oldIds);
-
-
-            }
-
-            //addHistory();
 
             addDataPoint();
         }

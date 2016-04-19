@@ -48,15 +48,19 @@
                 <br>
                 <div class="row" ng-show="application">
                     <div class="col-lg-12">
-                            <div class="dropdown col-lg-1">
-                                <button  ng-disable="checkStatus()" class="btn btn-primary dropdown-toggle" type="button" id="get_log_app" title="Loads the App logs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    App Logs
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="get_log_app">
-                                    <li ng-repeat="pod in application.podList"><a href="" ng-click="loadAppLog(pod)">{{pod}}</a></li>
-                                </ul>
-                            </div>
+                        <div class="dropdown col-lg-1">
+                            <button ng-disable="checkStatus()" class="btn btn-primary dropdown-toggle" type="button"
+                                    id="get_log_app" title="Loads the App logs" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="true">
+                                App Logs
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="get_log_app">
+                                <li ng-repeat="pod in application.podList"><a href=""
+                                                                              ng-click="loadAppLog(pod)">{{pod}}</a>
+                                </li>
+                            </ul>
+                        </div>
                         <button id="get_log" class="btn btn-primary" style="margin-left: 40px"
                                 title="Loads the buildlogs" ng-click="loadLog()">Build Log
                         </button>
@@ -78,10 +82,11 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">Autoscaling</div>
                             <div class="panel-body">
-
-                                <div class="col-lg-6">
-                                    <h4>Number of KMS instances</h4>
-                                    <div id="numberFlot"></div>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <h4>Number of KMS instances</h4>
+                                        <div id="numberFlot"></div>
+                                    </div>
                                 </div>
 
                                 <div class="row">
