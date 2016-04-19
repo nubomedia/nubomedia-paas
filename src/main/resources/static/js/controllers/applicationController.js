@@ -1,21 +1,27 @@
-angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce) {
+angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce,$rootScope) {
 
         var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
         var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
         var urlMediaManager = '';
+        console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
+        console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
 
         if (angular.isUndefined($cookieStore.get('server-ip'))) {
             http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
                 .success(function (data) {
-                    var serverIpString = data.toString();
-                    console.log(serverIpString.toString());
-                    urlMediaManager = 'http://'+ serverIpString.toString() + ':9000/vnfr/';
+                    var serverIpString = data.replaceAll("\"","");
+                    console.log(serverIpString);
+                    urlMediaManager = 'http://'+ serverIpString + ':9000/vnfr/';
                     $cookieStore.put('server-ip', serverIpString);
                 });
         }
         else {
-            urlMediaManager = $cookieStore.get('server-ip') + ':9000/vnfr/';
+            urlMediaManager = 'http://'+$cookieStore.get('server-ip') + ':9000/vnfr/';
         }
+
+        String.prototype.replaceAll = function(target, replacement) {
+            return this.split(target).join(replacement);
+        };
 
         $scope.alerts = [];
         $scope.apllications = [];
@@ -86,6 +92,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     console.log(data);
                     $scope.application = data;
                     $scope.applicationJSON = JSON.stringify(data, undefined, 4);
+                    loadMediaManeger();
+
                 });
 
         }
@@ -98,6 +106,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 .success(function (response, status) {
                     $scope.apllications = response;
                     console.log(response);
+
                 }).error(function (data, status) {
                 showError(status, data);
             });
@@ -364,29 +373,35 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             if ($('#numberFlot').find('div.vis-timeline').length == 0) {
                 drawGraph('numberFlot');
                 drawGraph('capacityFlot');
-                loadMediaManeger()
             }
         };
+
+
 
         //$scope.vnfrId = 'ed5c8629-36bb-402a-8481-49b3a8d3d6a3';
         $scope.vnfrId;
         $scope.numberValue = 1;
         $scope.loadValue = 0;
         function loadMediaManeger() {
-            http.get(urlMediaManager)
-                .success(function (data) {
+            console.log($scope.vnfrId);
+            console.log(urlMediaManager);
+
+            http.syncGet(urlMediaManager)
+                .then(function (data) {
                     //console.log(data);
                     $scope.vnfrs = data;
                     console.log($scope.vnfrs);
                     angular.forEach($scope.vnfrs, function (vnfr, index) {
-                        if ($scope.application.nsrID === vnfr.nsrId) {
+                        if ($scope.application.nsrID == vnfr.nsrId) {
                             console.log(vnfr);
-                            //$scope.vnfrId = vnfr.vnfrId;
-
+                            $scope.vnfrId = vnfr.vnfrId;
+                            loadCapacityHistory();
+                            loadNumberHistory();
                         }
                     });
 
                 });
+
         }
 
 
@@ -422,8 +437,6 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             }
         }
 
-        loadCapacityHistory();
-        loadNumberHistory();
 
         function getValue(type) {
             //console.log(urlMediaManager + $scope.vnfrId + '/media-server/' + type);
