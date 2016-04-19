@@ -1,25 +1,26 @@
-angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce,$rootScope) {
+angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce, $rootScope) {
 
         var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
         var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
         var urlMediaManager = '';
+        var maxLoad = 100;
         //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
         //console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
 
         if (angular.isUndefined($cookieStore.get('server-ip'))) {
             http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
                 .success(function (data) {
-                    var serverIpString = data.replaceAll("\"","");
+                    var serverIpString = data.replaceAll("\"", "");
                     console.log(serverIpString);
-                    urlMediaManager = 'http://'+ serverIpString + ':9000/vnfr/';
+                    urlMediaManager = 'http://' + serverIpString + ':9000/vnfr/';
                     $cookieStore.put('server-ip', serverIpString);
                 });
         }
         else {
-            urlMediaManager = 'http://'+$cookieStore.get('server-ip') + ':9000/vnfr/';
+            urlMediaManager = 'http://' + $cookieStore.get('server-ip') + ':9000/vnfr/';
         }
 
-        String.prototype.replaceAll = function(target, replacement) {
+        String.prototype.replaceAll = function (target, replacement) {
             return this.split(target).join(replacement);
         };
 
@@ -51,9 +52,9 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
 
 
-    $scope.changeCdn = function(){
-        $scope.appCreate.cloudRepository = $scope.appCreate.cdnConnector;
-    };
+        $scope.changeCdn = function () {
+            $scope.appCreate.cloudRepository = $scope.appCreate.cdnConnector;
+        };
         $http.get('json/infos.json')
             .then(function (res) {
                 //console.log(res.data);
@@ -377,7 +378,6 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
 
 
-
         //$scope.vnfrId = 'ed5c8629-36bb-402a-8481-49b3a8d3d6a3';
         $scope.vnfrId;
         $scope.numberValue = 1;
@@ -432,6 +432,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                             load.x = new Date(load.timestamp);
                             load.y = load.value;
                             $scope.loadValue = load.value;
+                            if (load.value > maxLoad)
+                                maxLoad = load.value + 50.0;
 
                         });
                         console.log($scope.loadHistory);
@@ -499,7 +501,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
             }
             if (id === 'capacityFlot') {
-                options.dataAxis.left.range.max = 100;
+                options.dataAxis.left.range.max = maxLoad;
                 var dataset = new vis.DataSet($scope.loadHistory);
 
             }
@@ -511,8 +513,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     var value = getValue('load');
                     //value = (Math.floor((Math.random() * 1000) + 1));
                     if (value > options.dataAxis.left.range.max) {
-                        options.dataAxis.left.range.max = value + 50;
-                        console.log(value);
+                        options.dataAxis.left.range.max = value + 50.0;
+                        console.log(value + 50.0);
                         graph2d.setOptions(options);
                     }
                     return value;
