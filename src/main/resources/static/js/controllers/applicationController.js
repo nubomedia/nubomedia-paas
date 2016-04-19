@@ -8,10 +8,9 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
                 .success(function (data) {
                     var serverIpString = data.toString();
-                    var ip = serverIpString.substring(0, serverIpString.length - 6);
-                    console.log(ip);
-                    urlMediaManager = ip + ':9000/vnfr/';
-                    $cookieStore.put('server-ip', ip);
+                    console.log(serverIpString);
+                    urlMediaManager = 'http://'+ serverIpString + ':9000/vnfr/';
+                    $cookieStore.put('server-ip', serverIpString);
                 });
         }
         else {
