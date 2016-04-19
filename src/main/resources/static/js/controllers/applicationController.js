@@ -3,8 +3,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
         var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
         var urlMediaManager = '';
-        console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
-        console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
+        //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
+        //console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
 
         if (angular.isUndefined($cookieStore.get('server-ip'))) {
             http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
@@ -414,6 +414,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                             number.id = index;
                             number.x = new Date(number.timestamp);
                             number.y = number.value;
+                            $scope.numberValue = number.value;
 
                         });
                         console.log($scope.numbersHistory);
@@ -430,6 +431,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                             load.id = index;
                             load.x = new Date(load.timestamp);
                             load.y = load.value;
+                            $scope.loadValue = load.value;
 
                         });
                         console.log($scope.loadHistory);
