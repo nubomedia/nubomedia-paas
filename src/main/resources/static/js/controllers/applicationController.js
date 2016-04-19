@@ -511,7 +511,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     var value = getValue('load');
                     //value = (Math.floor((Math.random() * 1000) + 1));
                     if (value > options.dataAxis.left.range.max) {
-                        options.dataAxis.left.range.max = value;
+                        options.dataAxis.left.range.max = value + 50;
                         console.log(value);
                         graph2d.setOptions(options);
                     }
