@@ -2,14 +2,14 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
         var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
-        var urlMediaManager = 'http:///80.96.122.73:9000/vnfr/';
+        var urlMediaManager = '';
 
         if (angular.isUndefined($cookieStore.get('server-ip'))) {
             http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
                 .success(function (data) {
                     var serverIpString = data.toString();
-                    console.log(serverIpString);
-                    urlMediaManager = 'http://'+ serverIpString + ':9000/vnfr/';
+                    console.log(serverIpString.toString());
+                    urlMediaManager = 'http://'+ serverIpString.toString() + ':9000/vnfr/';
                     $cookieStore.put('server-ip', serverIpString);
                 });
         }
