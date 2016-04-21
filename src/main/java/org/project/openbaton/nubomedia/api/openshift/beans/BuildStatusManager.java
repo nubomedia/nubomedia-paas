@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -93,7 +95,15 @@ public class BuildStatusManager {
         Build target = this.retrieveBuild(baseURL,appName,namespace,authHeader);
         String URL = baseURL + namespace + suffix + target.getMetadata().getName() + logSuffix;
         HttpEntity<String> logEntity = new HttpEntity<>(authHeader);
-        ResponseEntity<String> res = template.exchange(URL,HttpMethod.GET,logEntity,String.class);
+        ResponseEntity<String> res = null;
+
+        try {
+            res = template.exchange(URL, HttpMethod.GET, logEntity, String.class);
+        } catch (HttpServerErrorException e){
+            return "Build logs not anymore available";
+        } catch (HttpClientErrorException e){
+            return "Problems on communication with PaaS";
+        }
 
         if(res.getStatusCode() != HttpStatus.OK){
             logger.debug("Error retrieving logs " + res.getStatusCode() + " response " + res.toString());
