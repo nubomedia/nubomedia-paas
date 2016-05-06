@@ -217,6 +217,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
 
         $scope.loadLog = function () {
+
             http.get(url + $routeParams.applicationId + '/buildlogs')
                 .success(function (response) {
                     //$scope.log = response;
@@ -227,12 +228,20 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 });
         };
 
+        $scope.input = {numberRows: 35};
         $scope.loadAppLog = function (podName) {
             console.log(podName);
             http.get(url + $routeParams.applicationId + '/logs/' + podName)
                 .success(function (response) {
 
-                    $scope.log = $sce.trustAsHtml(n2br(response));
+                    var stringArray = response.split('\\n');
+
+                    var subLog = stringArray.slice(stringArray.length - $scope.input.numberRows, -1);
+                    var string = subLog.join('\\n');
+                    //console.log(subLog);
+                    //console.log($scope.input.numberRows);
+
+                    $scope.log = $sce.trustAsHtml(n2br(string));
                 })
                 .error(function (data, status) {
                     showError(status, data);
