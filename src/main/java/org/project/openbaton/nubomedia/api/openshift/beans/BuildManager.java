@@ -3,6 +3,7 @@ package org.project.openbaton.nubomedia.api.openshift.beans;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
+import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,9 @@ public class BuildManager {
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
-    public ResponseEntity<String> createBuild(String baseURL, String appName,String namespace,String gitURL,String dockerRepo, HttpHeaders authHeader, String secretName,String mediaServerGID, String mediaServerIP, String mediaServerPort, String cloudRepositoryIp, String cloudRepoPort, String cdnServerIp) throws DuplicatedException, UnauthorizedException {
+    public ResponseEntity<String> createBuild(String baseURL, String appName, String namespace, String gitURL, String dockerRepo, HttpHeaders authHeader, String secretName, String mediaServerGID, String mediaServerIP, String mediaServerPort, String cloudRepositoryIp, String cloudRepoPort, String cdnServerIp, RouteConfig routeConfig) throws DuplicatedException, UnauthorizedException {
         logger.info("Creating buildconfig for " + appName + " in project " + namespace + " from gitURL " + gitURL + " with secret " + secretName);
-        return builderManager.createBuildConfig(baseURL,appName,namespace,dockerRepo,gitURL,authHeader,secretName,mediaServerGID, mediaServerIP, mediaServerPort, cloudRepositoryIp, cloudRepoPort, cdnServerIp);
+        return builderManager.createBuildConfig(baseURL,appName,namespace,dockerRepo,gitURL,authHeader,secretName,mediaServerGID, mediaServerIP, mediaServerPort, cloudRepositoryIp, cloudRepoPort, cdnServerIp, routeConfig);
     }
 
     public HttpStatus deleteBuild(String baseURL, String appName,String namespace, HttpHeaders authHeader) throws UnauthorizedException {

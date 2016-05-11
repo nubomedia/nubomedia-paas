@@ -31,13 +31,15 @@ public class RouteManager {
         this.suffix = "/routes/";
     }
 
-    public ResponseEntity<String> makeRoute(String baseURL,String appID, String name, String namespace, String domainName, HttpHeaders authHeader) throws DuplicatedException, UnauthorizedException {
-        RouteConfig message = MessageBuilderFactory.getRouteMessage(name, appID, domainName);
+    public ResponseEntity<String> makeRoute(String baseURL, String appID, String name, String namespace, String domainName, HttpHeaders authHeader, RouteConfig routeConfig) throws DuplicatedException, UnauthorizedException {
+        //RouteConfig message = MessageBuilderFactory.getRouteMessage(name, appID, domainName);
 
-        logger.debug("Route message " + mapper.toJson(message,RouteConfig.class));
+        //logger.debug("Route message " + mapper.toJson(message,RouteConfig.class));
+        logger.debug("Route message " + mapper.toJson(routeConfig,RouteConfig.class));
 
         String URL = baseURL + namespace + suffix;
-        HttpEntity<String> routeEntity = new HttpEntity<String>(mapper.toJson(message, RouteConfig.class), authHeader);
+        //HttpEntity<String> routeEntity = new HttpEntity<String>(mapper.toJson(message, RouteConfig.class), authHeader);
+        HttpEntity<String> routeEntity = new HttpEntity<String>(mapper.toJson(routeConfig, RouteConfig.class), authHeader);
         ResponseEntity response = template.exchange(URL, HttpMethod.POST, routeEntity, String.class);
 
         if(response.getStatusCode().equals(HttpStatus.CONFLICT)){

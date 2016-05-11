@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import org.project.openbaton.nubomedia.api.configuration.OpenshiftProperties;
 import org.project.openbaton.nubomedia.api.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.api.openshift.beans.*;
+import org.project.openbaton.nubomedia.api.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.json.ImageStreamConfig;
@@ -73,7 +74,9 @@ public class OpenshiftManager {
 
         ImageStreamConfig isConfig = mapper.fromJson(appBuilEntity.getBody(),ImageStreamConfig.class);
 
-        appBuilEntity = buildManager.createBuild(openshiftBaseURL, appName, namespace, gitURL, isConfig.getStatus().getDockerImageRepository(), creationHeader, secretName, mediaServerGID,vnfmIp,vnfmPort, cloudRepositoryIp, cloudRepositoryPort,cdnServerIp);
+        RouteConfig routeConfig = MessageBuilderFactory.getRouteMessage(appName, appID, properties.getDomainName());
+
+        appBuilEntity = buildManager.createBuild(openshiftBaseURL, appName, namespace, gitURL, isConfig.getStatus().getDockerImageRepository(), creationHeader, secretName, mediaServerGID,vnfmIp,vnfmPort, cloudRepositoryIp, cloudRepositoryPort,cdnServerIp, routeConfig);
         if(!appBuilEntity.getStatusCode().is2xxSuccessful()){
             logger.debug("Failed creation of buildconfig " + appBuilEntity.toString());
             return appBuilEntity.getBody();
@@ -91,7 +94,7 @@ public class OpenshiftManager {
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = routeManager.makeRoute(openshiftBaseURL, appID, appName, namespace, properties.getDomainName(), creationHeader);
+        appBuilEntity = routeManager.makeRoute(openshiftBaseURL, appID, appName, namespace, properties.getDomainName(), creationHeader, routeConfig);
         if(!appBuilEntity.getStatusCode().is2xxSuccessful()){
             logger.debug("Failed creation of route " + appBuilEntity.toString());
             return appBuilEntity.getBody();

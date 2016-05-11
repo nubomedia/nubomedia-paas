@@ -5,6 +5,7 @@ import org.project.openbaton.nubomedia.api.openshift.builders.MessageBuilderFact
 import org.project.openbaton.nubomedia.api.openshift.exceptions.DuplicatedException;
 import org.project.openbaton.nubomedia.api.openshift.exceptions.UnauthorizedException;
 import org.project.openbaton.nubomedia.api.openshift.json.BuildConfig;
+import org.project.openbaton.nubomedia.api.openshift.json.RouteConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,9 @@ public class BuildConfigManager {
         this.suffix = "/buildconfigs/";
     }
 
-    public ResponseEntity<String> createBuildConfig (String baseURL, String appName,String namespace,String dockerRepo,String gitURL, HttpHeaders authHeader, String secretName,String mediaServerGID,String mediaServerIP, String mediaServerPort, String cloudRepositoryIp, String cloudRepoPort, String cdnServerIp) throws DuplicatedException, UnauthorizedException {
+    public ResponseEntity<String> createBuildConfig(String baseURL, String appName, String namespace, String dockerRepo, String gitURL, HttpHeaders authHeader, String secretName, String mediaServerGID, String mediaServerIP, String mediaServerPort, String cloudRepositoryIp, String cloudRepoPort, String cdnServerIp, RouteConfig routeConfig) throws DuplicatedException, UnauthorizedException {
 
-        BuildConfig message = MessageBuilderFactory.getBuilderMessage(appName, dockerRepo, gitURL, secretName,mediaServerGID, mediaServerIP, mediaServerPort, cloudRepositoryIp, cloudRepoPort, cdnServerIp);
+        BuildConfig message = MessageBuilderFactory.getBuilderMessage(appName, dockerRepo, gitURL, secretName,mediaServerGID, mediaServerIP, mediaServerPort, cloudRepositoryIp, cloudRepoPort, cdnServerIp, routeConfig);
         logger.debug("writing message " + mapper.toJson(message,BuildConfig.class));
         String URL = baseURL + namespace + suffix;
         HttpEntity<String> buildEntity = new HttpEntity<>(mapper.toJson(message, BuildConfig.class), authHeader);

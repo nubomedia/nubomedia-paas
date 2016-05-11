@@ -15,8 +15,8 @@ public class MessageBuilderFactory {
         return ism.buildMessage();
     }
 
-    public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL,String secretName,String mediaServerGID, String mediaServerIP, String mediaServerPort,String cloudRepositoryIp, String cloudRepoPort, String cdnServerIp) {
-        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("BUILD_LOGLEVEL","5"),new EnviromentVariable("VNFR_ID",mediaServerGID),new EnviromentVariable("VNFM_IP",mediaServerIP),new EnviromentVariable("VNFM_PORT",mediaServerPort),new EnviromentVariable("CLOUDREPO_IP",cloudRepositoryIp),new EnviromentVariable("CLOUDREPO_PORT",cloudRepoPort), new EnviromentVariable("CDN_SERVER_IP",cdnServerIp)},null);
+    public static BuildConfig getBuilderMessage(String name, String dockerRepo, String gitURL, String secretName, String mediaServerGID, String mediaServerIP, String mediaServerPort, String cloudRepositoryIp, String cloudRepoPort, String cdnServerIp, RouteConfig routeConfig) {
+        DockerBuildStrategy.DockerStrategy ds = new DockerBuildStrategy.DockerStrategy(new EnviromentVariable[]{new EnviromentVariable("BUILD_LOGLEVEL","5"),new EnviromentVariable("VNFR_ID",mediaServerGID),new EnviromentVariable("VNFM_IP",mediaServerIP),new EnviromentVariable("VNFM_PORT",mediaServerPort),new EnviromentVariable("CLOUDREPO_IP",cloudRepositoryIp),new EnviromentVariable("CLOUDREPO_PORT",cloudRepoPort), new EnviromentVariable("CDN_SERVER_IP",cdnServerIp), new EnviromentVariable("ROUTE",routeConfig.getSpec().getHost())},null);
         DockerBuildStrategy strategy = new DockerBuildStrategy(ds);
         Source.SourceSecret secret;
 
