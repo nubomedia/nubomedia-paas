@@ -1,37 +1,25 @@
-// -----
-// The `timezoneJS.Date` object gives you full-blown timezone support, independent from the timezone set on the end-user's machine running the browser. It uses the Olson zoneinfo files for its timezone data.
-//
-// The constructor function and setter methods use proxy JavaScript Date objects behind the scenes, so you can use strings like '10/22/2006' with the constructor. You also get the same sensible wraparound behavior with numeric parameters (like setting a value of 14 for the month wraps around to the next March).
-//
-// The other significant difference from the built-in JavaScript Date is that `timezoneJS.Date` also has named properties that store the values of year, month, date, etc., so it can be directly serialized to JSON and used for data transfer.
-
 /*
- * Copyright 2010 Matthew Eernisse (mde@fleegix.org)
- * and Open Source Applications Foundation
+ * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Credits: Ideas included from incomplete JS implementation of Olson
- * parser, "XMLDAte" by Philippe Goetz (philippe.goetz@wanadoo.fr)
- *
- * Contributions:
- * Jan Niehusmann
- * Ricky Romero
- * Preston Hunt (prestonhunt@gmail.com)
- * Dov. B Katz (dov.katz@morganstanley.com)
- * Peter Bergström (pbergstr@mac.com)
- * Long Ho
  */
+
+// -----
+// The `timezoneJS.Date` object gives you full-blown timezone support, independent from the timezone set on the end-user's machine running the browser. It uses the Olson zoneinfo files for its timezone data.
+//
+// The constructor function and setter methods use proxy JavaScript Date objects behind the scenes, so you can use strings like '10/22/2006' with the constructor. You also get the same sensible wraparound behavior with numeric parameters (like setting a value of 14 for the month wraps around to the next March).
+//
+// The other significant difference from the built-in JavaScript Date is that `timezoneJS.Date` also has named properties that store the values of year, month, date, etc., so it can be directly serialized to JSON and used for data transfer.
 (function () {
   // Standard initialization stuff to make sure the library is
   // usable on both client and server (node) side.
