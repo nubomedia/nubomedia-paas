@@ -23,6 +23,7 @@ import org.openbaton.catalogue.mano.record.VNFCInstance;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.sdk.api.exception.SDKException;
+import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.utils.PaaSProperties;
 import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
 import org.project.openbaton.nubomedia.paas.core.OpenshiftManager;
@@ -61,43 +62,44 @@ public class PaaSAPI {
 
     private static Map<String, MediaServerGroup> deploymentMap = new HashMap<>();
     private Logger logger;
-    private SecureRandom appIDGenerator;
 
-    @Autowired private OpenshiftManager osmanager;
-    @Autowired private OpenbatonManager obmanager;
-    @Autowired private ApplicationRepository appRepo;
-    @Autowired private PaaSProperties paaSProperties;
+    @Autowired
+    private OpenshiftManager osmanager;
+    @Autowired
+    private OpenbatonManager obmanager;
+    @Autowired
+    private ApplicationRepository appRepo;
+    @Autowired
+    private PaaSProperties paaSProperties;
+    @Autowired
+    private AppManager appManager;
 
     @PostConstruct
     private void init() {
         //System.setProperty("javax.net.ssl.trustStore", paaSProperties.getKeystore());
         System.setProperty("javax.net.ssl.trustStore", "/etc/nubomedia/openshift-keystore");
         this.logger = LoggerFactory.getLogger(this.getClass());
-        this.appIDGenerator = new SecureRandom();
     }
 
-    @RequestMapping(value = "/app",  method = RequestMethod.POST)
-    public @ResponseBody NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException, StunServerException {
-
-        if(token == null){
+    @RequestMapping(value = "/app", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException, StunServerException {
+        if (token == null) {
             throw new UnauthorizedException("No auth-token header");
         }
-
-        if(request.getAppName().length() > 18){
-
+        if (request.getAppName().length() > 18) {
             throw new NameStructureException("Name is too long");
-
         }
-
-        if(request.getAppName().contains(".")){
+        if (request.getAppName().contains(".")) {
             throw new NameStructureException("Name can't contains dots");
         }
 
-        if(request.getAppName().contains("_")){
+        if (request.getAppName().contains("_")) {
             throw new NameStructureException("Name can't contain underscore");
         }
 
-        if(!request.getAppName().matches("[a-z0-9]+(?:[._-][a-z0-9]+)*")){
+        if (!request.getAppName().matches("[a-z0-9]+(?:[._-][a-z0-9]+)*")) {
             throw new NameStructureException("Name must match [a-z0-9]+(?:[._-][a-z0-9]+)*");
         }
 
@@ -107,56 +109,33 @@ public class PaaSAPI {
 
         logger.debug("REQUEST" + request.toString());
 
-        List<String> protocols = new ArrayList<>();
-        List<Integer> targetPorts = new ArrayList<>();
-        List<Integer> ports = new ArrayList<>();
-
-        for (int i = 0; i < request.getPorts().length; i++){
-
-            protocols.add(request.getPorts()[i].getProtocol());
-            targetPorts.add(request.getPorts()[i].getTargetPort());
-            ports.add(request.getPorts()[i].getPort());
-
-        }
 
         NubomediaCreateAppResponse res = new NubomediaCreateAppResponse();
-        String appID = new BigInteger(130,appIDGenerator).toString(64);
-        logger.debug("App ID " + appID + "\n");
-
-        logger.debug("request params " + request.getAppName() + " " + request.getGitURL() + " " + request.getProjectName() + " " + ports + " " + protocols + " " + request.getReplicasNumber());
-
-        //Openbaton MediaServer Request
-        logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
-        MediaServerGroup mediaServerGroup = obmanager.getMediaServerGroupID(request.getFlavor(),appID,paaSProperties.getInternalURL(),request.isCloudRepository(), request.isCdnConnector(), request.getQualityOfService(),request.isTurnServerActivate(),request.getTurnServerUrl(),request.getTurnServerUsername(),request.getTurnServerPassword(),request.isStunServerActivate(), request.getStunServerIp(), request.getStunServerPort(), request.getScaleInOut(),request.getScale_out_threshold());
-        mediaServerGroup.setToken(token);
-
-        deploymentMap.put(appID, mediaServerGroup);
-
-        Application persistApp = new Application(appID,request.getFlavor(),request.getAppName(),request.getProjectName(),"", mediaServerGroup.getMediaServerGroupID(), request.getGitURL(), targetPorts, ports, protocols,null, request.getReplicasNumber(),request.getSecretName(),false);
-        appRepo.save(persistApp);
-
-        res.setApp(persistApp);
+        Application app = appManager.createApplication(request, token);
+        res.setApp(app);
         res.setCode(200);
         return res;
     }
 
-    @RequestMapping(value = "/app/{id}", method =  RequestMethod.GET)
-    public @ResponseBody Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws ApplicationNotFoundException, UnauthorizedException {
+    @RequestMapping(value = "/app/{id}", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws ApplicationNotFoundException, UnauthorizedException {
 
         logger.info("Request status for " + id + " app");
 
-        if(token == null){
+        if (token == null) {
             throw new UnauthorizedException("no auth-token header");
         }
 
-        if(!appRepo.exists(id)){
+        if (!appRepo.exists(id)) {
             throw new ApplicationNotFoundException("Application with ID not found");
         }
 
         Application app = appRepo.findFirstByAppID(id);
         logger.debug("Retrieving status for " + app.toString() + "\nwith status " + app.getStatus());
 
-        switch (app.getStatus()){
+        switch (app.getStatus()) {
             case CREATED:
                 app.setStatus(obmanager.getStatus(app.getNsrID()));
                 break;
@@ -166,31 +145,30 @@ public class PaaSAPI {
             case INITIALISED:
                 try {
                     app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
-                }catch (ResourceAccessException e){
+                } catch (ResourceAccessException e) {
                     app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
                 }
                 break;
             case BUILDING:
-                try{
-                    app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
-                }catch (ResourceAccessException e){
+                try {
+                    app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                } catch (ResourceAccessException e) {
                     app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
                 }
                 break;
             case DEPLOYNG:
-                try{
-                    app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
-                }catch (ResourceAccessException e){
+                try {
+                    app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                } catch (ResourceAccessException e) {
                     app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
                 }
                 break;
             case FAILED:
                 logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
-                if (!app.isResourceOK()){
+                if (!app.isResourceOK()) {
                     app.setStatus(BuildingStatus.FAILED);
                     break;
-                }
-                else {
+                } else {
                     try {
                         app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
                     } catch (ResourceAccessException e) {
@@ -199,15 +177,15 @@ public class PaaSAPI {
                 }
                 break;
             case RUNNING:
-                try{
-                    app.setStatus(osmanager.getStatus(token, app.getAppName(),app.getProjectName()));
-                    app.setPodList(osmanager.getPodList(token,app.getAppName(),app.getProjectName()));
-                }catch (ResourceAccessException e){
+                try {
+                    app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                    app.setPodList(osmanager.getPodList(token, app.getAppName(), app.getProjectName()));
+                } catch (ResourceAccessException e) {
                     app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
                 }
                 break;
             case PAAS_RESOURCE_MISSING:
-                app.setStatus(osmanager.getStatus(token,app.getAppName(),app.getProjectName()));
+                app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
                 break;
         }
 
@@ -218,35 +196,37 @@ public class PaaSAPI {
     }
 
     @RequestMapping(value = "/app/{id}/buildlogs", method = RequestMethod.GET)
-    public @ResponseBody NubomediaBuildLogs getBuildLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException {
+    public
+    @ResponseBody
+    NubomediaBuildLogs getBuildLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException {
 
-        if(token == null){
+        if (token == null) {
             throw new UnauthorizedException("no auth-token header");
         }
 
         NubomediaBuildLogs res = new NubomediaBuildLogs();
 
-        if(!appRepo.exists(id)){
+        if (!appRepo.exists(id)) {
             return null;
         }
 
         Application app = appRepo.findFirstByAppID(id);
 
-        if(app.getStatus().equals(BuildingStatus.FAILED) && !app.isResourceOK()){
+        if (app.getStatus().equals(BuildingStatus.FAILED) && !app.isResourceOK()) {
 
             res.setId(id);
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
             res.setLog("Something wrong on retrieving resources");
 
-        } else if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
+        } else if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)) {
             res.setId(id);
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
             res.setLog("The application is retrieving resources " + app.getStatus());
 
             return res;
-        } else if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)){
+        } else if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)) {
             res.setId(id);
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
@@ -271,37 +251,41 @@ public class PaaSAPI {
     }
 
     @RequestMapping(value = "/app/{id}/logs/{podName}", method = RequestMethod.GET)
-    public @ResponseBody String getApplicationLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id,@PathVariable("podName") String podName) throws UnauthorizedException, ApplicationNotFoundException {
+    public
+    @ResponseBody
+    String getApplicationLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id, @PathVariable("podName") String podName) throws UnauthorizedException, ApplicationNotFoundException {
 
-        if(token == null){
+        if (token == null) {
             throw new UnauthorizedException("no auth-token header");
         }
 
-        if(!appRepo.exists(id)){
+        if (!appRepo.exists(id)) {
             throw new ApplicationNotFoundException("Application with ID not found");
         }
 
         Application app = appRepo.findFirstByAppID(id);
 
-        if(!app.getStatus().equals(BuildingStatus.RUNNING)){
+        if (!app.getStatus().equals(BuildingStatus.RUNNING)) {
             return "Application Status " + app.getStatus() + ", logs are not available until the status is RUNNING";
         }
 
-        return osmanager.getApplicationLog(token,app.getAppName(),app.getProjectName(),podName);
+        return osmanager.getApplicationLog(token, app.getAppName(), app.getProjectName(), podName);
 
     }
 
     @RequestMapping(value = "/app", method = RequestMethod.GET)
-    public @ResponseBody Iterable<Application> getApps(@RequestHeader("Auth-token") String token) throws UnauthorizedException, ApplicationNotFoundException {
+    public
+    @ResponseBody
+    Iterable<Application> getApps(@RequestHeader("Auth-token") String token) throws UnauthorizedException, ApplicationNotFoundException {
 
-        if(token == null){
+        if (token == null) {
             throw new UnauthorizedException("no auth-token header");
         }
         //BETA
         Iterable<Application> applications = this.appRepo.findAll();
 
-        for (Application app : applications){
-            app.setStatus(this.getStatus(token,app));
+        for (Application app : applications) {
+            app.setStatus(this.getStatus(token, app));
         }
 
         this.appRepo.save(applications);
@@ -310,28 +294,30 @@ public class PaaSAPI {
     }
 
     @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
-    public @ResponseBody NubomediaDeleteAppResponse deleteApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException {
+    public
+    @ResponseBody
+    NubomediaDeleteAppResponse deleteApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException {
 
-        if(token == null){
+        if (token == null) {
             throw new UnauthorizedException("no auth-token header");
         }
 
         logger.debug("id " + id);
 
-        if(!appRepo.exists(id)){
-            return new NubomediaDeleteAppResponse(id,"Application not found","null",404);
+        if (!appRepo.exists(id)) {
+            return new NubomediaDeleteAppResponse(id, "Application not found", "null", 404);
         }
 
         Application app = appRepo.findFirstByAppID(id);
-        app.setStatus(this.getStatus(token,app));
+        app.setStatus(this.getStatus(token, app));
         logger.debug("Deleting " + app.toString());
 
-        if (!app.isResourceOK()){
+        if (!app.isResourceOK()) {
 
             String name = app.getAppName();
             String projectName = app.getProjectName();
 
-            if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING) || app.getStatus().equals(BuildingStatus.FAILED)){
+            if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING) || app.getStatus().equals(BuildingStatus.FAILED)) {
                 MediaServerGroup server = deploymentMap.get(id);
                 obmanager.deleteDescriptor(server.getNsdID());
                 //obmanager.deleteEvent(server.getEventAllocatedID());
@@ -345,15 +331,15 @@ public class PaaSAPI {
             }
 
             appRepo.delete(app);
-            return new NubomediaDeleteAppResponse(id,name,projectName,200);
+            return new NubomediaDeleteAppResponse(id, name, projectName, 200);
 
         }
 
-        if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)){
+        if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)) {
             obmanager.deleteRecord(app.getNsrID());
             appRepo.delete(app);
 
-            return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),200);
+            return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), 200);
         }
 
 //        if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
@@ -368,19 +354,21 @@ public class PaaSAPI {
         HttpStatus resDelete = HttpStatus.BAD_REQUEST;
         try {
             resDelete = osmanager.deleteApplication(token, app.getAppName(), app.getProjectName());
-        } catch (ResourceAccessException e){
+        } catch (ResourceAccessException e) {
             logger.info("PaaS Missing");
         }
 
         appRepo.delete(app);
 
-        return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),resDelete.value());
+        return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), resDelete.value());
     }
 
     @RequestMapping(value = "/secret", method = RequestMethod.POST)
-    public @ResponseBody String createSecret(@RequestHeader("Auth-token") String token, @RequestBody NubomediaCreateSecretRequest ncsr) throws UnauthorizedException {
+    public
+    @ResponseBody
+    String createSecret(@RequestHeader("Auth-token") String token, @RequestBody NubomediaCreateSecretRequest ncsr) throws UnauthorizedException {
 
-        if(token == null){
+        if (token == null) {
             throw new UnauthorizedException("no auth-token header");
         }
 
@@ -389,28 +377,30 @@ public class PaaSAPI {
     }
 
     @RequestMapping(value = "/secret/{projectName}/{secretName}", method = RequestMethod.DELETE)
-    public @ResponseBody NubomediaDeleteSecretResponse deleteSecret (@RequestHeader("Auth-token") String token, @PathVariable("secretName") String secretName, @PathVariable("projectName") String projectName) throws UnauthorizedException {
+    public
+    @ResponseBody
+    NubomediaDeleteSecretResponse deleteSecret(@RequestHeader("Auth-token") String token, @PathVariable("secretName") String secretName, @PathVariable("projectName") String projectName) throws UnauthorizedException {
 
-        if(token == null){
+        if (token == null) {
             throw new UnauthorizedException("no auth-token header");
         }
 
         HttpStatus deleteStatus = osmanager.deleteSecret(token, secretName, projectName);
-        return new NubomediaDeleteSecretResponse(secretName,projectName,deleteStatus.value());
+        return new NubomediaDeleteSecretResponse(secretName, projectName, deleteStatus.value());
     }
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
-    public @ResponseBody NubomediaAuthorizationResponse authorize(@RequestBody NubomediaAuthorizationRequest request) throws UnauthorizedException {
+    public
+    @ResponseBody
+    NubomediaAuthorizationResponse authorize(@RequestBody NubomediaAuthorizationRequest request) throws UnauthorizedException {
 
-        String token = osmanager.authenticate(request.getUsername(),request.getPassword());
-        if (token.equals("Unauthorized")){
-            return new NubomediaAuthorizationResponse(token,401);
-        }
-        else if (token.equals("PaaS Missing")){
-            return new NubomediaAuthorizationResponse(token,404);
-        }
-        else{
-            return new NubomediaAuthorizationResponse(token,200);
+        String token = osmanager.authenticate(request.getUsername(), request.getPassword());
+        if (token.equals("Unauthorized")) {
+            return new NubomediaAuthorizationResponse(token, 401);
+        } else if (token.equals("PaaS Missing")) {
+            return new NubomediaAuthorizationResponse(token, 404);
+        } else {
+            return new NubomediaAuthorizationResponse(token, 200);
         }
     }
 
@@ -421,38 +411,38 @@ public class PaaSAPI {
     }
 
     @RequestMapping(value = "/openbaton/{id}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id) throws UnauthorizedException{
+    public void startOpenshiftBuild(@RequestBody OpenbatonEvent evt, @PathVariable("id") String id) throws UnauthorizedException {
         logger.debug("starting callback for appId" + id);
         logger.info("Received event " + evt);
         Application app = appRepo.findFirstByAppID(id);
         logger.debug(deploymentMap.toString());
         MediaServerGroup server = deploymentMap.get(id);
 
-        if(evt.getAction().equals(Action.INSTANTIATE_FINISH) && server.getMediaServerGroupID().equals(evt.getPayload().getId())){
+        if (evt.getAction().equals(Action.INSTANTIATE_FINISH) && server.getMediaServerGroupID().equals(evt.getPayload().getId())) {
             logger.info("[PAAS]: EVENT_FINISH " + new Date().getTime());
             app.setStatus(BuildingStatus.INITIALISED);
             app.setResourceOK(true);
             appRepo.save(app);
 
-            String vnfrID ="";
+            String vnfrID = "";
             String cloudRepositoryIp = null;
             String cloudRepositoryPort = null;
             String cdnServerIp = null;
 
 
-            for(VirtualNetworkFunctionRecord record : evt.getPayload().getVnfr()){
+            for (VirtualNetworkFunctionRecord record : evt.getPayload().getVnfr()) {
 
-                if(record.getEndpoint().equals("media-server"))
+                if (record.getEndpoint().equals("media-server"))
                     vnfrID = record.getId();
 
-                if(record.getName().contains("mongodb")){
+                if (record.getName().contains("mongodb")) {
                     cloudRepositoryIp = this.getCloudRepoIP(record);
                     cloudRepositoryPort = "7676";
 
-                    for (LifecycleEvent lce : record.getLifecycle_event()){
-                        if(lce.getEvent().name().equals("START")){
-                            for (String scriptName : lce.getLifecycle_events()){
-                                if (scriptName.equals("start-cdn.sh")){
+                    for (LifecycleEvent lce : record.getLifecycle_event()) {
+                        if (lce.getEvent().name().equals("START")) {
+                            for (String scriptName : lce.getLifecycle_events()) {
+                                if (scriptName.equals("start-cdn.sh")) {
                                     cdnServerIp = cloudRepositoryIp;
                                     break;
                                 }
@@ -469,18 +459,19 @@ public class PaaSAPI {
                 int[] ports = new int[app.getPorts().size()];
                 int[] targetPorts = new int[app.getTargetPorts().size()];
 
-                for(int i = 0; i < ports.length; i++){
+                for (int i : ports) {
                     ports[i] = app.getPorts().get(i);
                     targetPorts[i] = app.getTargetPorts().get(i);
                 }
 
+
                 logger.info("[PAAS]: CREATE_APP_OS " + new Date().getTime());
-                logger.debug("cloudRepositoryPort "+ cloudRepositoryPort + " IP " + cloudRepositoryIp);
+                logger.debug("cloudRepositoryPort " + cloudRepositoryPort + " IP " + cloudRepositoryIp);
 
                 try {
-                    route = osmanager.buildApplication(server.getToken(), app.getAppID(), app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(), vnfrID, paaSProperties.getVnfmIP(), paaSProperties.getVnfmPort(), cloudRepositoryIp, cloudRepositoryPort,cdnServerIp);
+                    route = osmanager.buildApplication(server.getToken(), app.getAppID(), app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(), vnfrID, paaSProperties.getVnfmIP(), paaSProperties.getVnfmPort(), cloudRepositoryIp, cloudRepositoryPort, cdnServerIp);
 
-                } catch (ResourceAccessException e){
+                } catch (ResourceAccessException e) {
                     obmanager.deleteDescriptor(server.getNsdID());
                     //obmanager.deleteEvent(server.getEventAllocatedID());
                     //obmanager.deleteEvent(server.getEventErrorID());
@@ -502,8 +493,7 @@ public class PaaSAPI {
             app.setRoute(route);
             appRepo.save(app);
             deploymentMap.remove(app.getAppID());
-        }
-        else if (evt.getAction().equals(Action.ERROR)){
+        } else if (evt.getAction().equals(Action.ERROR)) {
 
             obmanager.deleteDescriptor(server.getNsdID());
             //obmanager.deleteEvent(server.getEventErrorID());
@@ -518,10 +508,10 @@ public class PaaSAPI {
 
     private String getCloudRepoIP(VirtualNetworkFunctionRecord record) {
 
-        for (VirtualDeploymentUnit vdu : record.getVdu()){
-            for (VNFCInstance instance : vdu.getVnfc_instance()){
-                for (Ip ip : instance.getFloatingIps()){
-                    if (ip != null){
+        for (VirtualDeploymentUnit vdu : record.getVdu()) {
+            for (VNFCInstance instance : vdu.getVnfc_instance()) {
+                for (Ip ip : instance.getFloatingIps()) {
+                    if (ip != null) {
                         return ip.getIp();
                     }
                 }
@@ -535,9 +525,9 @@ public class PaaSAPI {
 
         BuildingStatus res = null;
 
-        switch (app.getStatus()){
+        switch (app.getStatus()) {
             case CREATED:
-                res =  obmanager.getStatus(app.getNsrID());
+                res = obmanager.getStatus(app.getNsrID());
                 break;
             case INITIALIZING:
                 res = obmanager.getStatus(app.getNsrID());
@@ -545,31 +535,30 @@ public class PaaSAPI {
             case INITIALISED:
                 try {
                     res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
-                }catch (ResourceAccessException e){
+                } catch (ResourceAccessException e) {
                     res = BuildingStatus.PAAS_RESOURCE_MISSING;
                 }
                 break;
             case BUILDING:
-                try{
-                    res = osmanager.getStatus(token, app.getAppName(),app.getProjectName());
-                }catch (ResourceAccessException e){
+                try {
+                    res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
+                } catch (ResourceAccessException e) {
                     res = BuildingStatus.PAAS_RESOURCE_MISSING;
                 }
                 break;
             case DEPLOYNG:
-                try{
-                    res = osmanager.getStatus(token, app.getAppName(),app.getProjectName());
-                }catch (ResourceAccessException e){
+                try {
+                    res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
+                } catch (ResourceAccessException e) {
                     res = BuildingStatus.PAAS_RESOURCE_MISSING;
                 }
                 break;
             case FAILED:
                 logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
-                if (!app.isResourceOK()){
+                if (!app.isResourceOK()) {
                     res = BuildingStatus.FAILED;
                     break;
-                }
-                else {
+                } else {
                     try {
                         res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
                     } catch (ResourceAccessException e) {
@@ -578,14 +567,14 @@ public class PaaSAPI {
                 }
                 break;
             case RUNNING:
-                try{
-                    res = osmanager.getStatus(token, app.getAppName(),app.getProjectName());
-                }catch (ResourceAccessException e){
+                try {
+                    res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
+                } catch (ResourceAccessException e) {
                     res = BuildingStatus.PAAS_RESOURCE_MISSING;
                 }
                 break;
             case PAAS_RESOURCE_MISSING:
-                res = osmanager.getStatus(token, app.getAppName(),app.getProjectName());
+                res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
                 break;
         }
 

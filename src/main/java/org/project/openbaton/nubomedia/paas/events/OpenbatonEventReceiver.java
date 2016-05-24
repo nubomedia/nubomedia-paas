@@ -23,6 +23,7 @@ import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.sdk.api.exception.SDKException;
+import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.model.openbaton.OpenbatonEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +39,15 @@ public class OpenbatonEventReceiver {
 
     @Autowired private Gson mapper;
 
+    @Autowired
+    private AppManager appManager;
 
     public void receiveNewNsr(String message) {
         OpenbatonEvent openbatonEvent;
         try {
             openbatonEvent = getOpenbatonEvent(message);
             logger.debug("Received nfvo event with action: " + openbatonEvent.getAction());
-
+            appManager.startOpenshiftBuild(openbatonEvent, openbatonEvent.getPayload().getId());
 
         } catch (Exception e) {
             logger.error(e.getMessage(),e);

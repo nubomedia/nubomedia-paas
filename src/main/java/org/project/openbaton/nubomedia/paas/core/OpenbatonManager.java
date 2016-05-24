@@ -113,14 +113,11 @@ public class OpenbatonManager {
         }
     }
 
-    public MediaServerGroup getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet,boolean cdnConnectorSet, QoS qos,boolean turnServerActivate, String serverTurnIp,String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
+    public MediaServerGroup createMediaServerGroup(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, boolean cdnConnectorSet, QoS qos, boolean turnServerActivate, String serverTurnIp, String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
 
         logger.debug("FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
 
         NetworkServiceDescriptor targetNSD = this.configureDescriptor(networkServiceDescriptorNubo,flavorID,qos,turnServerActivate, serverTurnIp,serverTurnUsername,serverTurnPassword,stunServerActivate, stunServerIp, stunServerPort, scaleInOut,scale_out_threshold);
-
-
-
         if (cloudRepositorySet && !cdnConnectorSet){
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
             vnfds.add(cloudRepository);
@@ -145,29 +142,16 @@ public class OpenbatonManager {
 
         targetNSD = nfvoRequestor.getNetworkServiceDescriptorAgent().create(targetNSD);
 
-        MediaServerGroup res = new MediaServerGroup();
-        res.setNsdID(targetNSD.getId());
+        MediaServerGroup mediaServerGroup = new MediaServerGroup();
+        mediaServerGroup.setNsdID(targetNSD.getId());
+        mediaServerGroup.setAppId(appID);
         NetworkServiceRecord nsr = null;
 
         nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
         logger.debug("NSR " + nsr.toString());
-
-/*        EventEndpoint eventEndpointCreation = new EventEndpoint();
-        eventEndpointCreation.setType(EndpointType.REST);
-        eventEndpointCreation.setEndpoint(callbackUrl + apiPath + "/openbaton/" + appID);
-        eventEndpointCreation.setEvent(Action.INSTANTIATE_FINISH);
-        eventEndpointCreation.setNetworkServiceId(nsr.getId());
-
-        EventEndpoint eventEndpointError = new EventEndpoint();
-        eventEndpointError.setType(EndpointType.REST);
-        eventEndpointError.setEndpoint(callbackUrl + apiPath + "/openbaton/" + appID);
-        eventEndpointError.setEvent(Action.ERROR);
-        eventEndpointError.setNetworkServiceId(nsr.getId());*/
-
-        res.setMediaServerGroupID(nsr.getId());
-
-        logger.debug("Result " + res.toString());
-        return res;
+        mediaServerGroup.setMediaServerGroupID(nsr.getId());
+        logger.debug("Result " + mediaServerGroup.toString());
+        return mediaServerGroup;
     }
 
     private EventEndpoint createEventEndpoint(String name, EndpointType type, Action action, String url){

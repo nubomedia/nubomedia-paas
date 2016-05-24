@@ -26,6 +26,7 @@ public class MediaServerGroup {
     private String eventErrorID;
     private String nsdID;
     private String token;
+    private String appId;
 
     public MediaServerGroup() {
     }
@@ -70,11 +71,20 @@ public class MediaServerGroup {
         this.token = token;
     }
 
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
     @Override
     public String toString() {
         return "OpenbatonCreateServer{" +
                 "mediaServerGroupID='" + mediaServerGroupID + '\'' +
                 ", eventAllocatedID='" + eventAllocatedID + '\'' +
+                ", appID='" + appId + '\'' +
                 ", eventErrorID='" + eventErrorID + '\'' +
                 ", nsdID='" + nsdID + '\'' +
                 ", token='" + token + '\'' +
