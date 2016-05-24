@@ -1,4 +1,4 @@
-package org.project.openbaton.nubomedia.paas.openshift;
+package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import org.apache.commons.codec.binary.Base64;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;

@@ -1,4 +1,4 @@
-package org.project.openbaton.nubomedia.paas.openshift;
+package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import org.project.openbaton.nubomedia.paas.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;

@@ -1,4 +1,4 @@
-package org.project.openbaton.nubomedia.paas.openbaton;
+package org.project.openbaton.nubomedia.paas.main.utils;
 
 
 import com.google.gson.Gson;
@@ -31,8 +31,8 @@ public class OpenbatonConfiguration {
     @Bean
     public VimInstance getVimInstance(){
         VimInstance vim = new VimInstance();
-        logger.debug("Creating vim");
-        vim.setName("nubomedia-vim");
+        logger.debug("Creating VIM Object "+vimProperties.getVimName());
+        vim.setName(vimProperties.getVimName());
         vim.setAuthUrl(vimProperties.getAuthURL());
         vim.setKeyPair(vimProperties.getKeypair());
         vim.setPassword(vimProperties.getPassword());
@@ -44,7 +44,7 @@ public class OpenbatonConfiguration {
         location.setLatitude(vimProperties.getLocationLatitude());
         location.setLongitude(vimProperties.getLocationLongitude());
         vim.setLocation(location);
-        logger.debug("Sending VIM " + vim.toString());
+        logger.debug("VIM Object generated " + vim);
         return vim;
     }
 
@@ -53,7 +53,7 @@ public class OpenbatonConfiguration {
         VirtualNetworkFunctionDescriptor vnfd = null;
         Gson mapper = new GsonBuilder().create();
         try{
-            logger.debug("Reading cloud repository");
+            logger.debug("Reading cloud repository descriptor");
             FileReader vnfdFile = new FileReader("/etc/nubomedia/cloudrepo-vnfd.json");
             vnfd = mapper.fromJson(vnfdFile,VirtualNetworkFunctionDescriptor.class);
             logger.debug("CLOUD REPOSITORY IS " + vnfd.toString());

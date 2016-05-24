@@ -1,4 +1,4 @@
-package org.project.openbaton.nubomedia.paas.openshift.builders;
+package org.project.openbaton.nubomedia.paas.core.openshift.builders;
 
 import org.project.openbaton.nubomedia.paas.model.openshift.HPASpec;
 import org.project.openbaton.nubomedia.paas.model.openshift.HPASpecCpuMetrics;

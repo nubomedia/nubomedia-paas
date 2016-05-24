@@ -2,10 +2,10 @@ package org.project.openbaton.nubomedia.paas.core;
 
 
 import com.google.gson.Gson;
-import org.project.openbaton.nubomedia.paas.openshift.*;
+import org.project.openbaton.nubomedia.paas.core.openshift.*;
 import org.project.openbaton.nubomedia.paas.utils.OpenshiftProperties;
 import org.project.openbaton.nubomedia.paas.messages.BuildingStatus;
-import org.project.openbaton.nubomedia.paas.openshift.builders.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.openshift.ImageStreamConfig;

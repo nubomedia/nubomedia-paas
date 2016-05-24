@@ -1,4 +1,4 @@
-package org.project.openbaton.nubomedia.paas.openshift;
+package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import com.google.gson.Gson;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;

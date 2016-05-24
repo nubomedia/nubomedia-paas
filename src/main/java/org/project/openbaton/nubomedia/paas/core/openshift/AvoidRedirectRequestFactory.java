@@ -1,4 +1,4 @@
-package org.project.openbaton.nubomedia.paas.openshift;
+package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 

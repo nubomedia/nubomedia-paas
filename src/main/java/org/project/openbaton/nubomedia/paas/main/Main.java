@@ -1,6 +1,6 @@
 package org.project.openbaton.nubomedia.paas.main;
 
-import org.project.openbaton.nubomedia.paas.openshift.OpenshiftConfiguration;
+import org.project.openbaton.nubomedia.paas.core.openshift.OpenshiftConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.orm.jpa.EntityScan;

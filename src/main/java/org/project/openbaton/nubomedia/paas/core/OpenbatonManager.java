@@ -12,7 +12,7 @@ import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.utils.NfvoProperties;
 import org.project.openbaton.nubomedia.paas.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.paas.model.openbaton.Flavor;
-import org.project.openbaton.nubomedia.paas.openbaton.MediaServerGroup;
+import org.project.openbaton.nubomedia.paas.core.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.openbaton.QoS;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;

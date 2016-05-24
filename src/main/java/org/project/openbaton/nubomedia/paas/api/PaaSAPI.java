@@ -12,7 +12,7 @@ import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
 import org.project.openbaton.nubomedia.paas.core.OpenshiftManager;
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.paas.messages.*;
-import org.project.openbaton.nubomedia.paas.openbaton.MediaServerGroup;
+import org.project.openbaton.nubomedia.paas.core.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.openbaton.OpenbatonEvent;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;

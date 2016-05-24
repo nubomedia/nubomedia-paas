@@ -19,6 +19,7 @@ public class VimProperties {
     private String locationName;
     private String locationLatitude;
     private String locationLongitude;
+    private String vimName;
 
 
     public String getAuthURL() {
@@ -91,5 +92,13 @@ public class VimProperties {
 
     public void setLocationLongitude(String locationLongitude) {
         this.locationLongitude = locationLongitude;
+    }
+
+    public String getVimName() {
+        return vimName;
+    }
+
+    public void setVimName(String vimName) {
+        this.vimName = vimName;
     }
 }
