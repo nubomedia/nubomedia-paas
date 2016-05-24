@@ -70,7 +70,8 @@ public class PaaSAPI {
 
     @PostConstruct
     private void init() {
-        System.setProperty("javax.net.ssl.trustStore", paaSProperties.getKeystore());
+        //System.setProperty("javax.net.ssl.trustStore", paaSProperties.getKeystore());
+        System.setProperty("javax.net.ssl.trustStore", "/etc/nubomedia/openshift-keystore");
         this.logger = LoggerFactory.getLogger(this.getClass());
         this.appIDGenerator = new SecureRandom();
     }
@@ -89,9 +90,7 @@ public class PaaSAPI {
         }
 
         if(request.getAppName().contains(".")){
-
             throw new NameStructureException("Name can't contains dots");
-
         }
 
         if(request.getAppName().contains("_")){
@@ -335,8 +334,8 @@ public class PaaSAPI {
             if(app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING) || app.getStatus().equals(BuildingStatus.FAILED)){
                 MediaServerGroup server = deploymentMap.get(id);
                 obmanager.deleteDescriptor(server.getNsdID());
-                obmanager.deleteEvent(server.getEventAllocatedID());
-                obmanager.deleteEvent(server.getEventErrorID());
+                //obmanager.deleteEvent(server.getEventAllocatedID());
+                //obmanager.deleteEvent(server.getEventErrorID());
 
                 if (!app.getStatus().equals(BuildingStatus.FAILED) && obmanager.existRecord(server.getMediaServerGroupID())) {
                     obmanager.deleteRecord(app.getNsrID());
@@ -483,8 +482,8 @@ public class PaaSAPI {
 
                 } catch (ResourceAccessException e){
                     obmanager.deleteDescriptor(server.getNsdID());
-                    obmanager.deleteEvent(server.getEventAllocatedID());
-                    obmanager.deleteEvent(server.getEventErrorID());
+                    //obmanager.deleteEvent(server.getEventAllocatedID());
+                    //obmanager.deleteEvent(server.getEventErrorID());
                     app.setStatus(BuildingStatus.FAILED);
                     appRepo.save(app);
                     deploymentMap.remove(app.getAppID());
@@ -498,8 +497,8 @@ public class PaaSAPI {
             }
             obmanager.deleteDescriptor(server.getNsdID());
 
-            obmanager.deleteEvent(server.getEventAllocatedID());
-            obmanager.deleteEvent(server.getEventErrorID());
+            //obmanager.deleteEvent(server.getEventAllocatedID());
+            //obmanager.deleteEvent(server.getEventErrorID());
             app.setRoute(route);
             appRepo.save(app);
             deploymentMap.remove(app.getAppID());
@@ -507,8 +506,8 @@ public class PaaSAPI {
         else if (evt.getAction().equals(Action.ERROR)){
 
             obmanager.deleteDescriptor(server.getNsdID());
-            obmanager.deleteEvent(server.getEventErrorID());
-            obmanager.deleteEvent(server.getEventAllocatedID());
+            //obmanager.deleteEvent(server.getEventErrorID());
+            //obmanager.deleteEvent(server.getEventAllocatedID());
             obmanager.deleteRecord(server.getMediaServerGroupID());
             app.setStatus(BuildingStatus.FAILED);
             appRepo.save(app);

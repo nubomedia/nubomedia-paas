@@ -25,6 +25,7 @@ import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.openbaton.catalogue.nfvo.*;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
+import org.project.openbaton.nubomedia.paas.events.ConfigurationBeans;
 import org.project.openbaton.nubomedia.paas.utils.NfvoProperties;
 import org.project.openbaton.nubomedia.paas.messages.BuildingStatus;
 import org.project.openbaton.nubomedia.paas.model.openbaton.Flavor;
@@ -94,6 +95,22 @@ public class OpenbatonManager {
                 e1.printStackTrace();
             }
         }
+        // creating the queues for receiving events
+        EventEndpoint eventEndpointCreation = createEventEndpoint("paas-nsr-instantiate-finish",EndpointType.RABBIT,Action.INSTANTIATE_FINISH, ConfigurationBeans.queueName_eventInstatiateFinish);
+        EventEndpoint eventEndpointError = createEventEndpoint("paas-nsr-instantiate-finish",EndpointType.RABBIT,Action.ERROR, ConfigurationBeans.queueName_eventInstatiateFinish);
+
+
+        try {
+            eventEndpointCreation = this.nfvoRequestor.getEventAgent().create(eventEndpointCreation);
+        } catch (SDKException e) {
+            logger.error("problem creating the nsr instantiate finish queue");
+        }
+
+        try {
+            eventEndpointError = this.nfvoRequestor.getEventAgent().create(eventEndpointError);
+        } catch (SDKException e) {
+            logger.error("problem creating the nsr error queue");
+        }
     }
 
     public MediaServerGroup getMediaServerGroupID(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet,boolean cdnConnectorSet, QoS qos,boolean turnServerActivate, String serverTurnIp,String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
@@ -135,7 +152,7 @@ public class OpenbatonManager {
         nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
         logger.debug("NSR " + nsr.toString());
 
-        EventEndpoint eventEndpointCreation = new EventEndpoint();
+/*        EventEndpoint eventEndpointCreation = new EventEndpoint();
         eventEndpointCreation.setType(EndpointType.REST);
         eventEndpointCreation.setEndpoint(callbackUrl + apiPath + "/openbaton/" + appID);
         eventEndpointCreation.setEvent(Action.INSTANTIATE_FINISH);
@@ -145,18 +162,21 @@ public class OpenbatonManager {
         eventEndpointError.setType(EndpointType.REST);
         eventEndpointError.setEndpoint(callbackUrl + apiPath + "/openbaton/" + appID);
         eventEndpointError.setEvent(Action.ERROR);
-        eventEndpointError.setNetworkServiceId(nsr.getId());
+        eventEndpointError.setNetworkServiceId(nsr.getId());*/
 
         res.setMediaServerGroupID(nsr.getId());
 
-        eventEndpointCreation = this.nfvoRequestor.getEventAgent().create(eventEndpointCreation);
-        res.setEventAllocatedID(eventEndpointCreation.getId());
-
-        eventEndpointError = this.nfvoRequestor.getEventAgent().create(eventEndpointError);
-        res.setEventErrorID(eventEndpointError.getId());
-
         logger.debug("Result " + res.toString());
         return res;
+    }
+
+    private EventEndpoint createEventEndpoint(String name, EndpointType type, Action action, String url){
+        EventEndpoint eventEndpoint = new EventEndpoint();
+        eventEndpoint.setEvent(action);
+        eventEndpoint.setName(name);
+        eventEndpoint.setType(type);
+        eventEndpoint.setEndpoint(url);
+        return eventEndpoint;
     }
 
     public BuildingStatus getStatus(String nsrID) {

@@ -18,6 +18,7 @@ package org.project.openbaton.nubomedia.paas.events;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.project.openbaton.nubomedia.paas.utils.RabbitMQProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
@@ -28,6 +29,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -46,6 +48,9 @@ public class ConfigurationBeans {
     public static final String queueName_eventResourcesReleaseFinish = "nfvo.paas.nsr.delete";
     private Logger logger;
 
+    @Autowired
+    private RabbitMQProperties rabbitMQProperties;
+
     @PostConstruct
     private void init(){
         this.logger = LoggerFactory.getLogger(this.getClass());
@@ -59,9 +64,9 @@ public class ConfigurationBeans {
     @Bean
     public ConnectionFactory getConnectionFactory(Environment env){
         logger.debug("Created ConnectionFactory");
-        CachingConnectionFactory factory = new CachingConnectionFactory(env.getProperty("spring.rabbitmq.host"));
-        factory.setPassword(env.getProperty("spring.rabbitmq.password"));
-        factory.setUsername(env.getProperty("spring.rabbitmq.username"));
+        CachingConnectionFactory factory = new CachingConnectionFactory(rabbitMQProperties.getHost());
+        factory.setPassword(rabbitMQProperties.getPassword());
+        factory.setUsername(rabbitMQProperties.getUsername());
         return factory;
     }
 

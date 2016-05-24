@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -73,7 +74,10 @@ public class AuthenticationManager {
             response = template.exchange(builder.build().encode().toUriString(), HttpMethod.GET, authEntity, String.class);
         } catch (ResourceAccessException e){
             return "PaaS Missing";
+        } catch (HttpClientErrorException e){
+            throw new UnauthorizedException("Username: " + username + " password: " + password + " are invalid");
         }
+
         logger.debug("Response " + response.toString());
 
         if(response.getStatusCode().equals(HttpStatus.FOUND)){
