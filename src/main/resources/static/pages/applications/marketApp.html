@@ -29,7 +29,7 @@
 <div class="row">
     <div class="col-lg-12 ">
         <button id="btn_create_topology" class="btn btn-primary pull-right"
-                title="Create a new App" ng-click="createApp()">Create App
+                title="Create a new App" ng-click="createMarketApp()">Create App
         </button>
     </div>
 </div>
@@ -99,7 +99,8 @@
                             <br/>
 
                             <div class="form-group" ng-repeat="(key,value) in appCreate"
-                                 ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut'">
+                                 ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor'
+                                 && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut' && key!='requirements'">
                                 <label for="{{key}}" class="col-sm-4 control-label">
 
                                     <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left"
@@ -159,7 +160,6 @@
                                     </a>
                                 </div>
                             </div>
-
 
 
                             <div class="panel panel-default">
@@ -282,6 +282,21 @@
 
                                 </div>
                             </div>
+                            <h4>Requirements</h4>
+                                <div class="form-group" ng-repeat="(key,value) in appCreate.requirements">
+                                    <label for="{{key}}" class="col-sm-4 control-label">
+
+                                        <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left"
+                                           popover-trigger="mouseenter"
+                                           ng-mouseover="getInfos(key)"> </i>
+                                        {{key}}</label>
+
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="{{key}}" name="{{key}}"
+                                               ng-model="appCreate.requirements[key]"/>
+                                    </div>
+
+                                </div>
 
                             <h4>Ports <a href="" title="Add a new port">
                                 <li class="fa fa-plus-square" ng-click="addPort()"></li>
@@ -351,7 +366,7 @@
                 </button>
                 <button type="button" id="sendTemplate"
                         data-dismiss="modal"
-                        class="btn btn-primary" ng-class="{'disabled': disableButton}" ng-click="sendApp()">Create App
+                        class="btn btn-primary" ng-class="{'disabled': disableButton}" ng-click="sendApp('market')">Create App
                 </button>
             </div>
         </div>

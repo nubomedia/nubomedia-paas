@@ -1,0 +1,39 @@
+{
+    "appName":"awesomeApplication",
+    "description":"This application is just awesome",
+    "provider":"FOKUS",
+    "shared":true,
+    "requirements":{
+        "req1":"1", 
+        "req2":"2"
+    },
+    "projectName":"NUBOMEDIA",
+    "gitURL":"https://github.com/nubomedia/nubomedia-magic-mirror.git",
+    "ports":[
+        {
+            "port":8443,
+            "targetPort":8443,
+            "protocol":"TCP"
+        },
+        {
+            "port":443,
+            "targetPort":443,
+            "protocol":"TCP"
+        }
+    ],
+    "flavor":"SMALL",
+    "replicasNumber":1,
+    "secretName":null,
+    "qualityOfService":null,
+    "cloudRepository":false,
+    "cdnConnector":false,
+    "scaleInOut":3,
+    "scale_out_threshold":150,
+    "turnServerActivate":false,
+    "turnServerUrl":null,
+    "turnServerUsername":null,
+    "turnServerPassword":null,
+    "stunServerActivate":false,
+    "stunServerIp":null,
+    "stunServerPort":null
+}
