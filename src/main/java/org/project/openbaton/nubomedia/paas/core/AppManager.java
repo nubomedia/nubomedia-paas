@@ -94,9 +94,9 @@ public class AppManager {
 
         deploymentMap.put(mediaServerGroup.getMediaServerGroupID(), mediaServerGroup);
 
-        Application persistApp = new Application(appID, request.getFlavor(), request.getAppName(), request.getProjectName(), "", mediaServerGroup.getMediaServerGroupID(), request.getGitURL(), targetPorts, ports, protocols, null, request.getReplicasNumber(), request.getSecretName(), false);
-        appRepo.save(persistApp);
-        return persistApp;
+        Application app = new Application(appID, request.getFlavor(), request.getAppName(), request.getProjectName(), "", mediaServerGroup.getMediaServerGroupID(), request.getGitURL(), targetPorts, ports, protocols, null, request.getReplicasNumber(), request.getSecretName(), false);
+        appRepo.save(app);
+        return app;
     }
 
     ;
@@ -151,10 +151,11 @@ public class AppManager {
             logger.debug("retrieved session for " + server.getToken());
             String route = null;
             try {
+
                 int[] ports = new int[app.getPorts().size()];
                 int[] targetPorts = new int[app.getTargetPorts().size()];
 
-                for (int i : ports) {
+                for(int i = 0; i < ports.length; i++){
                     ports[i] = app.getPorts().get(i);
                     targetPorts[i] = app.getTargetPorts().get(i);
                 }

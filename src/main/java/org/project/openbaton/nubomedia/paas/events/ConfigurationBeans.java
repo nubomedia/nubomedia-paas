@@ -46,6 +46,7 @@ import javax.annotation.PostConstruct;
 public class ConfigurationBeans {
     public static final String queueName_eventInstatiateFinish = "nfvo.paas.nsr.create";
     public static final String queueName_eventResourcesReleaseFinish = "nfvo.paas.nsr.delete";
+    public static final String queueName_error = "nfvo.paas.nsr.error";
     private Logger logger;
 
     @Autowired
@@ -83,6 +84,11 @@ public class ConfigurationBeans {
     }
 
     @Bean
+    public Queue getErrorQueue(){
+        logger.debug("Created Queue for NSR error event");
+        return new Queue(queueName_error,false,false,true);
+    }
+    @Bean
     public Queue getDeletionQueue(){
         logger.debug("Created Queue for NSR Delete Event");
         return new Queue(queueName_eventResourcesReleaseFinish,false,false,true);
@@ -95,6 +101,12 @@ public class ConfigurationBeans {
     }
 
     @Bean
+    public Binding setErrorBinding(@Qualifier("getErrorQueue") Queue queue, TopicExchange topicExchange){
+        logger.debug("Created Binding for NSR error event");
+        return BindingBuilder.bind(queue).to(topicExchange).with("ns-error");
+    }
+
+    @Bean
     public Binding setDeletionBinding(@Qualifier("getDeletionQueue") Queue queue, TopicExchange topicExchange){
         logger.debug("Created Binding for NSR Deletion event");
         return BindingBuilder.bind(queue).to(topicExchange).with("ns-deletion");
@@ -103,6 +115,12 @@ public class ConfigurationBeans {
     @Bean
     public MessageListenerAdapter setCreationMessageListenerAdapter(OpenbatonEventReceiver receiver){
         return new MessageListenerAdapter(receiver,"receiveNewNsr");
+    }
+
+
+    @Bean
+    public MessageListenerAdapter setErrorMessageListenerAdapter(OpenbatonEventReceiver receiver){
+        return new MessageListenerAdapter(receiver,"errorNsr");
     }
 
     @Bean
@@ -120,6 +138,16 @@ public class ConfigurationBeans {
         return res;
     }
 
+
+    @Bean
+    public SimpleMessageListenerContainer setErrorMessageContainer(ConnectionFactory connectionFactory, @Qualifier("getErrorQueue") Queue queue, @Qualifier("setErrorMessageListenerAdapter") MessageListenerAdapter adapter){
+        logger.debug("Created MessageContainer for NSR error event");
+        SimpleMessageListenerContainer res = new SimpleMessageListenerContainer();
+        res.setConnectionFactory(connectionFactory);
+        res.setQueues(queue);
+        res.setMessageListener(adapter);
+        return res;
+    }
 
     @Bean
     public SimpleMessageListenerContainer setDeletionMessageContainer(ConnectionFactory connectionFactory, @Qualifier("getDeletionQueue") Queue queue, @Qualifier("setDeletionMessageListenerAdapter") MessageListenerAdapter messageListenerAdapter){

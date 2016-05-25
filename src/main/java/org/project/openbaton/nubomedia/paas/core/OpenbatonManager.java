@@ -97,7 +97,8 @@ public class OpenbatonManager {
         }
         // creating the queues for receiving events
         EventEndpoint eventEndpointCreation = createEventEndpoint("paas-nsr-instantiate-finish",EndpointType.RABBIT,Action.INSTANTIATE_FINISH, ConfigurationBeans.queueName_eventInstatiateFinish);
-        EventEndpoint eventEndpointError = createEventEndpoint("paas-nsr-instantiate-finish",EndpointType.RABBIT,Action.ERROR, ConfigurationBeans.queueName_eventInstatiateFinish);
+        EventEndpoint eventEndpointError = createEventEndpoint("paas-nsr-error",EndpointType.RABBIT,Action.ERROR, ConfigurationBeans.queueName_error);
+        EventEndpoint eventEndpointDeletion = createEventEndpoint("paas-nsr-deletion",EndpointType.RABBIT,Action.RELEASE_RESOURCES_FINISH, ConfigurationBeans.queueName_eventResourcesReleaseFinish);
 
 
         try {

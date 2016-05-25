@@ -35,9 +35,9 @@ public class MetadataTypeAdapter extends TypeAdapter<Metadata> {
             out.name("name");
             out.value(value.getName());
         }
-        if(!value.getSelflink().isEmpty() || value.getName() != null) {
+        if(!value.getSelfLink().isEmpty() || value.getName() != null) {
             out.name("selfLink");
-            out.value(value.getSelflink());
+            out.value(value.getSelfLink());
         }
         if(!value.getResourceVersion().isEmpty() || value.getResourceVersion() != null){
             out.name("resourceVersion");

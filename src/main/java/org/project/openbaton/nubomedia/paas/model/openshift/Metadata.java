@@ -22,12 +22,12 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
 public class Metadata {
 
     private String name;
-    private String selflink;
+    private String selfLink;
     private String resourceVersion;
 
-    public Metadata(String name, String selflink, String resourceVersion) {
+    public Metadata(String name, String selfLink, String resourceVersion) {
         this.name = name;
-        this.selflink = selflink;
+        this.selfLink = selfLink;
         this.resourceVersion = resourceVersion;
     }
 
@@ -42,12 +42,12 @@ public class Metadata {
         this.name = name;
     }
 
-    public String getSelflink() {
-        return selflink;
+    public String getSelfLink() {
+        return selfLink;
     }
 
-    public void setSelflink(String selflink) {
-        this.selflink = selflink;
+    public void setSelfLink(String selfLink) {
+        this.selfLink = selfLink;
     }
 
     public String getResourceVersion() {
