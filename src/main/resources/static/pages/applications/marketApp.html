@@ -16,12 +16,12 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <h1>Applications</h1>
+        <h1>Applications Store</h1>
         <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i>
                 Overview</a></li>
             <li class="active"><i class="fa fa-tasks"></i>
-                Applications
+                Applications Store
             </li>
         </ol>
     </div>
@@ -29,7 +29,7 @@
 <div class="row">
     <div class="col-lg-12 ">
         <button id="btn_create_topology" class="btn btn-primary pull-right"
-                title="Create a new App" ng-click="createMarketApp()">Create App
+                title="Store a new App" ng-click="createMarketApp()">Store App
         </button>
     </div>
 </div>
@@ -45,33 +45,31 @@
                     id="topoTabletable">
                 <thead>
                 <tr>
-                    <th ng-click="predicate = 'appID';reverse = !reverse">appID <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'id';reverse = !reverse">id <i class="fa fa-sort"></i></th>
                     <th ng-click="predicate = 'appName';reverse = !reverse">appName <i class="fa fa-sort"></i></th>
-                    <th ng-if="application.route" ng-click="predicate = 'route';reverse = !reverse">route <i
-                            class="fa fa-sort"></i></th>
                     <th ng-click="predicate = 'flavor'; reverse = !reverse">flavor <i class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'projectName'; reverse = !projectName">projectName <i
+                    <th ng-click="predicate = 'projectName'; reverse = !reverse">projectName <i
                             class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'status'; reverse = !status">status <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'provider'; reverse = !reverse">provider <i class="fa fa-sort"></i></th>
                     <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="data in apllications| orderBy:predicate:reverse">
-                    <td><a href="#applications/{{data.appID}}">{{data.appID}}</a></td>
+                    <td><a href="#marketapps/{{data.id}}" ng-click="setApp(data)">{{data.id}}</a></td>
                     <td>{{data.appName}}</td>
-                    <td ng-if="application.route"><a href="http://{{application.route}}" target="_blank">url</a></td>
                     <td>{{data.flavor}}</td>
                     <td>{{data.projectName}}</td>
-                    <td>{{data.status}}</td>
+                    <td>{{data.provider}}</td>
                     <td>
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                                 Action <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
+                                <li><a href="" ng-click="launch(data.id)">Launch</a></li>
                                 <li class="divider"></li>
-                                <li><a href="" ng-click="deleteData(data.appID)">Delete</a></li>
+                                <li><a href="" ng-click="deleteData(data.id)">Delete</a></li>
                             </ul>
                         </div>
                     </td>

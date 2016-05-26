@@ -34,6 +34,10 @@ angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCookies'])
                 templateUrl: 'pages/applications/marketApp.html',
                 controller: 'applicationsCtrl'
             }).
+            when('/marketapps/:appId', {
+                templateUrl: 'pages/applications/appmarketinfo.html',
+                controller: 'applicationsCtrl'
+            }).
             when('/applications/:applicationId', {
                 templateUrl: 'pages/applications/applicationinfo.html',
                 controller: 'applicationsCtrl'

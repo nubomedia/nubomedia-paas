@@ -16,11 +16,13 @@
 
 angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce, $timeout, $location) {
 
-        var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
-        var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
+        var ip = $cookieStore.get('URLNb');
+        var url = ip + '/api/v1/nubomedia/paas/app/';
+        var urlPK = ip + '/api/v1/nubomedia/paas/';
         var urlMediaManager = '';
         var maxLoad = 100;
-    var marketurl = 'http://localhost:8082/api/v1/app';
+        var marketurl = ip.slice(0, -5) + ':8082/api/v1/app/';
+        //var marketurl = 'http://localhost:8082/api/v1/app/';
         //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
         //console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
 
@@ -83,6 +85,9 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             $('#modalT').modal('show');
         };
 
+        $scope.saveApp = function (data) {
+            $scope.application = data;
+        };
 
         $scope.changeCdn = function () {
             $scope.appCreate.cloudRepository = $scope.appCreate.cdnConnector;
@@ -119,6 +124,14 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     showError(status, data);
                 });
         };
+        if (!angular.isUndefined($routeParams.appId)) {
+            http.get(marketurl + $routeParams.appId)
+                .success(function (data) {
+                    console.log(data);
+                    $scope.application = data;
+                    $scope.applicationJSON = JSON.stringify(data, undefined, 4);
+                });
+        }
         if (!angular.isUndefined($routeParams.applicationId)) {
             http.get(url + $routeParams.applicationId)
                 .success(function (data) {
@@ -126,9 +139,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     $scope.application = data;
                     $scope.applicationJSON = JSON.stringify(data, undefined, 4);
                     loadMediaManeger();
-
                 });
-
         }
         else {
             loadTable();
@@ -165,6 +176,21 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             threshold: false,
             cloudRepository: false,
             qualityOfService: false
+        };
+
+        $scope.launch = function (id) {
+            http.syncGet(marketurl + id)
+                .then(function (result) {
+                    console.log(result);
+                    http.post(url, result)
+                        .success(function (data, status) {
+                            console.log(data);
+                            showOk("App launched correctly.")
+                        })
+                        .error(function (data, status) {
+                            showError(status, data);
+                        })
+                })
         };
 
         $scope.sendApp = function (value) {
