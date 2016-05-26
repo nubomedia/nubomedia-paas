@@ -292,6 +292,17 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     showError(status, data);
                 });
         };
+        $scope.deleteAppMarket = function (id) {
+            http.delete(marketurl + id)
+                .success(function (response) {
+                    showOk('Deleted App with id: ' + id + ' done.');
+                    loadTable();
+                })
+                .error(function (data, status) {
+                    showError(status, data);
+                });
+        };
+
 
         $scope.changeText = function (text) {
             $scope.textTopologyJson = text;
