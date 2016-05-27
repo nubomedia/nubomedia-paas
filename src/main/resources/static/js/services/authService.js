@@ -18,51 +18,56 @@
  * Angular Service for managing the login of the user
  */
 
-angular.module('app').factory('AuthService', function($http, Session, $location, http, $cookieStore, $window, $q) {
+angular.module('app').factory('AuthService', function ($http, Session, $location, http, $cookieStore, $window, $q) {
     var authService = {};
 
-    authService.login = function(credentials, URL) {
+    authService.login = function (credentials, URL) {
+        http.syncGet(URL + '/api/v1/nubomedia/config')
+            .then(function (data) {
+                console.log(data);
+                $cookieStore.put('marketplaceIP', 'http://' + data.replace(/['"]+/g, '') + '/api/v1/app/');
+            });
         console.log(credentials);
         return $http({
             method: 'POST',
-            url:URL + '/api/v1/nubomedia/paas/auth',
+            url: URL + '/api/v1/nubomedia/paas/auth',
             headers: {
                 'Content-type': 'application/json'
             },
-            data: credentials})
-            .then(function(res) {
+            data: credentials
+        })
+            .then(function (res) {
                 console.log(res);
                 Session.create(URL, res.data.token, credentials.username, true);
                 $location.path("/");
                 $window.location.reload();
                 return;
             });
+
     };
 
-    authService.loginGuest = function(URL) {
-        Session.create(URL,'', 'guest', true);
+    authService.loginGuest = function (URL) {
+        Session.create(URL, '', 'guest', true);
         $location.path("/");
         $window.location.reload();
-        return ;
+        return;
     };
 
 
-
-
-    authService.isAuthenticated = function() {
+    authService.isAuthenticated = function () {
         return !!Session.userName;
     };
 
-    authService.removeSession = function() {
+    authService.removeSession = function () {
         Session.destroy();
     };
 
-    authService.logout = function() {
+    authService.logout = function () {
         Session.destroy();
         $window.location.reload();
     };
 
-    authService.isAuthorized = function(authorizedRoles) {
+    authService.isAuthorized = function (authorizedRoles) {
         if (!angular.isArray(authorizedRoles)) {
             authorizedRoles = [authorizedRoles];
         }
@@ -77,10 +82,10 @@ angular.module('app').factory('AuthService', function($http, Session, $location,
      * Angular Service for managing the session and cookies of the user
      */
 
-}).service('Session', function($cookieStore) {
+}).service('Session', function ($cookieStore) {
 
 
-    this.create = function(URL, token, userName, logged) {
+    this.create = function (URL, token, userName, logged) {
         this.URL = URL;
         this.token = token;
         this.userName = userName;
@@ -92,7 +97,7 @@ angular.module('app').factory('AuthService', function($http, Session, $location,
 //        console.log($cookieStore.get('token'));
 
     };
-    this.destroy = function() {
+    this.destroy = function () {
         this.URL = null;
         this.token = null;
         this.userName = null;

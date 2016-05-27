@@ -21,10 +21,14 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         var urlPK = ip + '/api/v1/nubomedia/paas/';
         var urlMediaManager = '';
         var maxLoad = 100;
-        var marketurl = http.getMarketplaceIp();
+        var marketurl = $cookieStore.get('marketplaceIP');
+
+
         //var marketurl = 'http://localhost:8082/api/v1/app/';
         //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
         //console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
+
+
 
         if (angular.isUndefined($cookieStore.get('server-ip'))) {
             http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
@@ -147,6 +151,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         function loadTable() {
             console.log($location.path());
+            console.log(marketurl);
             if ($location.path() === '/marketapps')
                 http.get(marketurl)
                     .success(function (response, status) {
@@ -365,6 +370,15 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             });
         };
 
+        /*function marketplaceIP() {
+            if (angular.isUndefined(marketurl)) {
+                http.syncGet($cookieStore.get('URLNb') + '/api/v1/nubomedia/config')
+                    .then(function (result) {
+                        console.log(result);
+                        marketurl = result.data + ':8082/api/v1/app/';
+                    })
+            }
+        }*/
         function n2br(str) {
             str = str.replace(/(?:\\[rn]|[\r\n]+)+/g, "<br />");
             //return str.replace(/\r\n|\r|\n//g, "<br />");

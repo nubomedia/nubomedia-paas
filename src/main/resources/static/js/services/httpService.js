@@ -47,10 +47,15 @@ angular.module('app')
 
 
         http.getMarketplaceIp = function () {
-            http.syncGet($cookieStore.get('URLNb')+'/api/v1/nubomedia/config')
-                .then(function(result){
-                    return result;
-                })
+            if (angular.isUndefined($cookieStore.get('URLNb')))
+                console.log($cookieStore.get('URLNb'));
+            else
+                http.syncGet($cookieStore.get('URLNb') + '/api/v1/nubomedia/config')
+                    .then(function (result) {
+                        console.log(result);
+                        $cookieStore.put('marketplaceIP',result);
+                        return result;
+                    })
         };
 
 

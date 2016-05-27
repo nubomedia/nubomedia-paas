@@ -25,9 +25,9 @@ var app = angular.module('app');
 
 app.controller('LoginController', function ($scope, AuthService, Session, $rootScope, $location, $cookieStore, $http) {
     $scope.currentUser = null;
-    $scope.URL = 'http://localhost:8081';
+    //$scope.URL = 'http://localhost:8081';
     //$scope.URL= 'http://80.96.122.73:8081';
-    //$scope.URL = '';
+    $scope.URL = '';
     $scope.credential = {
         "username": '',
         "password": ''
@@ -86,7 +86,7 @@ app.controller('LoginController', function ($scope, AuthService, Session, $rootS
 });
 
 
-app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthService,http) {
+app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthService, http) {
     $('#side-menu').metisMenu();
 
     var url = $cookieStore.get('URLNb');
@@ -119,26 +119,26 @@ app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthServi
     };
 
 
-    $scope.numberApp=0;
-    $scope.numberSecGroup=0;
-    $scope.numberService=0;
+    $scope.numberApp = 0;
+    $scope.numberSecGroup = 0;
+    $scope.numberService = 0;
 
-    http.get(url + '/api/v1/nubomedia/paas/app/').success(function(data) {
+    http.get(url + '/api/v1/nubomedia/paas/app/').success(function (data) {
         console.log(data);
         $scope.numberApp = data.length;
 
     });
 
-   /* http.get(url + '/applications').success(function(data) {
-        $scope.numberApp = data.length;
+    /* http.get(url + '/applications').success(function(data) {
+     $scope.numberApp = data.length;
 
-    });
+     });
 
 
-    http.get(url + '/secgroups').success(function(data) {
-        $scope.numberSecGroup = data.length;
+     http.get(url + '/secgroups').success(function(data) {
+     $scope.numberSecGroup = data.length;
 
-    });*/
+     });*/
 
 });
 

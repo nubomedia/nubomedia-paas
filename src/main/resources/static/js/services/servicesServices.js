@@ -18,8 +18,6 @@
 angular.module('app').factory('serviceAPI', function(http, $q) {
 
     var services = {};
-    var url = http.getOrchestratorURL();
-
 
     services.getNetworks = function() {
         var deferred = $q.defer();
