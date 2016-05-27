@@ -4,82 +4,64 @@ source ./gradle.properties
 
 _version=${version}
 
-_nubomedia_paas_base="/opt/nubomedia/nubomedia-paas"
-_nubomedia_config_file="/etc/nubomedia/paas.properties"
-#_message_queue_base="apache-activemq-5.11.1"
-#_openbaton_config_file=/etc/openbaton/openbaton.properties
+_base="/opt/nubomedia/nubomedia-paas"
+_process_name="nubomedia-paas"
+_screen_name="nubomedia"
 
-function start_mysql_osx {
-    sudo /usr/local/mysql/support-files/mysql.server start
+function checkBinary {
+  if command -v $1 >/dev/null 2>&1; then
+     return 0
+   else
+     echo >&2 "FAILED."
+     return 1
+   fi
 }
 
-function start_mysql_linux {
-    sudo service mysql start
-}
+_ex='sh -c'
+if [ "$_user" != 'root' ]; then
+    if checkBinary sudo; then
+        _ex='sudo -E sh -c'
+    elif checkBinary su; then
+        _ex='su -c'
+    fi
+fi
 
-function check_mysql {
-    if [[ "$OSTYPE" == "linux-gnu" ]]; then
-	result=$(pgrep mysql | wc -l);
-        if [ ${result} -eq 0 ]; then
-                read -p "mysql is down, would you like to start it ([y]/n):" yn
-		case $yn in
-			[Yy]* ) start_mysql_linux ; break;;
-			[Nn]* ) echo "you can't proceed withuot having mysql up and running"
-				exit;;
-			* ) start_mysql_linux;;
-		esac
-        else
-                echo "mysql is already running.."
-        fi
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-	mysqladmin status
-	result=$?
-        if [ "${result}" -eq "0" ]; then
-                echo "mysql service running..."
-        else
-                read -p "mysql is down, would you like to start it ([y]/n):" yn
-                case $yn in
-                        [Yy]* ) start_mysql_osx ; break;;
-                        [Nn]* ) exit;;
-                        * ) start_mysql_osx;;
-                esac
-        fi
+
+function check_already_running {
+    pgrep -f ${_process_name}-${_version}.jar
+    if [ "$?" -eq "0" ]; then
+        echo "${_process_name} is already running.."
+        exit;
     fi
 }
 
-function check_already_running {
-        result=$(screen -ls | grep nubomedia-paas | wc -l);
-        if [ "${result}" -ne "0" ]; then
-                echo "Nubomedia-PaaS is already running.."
-		exit;
-        fi
-}
-
-function start {
-
+function start_checks {
+    check_already_running
     if [ ! -d build/  ]
         then
             compile
     fi
-
-    #check_activemq
-    #check_mysql
-    #check_already_running
-    #if [ 0 -eq $? ]
-        #then
-	    #screen -X eval "chdir $PWD"
-	#screen -c screenrc -d -m -S ms-vnfm -t ms-vnfm java -jar "build/libs/ms-vnfm-$_version.jar"
-	pushd "${_nubomedia_paas_base}"
-	#                                                                   build/libs/nubomedia-paas-api-0.1-SNAPSHOT.jar
-	screen -d -m -S paas-manager -t nubomedia-paas-manager java -jar "/opt/nubomedia/nubomedia-paas/build/libs/nubomedia-paas-api-$_version.jar" --spring.config.location=file:${_nubomedia_config_file}
-	    #screen -c screenrc -r -p 0
-	popd
-    #fi
 }
 
+function start {
+    start_checks
+    screen_exists=$(screen -ls | grep ${_screen_name} | wc -l);
+    if [ "${screen_exists}" -eq 0 ]; then
+        screen -c screenrc -d -m -S ${_screen_name} -t ${_process_name} java -jar "$_base/build/libs/$_process_name-$_version.jar"
+    else
+        screen -S $_screen_name -p 0 -X screen -t $_process_name java -jar "$_base/build/libs/$_process_name-$_version.jar"
+    fi
+}
+
+function start_fg {
+    start_checks
+    java -jar "build/libs/${_process_name}-$_version.jar" --spring.config.location=file:${_openbaton_config_file}
+}
+
+
 function stop {
-    if screen -list | grep "paas-manager"; then
-	    screen -S paas-manager -p 0 -X stuff "exit$(printf \\r)"
+    if screen -list | grep ${_screen_name}; then
+	    screen -S ${_screen_name} -p 0 -X stuff "exit$(printf \\r)"
     fi
 }
 
@@ -90,29 +72,12 @@ function restart {
 
 
 function kill {
-    if screen -list | grep "paas-manager"; then
-	    screen -ls | grep paas-manager | cut -d. -f1 | awk '{print $1}' | xargs kill
-    fi
+    pkill -f ${_process_name}-${_version}.jar
 }
 
-function init {
-    if [ ! -f $_nubomedia_config_file ]; then
-        if [ $EUID != 0 ]; then
-            echo "creating the directory and copying the file"
-            sudo -E sh -c "mkdir /etc/nubomedia; cp ${_nubomedia_paas_base}/src/main/resources/paas.properties ${_nubomedia_config_file}"
-            #echo "copying the file, insert the administrator password" | sudo -kS cp ${_nubomedia_paas_base}/src/main/resources/paas.properties ${_nubomedia_config_file}
-        else
-            echo "creating the directory"
-            mkdir /etc/nubomedia
-            echo "copying the file"
-            cp ${_nubomedia_paas_base}/src/main/resources/paas.properties ${_nubomedia_config_file}
-        fi
-    else
-        echo "Properties file already exist"
-    fi
-}
+
 function compile {
-    ./gradlew build -x test
+    ./gradlew build -x test 
 }
 
 function tests {
@@ -127,8 +92,8 @@ function end {
     exit
 }
 function usage {
-    echo -e "Nubomedia PaaS API\n"
-    echo -e "Usage:\n\t ./nubomedia-paas.sh [compile|start|stop|test|kill|clean]"
+    echo -e "Open-Baton\n"
+    echo -e "Usage:\n\t ./openbaton.sh [compile|install_plugins|start|start_fg|stop|test|kill|clean]"
 }
 
 ##
@@ -147,16 +112,18 @@ do
     case ${cmds[$i]} in
         "clean" )
             clean ;;
+        "install_plugins" )
+            install_plugins ;;
         "sc" )
             clean
             compile
             start ;;
         "start" )
             start ;;
+        "start_fg" )
+            start_fg ;;
         "stop" )
             stop ;;
-        "init" )
-            init ;;
         "restart" )
             restart ;;
         "compile" )
@@ -169,7 +136,7 @@ do
             usage
             end ;;
     esac
-    if [[ $? -ne 0 ]];
+    if [[ $? -ne 0 ]]; 
     then
 	    exit 1
     fi
