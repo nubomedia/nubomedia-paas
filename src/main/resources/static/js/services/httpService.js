@@ -17,6 +17,7 @@
 angular.module('app')
     .factory('http', function ($http, $q, $cookieStore) {
 
+        var marketplaceIP = 'http://localhost:8082/api/v1/app/';
         var http = {};
         var URL = 'http://emm-dev.nubomedia.eu:8090';
         var customHeaders = {};
@@ -44,17 +45,14 @@ angular.module('app')
             })
         };
 
-        http.getOrchestratorURL = function () {
-            if (!angular.isUndefined($cookieStore.get('orchestratorURL')))
-                return $cookieStore.get('orchestratorURL');
-            else
-                return URL;
+
+        http.getMarketplaceIp = function () {
+            http.syncGet($cookieStore.get('URLNb')+'/api/v1/nubomedia/config')
+                .then(function(result){
+                    return result;
+                })
         };
 
-        http.setOrchestratorURL = function (orcURL) {
-            $cookieStore.put('orchestratorURL', orcURL);
-            URL = orcURL;
-        };
 
         http.post = function (url, data, type) {
             //if (!angular.isUndefined(type)) {

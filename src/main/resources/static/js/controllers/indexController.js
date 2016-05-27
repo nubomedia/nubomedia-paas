@@ -25,9 +25,9 @@ var app = angular.module('app');
 
 app.controller('LoginController', function ($scope, AuthService, Session, $rootScope, $location, $cookieStore, $http) {
     $scope.currentUser = null;
-    //$scope.URL = 'http://localhost:8081';
+    $scope.URL = 'http://localhost:8081';
     //$scope.URL= 'http://80.96.122.73:8081';
-    $scope.URL = '';
+    //$scope.URL = '';
     $scope.credential = {
         "username": '',
         "password": ''
@@ -118,14 +118,7 @@ app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthServi
         AuthService.logout();
     };
 
-    $scope.orchestratorURL = http.getOrchestratorURL();
-    $scope.saveSetting = function () {
-        console.log($scope.orchestratorURL);
-        http.setOrchestratorURL($scope.orchestratorURL);
-        $('.modal').modal('hide');
-        window.location.reload();
 
-    };
     $scope.numberApp=0;
     $scope.numberSecGroup=0;
     $scope.numberService=0;

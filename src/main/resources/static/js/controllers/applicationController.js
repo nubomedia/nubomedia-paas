@@ -21,7 +21,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         var urlPK = ip + '/api/v1/nubomedia/paas/';
         var urlMediaManager = '';
         var maxLoad = 100;
-        var marketurl = ip.slice(0, -5) + ':8082/api/v1/app/';
+        var marketurl = http.getMarketplaceIp();
         //var marketurl = 'http://localhost:8082/api/v1/app/';
         //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
         //console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );

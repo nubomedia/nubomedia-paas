@@ -61,7 +61,7 @@
 </div>
 <script data-main="js/main" src="js/libs/require/require.js"></script>
 </body>
-<div class="modal" id="modalSettings" ng-controller="IndexCtrl">
+<!--<div class="modal" id="modalSettings" ng-controller="IndexCtrl">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -73,12 +73,22 @@
                 <form class="form-horizontal" role="form" id="formSetting">
                     <div class="form-group">
                         <br/>
-                        <label for="url" class="col-sm-4 control-label">orchestrator URL</label>
-
-                        <div class="col-sm-6 input-group"><input type="text" ng-model="orchestratorURL"
-                                                                 class="form-control parameters" id="url">
-                            <span class="input-group-addon">@</span>
-                        </div>
+                        <fieldset class="form-group">
+                            <label for="url" class="col-sm-4 control-label">orchestrator URL</label>
+                            <div class="col-sm-6 input-group">
+                                <input type="text" ng-model="orchestratorURL"
+                                       class="form-control parameters" id="url">
+                                <span class="input-group-addon">@</span>
+                            </div>
+                        </fieldset>
+                        <fieldset class="form-group">
+                            <label for="ip" class="col-sm-4 control-label">marketplace IP</label>
+                            <div class="col-sm-6 input-group">
+                                <input type="text" ng-model="marketplaceIp"
+                                       class="form-control parameters" id="ip">
+                                <span class="input-group-addon">@</span>
+                            </div>
+                        </fieldset>
                     </div>
                 </form>
             </div>
@@ -89,10 +99,10 @@
                 </button>
             </div>
         </div>
-        <!-- /.modal-content -->
+        &lt;!&ndash; /.modal-content &ndash;&gt;
     </div>
-    <!-- /.modal-dialog -->
-</div>
+    &lt;!&ndash; /.modal-dialog &ndash;&gt;
+</div>-->
 <div class="modal " id="modalSend" data-backdrop="static"
      data-keyboard="false">
     <div class="modal-dialog">
