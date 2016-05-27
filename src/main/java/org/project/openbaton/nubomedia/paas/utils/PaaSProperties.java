@@ -30,6 +30,7 @@ public class PaaSProperties {
     private String vnfmIP;
     private String vnfmPort;
     private String keystore;
+    private String marketplace;
 
     public PaaSProperties() {
     }
@@ -64,5 +65,13 @@ public class PaaSProperties {
 
     public void setKeystore(String keystore) {
         this.keystore = keystore;
+    }
+
+    public String getMarketplace() {
+        return marketplace;
+    }
+
+    public void setMarketplace(String marketplace) {
+        this.marketplace = marketplace;
     }
 }
