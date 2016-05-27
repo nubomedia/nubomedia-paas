@@ -47,7 +47,7 @@ require({
             exports: '$'
         },
         sb_admin_2: {
-            deps: ['jquery']
+            deps: ['jquery', 'metisMenu']
         },
         bootstrapJS: {
             deps: ['jquery']
@@ -55,6 +55,9 @@ require({
         angular: {
             exports: 'angular',
             deps: ['jquery', 'bootstrapJS', 'sb_admin_2']
+        },
+        metisMenu: {
+            deps: ['jquery']
         },
         jQueryRotate: {
             deps: ['jquery']
@@ -110,6 +113,7 @@ require({
 }), require([
     'require',
     'bootstrapJS',
+    'metisMenu',
     'sb_admin_2',
     'underscore',
     'angular',

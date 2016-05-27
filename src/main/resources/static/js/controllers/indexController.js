@@ -87,7 +87,7 @@ app.controller('LoginController', function ($scope, AuthService, Session, $rootS
 
 
 app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthService,http) {
-
+    $('#side-menu').metisMenu();
 
     var url = $cookieStore.get('URLNb');
     $scope.logged = $cookieStore.get('loggedNb');
@@ -131,6 +131,7 @@ app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthServi
     $scope.numberService=0;
 
     http.get(url + '/api/v1/nubomedia/paas/app/').success(function(data) {
+        console.log(data);
         $scope.numberApp = data.length;
 
     });

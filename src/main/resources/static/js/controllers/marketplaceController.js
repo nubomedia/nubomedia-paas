@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce, $timeout, $location) {
+angular.module('app').controller('marketplaceCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce) {
 
-        var ip = $cookieStore.get('URLNb');
-        var url = ip + '/api/v1/nubomedia/paas/app/';
-        var urlPK = ip + '/api/v1/nubomedia/paas/';
+        var url = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/app/';
+        var urlPK = $cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/';
         var urlMediaManager = '';
         var maxLoad = 100;
-        var marketurl = ip.slice(0, -5) + ':8082/api/v1/app/';
-        //var marketurl = 'http://localhost:8082/api/v1/app/';
         //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
         //console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
 
@@ -45,7 +42,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         $scope.alerts = [];
         $scope.apllications = [];
-        $scope.flavors = ["SMALL", "MEDIUM", "LARGE"];
+        $scope.flavors = ["MEDIUM", "LARGE"];
         $scope._qualityOfService = ["BRONZE", "SILVER", "GOLD"];
         $scope._turnServer = {
             'turnServerUrl': '',
@@ -61,7 +58,6 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             'scaleInOut': 0,
             'scale_out_threshold': 0
         };
-
         $scope.createApp = function () {
             $http.get('json/request.json')
                 .then(function (res) {
@@ -71,23 +67,6 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             $('#modalT').modal('show');
         };
 
-        $scope.resize = function () {
-            $timeout(function () {
-                $('body').resize();
-            }, 500);
-        };
-        $scope.createMarketApp = function () {
-            $http.get('json/app.json')
-                .then(function (res) {
-                    console.log(res.data);
-                    $scope.appCreate = angular.copy(res.data);
-                });
-            $('#modalT').modal('show');
-        };
-
-        $scope.saveApp = function (data) {
-            $scope.application = data;
-        };
 
         $scope.changeCdn = function () {
             $scope.appCreate.cloudRepository = $scope.appCreate.cdnConnector;
@@ -124,14 +103,6 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     showError(status, data);
                 });
         };
-        if (!angular.isUndefined($routeParams.appId)) {
-            http.get(marketurl + $routeParams.appId)
-                .success(function (data) {
-                    console.log(data);
-                    $scope.application = data;
-                    $scope.applicationJSON = JSON.stringify(data, undefined, 4);
-                });
-        }
         if (!angular.isUndefined($routeParams.applicationId)) {
             http.get(url + $routeParams.applicationId)
                 .success(function (data) {
@@ -139,32 +110,23 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     $scope.application = data;
                     $scope.applicationJSON = JSON.stringify(data, undefined, 4);
                     loadMediaManeger();
+
                 });
+
         }
         else {
             loadTable();
         }
 
         function loadTable() {
-            console.log($location.path());
-            if ($location.path() === '/marketapps')
-                http.get(marketurl)
-                    .success(function (response, status) {
-                        $scope.apllications = response;
-                        console.log(response);
+            http.get(url)
+                .success(function (response, status) {
+                    $scope.apllications = response;
+                    console.log(response);
 
-                    }).error(function (data, status) {
-                    showError(status, data);
-                });
-            else
-                http.get(url)
-                    .success(function (response, status) {
-                        $scope.apllications = response;
-                        console.log(response);
-
-                    }).error(function (data, status) {
-                    showError(status, data);
-                });
+                }).error(function (data, status) {
+                showError(status, data);
+            });
         }
 
         $scope.closeAlert = function (index) {
@@ -178,22 +140,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             qualityOfService: false
         };
 
-        $scope.launch = function (id) {
-            http.syncGet(marketurl + id)
-                .then(function (result) {
-                    console.log(result);
-                    http.post(url, result)
-                        .success(function (data, status) {
-                            console.log(data);
-                            showOk("App launched correctly.")
-                        })
-                        .error(function (data, status) {
-                            showError(status, data);
-                        })
-                })
-        };
-
-        $scope.sendApp = function (value) {
+        $scope.sendApp = function () {
             var postTopology;
             var sendOk = true;
 
@@ -244,29 +191,16 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
             if (sendOk) {
                 console.log(JSON.stringify(postTopology));
-
-                if (arguments.length > 0)
-                    http.post(marketurl, $scope.appCreate)
-                        .success(function (response) {
-                            showOk('App Saved!');
-                            loadTable();
-                            $scope.file = '';
-                            $scope.textTopologyJson = '';
-                        })
-                        .error(function (data, status) {
-                            showError(status, data);
-                        });
-                else
-                    http.post(url, $scope.appCreate)
-                        .success(function (response) {
-                            showOk('App created!');
-                            loadTable();
-                            $scope.file = '';
-                            $scope.textTopologyJson = '';
-                        })
-                        .error(function (data, status) {
-                            showError(status, data);
-                        });
+                http.post(url, $scope.appCreate)
+                    .success(function (response) {
+                        showOk('App created!');
+                        loadTable();
+                        $scope.file = '';
+                        $scope.textTopologyJson = '';
+                    })
+                    .error(function (data, status) {
+                        showError(status, data);
+                    });
             }
 
         };
@@ -292,17 +226,6 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     showError(status, data);
                 });
         };
-        $scope.deleteAppMarket = function (id) {
-            http.delete(marketurl + id)
-                .success(function (response) {
-                    showOk('Deleted App with id: ' + id + ' done.');
-                    loadTable();
-                })
-                .error(function (data, status) {
-                    showError(status, data);
-                });
-        };
-
 
         $scope.changeText = function (text) {
             $scope.textTopologyJson = text;
