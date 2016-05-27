@@ -88,7 +88,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"
                         aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="serviceFormLabel">Create Topology</h4>
+                <h4 class="modal-title" id="serviceFormLabel">Create App</h4>
             </div>
             <div class="modal-body" ng-if="appCreate" ng-init="resize()">
                 <tabset>
@@ -97,10 +97,9 @@
                             <br/>
 
                             <div class="form-group" ng-repeat="(key,value) in appCreate"
-                                 ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor'
-                                 && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut' && key!='requirements'">
+                                 ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut' && key!='requirements'
+                                  && key!='qualityOfService' && key!='stunServerIp' && key!='stunServerPort' && key!='turnServerPassword' && key!='turnServerUrl' && key!='turnServerUsername'" >
                                 <label for="{{key}}" class="col-sm-4 control-label">
-
                                     <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left"
                                        popover-trigger="mouseenter"
                                        ng-mouseover="getInfos(key)"> </i>

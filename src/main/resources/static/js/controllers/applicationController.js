@@ -251,7 +251,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 console.log(JSON.stringify(postTopology));
 
                 if (arguments.length > 0)
-                    http.post(marketurl, $scope.appCreate)
+                    http.post(marketurl, postTopology)
                         .success(function (response) {
                             showOk('App Saved!');
                             loadTable();
@@ -262,7 +262,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                             showError(status, data);
                         });
                 else
-                    http.post(url, $scope.appCreate)
+                    http.post(url, postTopology)
                         .success(function (response) {
                             showOk('App created!');
                             loadTable();
