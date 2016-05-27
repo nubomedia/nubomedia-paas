@@ -5,6 +5,7 @@ source ./gradle.properties
 _version=${version}
 
 _base="/opt/nubomedia/nubomedia-paas"
+_nubomedia_config_file="/etc/nubomedia/paas.properties"
 _process_name="nubomedia-paas"
 _screen_name="nubomedia"
 
@@ -47,9 +48,9 @@ function start {
     start_checks
     screen_exists=$(screen -ls | grep ${_screen_name} | wc -l);
     if [ "${screen_exists}" -eq 0 ]; then
-        screen -c screenrc -d -m -S ${_screen_name} -t ${_process_name} java -jar "$_base/build/libs/$_process_name-$_version.jar"
+        screen -c screenrc -d -m -S ${_screen_name} -t ${_process_name} java -jar "$_base/build/libs/$_process_name-$_version.jar" --spring.config.location=file:${_nubomedia_config_file}
     else
-        screen -S $_screen_name -p 0 -X screen -t $_process_name java -jar "$_base/build/libs/$_process_name-$_version.jar"
+        screen -S $_screen_name -p 0 -X screen -t $_process_name java -jar "$_base/build/libs/$_process_name-$_version.jar" --spring.config.location=file:${_nubomedia_config_file}
     fi
 }
 
