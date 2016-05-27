@@ -327,11 +327,11 @@
                     </tab>
                     <tab heading="Json">
                         <form role="form" id="formJson">
-                            <div class="form-group">
+                            <div class="form-group" ng-init="appJson=''">
                                 <br> <label for="jsonInputArea">Insert Your Json</label>
-                                <textarea name="textTopologyJson" ng-model="textTopologyJson" id="jsonInputArea"
+                                <textarea name="appjson" ng-model="appJson" id="jsonInputArea"
                                           class="form-control" rows="5"
-                                          placeholder="{ }" ng-change="changeText(textTopologyJson)"></textarea>
+                                          placeholder="{ }" ng-change="changeText(appJson)"></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="jsonInputFile">File input</label>
@@ -387,7 +387,7 @@
                     <div class="inputKeyP">
                         <div class="form-group">
                             <br> <label for="jsonInputArea" class="">Insert Your Private Key</label>
-                                <textarea name="textTopologyJson" ng-model="privateKeyReq.privateKey" id="jsonInputArea"
+                                <textarea name="appJson" ng-model="privateKeyReq.privateKey" id="jsonInputArea"
                                           class="form-control" rows="25"
                                           placeholder="-----BEGIN PRIVATE KEY-----"></textarea>
                         </div>

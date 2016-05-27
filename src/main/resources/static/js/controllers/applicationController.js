@@ -22,7 +22,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         var urlMediaManager = '';
         var maxLoad = 100;
         var marketurl = $cookieStore.get('marketplaceIP');
-
+        $scope.file ='';
 
         //var marketurl = 'http://localhost:8082/api/v1/app/';
         //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
@@ -232,15 +232,24 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 delete $scope.appCreate.secretName;
 
 
-            console.log(JSON.stringify($scope.appCreate));
+            //console.log(JSON.stringify($scope.appCreate));
 
             if ($scope.file !== '') {
                 postTopology = $scope.file;
+                console.log("It's a File!")
             }
-            else if ($scope.textTopologyJson !== '')
-                postTopology = $scope.textTopologyJson;
-            else if (angular.isUndefined(postTopology))
+            else if ($scope.appJson !== ''){
+                postTopology = $scope.appJson;
+                console.log("It's a TextArea!")
+
+            }
+
+            else if (angular.isUndefined(postTopology)){
                 postTopology = $scope.appCreate;
+                console.log("It's a Form!")
+
+            }
+
             else {
                 alert('Problem with Topology');
                 sendOk = false;
@@ -256,7 +265,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                             showOk('App Saved!');
                             loadTable();
                             $scope.file = '';
-                            $scope.textTopologyJson = '';
+                            $scope.appJson = '';
                         })
                         .error(function (data, status) {
                             showError(status, data);
@@ -267,7 +276,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                             showOk('App created!');
                             loadTable();
                             $scope.file = '';
-                            $scope.textTopologyJson = '';
+                            $scope.appJson = '';
                         })
                         .error(function (data, status) {
                             showError(status, data);
@@ -310,8 +319,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
 
         $scope.changeText = function (text) {
-            $scope.textTopologyJson = text;
-            console.log($scope.textTopologyJson);
+            $scope.appJson = text;
+            console.log($scope.appJson);
         };
 
         $scope.loadLog = function () {
