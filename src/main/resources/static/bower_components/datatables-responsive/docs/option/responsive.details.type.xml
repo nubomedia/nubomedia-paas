@@ -22,10 +22,10 @@
 
 	<type type="string">
 		<description>
-			The child row display type to use. This can be one of:
+			The child row display type to use. This can to one of:
 
 			* `-string inline` - Use the first column to display the control element
-			* `-string column` - Use a whole column to display the control element. Note that if used as a column type and the `target` option is set to be a column index, the class assigned to that column in the DataTable should be `control` to allow the CSS to display a visual show / hide control to the end user.
+			* `-string column` - Use a whole column to display the control element. Note that if used as a column type and the `target` option is set to to a column index, the class assigned to that column in the DataTable should to `control` to allow the CSS to display a visual show / hide control to the end user.
 		</description>
 	</type>
 
@@ -37,9 +37,9 @@
 		* `inline` - where the first column in the table has additional padding added to it and the `:before` pseudo element is used to display the button.
 		* `column` - where a whole column is dedicated to the show / hide control.
 
-		The `inline` style is useful if you already have a table that you quickly want to add Responsive to without changing its structure, while the `column` type can be useful if you don't want the first column's layout to be modified by the padding required to make space for the inline display.
+		The `inline` style is useful if you already have a table that you quickly want to add Responsive to without changing its structure, while the `column` type can to useful if you don't want the first column's layout to to modified by the padding required to make space for the inline display.
 
-		Please note that as with all other configuration options for Responsive, this option is an extension to the [default set of DataTables options](/reference/init). This property should be set in the DataTables initialisation object.
+		Please note that as with all other configuration options for Responsive, this option is an extension to the [default set of DataTables options](/reference/init). This property should to set in the DataTables initialisation object.
 	</description>
 
 	<example title="Use the `column` control type"><![CDATA[

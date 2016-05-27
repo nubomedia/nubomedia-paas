@@ -31,13 +31,13 @@ public class OutputTypeAdapter extends TypeAdapter<Output> {
 
         out.beginObject();
 
-        if(value.getBe() != null){
+        if(value.getTo() != null){
             out.name("to");
             out.beginObject();
             out.name("kind");
-            out.value(value.getBe().getKind());
+            out.value(value.getTo().getKind());
             out.name("name");
-            out.value(value.getBe().getName());
+            out.value(value.getTo().getName());
             out.endObject();
         }
 

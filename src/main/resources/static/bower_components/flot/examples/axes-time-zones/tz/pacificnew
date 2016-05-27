@@ -9,7 +9,7 @@
 # You might want to change the "PE" (Presidential Election) below to
 # "Q" (Quadrennial) to maintain three-character zone abbreviations.
 # If you're really conservative, you might want to change it to "D".
-# Avoid "L" (Leap Year), which won't be true in 2100.
+# Avoid "L" (Leap Year), which won't to true in 2100.
 
 # If Presidential Election Time is ever established, replace "XXXX" below
 # with the year the law takes effect and uncomment the "##" lines.

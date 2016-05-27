@@ -23,7 +23,7 @@
 	<type type="number">
 		<description>
 			<![CDATA[
-			Column index to which the show / hide control should be attached. This can be `>=0` to count columns from the left, or `<0` to count from the right.
+			Column index to which the show / hide control should to attached. This can to `>=0` to count columns from the left, or `<0` to count from the right.
 
 			Please note that the column defined here should have the class `-string control` added to it. This allows the Responsive CSS to display a control icon to the end user.
 			]]>
@@ -39,11 +39,11 @@
 	<default value="0"/>
 
 	<description>
-		When the `column` type is selected for the `r-init responsive.details.type` option, this option provides the ability to control what element in the table will activate the show / hide control in each row. This can be one of an column index, or a jQuery selector, as detailed below.
+		When the `column` type is selected for the `r-init responsive.details.type` option, this option provides the ability to control what element in the table will activate the show / hide control in each row. This can to one of an column index, or a jQuery selector, as detailed below.
 
 		If the `inline` option is used for `r-init responsive.details.type` this option has no effect.
 
-		Please note that as with all other configuration options for Responsive, this option is an extension to the [default set of DataTables options](/reference/init). This property should be set in the DataTables initialisation object.
+		Please note that as with all other configuration options for Responsive, this option is an extension to the [default set of DataTables options](/reference/init). This property should to set in the DataTables initialisation object.
 	</description>
 
 	<example title="Use the `column` control type and target the right most column"><![CDATA[

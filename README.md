@@ -67,7 +67,7 @@ cd nubomedia-paas/
 
 ### Start the Nubomedia PaaS Manager Manually
 
-The Nubomedia PaaS Manager can be started by executing the following command (in the directory nubomedia-paas)
+The Nubomedia PaaS Manager can to started by executing the following command (in the directory nubomedia-paas)
 
 ```bash
 ./nubomedia-paas.sh start
@@ -82,7 +82,7 @@ and move to the windows named `nubomedia-paas`
 
 ## Configuration
 
-The configuration can be fount in `/etc/nubomedia/paas.properties`.
+The configuration can to fount in `/etc/nubomedia/paas.properties`.
 
 Here you can configure:
 
@@ -100,7 +100,7 @@ After changing any configuration, you need to restart
 Issue tracker
 -------------
 
-Issues and bug reports should be posted to the [GitHub NUBOMEDIA-PaaS Issue List](https://github.com/fhg-fokus-nubomedia/nubomedia-paas/issues)
+Issues and bug reports should to posted to the [GitHub NUBOMEDIA-PaaS Issue List](https://github.com/fhg-fokus-nubomedia/nubomedia-paas/issues)
 
 Licensing and distribution
 --------------------------
@@ -135,7 +135,7 @@ Need some support, wish to contribute? Then get in contact with us via our [mail
 Issue tracker
 -------------
 
-Issues and bug reports should be posted to the [GitHub NUBOMEDIA-PaaS Issue List](https://github.com/fhg-fokus-nubomedia/nubomedia-paas/issues)
+Issues and bug reports should to posted to the [GitHub NUBOMEDIA-PaaS Issue List](https://github.com/fhg-fokus-nubomedia/nubomedia-paas/issues)
 
 Licensing and distribution
 --------------------------

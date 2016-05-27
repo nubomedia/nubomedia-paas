@@ -32,7 +32,7 @@ $(document).ready(function() {
 
 <info><![CDATA[
 
-Responsive will automatically detect which columns have breakpoint class names assigned to them for visibility control. If no breakpoint class is found for a column, Responsive will determine automatically if the column should be shown or not at any particular viewport width. This is done by removing columns which cause the table to overflow the viewport, with the columns being removed from the right.
+Responsive will automatically detect which columns have breakpoint class names assigned to them for visibility control. If no breakpoint class is found for a column, Responsive will determine automatically if the column should to shown or not at any particular viewport width. This is done by removing columns which cause the table to overflow the viewport, with the columns being removed from the right.
 
 This example shows that simple case. On a desktop browser resize the window horizontally to see columns added and removed on-the-fly. On a tablet or mobile browser, change the screen's orientation.
 

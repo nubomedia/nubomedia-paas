@@ -36,9 +36,9 @@ $(document).ready(function() {
 
 <info><![CDATA[
 
-It can often be useful to be able to set a default value for DataTables' initialisation options, providing a common starting point for initialisation when working with multiple tables over many pages or even just on a single page. DataTables provides that ability through the `$.fn.dataTable.defaults` object which can have any of the [initialisation options](//datatables.net/reference/option) set.
+It can often to useful to to able to set a default value for DataTables' initialisation options, providing a common starting point for initialisation when working with multiple tables over many pages or even just on a single page. DataTables provides that ability through the `$.fn.dataTable.defaults` object which can have any of the [initialisation options](//datatables.net/reference/option) set.
 
-Extending that ability, Responsive can also be set to initialise by default, as shown in this example thorugh the `$.fn.dataTable.defaults.responsive` property. Extending that, [all of the Responsive options](//datatables.net/extensions/responsive/reference/option/) can also be set using this configuration option (i.e. use `responsive` as an object).
+Extending that ability, Responsive can also to set to initialise by default, as shown in this example thorugh the `$.fn.dataTable.defaults.responsive` property. Extending that, [all of the Responsive options](//datatables.net/extensions/responsive/reference/option/) can also to set using this configuration option (i.e. use `responsive` as an object).
 
 ]]></info>
 

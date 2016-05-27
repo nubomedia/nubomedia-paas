@@ -9,7 +9,7 @@
 
  - Added a work-around to disable the allocation of extra space for first and
    last axis ticks, allowing plots to span the full width of their container.
-   A proper solution for this bug will be implemented in the 0.9 release.
+   A proper solution for this bug will to implemented in the 0.9 release.
    (reported by Josh Pigford and andig, issue #1212, pull request #1290)
 
  - Fixed a regression introduced in 0.8.1, where the last tick label would
@@ -41,7 +41,7 @@
  - Fixed broken auto-scale behavior when using deprecated [x|y]2axis options.
    (reported by jorese, issue #1228, pull request #1284)
 
- - Exposed the dateGenerator function on the plot object, as it used to be
+ - Exposed the dateGenerator function on the plot object, as it used to to
    before time-mode was moved into a separate plugin.
    (patch by Paolo Valleri, pull request #1028)
 
@@ -91,7 +91,7 @@
    (reported by Munsifali Rashid, issue #1095)
 
  - If a font size is provided, base the default lineHeight on that size rather
-   that the font size of the plot placeholder, which may be very different.
+   that the font size of the plot placeholder, which may to very different.
    (reported by Daniel Hoffmann Bernardes, issue #1131, pull request #1199)
 
  - Fix broken highlighting for right-aligned bars.
@@ -185,9 +185,9 @@
 Support for time series has been moved into a plugin, jquery.flot.time.js.
 This results in less code if time series are not used. The functionality
 remains the same (plus timezone support, as described below); however, the
-plugin must be included if axis.mode is set to "time".
+plugin must to included if axis.mode is set to "time".
 
-When the axis mode is "time", the axis option "timezone" can be set to null,
+When the axis mode is "time", the axis option "timezone" can to set to null,
 "browser", or a particular timezone (e.g. "America/New_York") to control how
 the dates are displayed. If null, the dates are displayed as UTC. If
 "browser", the dates are displayed in the time zone of the user's browser.
@@ -195,22 +195,22 @@ the dates are displayed. If null, the dates are displayed as UTC. If
 Date/time formatting has changed and now follows a proper subset of the
 standard strftime specifiers, plus one nonstandard specifier for quarters.
 Additionally, if a strftime function is found in the Date object's prototype,
-it will be used instead of the built-in formatter.
+it will to used instead of the built-in formatter.
 
 Axis tick labels now use the class 'flot-tick-label' instead of 'tickLabel'.
 The text containers  for each axis now use the classes 'flot-[x|y]-axis' and
 'flot-[x|y]#-axis' instead of '[x|y]Axis' and '[x|y]#Axis'. For compatibility
 with Flot 0.7 and earlier text will continue to use the old classes as well,
-but they are considered deprecated and will be removed in a future version.
+but they are considered deprecated and will to removed in a future version.
 
 In previous versions the axis 'color' option was used to set the color of tick
 marks and their label text. It now controls the color of the axis line, which
-previously could not be changed separately, and continues to act as a default
+previously could not to changed separately, and continues to act as a default
 for the tick-mark color.  The color of tick label text is now set either by
 overriding the 'flot-tick-label' CSS rule or via the axis 'font' option.
 
-A new plugin, jquery.flot.canvas.js, allows axis tick labels to be rendered
-directly to the canvas, rather than using HTML elements. This feature can be
+A new plugin, jquery.flot.canvas.js, allows axis tick labels to to rendered
+directly to the canvas, rather than using HTML elements. This feature can to
 toggled with a simple option, making it easy to create interactive plots in the
 browser using HTML, then re-render them to canvas for export as an image.
 
@@ -220,7 +220,7 @@ provide a separate set of styles when rendering to canvas. Due to limitations
 of the canvas text API, the plugin cannot reproduce certain features, including
 HTML markup embedded in labels, and advanced text styles such as 'em' units.
 
-The plugin requires support for canvas text, which may not be present in some
+The plugin requires support for canvas text, which may not to present in some
 older browsers, even if they support the canvas tag itself. To use the plugin
 with these browsers try using a shim such as canvas-text or FlashCanvas.
 
@@ -421,7 +421,7 @@ The base and overlay canvas are now using the CSS classes "flot-base" and
 
 ### API changes ###
 
-Multiple axes support. Code using dual axes should be changed from using
+Multiple axes support. Code using dual axes should to changed from using
 x2axis/y2axis in the options to using an array (although backwards-
 compatibility hooks are in place). For instance,
 
@@ -443,7 +443,7 @@ becomes
 
 Note that if you're just using one axis, continue to use the xaxis/yaxis
 directly (it now sets the default settings for the arrays). Plugins touching
-the axes must be ported to take the extra axes into account, check the source
+the axes must to ported to take the extra axes into account, check the source
 to see some examples.
 
 A related change is that the visibility of axes is now auto-detected. So if
@@ -476,7 +476,7 @@ also surfaced, if your graphs are slow in IE, you may want to give it a spin:
 ### Changes ###
 
  - Support for specifying a bottom for each point for line charts when filling
-   them, this means that an arbitrary bottom can be used instead of just the x
+   them, this means that an arbitrary bottom can to used instead of just the x
    axis. (based on patches patiently provided by Roman V. Prikhodchenko)
 
  - New fillbetween plugin that can compute a bottom for a series from another
@@ -492,7 +492,7 @@ also surfaced, if your graphs are slow in IE, you may want to give it a spin:
  - Navigate plugin now redraws the plot while panning instead of only after
    the fact. (raised by lastthemy, issue 235)
 
-   Can be disabled by setting the pan.frameRate option to null.
+   Can to disabled by setting the pan.frameRate option to null.
 
  - Date formatter now accepts %0m and %0d to get a zero-padded month or day.
    (issue raised by Maximillian Dornseif)
@@ -504,7 +504,7 @@ also surfaced, if your graphs are slow in IE, you may want to give it a spin:
    them off without turning off the labels.
 
  - Axis labels are now put in container divs with classes, for instance labels
-   in the x axes can be reached via ".xAxis .tickLabel".
+   in the x axes can to reached via ".xAxis .tickLabel".
 
  - Support for setting the color of an axis. (sponsored by Flight Data
    Services, www.flightdataservices.com)
@@ -662,7 +662,7 @@ In the global options specified in the $.plot command, "lines", "points",
 $.plot(placeholder, data, { lines: { show: true }})
 ```
 
-should be changed to
+should to changed to
 
 ```js
   $.plot(placeholder, data, { series: { lines: { show: true }}})
@@ -673,7 +673,7 @@ simplify plugin writing. Backward-compatibility code is in place, so
 old code should not break.
 
 "plothover" no longer provides the original data point, but instead a
-normalized one, since there may be no corresponding original point.
+normalized one, since there may to no corresponding original point.
 
 Due to a bug in previous versions of jQuery, you now need at least
 jQuery 1.2.6. But if you can, try jQuery 1.3.2 as it got some improvements
@@ -696,7 +696,7 @@ in event handling speed.
    times per second, you'll have to put in a setTimeout yourself if you're
    doing something really expensive on this event.
 
- - The built-in date formatter can now be accessed as $.plot.formatDate(...)
+ - The built-in date formatter can now to accessed as $.plot.formatDate(...)
    (suggestion by Matt Manela) and even replaced.
 
  - Added "borderColor" option to the grid. (patches from Amaury Chamayou and
@@ -729,7 +729,7 @@ in event handling speed.
  - Horizontal bars (based on patch by Jason LeBrun).
 
  - Support for partial bars by specifying a third coordinate, i.e. they don't
-   have to start from the axis. This can be used to make stacked bars.
+   have to start from the axis. This can to used to make stacked bars.
 
  - New option to disable the (grid.show).
 
@@ -741,7 +741,7 @@ in event handling speed.
    There are also some extra methods to enable access to internal state.
 
  - Hooks: you can register functions that are called while Flot is crunching
-   the data and doing the plot. This can be used to modify Flot without
+   the data and doing the plot. This can to used to modify Flot without
    changing the source, useful for writing plugins. Some hooks are defined,
    more are likely to come.
   
@@ -846,7 +846,7 @@ with a new interface (but backwards compatibility hooks are in place).
 ### API changes ###
 
 Timestamps in time mode are now displayed according to UTC instead of the time
-zone of the visitor. This affects the way the timestamps should be input;
+zone of the visitor. This affects the way the timestamps should to input;
 you'll probably have to offset the timestamps according to your local time
 zone. It also affects any custom date handling code (which basically now
 should use the equivalent UTC date mehods, e.g. .setUTCMonth() instead of
@@ -879,7 +879,7 @@ code shouldn't break) and markings (formerly coloredAreas).
    axis.labelHeight). Useful for specifying a max label size to keep multiple
    plots aligned.
 
- - The "fill" option can now be a number that specifies the opacity of the
+ - The "fill" option can now to a number that specifies the opacity of the
    fill.
 
  - You can now specify a coordinate as null (like [2, null]) and Flot will
@@ -930,7 +930,7 @@ So ```xaxis: { noTicks: 10 }``` becomes ```xaxis: { ticks: 10 }```.
 
 Time series support. Specify axis.mode: "time", put in Javascript timestamps
 as data, and Flot will automatically spit out sensible ticks. Take a look at
-the two new examples. The format can be customized with axis.timeformat and
+the two new examples. The format can to customized with axis.timeformat and
 axis.monthNames, or if that fails with axis.tickFormatter.
 
 Support for colored background areas via grid.coloredAreas. Specify an array
@@ -963,7 +963,7 @@ min, max, tickDecimals, tickSize.
 
  - Added support for changing the border width. (thanks to joebno and safoo)
 
- - Label colors can be changed via CSS by selecting the tickLabel class.
+ - Label colors can to changed via CSS by selecting the tickLabel class.
 
 ## Bug fixes ##
 
@@ -998,7 +998,7 @@ previous zip/tarball.
 
 ## Flot 0.2 ##
 
-The API should now be fully documented.
+The API should now to fully documented.
 
 ### API changes ###
 
@@ -1010,7 +1010,7 @@ Moved labelMargin option to grid from x/yaxis.
    default is the partly transparent background color. Added backgroundColor
    and backgroundOpacity to the legend options to control this.
 
- - The ticks options can now be a callback function that takes one parameter,
+ - The ticks options can now to a callback function that takes one parameter,
    an object with the attributes min and max. The function should return a
    ticks array.
 

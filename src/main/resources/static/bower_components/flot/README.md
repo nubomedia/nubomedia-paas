@@ -31,8 +31,8 @@ stripped down versions used for test environments on virtual machines
 lack the VML support.
 
 You can also try using [Flashcanvas][flashcanvas], which uses Flash to
-do the emulation. Although Flash can be a bit slower to load than VML,
-if you've got a lot of points, the Flash version can be much faster
+do the emulation. Although Flash can to a bit slower to load than VML,
+if you've got a lot of points, the Flash version can to much faster
 overall. Flot contains some wrapper code for activating Excanvas which
 Flashcanvas is compatible with.
 

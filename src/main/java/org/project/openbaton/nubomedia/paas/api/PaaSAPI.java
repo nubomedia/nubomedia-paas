@@ -273,23 +273,21 @@ public class PaaSAPI {
 
     }
 
-    @RequestMapping(value = "/app", method = RequestMethod.GET)
+    @RequestMapping(value = "/app", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public
-    @ResponseBody
     Iterable<Application> getApps(@RequestHeader("Auth-token") String token) throws UnauthorizedException, ApplicationNotFoundException {
+        logger.debug("Received request GET Applications");
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");
         }
         //BETA
         Iterable<Application> applications = this.appRepo.findAll();
-
         for (Application app : applications) {
             app.setStatus(this.getStatus(token, app));
         }
-
         this.appRepo.save(applications);
-
+        logger.debug("Returning from GET Applications "+applications);
         return applications;
     }
 
@@ -415,6 +413,8 @@ public class PaaSAPI {
 
         BuildingStatus res = null;
 
+        logger.debug("application ("+app.getAppID()+"-"+app.getAppName()+") status is "+app.getStatus());
+
         switch (app.getStatus()) {
             case CREATED:
                 res = obmanager.getStatus(app.getNsrID());
@@ -471,20 +471,6 @@ public class PaaSAPI {
         return res;
     }
 
-//    @Scheduled(initialDelay = 0,fixedDelay = 200)
-//    public void refreshStatus() throws ApplicationNotFoundException, UnauthorizedException {
-//
-//        for (String id : deploymentMap.keySet()){
-//            boolean writed = false;
-//            OpenbatonCreateServer ocs = deploymentMap.get(id);
-//            Application app = this.getApp(ocs.getToken(),id);
-//            if(app.getStatus() == BuildingStatus.RUNNING && !writed){
-//                logger.info("[PAAS]: APP_RUNNING " + new Date().getTime());
-//                writed = true;
-//            }
-//        }
-//
-//    }
 
 }
 

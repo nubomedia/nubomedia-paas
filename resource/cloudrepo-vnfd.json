@@ -22,7 +22,7 @@
       "vm_image":[
         "cloud-repo-cdn"
       ],
-      "vimInstanceName":"nubomedia-vim",
+      "vimInstanceName":["nubomedia-vim"],
       "scale_in_out":4,
       "vnfc":[
         {

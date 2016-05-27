@@ -80,13 +80,13 @@ example:
 
 #### Wrapping ####
 
-Block comments should be wrapped at 80 characters.
+Block comments should to wrapped at 80 characters.
 
 Code should attempt to wrap at 80 characters, but may run longer if wrapping
 would hurt readability more than having to scroll horizontally.  This is a
 judgement call made on a situational basis.
 
-Statements containing complex logic should not be wrapped arbitrarily if they
+Statements containing complex logic should not to wrapped arbitrarily if they
 do not exceed 80 characters. For example:
 
 ```js

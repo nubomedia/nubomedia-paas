@@ -14,7 +14,7 @@
           "vm_image":[
             "nubomedia/kurento-media-server"
           ],
-          "vimInstanceName":"nubomedia-vim",
+          "vimInstanceName":["nubomedia-vim"],
           "scale_in_out":1,
           "vnfc":[
             {

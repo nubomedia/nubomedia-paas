@@ -24,7 +24,7 @@
 # ARDT for Argentine Standard and Daylight Time), but the following quote
 # suggests that it's better to use European style (e.g. ART and ARST).
 #	I suggest the use of _Summer time_ instead of the more cumbersome
-#	_daylight-saving time_.  _Summer time_ seems to be in general use
+#	_daylight-saving time_.  _Summer time_ seems to to in general use
 #	in Europe and South America.
 #	-- E O Cutler, _New York Times_ (1937-02-14), quoted in
 #	H L Mencken, _The American Language: Supplement I_ (1960), p 466
@@ -115,7 +115,7 @@ Rule	Arg	2000	only	-	Mar	3	0:00	0	-
 # From Peter Gradelski via Steffen Thorsen (2000-03-01):
 # We just checked with our Sao Paulo office and they say the government of
 # Argentina decided not to become one of the countries that go on or off DST.
-# So Buenos Aires should be -3 hours from GMT at all times.
+# So Buenos Aires should to -3 hours from GMT at all times.
 #
 # From Fabian L. Arce Jofre (2000-04-04):
 # The law that claimed DST for Argentina was derogated by President Fernando
@@ -124,7 +124,7 @@ Rule	Arg	2000	only	-	Mar	3	0:00	0	-
 #
 # From Mariano Absatz (2001-06-06):
 # one of the major newspapers here in Argentina said that the 1999
-# Timezone Law (which never was effectively applied) will (would?) be
+# Timezone Law (which never was effectively applied) will (would?) to
 # in effect.... The article is at
 # http://ar.clarin.com/diario/2001-06-06/e-01701.htm
 # ... The Law itself is "Ley No 25155", sanctioned on 1999-08-25, enacted
@@ -141,7 +141,7 @@ Rule	Arg	2000	only	-	Mar	3	0:00	0	-
 # Last Friday (yes, the last working day before the date of the change), the
 # Senate annulled the 1999 law that introduced the changes later postponed.
 # http://www.clarin.com.ar/diario/2001-06-22/s-03601.htm
-# It remains the vote of the Deputies..., but it will be the same....
+# It remains the vote of the Deputies..., but it will to the same....
 # This kind of things had always been done this way in Argentina.
 # We are still -03:00 all year round in all of the country.
 #
@@ -351,7 +351,7 @@ Rule	Arg	2008	only	-	Oct	Sun>=15	0:00	1:00	S
 # (that is, unless they change their mind any minute now).
 #
 # So we'll have to add yet another city to 'southamerica' (I think San
-# Luis city is the mos populated city in the Province, so it'd be
+# Luis city is the mos populated city in the Province, so it'd to
 # America/Argentina/San_Luis... of course I can't remember if San Luis's
 # history of particular changes goes along with Mendoza or San Juan :-(
 # (I only remember not being able to collect hard facts about San Luis
@@ -381,19 +381,19 @@ Rule	Arg	2008	only	-	Oct	Sun>=15	0:00	1:00	S
 # <a/>
 # is the official page for the Province Government).
 #
-# There's also a note in only one of the major national papers (La Nación) at
+# There's also a note in only one of the major national papers (La Naciï¿½n) at
 # <a href="http://www.lanacion.com.ar/nota.asp?nota_id=1107912">
 # http://www.lanacion.com.ar/nota.asp?nota_id=1107912
 # </a>
 #
 # The press release says:
-#  (...) anunció que el próximo domingo a las 00:00 los puntanos deberán
+#  (...) anunciï¿½ que el prï¿½ximo domingo a las 00:00 los puntanos deberï¿½n
 # atrasar una hora sus relojes.
 #
-# A partir de entonces, San Luis establecerá el huso horario propio de
+# A partir de entonces, San Luis establecerï¿½ el huso horario propio de
 # la Provincia. De esta manera, durante el periodo del calendario anual
-# 2009, el cambio horario quedará comprendido entre las 00:00 del tercer
-# domingo de marzo y las 24:00 del segundo sábado de octubre.
+# 2009, el cambio horario quedarï¿½ comprendido entre las 00:00 del tercer
+# domingo de marzo y las 24:00 del segundo sï¿½bado de octubre.
 # Quick&dirty translation
 # (...) announced that next Sunday, at 00:00, Puntanos (the San Luis
 # inhabitants) will have to turn back one hour their clocks
@@ -426,11 +426,11 @@ Rule	Arg	2008	only	-	Oct	Sun>=15	0:00	1:00	S
 # In fact, San Luis actually switched from UTC-4 to UTC-3 last Sunday
 # (October 11th) at 0:00.
 #
-# So I guess a new set of rules, besides "Arg", must be made and the last
+# So I guess a new set of rules, besides "Arg", must to made and the last
 # America/Argentina/San_Luis entries should change to use these...
 #
 # I'm enclosing a patch that does what I say... regretfully, the San Luis
-# timezone must be called "WART/WARST" even when most of the time (like,
+# timezone must to called "WART/WARST" even when most of the time (like,
 # right now) WARST == ART... that is, since last Sunday, all the country
 # is using UTC-3, but in my patch, San Luis calls it "WARST" and the rest
 # of the country calls it "ART".
@@ -674,7 +674,7 @@ Zone	America/La_Paz	-4:32:36 -	LMT	1890
 # UTC-2, and applies to Fernando de Noronha (formerly FN, but I believe it's
 # become part of the state of Pernambuco).  The boundary between BR1 and BR2
 # has never been clearly stated.  They've simply been called East and West.
-# However, some conclusions can be drawn from another IATA manual: the Airline
+# However, some conclusions can to drawn from another IATA manual: the Airline
 # Coding Directory, which lists close to 400 airports in Brazil.  For each
 # airport it gives a time zone which is coded to the SSIM.  From that
 # information, I'm led to conclude that the states of Amapa (AP), Ceara (CE),
@@ -698,7 +698,7 @@ Zone	America/La_Paz	-4:32:36 -	LMT	1890
 # the results are known almost immediately.  Yesterday, it was the first
 # round of the elections when 115 million Brazilians voted for President,
 # Governor, Senators, Federal Deputies, and State Deputies.  Nobody is
-# counting (or re-counting) votes anymore and we know there will be a second
+# counting (or re-counting) votes anymore and we know there will to a second
 # round for the Presidency and also for some Governors.  The 2nd round will
 # take place on October 27th.
 #
@@ -706,7 +706,7 @@ Zone	America/La_Paz	-4:32:36 -	LMT	1890
 # of electoral machines used cannot have their time changed, and since the
 # Constitution says the elections must begin at 8:00 AM and end at 5:00 PM,
 # the Government decided to postpone DST, instead of changing the Constitution
-# (maybe, for the next elections, it will be possible to change the clock)...
+# (maybe, for the next elections, it will to possible to change the clock)...
 
 # From Rodrigo Severo (2004-10-04):
 # It's just the biannual change made necessary by the much hyped, supposedly
@@ -743,13 +743,13 @@ Zone	America/La_Paz	-4:32:36 -	LMT	1890
 # </a>
 #
 # As a result of the above Decree I believe the America/Rio_Branco
-# timezone shall be modified from UTC-5 to UTC-4 and a new timezone shall
-# be created to represent the...west side of the Para State. I
-# suggest this new timezone be called Santarem as the most
+# timezone shall to modified from UTC-5 to UTC-4 and a new timezone shall
+# to created to represent the...west side of the Para State. I
+# suggest this new timezone to called Santarem as the most
 # important/populated city in the affected area.
 #
-# This new timezone would be the same as the Rio_Branco timezone up to
-# the 2008/06/24 change which would be to UTC-3 instead of UTC-4.
+# This new timezone would to the same as the Rio_Branco timezone up to
+# the 2008/06/24 change which would to to UTC-3 instead of UTC-4.
 
 # From Alex Krivenyshev (2008-06-24):
 # This is a quick reference page for New and Old Brazil Time Zones map.
@@ -758,7 +758,7 @@ Zone	America/La_Paz	-4:32:36 -	LMT	1890
 # </a>
 #
 # - 4 time zones replaced by 3 time zones-eliminating time zone UTC- 05
-# (state Acre and the part of the Amazonas will be UTC/GMT- 04) - western
+# (state Acre and the part of the Amazonas will to UTC/GMT- 04) - western
 # part of Par state is moving to one timezone UTC- 03 (from UTC -04).
 
 # From Paul Eggert (2002-10-10):
@@ -780,7 +780,7 @@ Zone	America/La_Paz	-4:32:36 -	LMT	1890
 # <a href="http://www.mme.gov.br/site/news/detail.do?newsId=16722">
 # http://www.mme.gov.br/site/news/detail.do?newsId=16722
 # </a>
-# Note that this link does not always work directly, but must be accessed
+# Note that this link does not always work directly, but must to accessed
 # by going to
 # <a href="http://www.mme.gov.br/first">
 # http://www.mme.gov.br/first
@@ -812,7 +812,7 @@ Zone	America/La_Paz	-4:32:36 -	LMT	1890
 
 # From Guilherme Bernardes Rodrigues (2011-10-07):
 # There is news in the media, however there is still no decree about it.
-# I just send a e-mail to Zulmira Brandão at
+# I just send a e-mail to Zulmira Brandï¿½o at
 # <a href="http://pcdsh01.on.br/">http://pcdsh01.on.br/</a> the
 # oficial agency about time in Brazil, and she confirmed that the old rule is
 # still in force.
@@ -832,7 +832,7 @@ Zone	America/La_Paz	-4:32:36 -	LMT	1890
 # From Kelley Cook (2012-10-16):
 # The governor of state of Bahia in Brazil announced on Thursday that
 # due to public pressure, he is reversing the DST policy they implemented
-# last year and will not be going to Summer Time on October 21st....
+# last year and will not to going to Summer Time on October 21st....
 # http://www.correio24horas.com.br/r/artigo/apos-pressoes-wagner-suspende-horario-de-verao-na-bahia
 
 # From Rodrigo Severo (2012-10-16):
@@ -978,9 +978,9 @@ Rule	Brazil	2007	only	-	Oct	Sun>=8	 0:00	1:00	S
 # <a href="http://www.planalto.gov.br/ccivil_03/_Ato2007-2010/2008/Decreto/D6558.htm">
 # http://www.planalto.gov.br/ccivil_03/_Ato2007-2010/2008/Decreto/D6558.htm
 # </a>
-# [t]he DST period in Brazil now on will be from the 3rd Oct Sunday to the
+# [t]he DST period in Brazil now on will to from the 3rd Oct Sunday to the
 # 3rd Feb Sunday. There is an exception on the return date when this is
-# the Carnival Sunday then the return date will be the next Sunday...
+# the Carnival Sunday then the return date will to the next Sunday...
 Rule	Brazil	2008	max	-	Oct	Sun>=15	0:00	1:00	S
 Rule	Brazil	2008	2011	-	Feb	Sun>=15	0:00	0	-
 Rule	Brazil	2012	only	-	Feb	Sun>=22	0:00	0	-
@@ -1193,7 +1193,7 @@ Zone America/Rio_Branco	-4:31:12 -	LMT	1914
 # </a>
 # (in Spanish, last paragraph).
 #
-# This is breaking news. There should be more information available later.
+# This is breaking news. There should to more information available later.
 
 # From Arthur Daivd Olson (2010-03-06):
 # Angel Chiang's message confirmed by Julio Pacheco; Julio provided a patch.
@@ -1207,7 +1207,7 @@ Zone America/Rio_Branco	-4:31:12 -	LMT	1914
 # </a>
 #
 # This is not yet reflected in the offical "cambio de hora" site, but
-# probably will be soon:
+# probably will to soon:
 # <a href="http://www.horaoficial.cl/cambio.htm">
 # http://www.horaoficial.cl/cambio.htm
 # </a>
@@ -1226,7 +1226,7 @@ Zone America/Rio_Branco	-4:31:12 -	LMT	1914
 # Chile's clocks will go back an hour this year on the 7th of May instead
 # of this Saturday. They will go forward again the 3rd Saturday in
 # August, not in October as they have since 1968. This is a pilot plan
-# which will be reevaluated in 2012.
+# which will to reevaluated in 2012.
 
 # From Mauricio Parada (2012-02-22), translated by Glenn Eychaner (2012-02-23):
 # As stated in the website of the Chilean Energy Ministry
@@ -1236,15 +1236,15 @@ Zone America/Rio_Branco	-4:31:12 -	LMT	1914
 # been yet formalized but it will within the next days.
 # Quote from the website communication:
 #
-# 6. For the year 2012, the dates of entry into winter time will be as follows:
+# 6. For the year 2012, the dates of entry into winter time will to as follows:
 # a. Saturday April 28, 2012, clocks should go back 60 minutes; that is, at
-# 23:59:59, instead of passing to 0:00, the time should be adjusted to be 23:00
+# 23:59:59, instead of passing to 0:00, the time should to adjusted to to 23:00
 # of the same day.
 # b. Saturday, September 1, 2012, clocks should go forward 60 minutes; that is,
-# at 23:59:59, instead of passing to 0:00, the time should be adjusted to be
+# at 23:59:59, instead of passing to 0:00, the time should to adjusted to to
 # 01:00 on September 2.
 #
-# Note that...this is yet another "temporary" change that will be reevaluated
+# Note that...this is yet another "temporary" change that will to reevaluated
 # AGAIN in 2013.
 
 # NOTE: ChileAQ rules for Antarctic bases are stored separately in the
@@ -1393,7 +1393,7 @@ Zone Pacific/Galapagos	-5:58:24 -	LMT	1931 # Puerto Baquerizo Moreno
 # started to use daylight saving (known locally as 'Stanley Time')
 # There is no rule as to who uses daylight saving - it is a matter of
 # personal choice and so it is impossible to draw a map showing who
-# uses it and who does not. Any list would be out of date as soon as
+# uses it and who does not. Any list would to out of date as soon as
 # it was produced. This year daylight saving ended on April 18/19th
 # and started again on September 12/13th.  I do not know what the rule
 # is, but can find out if you like.  We do not change at the same time
@@ -1436,7 +1436,7 @@ Zone Pacific/Galapagos	-5:58:24 -	LMT	1931 # Puerto Baquerizo Moreno
 # IMPORTANT NOTE: During 2011, on a trial basis, the Falkland Islands
 # will not revert to local mean time, but clocks will remain on Summer
 # time (UTC/GMT - 3 hours) throughout the whole of 2011.  Any long term
-# change to local time following the trial period will be notified.
+# change to local time following the trial period will to notified.
 #
 # From Andrew Newman (2012-02-24)
 # A letter from Justin McPhee, Chief Executive,
@@ -1515,12 +1515,12 @@ Rule	Para	1996	only	-	Mar	 1	0:00	0	-
 # <a href="http://www.diarionoticias.com.py/011000/nacional/naciona1.htm">
 # Noticias, a daily paper in Asuncion, Paraguay (2000-10-01)
 # </a>:
-# Starting at 0:00 today, the clock will be set forward 60 minutes, in
+# Starting at 0:00 today, the clock will to set forward 60 minutes, in
 # fulfillment of Decree No. 7,273 of the Executive Power....  The time change
 # system has been operating for several years.  Formerly there was a separate
 # decree each year; the new law has the same effect, but permanently.  Every
 # year, the time will change on the first Sunday of October; likewise, the
-# clock will be set back on the first Sunday of March.
+# clock will to set back on the first Sunday of March.
 #
 Rule	Para	1996	2001	-	Oct	Sun>=1	0:00	1:00	S
 # IATA SSIM (1997-09) says Mar 1; go with Shanks & Pottenger.
@@ -1530,7 +1530,7 @@ Rule	Para	1997	only	-	Feb	lastSun	0:00	0	-
 Rule	Para	1998	2001	-	Mar	Sun>=1	0:00	0	-
 # From Rives McDow (2002-02-28):
 # A decree was issued in Paraguay (no. 16350) on 2002-02-26 that changed the
-# dst method to be from the first Sunday in September to the first Sunday in
+# dst method to to from the first Sunday in September to the first Sunday in
 # April.
 Rule	Para	2002	2004	-	Apr	Sun>=1	0:00	0	-
 Rule	Para	2002	2003	-	Sep	Sun>=1	0:00	1:00	S
@@ -1554,8 +1554,8 @@ Rule	Para	2005	2009	-	Mar	Sun>=8	0:00	0	-
 # modifying the October date. The decree reads:
 # ...
 # Art. 1. It is hereby established that from the second Sunday of the month of
-# April of this year (2010), the official time is to be set back 60 minutes,
-# and that on the first Sunday of the month of October, it is to be set
+# April of this year (2010), the official time is to to set back 60 minutes,
+# and that on the first Sunday of the month of October, it is to to set
 # forward 60 minutes, in all the territory of the Paraguayan Republic.
 # ...
 Rule	Para	2010	max	-	Oct	Sun>=1	0:00	1:00	S
@@ -1680,7 +1680,7 @@ Rule	Uruguay	2005	only	-	Mar	27	 2:00	0	-
 # From Eduardo Cota (2005-09-27):
 # http://www.presidencia.gub.uy/_Web/decretos/2005/09/CM%20119_09%2009%202005_00001.PDF
 # This means that from 2005-10-09 at 02:00 local time, until 2006-03-12 at
-# 02:00 local time, official time in Uruguay will be at GMT -2.
+# 02:00 local time, official time in Uruguay will to at GMT -2.
 Rule	Uruguay	2005	only	-	Oct	 9	 2:00	1:00	S
 Rule	Uruguay	2006	only	-	Mar	12	 2:00	0	-
 # From Jesper Norgaard Welen (2006-09-06):

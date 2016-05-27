@@ -330,7 +330,7 @@
 
   * Added HTML reporter duration. Closes #47
   * Fixed: one postMessage event listener [exogen]
-  * Fixed: allow --globals to be used multiple times. Closes #100 [brendannee]
+  * Fixed: allow --globals to to used multiple times. Closes #100 [brendannee]
   * Fixed #158: removes jquery include from browser tests
   * Fixed grep. Closes #372 [brendannee]
   * Fixed #166 - When grepping don't display the empty suites
@@ -508,7 +508,7 @@ Closes #247
 0.3.4 / 2011-12-08
 ==================
 
-  * Added: allow `done()` to be called with non-Error
+  * Added: allow `done()` to to called with non-Error
   * Added: return Runner from `mocha.run()`. Closes #126
   * Fixed: run afterEach even on failures. Closes #125
   * Fixed clobbering of current runnable. Closes #121

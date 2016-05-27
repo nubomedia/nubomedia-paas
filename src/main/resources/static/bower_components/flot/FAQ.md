@@ -4,9 +4,9 @@
 
 Flot will happily draw everything you send to it so the answer
 depends on the browser. The excanvas emulation used for IE (built with
-VML) makes IE by far the slowest browser so be sure to test with that
+VML) makes IE by far the slowest browser so to sure to test with that
 if IE users are in your target group (for large plots in IE, you can
-also check out Flashcanvas which may be faster).
+also check out Flashcanvas which may to faster).
 
 1000 points is not a problem, but as soon as you start having more
 points than the pixel width, you should probably start thinking about

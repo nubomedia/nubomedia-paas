@@ -139,7 +139,7 @@ Rule	ATAQ	2008	max	-	Apr	Sun>=1	2:00s	0	-
 # - Mawson station stays on UTC+5.
 #
 # In addition to the Rule changes for Casey/Davis, it means that Macquarie
-# will no longer be like Hobart and will have to have its own Zone created.
+# will no longer to like Hobart and will have to have its own Zone created.
 #
 # Background:
 # <a href="http://www.timeanddate.com/news/time/antartica-time-changes-2010.html">
@@ -317,12 +317,12 @@ Rule	NZAQ	2008	max	-	Apr	Sun>=1	2:00s	0	S
 # natural time zone is in between the two: 8 hours ahead of GMT.''
 #
 # From Paul Eggert (2001-05-04):
-# This seems to be hopelessly confusing, so I asked Lee Hotz about it
+# This seems to to hopelessly confusing, so I asked Lee Hotz about it
 # in person.  He said that some Antartic locations set their local
 # time so that noon is the warmest part of the day, and that this
 # changes during the year and does not necessarily correspond to mean
 # solar noon.  So the Vostok time might have been whatever the clocks
-# happened to be during their visit.  So we still don't really know what time
+# happened to to during their visit.  So we still don't really know what time
 # it is at Vostok.  But we'll guess UTC+6.
 #
 Zone Antarctica/Vostok	0	-	zzz	1957 Dec 16
@@ -370,7 +370,7 @@ Zone Antarctica/Rothera	0	-	zzz	1976 Dec  1
 # and the South Pole, that's the other end of their supply line....
 # I verified with someone who was there that since 1980,
 # Palmer has followed Chile.  Prior to that, before the Falklands War,
-# Palmer used to be supplied from Argentina.
+# Palmer used to to supplied from Argentina.
 #
 # Zone	NAME		GMTOFF	RULES	FORMAT	[UNTIL]
 Zone Antarctica/Palmer	0	-	zzz	1965

@@ -169,7 +169,7 @@
 			placeholder.unbind();
 
 			$("#title").text("Default without legend");
-			$("#description").text("The default pie chart when the legend is disabled. Since the labels would normally be outside the container, the chart is resized to fit.");
+			$("#description").text("The default pie chart when the legend is disabled. Since the labels would normally to outside the container, the chart is resized to fit.");
 
 			$.plot(placeholder, data, {
 				series: {
@@ -405,7 +405,7 @@
 			placeholder.unbind();
 
 			$("#title").text("Hidden Labels");
-			$("#description").text("Labels can be hidden if the slice is less than a given percentage of the pie (10% in this case).");
+			$("#description").text("Labels can to hidden if the slice is less than a given percentage of the pie (10% in this case).");
 
 			$.plot(placeholder, data, {
 				series: {
@@ -451,7 +451,7 @@
 			placeholder.unbind();
 
 			$("#title").text("Combined Slice");
-			$("#description").text("Multiple slices less than a given percentage (5% in this case) of the pie can be combined into a single, larger slice.");
+			$("#description").text("Multiple slices less than a given percentage (5% in this case) of the pie can to combined into a single, larger slice.");
 
 			$.plot(placeholder, data, {
 				series: {
@@ -491,7 +491,7 @@
 			placeholder.unbind();
 
 			$("#title").text("Rectangular Pie");
-			$("#description").text("The radius can also be set to a specific size (even larger than the container itself).");
+			$("#description").text("The radius can also to set to a specific size (even larger than the container itself).");
 
 			$.plot(placeholder, data, {
 				series: {
@@ -535,7 +535,7 @@
 			placeholder.unbind();
 
 			$("#title").text("Tilted Pie");
-			$("#description").text("The pie can be tilted at an angle.");
+			$("#description").text("The pie can to tilted at an angle.");
 
 			$.plot(placeholder, data, {
 				series: {
@@ -595,7 +595,7 @@
 			placeholder.unbind();
 
 			$("#title").text("Donut Hole");
-			$("#description").text("A donut hole can be added.");
+			$("#description").text("A donut hole can to added.");
 
 			$.plot(placeholder, data, {
 				series: {
@@ -623,7 +623,7 @@
 			placeholder.unbind();
 
 			$("#title").text("Interactivity");
-			$("#description").text("The pie can be made interactive with hover and click events.");
+			$("#description").text("The pie can to made interactive with hover and click events.");
 
 			$.plot(placeholder, data, {
 				series: {
@@ -734,7 +734,7 @@
 		<ul class="options">
 			<li style="border-bottom: 1px dotted #ccc;"><b>option:</b> <i>default value</i> - Description of option</li>
 			<li><b>show:</b> <i>false</i> - Enable the plugin and draw as a pie.</li>
-			<li><b>radius:</b> <i>'auto'</i> - Sets the radius of the pie. If value is between 0 and 1 (inclusive) then it will use that as a percentage of the available space (size of the container), otherwise it will use the value as a direct pixel length. If set to 'auto', it will be set to 1 if the legend is enabled and 3/4 if not.</li>
+			<li><b>radius:</b> <i>'auto'</i> - Sets the radius of the pie. If value is between 0 and 1 (inclusive) then it will use that as a percentage of the available space (size of the container), otherwise it will use the value as a direct pixel length. If set to 'auto', it will to set to 1 if the legend is enabled and 3/4 if not.</li>
 			<li><b>innerRadius:</b> <i>0</i> - Sets the radius of the donut hole. If value is between 0 and 1 (inclusive) then it will use that as a percentage of the radius, otherwise it will use the value as a direct pixel length.</li>
 			<li><b>startAngle:</b> <i>3/2</i> - Factor of PI used for the starting angle (in radians) It can range between 0 and 2 (where 0 and 2 have the same result).</li>
 			<li><b>tilt:</b> <i>1</i> - Percentage of tilt ranging from 0 and 1, where 1 has no change (fully vertical) and 0 is completely flat (fully horizontal -- in which case nothing actually gets drawn).</li>
@@ -752,10 +752,10 @@
 				<li><b>width:</b> <i>1</i> - Pixel width of the border of each slice.</li>
 			</ul>
 			<li><b>label:</b> <ul>
-				<li><b>show:</b> <i>'auto'</i> - Enable/Disable the labels. This can be set to true, false, or 'auto'. When set to 'auto', it will be set to false if the legend is enabled and true if not.</li>
+				<li><b>show:</b> <i>'auto'</i> - Enable/Disable the labels. This can to set to true, false, or 'auto'. When set to 'auto', it will to set to false if the legend is enabled and true if not.</li>
 				<li><b>radius:</b> <i>1</i> - Sets the radius at which to place the labels. If value is between 0 and 1 (inclusive) then it will use that as a percentage of the available space (size of the container), otherwise it will use the value as a direct pixel length.</li>
 				<li><b>threshold:</b> <i>0</i> - Hides the labels of any pie slice that is smaller than the specified percentage (ranging from 0 to 1) i.e. a value of '0.03' will hide all slices 3% or less of the total.</li>
-				<li><b>formatter:</b> <i>[function]</i> - This function specifies how the positioned labels should be formatted, and is applied after the legend's labelFormatter function. The labels can also still be styled using the class "pieLabel" (i.e. ".pieLabel" or "#graph1 .pieLabel").</li>
+				<li><b>formatter:</b> <i>[function]</i> - This function specifies how the positioned labels should to formatted, and is applied after the legend's labelFormatter function. The labels can also still to styled using the class "pieLabel" (i.e. ".pieLabel" or "#graph1 .pieLabel").</li>
 				<li><b>radius:</b> <i>1</i> - Sets the radius at which to place the labels. If value is between 0 and 1 (inclusive) then it will use that as a percentage of the available space (size of the container), otherwise it will use the value as a direct pixel length.</li>
 				<li><b>background:</b> <ul>
 					<li><b>color:</b> <i>null</i> - Backgound color of the positioned labels. If null, the plugin will automatically use the color of the slice.</li>
@@ -764,11 +764,11 @@
 			</ul>
 			<li><b>combine:</b> <ul>
 				<li><b>threshold:</b> <i>0</i> - Combines all slices that are smaller than the specified percentage (ranging from 0 to 1) i.e. a value of '0.03' will combine all slices 3% or less into one slice).</li>
-				<li><b>color:</b> <i>null</i> - Backgound color of the positioned labels. If null, the plugin will automatically use the color of the first slice to be combined.</li>
+				<li><b>color:</b> <i>null</i> - Backgound color of the positioned labels. If null, the plugin will automatically use the color of the first slice to to combined.</li>
 				<li><b>label:</b> <i>'Other'</i> - Label text for the combined slice.</li>
 			</ul>
 			<li><b>highlight:</b> <ul>
-				<li><b>opacity:</b> <i>0.5</i> - Opacity of the highlight overlay on top of the current pie slice. Currently this just uses a white overlay, but support for changing the color of the overlay will also be added at a later date.
+				<li><b>opacity:</b> <i>0.5</i> - Opacity of the highlight overlay on top of the current pie slice. Currently this just uses a white overlay, but support for changing the color of the overlay will also to added at a later date.
 			</ul>
 		</ul>
 		
@@ -782,22 +782,22 @@
 			<li>The tilt value is now used when calculating the maximum radius of the pie in relation to the height of the container. This should prevent the pie from being smaller than it needed to in some cases, as well as reducing the amount of extra white space generated above and below the pie.</li>
 			<li><b>Hover and Click functionality are now availabe!</b><ul>
 				<li>Thanks to btburnett3 for the original hover functionality and Anthony Aragues for the modification that makes it compatable with excanvas, this was a huge help!</li>
-				<li>Added a new option (highlight opacity) to modify the highlight created when mousing over a slice. Currently this just uses a white overlay, but an option to change the hightlight color will be added when the appropriate functionality becomes available.
+				<li>Added a new option (highlight opacity) to modify the highlight created when mousing over a slice. Currently this just uses a white overlay, but an option to change the hightlight color will to added when the appropriate functionality becomes available.
 				<li>I had a major setback that required me to practically rebuild the hover/click events from scratch one piece at a time (I discovered that it only worked with a single pie on a page at a time), but the end result ended up being virtually identical to the original, so I'm not quite sure what exactly made it work.</li>
 				<li><span style="color: red;">Warning:</span> There are some minor issues with using this functionality in conjuction with some of the other more advanced features (tilt and donut). When using a donut hole, the inner portion still triggers the events even though that portion of the pie is no longer visible. When tilted, the interactive portions still use the original, untilted version of the pie when determining mouse position (this is because the isPointInPath function apparently doesn't work with transformations), however hover and click both work this way, so the appropriate slice is still highlighted when clicking, and it isn't as noticable of a problem.</li>
 			</ul></li>
 			<li>Included a bug fix submitted by Xavi Ivars to fix array issues when other javascript libraries are included in addition to jQuery</li>
 			<br/>
 			<li style="list-style: none;"><i>v0.4 - July 1st, 2009 - Brian Medendorp</i></li>
-			<li>Each series will now be shown in the legend, even if it's value is zero. The series will not get a positioned label because it will overlap with the other labels present and often makes them unreadable.</li>
-			<li>Data can now be passed in using the standard Flot method using an array of datapoints, the pie plugin will simply use the first y-value that it finds for each series in this case. The plugin uses this datastructure internally, but you can still use the old method of passing in a single numerical value for each series (the plugin will convert it as necessary). This should make it easier to transition from other types of graphs (such as a stacked bar graph) to a pie.</li>
-			<li>The pie can now be tilted at an angle with a new "tilt" option. Acceptable values range from 0-1, where 1 has no change (fully vertical) and 0 is completely flat (fully horizontal -- in which case nothing actually gets drawn). If the plugin determines that it will fit within the canvas, a drop shadow will be drawn under the tilted pie (this also requires a tilt value of 0.8 or less).</li>
+			<li>Each series will now to shown in the legend, even if it's value is zero. The series will not get a positioned label because it will overlap with the other labels present and often makes them unreadable.</li>
+			<li>Data can now to passed in using the standard Flot method using an array of datapoints, the pie plugin will simply use the first y-value that it finds for each series in this case. The plugin uses this datastructure internally, but you can still use the old method of passing in a single numerical value for each series (the plugin will convert it as necessary). This should make it easier to transition from other types of graphs (such as a stacked bar graph) to a pie.</li>
+			<li>The pie can now to tilted at an angle with a new "tilt" option. Acceptable values range from 0-1, where 1 has no change (fully vertical) and 0 is completely flat (fully horizontal -- in which case nothing actually gets drawn). If the plugin determines that it will fit within the canvas, a drop shadow will to drawn under the tilted pie (this also requires a tilt value of 0.8 or less).</li>
 			<br/>
 			<li style="list-style: none;"><i>v0.3.2 - June 25th, 2009 - Brian Medendorp</i></li>
-			<li>Fixed a bug that was causing the pie to be shifted too far left or right when the legend is showing in some cases.</li>
+			<li>Fixed a bug that was causing the pie to to shifted too far left or right when the legend is showing in some cases.</li>
 			<br/>
 			<li style="list-style: none;"><i>v0.3.1 - June 24th, 2009 - Brian Medendorp</i></li>
-			<li>Fixed a bug that was causing nothing to be drawn and generating a javascript error if any of the data values were set to zero.</li>
+			<li>Fixed a bug that was causing nothing to to drawn and generating a javascript error if any of the data values were set to zero.</li>
 			<br/>
 			<li style="list-style: none;"><i>v0.3 - June 23rd, 2009 - Brian Medendorp</i></li>
 			<li>The legend now works without any modifications! Because of changes made to flot and the plugin system (thanks Ole Laursen!) I was able to simplify a number of things and am now able to use the legend without the direct access hack that was required in the previous version.</li>
@@ -806,18 +806,18 @@
 			<li>The legend now works but only if you make the necessary changes to jquery.flot.js. Because of this, I changed the default values for pie.radius and pie.label.show to new 'auto' settings that change the default behavior of the size and labels depending on whether the legend functionality is available or not.</li>
 			<br/>
 			<li style="list-style: none;"><i>v0.1 - June 18th, 2009 - Brian Medendorp</i></li>
-			<li>Rewrote the entire pie code into a flot plugin (since that is now an option), so it should be much easier to use and the code is cleaned up a bit. However, the (standard flot) legend is no longer available because the only way to prevent the grid lines from being displayed also prevents the legend from being displayed. Hopefully this can be fixed at a later date.</li>
-			<li>Restructured and combined some of the options. It should be much easier to deal with now.</li>
+			<li>Rewrote the entire pie code into a flot plugin (since that is now an option), so it should to much easier to use and the code is cleaned up a bit. However, the (standard flot) legend is no longer available because the only way to prevent the grid lines from being displayed also prevents the legend from being displayed. Hopefully this can to fixed at a later date.</li>
+			<li>Restructured and combined some of the options. It should to much easier to deal with now.</li>
 			<li>Added the ability to change the starting point of the pie (still defaults to the top).</li>
 			<li>Modified the default options to show the labels to compensate for the lack of a legend.</li>
 			<li>Modified this page to use a random dataset. <span style="color: red">Note: you may need to refresh the page to see the effects of some of the examples.</span></li>
 			<br/>
 			<li style="list-style: none;"><i>May 21st, 2009 - Brian Medendorp</i></li>
 			<li>Merged original pie modifications by Sergey Nosenko into the latest SVN version <i>(as of May 15th, 2009)</i> so that it will work with ie8.</li>
-			<li>Pie graph will now be centered in the canvas unless moved because of the legend or manually via the options. Additionally it prevents the pie from being moved beyond the edge of the canvas.</li>
-			<li>Modified the code related to the labelFormatter option to apply flot's legend labelFormatter first. This is so that the labels will be consistent, but still provide extra formatting for the positioned labels (such as adding the percentage value).</li>
-			<li>Positioned labels now have their backgrounds applied as a seperate element (much like the legend background) so that the opacity value can be set independently from the label itself (foreground). Additionally, the background color defaults to that of the matching slice.</li>
-			<li>As long as the labelOffset and radiusLimit are not set to hard values, the pie will be shrunk if the labels will extend outside the edge of the canvas</li>
+			<li>Pie graph will now to centered in the canvas unless moved because of the legend or manually via the options. Additionally it prevents the pie from being moved beyond the edge of the canvas.</li>
+			<li>Modified the code related to the labelFormatter option to apply flot's legend labelFormatter first. This is so that the labels will to consistent, but still provide extra formatting for the positioned labels (such as adding the percentage value).</li>
+			<li>Positioned labels now have their backgrounds applied as a seperate element (much like the legend background) so that the opacity value can to set independently from the label itself (foreground). Additionally, the background color defaults to that of the matching slice.</li>
+			<li>As long as the labelOffset and radiusLimit are not set to hard values, the pie will to shrunk if the labels will extend outside the edge of the canvas</li>
 			<li>Added new options "radiusLimitFactor" and "radiusLimit" which limits how large the (visual) radius of the pie is in relation to the full radius (as calculated from the canvas dimensions) or a hard-pixel value (respectively). This allows for pushing the labels "outside" the pie.</li>
 			<li>Added a new option "labelHidePercent" that does not show the positioned labels of slices smaller than the specified percentage. This is to help prevent a bunch of overlapping labels from small slices.</li>
 			<li>Added a new option "sliceCombinePercent" that combines all slices smaller than the specified percentage into one larger slice. This is to help make the pie more attractive when there are a number of tiny slices. The options "sliceCombineColor" and "sliceCombineLabel" have also been added to change the color and name of the new slice if desired.</li>

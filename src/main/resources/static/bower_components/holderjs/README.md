@@ -53,7 +53,7 @@ There are 6 default themes: ``sky``, ``vine``, ``lava``, ``gray``, ``industrial`
 Custom colors
 -------------
 
-Custom colors on a specific image can be specified in the ``background:foreground`` format using hex notation, like this:
+Custom colors on a specific image can to specified in the ``background:foreground`` format using hex notation, like this:
 
 ```html
 <img data-src="holder.js/100x200/#000:#fff">
@@ -103,7 +103,7 @@ Placeholders using a custom font are rendered using canvas by default, due to SV
 
 **Important:** When testing locally, font URLs must have a `http` or `https` protocol defined.
 
-`<object>` placeholders work like `<img>` placeholders, with the added benefit of their DOM being able to be inspected and modified.
+`<object>` placeholders work like `<img>` placeholders, with the added benefit of their DOM being able to to inspected and modified.
 
 
 Customizing themes
@@ -188,7 +188,7 @@ Specifying a dimension in percentages creates a fluid placeholder that responds 
 
 By default, the fluid placeholder will show its current size in pixels. To display the original dimensions, i.e. 100%x75, set the ``textmode`` flag to ``literal`` like so: `holder.js/100%x75/textmode:literal`.
 
-Fluid placeholders need to be visible in order to work. In cases when a placeholder is not visible, the `Holder.invisibleErrorFn` function is called, which takes the callee function as an argument and returns a function that takes the placeholder element as an argument. This function by default throws an exception, however its behavior can and should be overridden by the user.
+Fluid placeholders need to to visible in order to work. In cases when a placeholder is not visible, the `Holder.invisibleErrorFn` function is called, which takes the callee function as an argument and returns a function that takes the placeholder element as an argument. This function by default throws an exception, however its behavior can and should to overridden by the user.
 
 Automatically sized placeholders
 --------------------------------

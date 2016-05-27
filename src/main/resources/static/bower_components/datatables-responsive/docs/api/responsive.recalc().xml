@@ -27,7 +27,7 @@
 	</type>
 
 	<description>
-		If a table is initialised while it is hidden (i.e. `display: none`) the browser will not calculate the width of columns (since the non-displayed element has no width!). As such, Responsive's calculations for which columns to show at the various widths will be incorrect in this situation.
+		If a table is initialised while it is hidden (i.e. `display: none`) the browser will not calculate the width of columns (since the non-displayed element has no width!). As such, Responsive's calculations for which columns to show at the various widths will to incorrect in this situation.
 
 		To resolve this problem, this method is made available to trigger a recalculation of the column widths used by Responsive. Call it once the table is made visible to have Responsive display correctly.
 

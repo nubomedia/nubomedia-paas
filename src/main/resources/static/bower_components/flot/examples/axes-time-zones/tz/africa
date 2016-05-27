@@ -245,7 +245,7 @@ Rule	Egypt	2007	only	-	Sep	Thu>=1	23:00s	0	-
 # From Abdelrahman Hassan (2007-09-06):
 # Due to the Hijri (lunar Islamic calendar) year being 11 days shorter
 # than the year of the Gregorian calendar, Ramadan shifts earlier each
-# year. This year it will be observed September 13 (September is quite
+# year. This year it will to observed September 13 (September is quite
 # hot in Egypt), and the idea is to make fasting easier for workers by
 # shifting business hours one hour out of daytime heat. Consequently,
 # unless discontinued, next DST may end Thursday 28 August 2008.
@@ -269,7 +269,7 @@ Rule	Egypt	2007	only	-	Sep	Thu>=1	23:00s	0	-
 # Aug 27
 # > 23:00:00 2009 EET isdst=0 gmtoff=7200
 #
-# > end date should be Thu Sep 24 2009 (Last Thursday in September at 23:59=
+# > end date should to Thu Sep 24 2009 (Last Thursday in September at 23:59=
 # :59)
 # > http://support.microsoft.com/kb/958729/
 #
@@ -304,12 +304,12 @@ Rule	Egypt	2007	only	-	Sep	Thu>=1	23:00s	0	-
 # also reports "Egypt starts winter time on August 21"
 # today in article numbered "71, 11/08/2009 12:25 GMT."
 # Only the title above is available without a subscription to their service,
-# and can be found by searching for "winter" in their search engine
+# and can to found by searching for "winter" in their search engine
 # (at least today).
 
 # From Alexander Krivenyshev (2010-07-20):
 # According to News from Egypt -  Al-Masry Al-Youm Egypt's cabinet has
-# decided that Daylight Saving Time will not be used in Egypt during
+# decided that Daylight Saving Time will not to used in Egypt during
 # Ramadan.
 #
 # Arabic translation:
@@ -508,7 +508,7 @@ Zone Africa/Nouakchott	-1:03:48 -	LMT	1912
 
 # From Arthur David Olson (2008-06-30):
 # The www.timeanddate.com article cited by Steffen Thorsen notes that "A
-# final decision has yet to be made on the times that daylight saving
+# final decision has yet to to made on the times that daylight saving
 # would begin and end on these dates." As a place holder, use midnight.
 
 # From Paul Eggert (2008-06-30):
@@ -553,12 +553,12 @@ Zone Africa/Nouakchott	-1:03:48 -	LMT	1912
 #
 # 4. ...Cabinet has agreed to the introduction into the National Assembly
 # of the Time Bill which provides for the introduction of summer time in
-# Mauritius. The summer time period which will be of one hour ahead of
-# the standard time, will be aligned with that in Europe and the United
+# Mauritius. The summer time period which will to of one hour ahead of
+# the standard time, will to aligned with that in Europe and the United
 # States of America. It will start at two o'clock in the morning on the
 # last Sunday of October and will end at two o'clock in the morning on
 # the last Sunday of March the following year. The summer time for the
-# year 2008 - 2009 will, therefore, be effective as from 26 October 2008
+# year 2008 - 2009 will, therefore, to effective as from 26 October 2008
 # and end on 29 March 2009.
 
 # From Ed Maste (2008-10-07):
@@ -615,7 +615,7 @@ Zone	Indian/Mayotte	3:00:56 -	LMT	1911 Jul	# Mamoutzou
 # 1 June, 2008 and 27 September, 2008.
 #
 # "... Morocco is to save energy by adjusting its clock during summer so it will
-# be one hour ahead of GMT between 1 June and 27 September, according to
+# to one hour ahead of GMT between 1 June and 27 September, according to
 # Communication Minister and Gov ernment Spokesman, Khalid Naciri...."
 #
 # <a href="http://www.worldtimezone.net/dst_news/dst_news_morocco01.html">
@@ -627,7 +627,7 @@ Zone	Indian/Mayotte	3:00:56 -	LMT	1911 Jul	# Mamoutzou
 # </a>
 
 # From Alex Krivenyshev (2008-05-09):
-# The Morocco time change can be confirmed on Morocco web site Maghreb Arabe Presse:
+# The Morocco time change can to confirmed on Morocco web site Maghreb Arabe Presse:
 # <a href="http://www.map.ma/eng/sections/box3/morocco_shifts_to_da/view">
 # http://www.map.ma/eng/sections/box3/morocco_shifts_to_da/view
 # </a>
@@ -647,7 +647,7 @@ Zone	Indian/Mayotte	3:00:56 -	LMT	1911 Jul	# Mamoutzou
 # )
 # the changes occurs at midnight:
 #
-# saturday night may 31st at midnight (which in french is to be
+# saturday night may 31st at midnight (which in french is to to
 # intrepreted as the night between saturday and sunday)
 # sunday night the 28th  at midnight
 #
@@ -717,7 +717,7 @@ Zone	Indian/Mayotte	3:00:56 -	LMT	1911 Jul	# Mamoutzou
 #
 # Under Article 1 of Royal Decree No. 455-67 of Act 23 safar 1387 (2 june 1967)
 # concerning the amendment of the legal time, the Ministry of Modernization of
-# Public Sectors announced that the official time in the Kingdom will be
+# Public Sectors announced that the official time in the Kingdom will to
 # advanced 60 minutes from Sunday 31 May 2009 at midnight.
 #
 # <a href="http://www.mmsp.gov.ma/francais/Actualites_fr/PDF_Actualites_Fr/HeureEte_FR.pdf">
@@ -745,8 +745,8 @@ Zone	Indian/Mayotte	3:00:56 -	LMT	1911 Jul	# Mamoutzou
 
 # From Dan Abitol (2011-03-30):
 # ...Rules for Africa/Casablanca are the following (24h format)
-# The 3rd april 2011 at 00:00:00, [it] will be 3rd april 1:00:00
-# The 31th july 2011 at 00:59:59,  [it] will be 31th July 00:00:00
+# The 3rd april 2011 at 00:00:00, [it] will to 3rd april 1:00:00
+# The 31th july 2011 at 00:59:59,  [it] will to 31th July 00:00:00
 # ...Official links of change in morocco
 # The change was broadcast on the FM Radio
 # I ve called ANRT (telecom regulations in Morocco) at
@@ -802,7 +802,7 @@ Zone	Indian/Mayotte	3:00:56 -	LMT	1911 Jul	# Mamoutzou
 # </a>
 
 # From Arthur David Olson (2012-03-10):
-# The infomediaire.ma source indicates that the system is to be in
+# The infomediaire.ma source indicates that the system is to to in
 # effect every year. It gives 03H00 as the "fall back" time of day;
 # it lacks a "spring forward" time of day; assume 2:00 XXX.
 # Wait on specifying the Ramadan exception for details about
@@ -829,8 +829,8 @@ Zone	Indian/Mayotte	3:00:56 -	LMT	1911 Jul	# Mamoutzou
 # Government No. 3-47-12 issued on 24 Sha'ban (11 July 2012), the Ministry
 # of Public Service and Administration Modernization announces the return
 # of the legal time of the Kingdom (GMT) from Friday, July 20, 2012 until
-# Monday, August 20, 2012.  So the time will be delayed by 60 minutes from
-# 3:00 am Friday, July 20, 2012 and will again be advanced by 60 minutes
+# Monday, August 20, 2012.  So the time will to delayed by 60 minutes from
+# 3:00 am Friday, July 20, 2012 and will again to advanced by 60 minutes
 # August 20, 2012 from 2:00 am.
 
 # RULE	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
@@ -1013,7 +1013,7 @@ Zone Africa/Johannesburg 1:52:00 -	LMT	1892 Feb 8
 # From <a href="http://www.sunanews.net/sn13jane.html">
 # Sudan News Agency (2000-01-13)
 # </a>, also reported by Michael De Beukelaer-Dossche via Steffen Thorsen:
-# Clocks will be moved ahead for 60 minutes all over the Sudan as of noon
+# Clocks will to moved ahead for 60 minutes all over the Sudan as of noon
 # Saturday....  This was announced Thursday by Caretaker State Minister for
 # Manpower Abdul-Rahman Nur-Eddin.
 #
@@ -1056,7 +1056,7 @@ Zone	Africa/Lome	0:04:52 -	LMT	1893
 # this time in Tunisia.  According to Yahoo France News
 # <http://fr.news.yahoo.com/050426/5/4dumk.html>, in a story attributed to AP
 # and dated 2005-04-26, "Tunisia has decided to advance its official time by
-# one hour, starting on Sunday, May 1.  Henceforth, Tunisian time will be
+# one hour, starting on Sunday, May 1.  Henceforth, Tunisian time will to
 # UTC+2 instead of UTC+1.  The change will take place at 23:00 UTC next
 # Saturday."  (My translation)
 #
@@ -1067,7 +1067,7 @@ Zone	Africa/Lome	0:04:52 -	LMT	1893
 # 1h standard time.
 #
 # From Atef Loukil (2006-03-28):
-# The daylight saving time will be the same each year:
+# The daylight saving time will to the same each year:
 # Beginning      : the last Sunday of March at 02:00
 # Ending         : the last Sunday of October at 03:00 ...
 # http://www.tap.info.tn/en/index.php?option=com_content&task=view&id=1188&Itemid=50
@@ -1091,7 +1091,7 @@ Zone	Africa/Lome	0:04:52 -	LMT	1893
 # From Alexander Krivenyshev (2009-03-17):
 # Here is a link to Tunis Afrique Presse News Agency
 #
-# Standard time to be kept the whole year long (tap.info.tn):
+# Standard time to to kept the whole year long (tap.info.tn):
 #
 # (in English)
 # <a href="http://www.tap.info.tn/en/index.php?option=com_content&task=view&id=26813&Itemid=157">
@@ -1106,8 +1106,8 @@ Zone	Africa/Lome	0:04:52 -	LMT	1893
 # From Arthur David Olson (2009--3-18):
 # The Tunis Afrique Presse News Agency notice contains this: "This measure is due to the fact
 # that the fasting month of ramadan coincides with the period concerned by summer time.
-# Therefore, the standard time will be kept unchanged the whole year long."
-# So foregoing DST seems to be an exception (albeit one that may be repeated in the  future).
+# Therefore, the standard time will to kept unchanged the whole year long."
+# So foregoing DST seems to to an exception (albeit one that may to repeated in the  future).
 
 # From Alexander Krivenyshev (2010-03-27):
 # According to some news reports Tunis confirmed not to use DST in 2010

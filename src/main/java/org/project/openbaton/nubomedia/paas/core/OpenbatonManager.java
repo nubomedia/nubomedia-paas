@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -59,6 +60,8 @@ public class OpenbatonManager {
 
     @Autowired
     private VirtualNetworkFunctionDescriptor cloudRepository;
+
+    private EventEndpoint eventEndpointCreation, eventEndpointError;
 
     @Autowired
     @Qualifier("networkServiceDescriptorNubo")
@@ -95,24 +98,10 @@ public class OpenbatonManager {
                 e1.printStackTrace();
             }
         }
-        // creating the queues for receiving events
-        EventEndpoint eventEndpointCreation = createEventEndpoint("paas-nsr-instantiate-finish",EndpointType.RABBIT,Action.INSTANTIATE_FINISH, ConfigurationBeans.queueName_eventInstatiateFinish);
-        EventEndpoint eventEndpointError = createEventEndpoint("paas-nsr-error",EndpointType.RABBIT,Action.ERROR, ConfigurationBeans.queueName_error);
-        EventEndpoint eventEndpointDeletion = createEventEndpoint("paas-nsr-deletion",EndpointType.RABBIT,Action.RELEASE_RESOURCES_FINISH, ConfigurationBeans.queueName_eventResourcesReleaseFinish);
+        logger.debug("VIM instance created");
 
-
-        try {
-            eventEndpointCreation = this.nfvoRequestor.getEventAgent().create(eventEndpointCreation);
-        } catch (SDKException e) {
-            logger.error("problem creating the nsr instantiate finish queue");
-        }
-
-        try {
-            eventEndpointError = this.nfvoRequestor.getEventAgent().create(eventEndpointError);
-        } catch (SDKException e) {
-            logger.error("problem creating the nsr error queue");
-        }
     }
+
 
     public MediaServerGroup createMediaServerGroup(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, boolean cdnConnectorSet, QoS qos, boolean turnServerActivate, String serverTurnIp, String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
 
@@ -155,14 +144,7 @@ public class OpenbatonManager {
         return mediaServerGroup;
     }
 
-    private EventEndpoint createEventEndpoint(String name, EndpointType type, Action action, String url){
-        EventEndpoint eventEndpoint = new EventEndpoint();
-        eventEndpoint.setEvent(action);
-        eventEndpoint.setName(name);
-        eventEndpoint.setType(type);
-        eventEndpoint.setEndpoint(url);
-        return eventEndpoint;
-    }
+
 
     public BuildingStatus getStatus(String nsrID) {
         NetworkServiceRecord nsr = null;

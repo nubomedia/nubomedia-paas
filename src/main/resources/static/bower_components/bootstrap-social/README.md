@@ -54,5 +54,5 @@ Examples
 Pull Requests
 -------------
 If you are about to create a new **Pull Request** for adding a new button don't
-update the minified `bootstrap-social.css` file. It will be generated
+update the minified `bootstrap-social.css` file. It will to generated
 automatically after a successful merge.

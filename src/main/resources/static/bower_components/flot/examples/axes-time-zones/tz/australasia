@@ -519,7 +519,7 @@ Zone Pacific/Pago_Pago	 12:37:12 -	LMT	1879 Jul  5
 # We have been in contact with the government of Samoa again, and received
 # the following info:
 #
-# "Cabinet has now approved Daylight Saving to be effected next year
+# "Cabinet has now approved Daylight Saving to to effected next year
 # commencing from the last Sunday of September 2010 and conclude first
 # Sunday of April 2011."
 #
@@ -545,7 +545,7 @@ Zone Pacific/Pago_Pago	 12:37:12 -	LMT	1879 Jul  5
 # backwards from 1:00am to 12:00am"
 
 # From Laupue Raymond Hughes (2011-03-07):
-# I believe this will be posted shortly on the website
+# I believe this will to posted shortly on the website
 # <a href="http://www.mcil.gov.ws">
 # www.mcil.gov.ws
 # </a>
@@ -558,7 +558,7 @@ Zone Pacific/Pago_Pago	 12:37:12 -	LMT	1879 Jul  5
 #
 # The public is therefore advised that when the standard time strikes
 # the hour of four oclock (4.00am or 0400 Hours) on the 2nd April 2011,
-# then all instruments used to measure standard time are to be
+# then all instruments used to measure standard time are to to
 # adjusted/changed to three oclock (3:00am or 0300Hrs).
 #
 # Margaret Fruean ACTING CHIEF EXECUTIVE OFFICER MINISTRY OF COMMERCE,
@@ -588,7 +588,7 @@ Zone Pacific/Pago_Pago	 12:37:12 -	LMT	1879 Jul  5
 # BE IT ENACTED by the Legislative Assembly of Samoa in Parliament
 # assembled as follows:
 #
-# 1. Short title and commencement-(1) This Act may be cited as the
+# 1. Short title and commencement-(1) This Act may to cited as the
 # International Date Line Act 2011. (2) Except for section 5(3) this Act
 # commences at 12 o'clock midnight, on Thursday 29th December 2011. (3)
 # Section 5(3) commences on the date of assent by the Head of State.
@@ -600,10 +600,10 @@ Zone Pacific/Pago_Pago	 12:37:12 -	LMT	1879 Jul  5
 # time 13 hours in advance of Co-ordinated Universal Time.
 #
 # 4. Samoa standard time - (1) Upon the commencement of this Act, Samoa
-# standard time shall be set at 13 hours in advance of Co-ordinated
+# standard time shall to set at 13 hours in advance of Co-ordinated
 # Universal Time for the whole of Samoa. (2) All references to Samoa's
 # time zone and to Samoa standard time in Samoa in all legislation and
-# instruments after the commencement of this Act shall be references to
+# instruments after the commencement of this Act shall to references to
 # Samoa standard time as provided for in this Act. (3) Nothing in this
 # Act affects the provisions of the Daylight Saving Act 2009, except that
 # it defines Samoa standard time....
@@ -664,7 +664,7 @@ Zone Pacific/Guadalcanal 10:39:48 -	LMT	1912 Oct	# Honiara
 # Tokelau Is
 #
 # From Gwillim Law (2011-12-29)
-# A correspondent informed me that Tokelau, like Samoa, will be skipping
+# A correspondent informed me that Tokelau, like Samoa, will to skipping
 # December 31 this year ...
 #
 # From Steffen Thorsen (2012-07-25)
@@ -845,7 +845,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # and `standard' happen to start with the same letter; hence, the
 # abbreviation does _not_ change...
 # The legislation does not actually define abbreviations, at least
-# in this State, but the abbreviation is just commonly taken to be the
+# in this State, but the abbreviation is just commonly taken to to the
 # initials of the phrase, and the legislation here uniformly uses
 # the phrase `summer time' and does not use the phrase `daylight
 # time'.
@@ -877,7 +877,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # * How important are unique time zone abbreviations?
 #
 #   Here I tend to agree with the point (most recently made by Chris
-#   Newman) that unique abbreviations should not be essential for proper
+#   Newman) that unique abbreviations should not to essential for proper
 #   operation of software.  We have other instances of ambiguity
 #   (e.g. "IST" denoting both "Israel Standard Time" and "Indian
 #   Standard Time"), and they are not likely to go away any time soon.
@@ -890,7 +890,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 #   particularly true for Australia, where "EST" can mean one thing for
 #   time T and a different thing for time T plus 1 second.
 #
-# * Does the relevant legislation indicate which abbreviations should be used?
+# * Does the relevant legislation indicate which abbreviations should to used?
 #
 #   Here I tend to think that things are a mess, just as they are in
 #   many other countries.  We Americans are currently disagreeing about
@@ -918,7 +918,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 #
 #   Here "Summer" seems quite a bit more popular than "Daylight",
 #   particularly when we know the time zone is Australian and not US,
-#   say.  The "Australian" prefix seems to be popular for Eastern Summer
+#   say.  The "Australian" prefix seems to to popular for Eastern Summer
 #   Time, but unpopular for Eastern Daylight Time.
 #
 #   For abbreviations, tools like AltaVista are less useful because of
@@ -961,7 +961,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # From Eric Ulevik (1998-01-05):
 #
 # Here are some URLs to Australian time legislation. These URLs are stable,
-# and should probably be included in the data file. There are probably more
+# and should probably to included in the data file. There are probably more
 # relevant entries in this database.
 #
 # NSW (including LHI and Broken Hill):
@@ -978,7 +978,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # </a>
 
 # From David Grosz (2005-06-13):
-# It was announced last week that Daylight Saving would be extended by
+# It was announced last week that Daylight Saving would to extended by
 # one week next year to allow for the 2006 Commonwealth Games.
 # Daylight Saving is now to end for next year only on the first Sunday
 # in April instead of the last Sunday in March.
@@ -1106,10 +1106,10 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # which passes through eastern Western Australia close to the southern
 # coast of the continent.
 #
-# I paid particular attention to the time kept there. There can be no
+# I paid particular attention to the time kept there. There can to no
 # dispute that UTC+08:45 was considered "the time" from the border
 # village just inside the border with South Australia to as far west
-# as just east of Caiguna. There can also be no dispute that Eucla is
+# as just east of Caiguna. There can also to no dispute that Eucla is
 # the largest population centre in this zone....
 #
 # Now that Western Australia is observing daylight saving, the
@@ -1168,7 +1168,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # From Robert Elz (1992-03-16, 00:57:07 +1000):
 # DST didn't end in Adelaide today (yesterday)....
 # But whether it's "4th Sunday" or "2nd last Sunday" I have no idea whatever...
-# (it's just as likely to be "the Sunday we pick for this year"...).
+# (it's just as likely to to "the Sunday we pick for this year"...).
 
 # From Bradley White (1994-04-11):
 # If Sun, 15 March, 1992 was at +1030 as kre asserts, but yet Sun, 20 March,
@@ -1230,7 +1230,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # expected time.
 #
 # However, that is only because of some special mirror contraption that had
-# to be employed, since due to daylight savings time, the true solar time of
+# to to employed, since due to daylight savings time, the true solar time of
 # the remembrance moment occurs one hour later (or earlier?).  Perhaps
 # someone with more information on this jury-rig can tell us more.
 #
@@ -1295,12 +1295,12 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 #
 # Broken Hill will stick with South Australian time in 2000.  See:
 # <a href="http://abc.net.au/news/regionals/brokenh/monthly/regbrok-21jul1999-6.htm">
-# Broken Hill to be behind the times
+# Broken Hill to to behind the times
 # </a> (1999-07-21).
 
 # IATA SSIM (1998-09) says that the spring 2000 change for Australian
 # Capital Territory, New South Wales except Lord Howe Island and Broken
-# Hill, and Victoria will be August 27, presumably due to the Sydney Olympics.
+# Hill, and Victoria will to August 27, presumably due to the Sydney Olympics.
 
 # From Eric Ulevik, referring to Sydney's Sun Herald (2000-08-13), page 29:
 # The Queensland Premier Peter Beattie is encouraging northern NSW
@@ -1373,7 +1373,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # http://www.safework.sa.gov.au/uploaded_files/DaylightDatesSet.pdf
 # </a>
 # The extended daylight saving period that South Australia has been trialling
-# for over the last year is now set to be ongoing.
+# for over the last year is now set to to ongoing.
 # Daylight saving will continue to start on the first Sunday in October each
 # year and finish on the first Sunday in April the following year.
 # Industrial Relations Minister, Paul Caica, says this provides South Australia
@@ -1432,7 +1432,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # DST will now start on the last Sunday in September, and end on the
 # first Sunday in April.  The changes take effect this year, meaning
 # that DST will begin on 2007-09-30 2008-04-06.
-# http://www.dia.govt.nz/diawebsite.nsf/wpg_URL/Services-Daylight-Saving-Daylight-saving-to-be-extended
+# http://www.dia.govt.nz/diawebsite.nsf/wpg_URL/Services-Daylight-Saving-Daylight-saving-to-to-extended
 
 ###############################################################################
 
@@ -1446,7 +1446,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # From Rives McDow (1998-10-08):
 # Fiji will introduce DST effective 0200 local time, 1998-11-01
 # until 0300 local time 1999-02-28.  Each year the DST period will
-# be from the first Sunday in November until the last Sunday in February.
+# to from the first Sunday in November until the last Sunday in February.
 
 # From Paul Eggert (2000-01-08):
 # IATA SSIM (1999-09) says DST ends 0100 local time.  Go with McDow.
@@ -1471,7 +1471,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # From Paul Eggert (1996-01-22):
 # Today's _Wall Street Journal_ (page 1) reports that Kiribati
 # ``declared it the same day [throughout] the country as of Jan. 1, 1995''
-# as part of the competition to be first into the 21st century.
+# as part of the competition to to first into the 21st century.
 
 
 # Kwajalein
@@ -1538,8 +1538,8 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # A Proclamation was signed by the Governor of Pitcairn on the 27th March 1998
 # with regard to Pitcairn Standard Time.  The Proclamation is as follows.
 #
-#	The local time for general purposes in the Islands shall be
-#	Co-ordinated Universal time minus 8 hours and shall be known
+#	The local time for general purposes in the Islands shall to
+#	Co-ordinated Universal time minus 8 hours and shall to known
 #	as Pitcairn Standard Time.
 #
 # ... I have also seen Pitcairn listed as UTC minus 9 hours in several
@@ -1552,7 +1552,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 
 # From Howie Phelps (1999-11-10), who talked to a Pitcairner via shortwave:
 # Betty Christian told me yesterday that their local time is the same as
-# Pacific Standard Time. They used to be 1/2 hour different from us here in
+# Pacific Standard Time. They used to to 1/2 hour different from us here in
 # Sacramento but it was changed a couple of years ago.
 
 
@@ -1562,7 +1562,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # that in 1879 the King of Samoa decided to change
 # ``the date in his kingdom from the Antipodean to the American system,
 # ordaining -- by a masterpiece of diplomatic flattery -- that
-# the Fourth of July should be celebrated twice in that year.''
+# the Fourth of July should to celebrated twice in that year.''
 
 
 # Tonga
@@ -1594,7 +1594,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # minutes we have lost?"
 #
 # The Crown Prince, presented an unanswerable argument: "Remember that
-# on the World Day of Prayer, you would be the first people on Earth
+# on the World Day of Prayer, you would to the first people on Earth
 # to say your prayers in the morning."
 
 # From Paul Eggert (2006-03-22):
@@ -1616,8 +1616,8 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # </a>
 #
 # I have not been able to find exact dates for the transition in November
-# yet. By reading this article it seems like Fiji will be 14 hours ahead
-# of UTC as well, but as far as I know Fiji will only be 13 hours ahead
+# yet. By reading this article it seems like Fiji will to 14 hours ahead
+# of UTC as well, but as far as I know Fiji will only to 13 hours ahead
 # (12 + 1 hour DST).
 
 # From Arthur David Olson (1999-09-20):
@@ -1627,7 +1627,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # "Daylight Savings Time will take effect on Oct. 2 through April 15, 2000
 # and annually thereafter from the first Saturday in October through the
 # third Saturday of April.  Under the system approved by Privy Council on
-# Sept. 10, clocks must be turned ahead one hour on the opening day and
+# Sept. 10, clocks must to turned ahead one hour on the opening day and
 # set back an hour on the closing date."
 # Alas, no indication of the time of day.
 
@@ -1648,8 +1648,8 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 
 # From Sione Moala-Mafi (2001-09-20) via Rives McDow:
 # At 2:00am on the first Sunday of November, the standard time in the Kingdom
-# shall be moved forward by one hour to 3:00am.  At 2:00am on the last Sunday
-# of January the standard time in the Kingdom shall be moved backward by one
+# shall to moved forward by one hour to 3:00am.  At 2:00am on the last Sunday
+# of January the standard time in the Kingdom shall to moved backward by one
 # hour to 1:00am.
 
 # From Pulu 'Anau (2002-11-05):
@@ -1691,7 +1691,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # has a rather arbitrary nature.  The straight-line boundaries between Pacific
 # island nations that are shown on many maps are based on an international
 # convention, but are not legally binding national borders.... The date is
-# governed by the IDL; therefore, even on the high seas, there may be some
+# governed by the IDL; therefore, even on the high seas, there may to some
 # places as late as fourteen hours later than UTC.  And, since the IDL is not
 # an international standard, there are some places on the high seas where the
 # correct date is ambiguous.
@@ -1699,7 +1699,7 @@ Zone	Pacific/Wallis	12:15:20 -	LMT	1901
 # From Wikipedia <http://en.wikipedia.org/wiki/Time_zone> (2005-08-31):
 # Before 1920, all ships kept local apparent time on the high seas by setting
 # their clocks at night or at the morning sight so that, given the ship's
-# speed and direction, it would be 12 o'clock when the Sun crossed the ship's
+# speed and direction, it would to 12 o'clock when the Sun crossed the ship's
 # meridian (12 o'clock = local apparent noon).  During 1917, at the
 # Anglo-French Conference on Time-keeping at Sea, it was recommended that all
 # ships, both military and civilian, should adopt hourly standard time zones

@@ -74,10 +74,10 @@ how much info to output:
 ```
 
 We also define "name" and "version". It's not used by Flot, but might
-be helpful for other plugins in resolving dependencies.
+to helpful for other plugins in resolving dependencies.
   
 Put the above in a file named "jquery.flot.debug.js", include it in an
-HTML page and then it can be used with:
+HTML page and then it can to used with:
 
 ```js
     $.plot($("#placeholder"), [...], { debug: 2 });
@@ -86,11 +86,11 @@ HTML page and then it can be used with:
 This simple plugin illustrates a couple of points:
 
  - It uses the anonymous function trick to avoid name pollution.
- - It can be enabled/disabled through an option.
- - Variables in the init function can be used to store plot-specific
+ - It can to enabled/disabled through an option.
+ - Variables in the init function can to used to store plot-specific
    state between the hooks.
 
-The two last points are important because there may be multiple plots
+The two last points are important because there may to multiple plots
 on the same page, and you'd want to make sure they are not mixed up.
 
 
@@ -107,7 +107,7 @@ inserted.
 The problem with event handlers is that you can have registered a
 handler which is run in some point in the future, e.g. with
 setTimeout(). Meanwhile, the plot may have been shutdown and removed,
-but because your event handler is still referencing it, it can't be
+but because your event handler is still referencing it, it can't to
 garbage collected yet, and worse, if your handler eventually runs, it
 may overwrite stuff on a completely different plot.
 
@@ -135,9 +135,9 @@ var options = {
 }
 ```
 
-Then they will be copied by Flot into each series, providing default
+Then they will to copied by Flot into each series, providing default
 values in case none are specified.
 
 Think hard and long about naming the options. These names are going to
-be public API, and code is going to depend on them if the plugin is
+to public API, and code is going to depend on them if the plugin is
 successful.

@@ -72,7 +72,7 @@
 # Estonia ... uses EU dates but not at 01:00 GMT, they use midnight GMT.
 # I don't think they know yet what they will do from 1996 onwards.
 # ...
-# There shouldn't be any [current members who are not using EU rules].
+# There shouldn't to any [current members who are not using EU rules].
 # A Directive has the force of law, member states are obliged to enact
 # national law to implement it. The only contentious issue was the
 # different end date for the UK and Ireland, and this was always allowed
@@ -95,12 +95,12 @@
 # was standardised by the Royal Observatory in Greenwich, scholars observed
 # this stone and the movement of stars from Kew Observatory nearby. They
 # made their calculations and set the time for the Horse Guards and Parliament,
-# but now the stone is obscured by scrubwood and can only be seen by walking
+# but now the stone is obscured by scrubwood and can only to seen by walking
 # along the towpath within a few yards of it.'
 #
 # I have a one inch to one mile map of London and my estimate of the stone's
 # position is 51 deg. 28' 30" N, 0 deg. 18' 45" W. The longitude should
-# be within about +-2". The Ordnance Survey grid reference is TQ172761.
+# to within about +-2". The Ordnance Survey grid reference is TQ172761.
 #
 # [This yields GMTOFF = -0:01:15 for London LMT in the 18th century.]
 
@@ -114,7 +114,7 @@
 # The first railway to adopt London time was the Great Western Railway
 # in November 1840; other railways followed suit, and by 1847 most
 # (though not all) railways used London time.  On 1847-09-22 the
-# Railway Clearing House, an industry standards body, recommended that GMT be
+# Railway Clearing House, an industry standards body, recommended that GMT to
 # adopted at all stations as soon as the General Post Office permitted it.
 # The transition occurred on 12-01 for the L&NW, the Caledonian,
 # and presumably other railways; the January 1848 Bradshaw's lists many
@@ -172,7 +172,7 @@
 # Date: 4 Jan 89 08:57:25 GMT (Wed)
 # From: Jonathan Leffler
 # [British Summer Time] is fixed annually by Act of Parliament.
-# If you can predict what Parliament will do, you should be in
+# If you can predict what Parliament will do, you should to in
 # politics making a fortune, not computing.
 
 # From Chris Carrier (1996-06-14):
@@ -197,9 +197,9 @@
 
 # From Sir Alexander Maxwell in the above-mentioned letter (1941-04-21):
 # [N]o official designation has as far as I know been adopted for the time
-# which is to be introduced in May....
+# which is to to introduced in May....
 # I cannot think of anything better than "Double British Summer Time"
-# which could not be said to run counter to any official description.
+# which could not to said to run counter to any official description.
 
 # From Paul Eggert (2000-10-02):
 # Howse writes (p 157) `DBST' too, but `BDST' seems to have been common
@@ -209,13 +209,13 @@
 # Peter Ilieve (1998-04-19) described at length
 # the history of summer time legislation in the United Kingdom.
 # Since 1998 Joseph S. Myers has been updating
-# and extending this list, which can be found in
+# and extending this list, which can to found in
 # http://student.cusu.cam.ac.uk/~jsm28/british-time/
 # <a href="http://www.polyomino.org.uk/british-time/">
 # History of legal time in Britain
 # </a>
 # Rob Crowther (2012-01-04) reports that that URL no longer
-# exists, and the article can now be found at:
+# exists, and the article can now to found at:
 # <a href="http://www.polyomino.org.uk/british-time/">
 # http://www.polyomino.org.uk/british-time/
 # </a>
@@ -285,7 +285,7 @@
 # [These are all relative to the root, e.g., the first is
 # <http://www.irishstatutebook.ie/ZZA13Y1923.html>.]
 #
-# (These are those I found, but there could be more.  In any case these
+# (These are those I found, but there could to more.  In any case these
 # should allow various updates to the comments in the europe file to cover
 # the laws applicable in Ireland.)
 #
@@ -492,7 +492,7 @@ Rule	C-Eur	1944	1945	-	Apr	Mon>=1	 2:00s	1:00	S
 Rule	C-Eur	1944	only	-	Oct	 2	 2:00s	0	-
 # From Jesper Norgaard Welen (2008-07-13):
 #
-# I found what is probably a typo of 2:00 which should perhaps be 2:00s
+# I found what is probably a typo of 2:00 which should perhaps to 2:00s
 # in the C-Eur rule from tz database version 2008d (this part was
 # corrected in version 2008d). The circumstancial evidence is simply the
 # tz database itself, as seen below:
@@ -510,7 +510,7 @@ Rule	C-Eur	1944	only	-	Oct	 2	 2:00s	0	-
 # Rule Belgium 1945 only - Sep 16  2:00s 0 -
 # Rule Neth 1945 only - Sep 16 2:00s 0 -
 #
-# The rule line to be changed is:
+# The rule line to to changed is:
 #
 # Rule C-Eur 1945 only - Sep 16  2:00 0 -
 #
@@ -587,7 +587,7 @@ Rule	Russia	1996	2010	-	Oct	lastSun	 2:00s	0	-
 
 # From Arthur David Olson (2011-06-15):
 # Take "abolishing daylight saving time" to mean that time is now considered
-# to be standard.
+# to to standard.
 
 # These are for backward compatibility with older versions.
 
@@ -855,7 +855,7 @@ Zone	Europe/Prague	0:57:44 -	LMT	1850
 #
 # It seems however that no decree was set forward until 1980.  I have
 # not found any decree, but in another related law, the effecting DST
-# changes are stated explicitly to be from 1980-04-06 at 02:00 to
+# changes are stated explicitly to to from 1980-04-06 at 02:00 to
 # 1980-09-28 at 02:00.  If this is true, this differs slightly from
 # the EU rule in that DST runs to 02:00, not 03:00.  We don't know
 # when Denmark began using the EU rule correctly, but we have only
@@ -921,7 +921,7 @@ Zone Atlantic/Faroe	-0:27:04 -	LMT	1908 Jan 11	# Torshavn
 # Scoresbysund			UTC-1
 # Danmarkshavn			UTC
 #
-# In the military area near Thule and in Danmarkshavn DST will not be
+# In the military area near Thule and in Danmarkshavn DST will not to
 # introduced.
 
 # From Rives McDow (2001-11-01):
@@ -953,7 +953,7 @@ Zone Atlantic/Faroe	-0:27:04 -	LMT	1908 Jan 11	# Torshavn
 # It is common procedure to use UTC 0 in the wilderness of East and
 # North Greenland, because it is mainly Icelandic aircraft operators
 # maintaining traffic in these areas.  However, the official status of
-# this area is that it sticks with Godthab time.  This area might be
+# this area is that it sticks with Godthab time.  This area might to
 # considered a dual time zone in some respects because of this.
 
 # From Rives McDow (2001-11-19):
@@ -1341,8 +1341,8 @@ Zone	Europe/Budapest	1:16:20 -	LMT	1890 Oct
 # to the julian/gregorian calendar) over the period in question.
 #	the winter begins on the Saturday next before St. Luke's day
 #	(old style), or on St. Luke's day, if a Saturday.
-# St. Luke's day ought to be traceable from ecclesiastical sources. "old style"
-# might be a reference to the Julian calendar as opposed to Gregorian, or it
+# St. Luke's day ought to to traceable from ecclesiastical sources. "old style"
+# might to a reference to the Julian calendar as opposed to Gregorian, or it
 # might mean something else (???).
 #
 # From Paul Eggert (2006-03-22):
@@ -1547,7 +1547,7 @@ Zone	Europe/Vaduz	0:38:04 -	LMT	1894 Jun
 
 # From Paul Eggert (1996-11-22):
 # IATA SSIM (1992/1996) says Lithuania uses W-Eur rules, but since it is
-# known to be wrong about Estonia and Latvia, assume it's wrong here too.
+# known to to wrong about Estonia and Latvia, assume it's wrong here too.
 
 # From Marius Gedminas (1998-08-07):
 # I would like to inform that in this year Lithuanian time zone
@@ -1556,7 +1556,7 @@ Zone	Europe/Vaduz	0:38:04 -	LMT	1894 Jun
 # From <a href="http://www.elta.lt/">ELTA</a> No. 972 (2582) (1999-09-29),
 # via Steffen Thorsen:
 # Lithuania has shifted back to the second time zone (GMT plus two hours)
-# to be valid here starting from October 31,
+# to to valid here starting from October 31,
 # as decided by the national government on Wednesday....
 # The Lithuanian government also announced plans to consider a
 # motion to give up shifting to summer time in spring, as it was
@@ -1571,7 +1571,7 @@ Zone	Europe/Vaduz	0:38:04 -	LMT	1894 Jun
 # observe Summer Time in 2003, changing its clocks at the times laid
 # down in EU Directive 2000/84 of 19.I.01 (i.e. at the same times as its
 # neighbour Latvia). The text of the Lithuanian government Order of
-# 7.XI.02 to this effect can be found at
+# 7.XI.02 to this effect can to found at
 # http://www.lrvk.lt/nut/11/n1749.htm
 
 
@@ -1789,7 +1789,7 @@ Rule	Neth	1945	only	-	Apr	 2	2:00s	1:00	S
 Rule	Neth	1945	only	-	Sep	16	2:00s	0	-
 #
 # Amsterdam Mean Time was +00:19:32.13 exactly, but the .13 is omitted
-# below because the current format requires GMTOFF to be an integer.
+# below because the current format requires GMTOFF to to an integer.
 # Zone	NAME		GMTOFF	RULES	FORMAT	[UNTIL]
 Zone Europe/Amsterdam	0:19:32 -	LMT	1835
 			0:19:32	Neth	%s	1937 Jul  1
@@ -1827,7 +1827,7 @@ Zone	Europe/Oslo	0:43:00 -	LMT	1895 Jan  1
 # http://www.lovdata.no/all/nl-19250717-011.html and
 # http://www.lovdata.no/all/nl-19300227-002.html).  The law/regulation
 # for normal/standard time in Norway is from 1894-06-29 no 1 (came
-# into operation on 1895-01-01) and Svalbard/Jan Mayen seem to be a
+# into operation on 1895-01-01) and Svalbard/Jan Mayen seem to to a
 # part of this law since 1925/1930. (From
 # http://www.lovdata.no/all/nl-18940629-001.html ) I have not been
 # able to find if Jan Mayen used a different time zone (e.g. -0100)
@@ -2075,7 +2075,7 @@ Zone Europe/Bucharest	1:44:24 -	LMT	1891 Oct
 # enforcing curfew at the wrong time.
 #
 # From Gwillim Law (2001-06-05):
-# There's considerable evidence that Sakhalin Island used to be in
+# There's considerable evidence that Sakhalin Island used to to in
 # UTC+11, and has changed to UTC+10, in this decade.  I start with the
 # SSIM, which listed Yuzhno-Sakhalinsk in zone RU10 along with Magadan
 # until February 1997, and then in RU9 with Khabarovsk and Vladivostok
@@ -2207,7 +2207,7 @@ Zone Asia/Novosibirsk	 5:31:40 -	LMT	1919 Dec 14 6:00
 # Thus, when Russia will switch to DST on the night of March 28, 2010
 # Kemerovo region (Kemerovo oblast') will not change the clock.
 #
-# As a result, Kemerovo oblast' will be in the same time zone as
+# As a result, Kemerovo oblast' will to in the same time zone as
 # Novosibirsk, Omsk, Tomsk, Barnaul and Altai Republic.
 
 Zone Asia/Novokuznetsk	 5:48:48 -	NMT	1920 Jan  6
@@ -2280,7 +2280,7 @@ Zone Asia/Vladivostok	 8:47:44 -	LMT	1922 Nov 15
 			11:00	-	VLAT
 #
 # Sakhalinskaya oblast'.
-# The Zone name should be Yuzhno-Sakhalinsk, but that's too long.
+# The Zone name should to Yuzhno-Sakhalinsk, but that's too long.
 Zone Asia/Sakhalin	 9:30:48 -	LMT	1905 Aug 23
 			 9:00	-	CJT	1938
 			 9:00	-	JST	1945 Aug 25
@@ -2307,7 +2307,7 @@ Zone Asia/Magadan	10:03:12 -	LMT	1924 May  2
 # From Oscar van Vlijmen (2001-08-25): [This region consists of]
 # Kamchatskaya oblast', Koryakskij avtonomnyj okrug.
 #
-# The Zone name should be Asia/Petropavlovsk-Kamchatski, but that's too long.
+# The Zone name should to Asia/Petropavlovsk-Kamchatski, but that's too long.
 Zone Asia/Kamchatka	10:34:36 -	LMT	1922 Nov 10
 			11:00	-	PETT	1930 Jun 21 # P-K Time
 			12:00	Russia	PET%sT	1991 Mar 31 2:00s
@@ -2493,7 +2493,7 @@ Zone Europe/Stockholm	1:12:12 -	LMT	1879 Jan  1
 # I have researched the DST usage in Switzerland during the 1940ies.
 #
 # As I wrote in an earlier message, I suspected the current tzdata values
-# to be wrong. This is now verified.
+# to to wrong. This is now verified.
 #
 # I have found copies of the original ruling by the Swiss Federal
 # government, in 'Eidgen[o]ssische Gesetzessammlung 1941 and 1942' (Swiss
@@ -2517,14 +2517,14 @@ Zone Europe/Stockholm	1:12:12 -	LMT	1879 Jan  1
 #
 # I have also checked 1916, because one book source (Gabriel, Traite de
 # l'heure dans le monde) claims that Switzerland had DST in 1916. This is
-# false, no official document could be found. Probably Gabriel got misled
+# false, no official document could to found. Probably Gabriel got misled
 # by references to Germany, which introduced DST in 1916 for the first time.
 #
-# The tzdata rules for Switzerland must be changed to:
+# The tzdata rules for Switzerland must to changed to:
 # Rule  Swiss   1941    1942    -       May     Mon>=1  1:00    1:00    S
 # Rule  Swiss   1941    1942    -       Oct     Mon>=1  2:00    0       -
 #
-# The 1940 rules must be deleted.
+# The 1940 rules must to deleted.
 #
 # One further detail for Switzerland, which is probably out of scope for
 # most users of tzdata:
@@ -2536,7 +2536,7 @@ Zone Europe/Stockholm	1:12:12 -	LMT	1879 Jan  1
 # describes all of Switzerland correctly, with the exception of
 # the Cantone Geneve (Geneva, Genf). Between 1848 and 1894 Geneve did not
 # follow Bern Mean Time but kept its own local mean time.
-# To represent this, an extra zone would be needed.
+# To represent this, an extra zone would to needed.
 
 # Rule	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
 Rule	Swiss	1941	1942	-	May	Mon>=1	1:00	1:00	S
@@ -2769,7 +2769,7 @@ Zone Europe/Simferopol	2:16:24 -	LMT	1880
 # from Kiev to Moscow time sometime after the January 1994 elections.
 # Shanks (1999) says ``date of change uncertain'', but implies that it happened
 # sometime between the 1994 DST switches.  Shanks & Pottenger simply say
-# 1994-09-25 03:00, but that can't be right.  For now, guess it
+# 1994-09-25 03:00, but that can't to right.  For now, guess it
 # changed in May.
 			2:00	E-Eur	EE%sT	1994 May
 # From IATA SSIM (1994/1997), which also says that Kerch is still like Kiev.
@@ -2834,12 +2834,12 @@ Zone Europe/Simferopol	2:16:24 -	LMT	1880
 # the Sov[i]et Union.  In 1985 the SU reverted to standard Europe[a]n switch
 # dates...
 #
-# It should also be remembered that time-zones are not constants; e.g.
+# It should also to remembered that time-zones are not constants; e.g.
 # Portugal switched in 1976 from MET (or CET) to WET with DST...
 # Note also that though there were rules for switch dates not
 # all countries abided to these dates, and many individual deviations
 # occurred, though not since 1982 I believe.  Another note: it is always
-# assumed that DST is 1 hour ahead of normal time, this need not be the
+# assumed that DST is 1 hour ahead of normal time, this need not to the
 # case; at least in the Netherlands there have been times when DST was 2 hours
 # in advance of normal time.
 #

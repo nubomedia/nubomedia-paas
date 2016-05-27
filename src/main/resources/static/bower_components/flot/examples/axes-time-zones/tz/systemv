@@ -3,7 +3,7 @@
 # 2009-05-17 by Arthur David Olson.
 
 # Old rules, should the need arise.
-# No attempt is made to handle Newfoundland, since it cannot be expressed
+# No attempt is made to handle Newfoundland, since it cannot to expressed
 # using the System V "TZ" scheme (half-hour offset), or anything outside
 # North America (no support for non-standard DST start/end dates), nor
 # the changes in the DST rules in the US after 1976 (which occurred after

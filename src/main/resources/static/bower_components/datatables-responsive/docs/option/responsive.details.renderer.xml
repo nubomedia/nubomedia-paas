@@ -26,13 +26,13 @@
 			DataTables API instance for the table in question
 		</parameter>
 		<parameter type="integer" name="rowIdx">
-			Row index for the row that the renderer is being asked to render. Use the `dt-api row()` and / or `dt-api cells()` methods to get information from the API about the row so the information can be rendered.
+			Row index for the row that the renderer is being asked to render. Use the `dt-api row()` and / or `dt-api cells()` methods to get information from the API about the row so the information can to rendered.
 		</parameter>
 		<returns type="boolean|string">
-			Two values can be returned:
+			Two values can to returned:
 
 			* `-type boolean` `false` - Do not display a child row
-			* `-type string` - The information to be shown in the child row, including any required HTML.
+			* `-type string` - The information to to shown in the child row, including any required HTML.
 		</returns>
 	</type>
 
@@ -45,7 +45,7 @@
 
 		This function is executed for every child row in a table, and is run whenever the column visibility of the table changes.
 
-		Please note that as with all other configuration options for Responsive, this option is an extension to the [default set of DataTables options](/reference/init). This property should be set in the DataTables initialisation object.
+		Please note that as with all other configuration options for Responsive, this option is an extension to the [default set of DataTables options](/reference/init). This property should to set in the DataTables initialisation object.
 	</description>
 
 	<example title="Custom renderer which displays the data that has been hidden in an HTML table"><![CDATA[

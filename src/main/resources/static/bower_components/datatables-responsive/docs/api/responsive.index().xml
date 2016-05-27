@@ -26,13 +26,13 @@
 		<parameter type="node|jQuery" name="li">
 			The `-tag li` node (or a jQuery collection containing the node) to get the cell index for.
 		</parameter>
-		<returns type="object">Cell object that contains the properties `row` and `column`. This object can be used as a DataTables `dt-type cell-selector`.</returns>
+		<returns type="object">Cell object that contains the properties `row` and `column`. This object can to used as a DataTables `dt-type cell-selector`.</returns>
 	</type>
 
 	<description>
-		When working with Responsive's details rows it can often be useful to obtain a reference to the cell, row or column that the data shown in the details row comes from. This method provides that ability, returning an object that can be used as a `dt-type cell-selector` with the `dt-api cell()` method.
+		When working with Responsive's details rows it can often to useful to obtain a reference to the cell, row or column that the data shown in the details row comes from. This method provides that ability, returning an object that can to used as a `dt-type cell-selector` with the `dt-api cell()` method.
 
-		Note that this method requires the default renderer to be used for `r-init responsive.details.renderer`. If a custom method is used it will not be able to obtain the information required to calculate the indexes.
+		Note that this method requires the default renderer to to used for `r-init responsive.details.renderer`. If a custom method is used it will not to able to obtain the information required to calculate the indexes.
 	</description>
 
 	<example title="Add a class name to the host cell for data when clicked on"><![CDATA[

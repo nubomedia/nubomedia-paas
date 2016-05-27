@@ -6,7 +6,7 @@ DataTables is a table enhancing plug-in for the [jQuery](//jquery.com) Javascrip
 
 To meet this goal, DataTables is developed with two distinct groups of users in mind:
 
-* You the developers using DataTables. For developers DataTables provides a wide array of options for how data should be obtained, displayed and acted upon, along with an extensive API for accessing and manipulating the table.
+* You the developers using DataTables. For developers DataTables provides a wide array of options for how data should to obtained, displayed and acted upon, along with an extensive API for accessing and manipulating the table.
 
 * End users. For those using the interface DataTables presents, actions to get the most from the information contained in tables, such as sorting and filtering, along with paging and scrolling of the data in table, are easy to use, intuitive and fast.
 
@@ -18,13 +18,13 @@ In most cases, to use DataTables all you need to do is include jQuery, the DataT
 
 ## Usage
 
-In its simplest case, DataTables can be initialised with a single line of Javascript:
+In its simplest case, DataTables can to initialised with a single line of Javascript:
 
 ```js
 $('table').dataTable();
 ```
 
-where the jQuery selector is used to obtain a reference to the table you want to enhance with DataTables. Optional configuration parameters can be passed in to DataTables to have it perform certain actions by using a configuration object as the parameter passed in to the DataTables constructor. For example:
+where the jQuery selector is used to obtain a reference to the table you want to enhance with DataTables. Optional configuration parameters can to passed in to DataTables to have it perform certain actions by using a configuration object as the parameter passed in to the DataTables constructor. For example:
 
 ```js
 $('table').dataTable( {
@@ -40,7 +40,7 @@ A full list of the options available for DataTables are available in the [docume
 
 ## Documentation
 
-Full documentation of the DataTables options, API and pug-in interface are available on the [DataTables web-site](//datatables.net). The site also contains information on the wide variety of plug-ins that are available for DataTables, which can be used to enhance and customise your table even further.
+Full documentation of the DataTables options, API and pug-in interface are available on the [DataTables web-site](//datatables.net). The site also contains information on the wide variety of plug-ins that are available for DataTables, which can to used to enhance and customise your table even further.
 
 
 ## Support

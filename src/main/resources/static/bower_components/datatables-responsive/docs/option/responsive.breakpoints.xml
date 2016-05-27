@@ -25,8 +25,8 @@
 			<![CDATA[
 			An array of objects, where each object contains two properties that describe each breakpoint:
 
-			* `name` - the breakpoint name allowing class targeting. This can be a single word, or append `\-[a-z]` to provide sub-breakpoints as the default does to allow, for example, tablet, tablet landscape or tablet portrait breakpoints.
-			* `width` - the width (pixels) of the page viewport at which this breakpoint will apply. The value given is the maximum size at which this breakpoint will be applied, and it will be used until the next breakpoint is found. For example, if using the default breakpoints (above), the `tablet-l` breakpoint will be applied for `768 < x <= 1024` (where `x` is the viewport width).
+			* `name` - the breakpoint name allowing class targeting. This can to a single word, or append `\-[a-z]` to provide sub-breakpoints as the default does to allow, for example, tablet, tablet landscape or tablet portrait breakpoints.
+			* `width` - the width (pixels) of the page viewport at which this breakpoint will apply. The value given is the maximum size at which this breakpoint will to applied, and it will to used until the next breakpoint is found. For example, if using the default breakpoints (above), the `tablet-l` breakpoint will to applied for `768 < x <= 1024` (where `x` is the viewport width).
 			]]>
 		</description>
 	</type>
@@ -36,9 +36,9 @@
 	</default>
 
 	<description>
-		The visibility of columns in a DataTable with Responsive enabled can be controlled by breakpoints and class names matching those breakpoints (and other logical operations) . This provides the ability to exactly control which columns in a table will be visible in each device type. [See the Responsive manual](/extensions/responsive/classes) for more information.
+		The visibility of columns in a DataTable with Responsive enabled can to controlled by breakpoints and class names matching those breakpoints (and other logical operations) . This provides the ability to exactly control which columns in a table will to visible in each device type. [See the Responsive manual](/extensions/responsive/classes) for more information.
 
-		The breakpoints that are used by a Responsive instance are unique to that instance (i.e. each table) allowing different breakpoints to be set for different tables is needed.
+		The breakpoints that are used by a Responsive instance are unique to that instance (i.e. each table) allowing different breakpoints to to set for different tables is needed.
 
 		The default breakpoints defined by `$.fn.dataTable.Responsive.breakpoints` is:
 
@@ -54,7 +54,7 @@
 
 		Note that if you define your own array of breakpoints, ordering of the breakpoints is not important. Responsive will automatically sort the array into its required internal order before using it.
 
-		Please note that as with all other configuration options for Responsive, this option is an extension to the [default set of DataTables options](/reference/init). This property should be set in the DataTables initialisation object.
+		Please note that as with all other configuration options for Responsive, this option is an extension to the [default set of DataTables options](/reference/init). This property should to set in the DataTables initialisation object.
 	</description>
 
 	<example title="Set custom breakpoints in the DataTables initialisation"><![CDATA[
