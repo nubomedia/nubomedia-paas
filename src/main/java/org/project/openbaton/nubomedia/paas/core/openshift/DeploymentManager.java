@@ -17,7 +17,7 @@
 package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import com.google.gson.Gson;
-import org.project.openbaton.nubomedia.paas.messages.BuildingStatus;
+import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
@@ -140,9 +140,9 @@ public class DeploymentManager {
         return deleteEntity.getStatusCode();
     }
 
-    public BuildingStatus getDeployStatus(String kubernetesBaseURL, String appName, String namespace, HttpHeaders authHeader){
+    public AppStatus getDeployStatus(String kubernetesBaseURL, String appName, String namespace, HttpHeaders authHeader){
 
-        BuildingStatus res = BuildingStatus.RUNNING; //if deploy pod will not exist is because the application is already deployed or the build is already failed :P
+        AppStatus res = AppStatus.RUNNING; //if deploy pod will not exist is because the application is already deployed or the build is already failed :P
         String podsURL = kubernetesBaseURL + namespace + podSuffix;
         HttpEntity<String> podEntity = new HttpEntity<>(authHeader);
         Pods podList = this.getPodsList(podsURL,podEntity);
@@ -154,13 +154,13 @@ public class DeploymentManager {
 
                 switch (targetPod.getStatus().getPhase()){
                     case "Running":
-                        res = BuildingStatus.DEPLOYNG;
+                        res = AppStatus.DEPLOYNG;
                         break;
                     case "Failed":
-                        res = BuildingStatus.FAILED;
+                        res = AppStatus.FAILED;
                         break;
                     case "Complete":
-                        res = BuildingStatus.RUNNING;
+                        res = AppStatus.RUNNING;
                         break;
                 }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.core.openbaton;
+package org.project.openbaton.nubomedia.paas.model.openbaton;
 
 /**
  * Created by maa on 21.10.15.

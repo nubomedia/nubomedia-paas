@@ -16,7 +16,7 @@
 
 package org.project.openbaton.nubomedia.paas.core.openshift;
 
-import org.project.openbaton.nubomedia.paas.messages.BuildingStatus;
+import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.openshift.RouteConfig;
@@ -60,8 +60,8 @@ public class BuildManager {
         return statusManager.deleteBuilds(baseURL,appName,namespace,authHeader);
     }
 
-    public BuildingStatus getApplicationStatus(String baseURL, String appName,String namespace, HttpHeaders authHeader) throws UnauthorizedException {
-        BuildingStatus status = statusManager.getBuildStatus(baseURL,appName,namespace,authHeader);
+    public AppStatus getApplicationStatus(String baseURL, String appName,String namespace, HttpHeaders authHeader) throws UnauthorizedException {
+        AppStatus status = statusManager.getBuildStatus(baseURL,appName,namespace,authHeader);
         logger.info("Status:" + status);
         return status;
     }

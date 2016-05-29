@@ -17,7 +17,7 @@
 package org.project.openbaton.nubomedia.paas.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.project.openbaton.nubomedia.paas.messages.BuildingStatus;
+import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.openbaton.Flavor;
 
 import javax.persistence.ElementCollection;
@@ -50,7 +50,7 @@ public class Application {
     private int replicasNumber;
     private String secretName;
     private Flavor flavor;
-    private BuildingStatus status;
+    private AppStatus status;
     @JsonIgnore private boolean resourceOK;
 
     public Application(String appID,Flavor flavor, String appName, String projectName, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, List<String> podList, int replicasNumber, String secretName,boolean resourceOK) {
@@ -74,7 +74,7 @@ public class Application {
         this.protocols = protocols;
         this.replicasNumber = replicasNumber;
         this.secretName = secretName;
-        this.status = BuildingStatus.CREATED;
+        this.status = AppStatus.CREATED;
         this.resourceOK = resourceOK;
     }
 
@@ -153,11 +153,11 @@ public class Application {
         this.appID = appID;
     }
 
-    public BuildingStatus getStatus() {
+    public AppStatus getStatus() {
         return status;
     }
 
-    public void setStatus(BuildingStatus status) {
+    public void setStatus(AppStatus status) {
         this.status = status;
     }
 
