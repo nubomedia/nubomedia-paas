@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.core;
+package org.project.openbaton.nubomedia.paas.messages;
 
-import org.springframework.stereotype.Controller;
+/**
+ * Created by maa on 08.10.15.
+ */
+public enum AppStatus {
 
-
-@Controller
-class WebConfig {
-
+    CREATED,
+    INITIALIZING,
+    INITIALISED,
+    DUPLICATED,
+    BUILDING,
+    BUILD_OK, //internal state not visible from outside, used to redirect requests to deploymentManager
+    DEPLOYNG,
+    RUNNING,
+    FAILED,
+    PAAS_RESOURCE_MISSING
 
 }

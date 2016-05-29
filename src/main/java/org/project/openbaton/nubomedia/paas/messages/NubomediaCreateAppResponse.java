@@ -29,6 +29,11 @@ public class NubomediaCreateAppResponse {
     public NubomediaCreateAppResponse() {
     }
 
+    public NubomediaCreateAppResponse(Application app, int code) {
+        this.app = app;
+        this.code = code;
+    }
+
     public Application getApp() {
         return app;
     }

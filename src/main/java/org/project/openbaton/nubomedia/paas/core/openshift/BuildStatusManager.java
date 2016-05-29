@@ -17,7 +17,7 @@
 package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import com.google.gson.Gson;
-import org.project.openbaton.nubomedia.paas.messages.BuildingStatus;
+import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.openshift.*;
 import org.slf4j.Logger;
@@ -52,9 +52,9 @@ public class BuildStatusManager {
     }
 
     //Responses: Complete, Running, Failed
-    public BuildingStatus getBuildStatus (String baseURL, String appName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
+    public AppStatus getBuildStatus (String baseURL, String appName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
 
-        BuildingStatus res = null;
+        AppStatus res = null;
         BuildStatus status = null;
         BuildList buildList = this.getBuilds(baseURL,namespace,authHeader);
 
@@ -68,18 +68,18 @@ public class BuildStatusManager {
         if (status != null) {
             switch (status.getPhase()){
                 case "Running":
-                    res = BuildingStatus.BUILDING;
+                    res = AppStatus.BUILDING;
                     break;
                 case "Failed":
-                    res = BuildingStatus.FAILED;
+                    res = AppStatus.FAILED;
                     break;
                 case "Complete":
-                    res = BuildingStatus.BUILD_OK;
+                    res = AppStatus.BUILD_OK;
                     break;
             }
         }
         else{
-            res = BuildingStatus.PAAS_RESOURCE_MISSING;
+            res = AppStatus.PAAS_RESOURCE_MISSING;
         }
 
         return res;

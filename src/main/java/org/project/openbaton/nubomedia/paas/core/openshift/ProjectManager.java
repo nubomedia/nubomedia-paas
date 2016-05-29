@@ -33,7 +33,6 @@ import javax.annotation.PostConstruct;
 /**
  * Created by maa on 26.01.16.
  */
-//BETA!!
 @Service
 public class ProjectManager {
 

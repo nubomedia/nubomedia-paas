@@ -20,7 +20,7 @@ package org.project.openbaton.nubomedia.paas.core;
 import com.google.gson.Gson;
 import org.project.openbaton.nubomedia.paas.core.openshift.*;
 import org.project.openbaton.nubomedia.paas.utils.OpenshiftProperties;
-import org.project.openbaton.nubomedia.paas.messages.BuildingStatus;
+import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
@@ -65,16 +65,18 @@ public class OpenshiftManager {
     private AuthenticationManager authManager;
     @Autowired
     private OpenshiftProperties properties;
+
     private Logger logger;
     private String openshiftBaseURL;
     private String kubernetesBaseURL;
-
+    private String project;
 
     @PostConstruct
     private void init() throws IOException {
         this.logger = LoggerFactory.getLogger(this.getClass());
         this.openshiftBaseURL = properties.getBaseURL() + "/oapi/v1/namespaces/";
         this.kubernetesBaseURL = properties.getBaseURL() + "/api/v1/namespaces/";
+        this.project = properties.getProject();
     }
 
     public String authenticate(String username, String password) throws UnauthorizedException {
@@ -83,15 +85,15 @@ public class OpenshiftManager {
 
     }
 
-    public String buildApplication(String token, String appID, String appName, String namespace, String gitURL, int[] ports, int[] targetPorts, String[] protocols, int replicasnumber, String secretName, String mediaServerGID, String vnfmIp, String vnfmPort, String cloudRepositoryIp, String cloudRepositoryPort, String cdnServerIp) throws DuplicatedException, UnauthorizedException {
+    public String buildApplication(String token, String appID, String appName, String gitURL, int[] ports, int[] targetPorts, String[] protocols, int replicasnumber, String secretName, String mediaServerGID, String vnfmIp, String vnfmPort, String cloudRepositoryIp, String cloudRepositoryPort, String cdnServerIp) throws DuplicatedException, UnauthorizedException {
 
         HttpHeaders creationHeader = new HttpHeaders();
         creationHeader.add("Authorization", "Bearer " + token);
         creationHeader.add("Content-type", "application/json");
 
-        logger.info("Starting build app " + appName + " in project " + namespace);
+        logger.info("Starting build app " + appName + " in project " + this.project);
 
-        ResponseEntity<String> appBuilEntity = imageStreamManager.makeImageStream(openshiftBaseURL, appName, namespace, creationHeader);
+        ResponseEntity<String> appBuilEntity = imageStreamManager.makeImageStream(openshiftBaseURL, appName, this.project, creationHeader);
         if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
             logger.debug("Failed creation of imagestream " + appBuilEntity.toString());
             return appBuilEntity.getBody();
@@ -101,25 +103,25 @@ public class OpenshiftManager {
 
         RouteConfig routeConfig = MessageBuilderFactory.getRouteMessage(appName, appID, properties.getDomainName());
 
-        appBuilEntity = buildManager.createBuild(openshiftBaseURL, appName, namespace, gitURL, isConfig.getStatus().getDockerImageRepository(), creationHeader, secretName, mediaServerGID, vnfmIp, vnfmPort, cloudRepositoryIp, cloudRepositoryPort, cdnServerIp, routeConfig);
+        appBuilEntity = buildManager.createBuild(openshiftBaseURL, appName, this.project, gitURL, isConfig.getStatus().getDockerImageRepository(), creationHeader, secretName, mediaServerGID, vnfmIp, vnfmPort, cloudRepositoryIp, cloudRepositoryPort, cdnServerIp, routeConfig);
         if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
             logger.debug("Failed creation of buildconfig " + appBuilEntity.toString());
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = deploymentManager.makeDeployment(openshiftBaseURL, appName, isConfig.getStatus().getDockerImageRepository(), targetPorts, protocols, replicasnumber, namespace, creationHeader);
+        appBuilEntity = deploymentManager.makeDeployment(openshiftBaseURL, appName, isConfig.getStatus().getDockerImageRepository(), targetPorts, protocols, replicasnumber, this.project, creationHeader);
         if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
             logger.debug("Failed creation of deploymentconfig " + appBuilEntity.toString());
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = serviceManager.makeService(kubernetesBaseURL, appName, namespace, ports, targetPorts, protocols, creationHeader);
+        appBuilEntity = serviceManager.makeService(kubernetesBaseURL, appName, this.project, ports, targetPorts, protocols, creationHeader);
         if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
             logger.debug("Failed creation of service " + appBuilEntity.toString());
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = routeManager.makeRoute(openshiftBaseURL, appID, appName, namespace, properties.getDomainName(), creationHeader, routeConfig);
+        appBuilEntity = routeManager.makeRoute(openshiftBaseURL, appID, appName, this.project, properties.getDomainName(), creationHeader, routeConfig);
         if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
             logger.debug("Failed creation of route " + appBuilEntity.toString());
             return appBuilEntity.getBody();
@@ -131,98 +133,98 @@ public class OpenshiftManager {
 
     }
 
-    public HttpStatus deleteApplication(String token, String appName, String namespace) throws UnauthorizedException {
+    public HttpStatus deleteApplication(String token, String appName) throws UnauthorizedException {
 
         HttpHeaders deleteHeader = new HttpHeaders();
         deleteHeader.add("Authorization", "Bearer " + token);
 
-        HttpStatus res = imageStreamManager.deleteImageStream(openshiftBaseURL, appName, namespace, deleteHeader);
+        HttpStatus res = imageStreamManager.deleteImageStream(openshiftBaseURL, appName, this.project, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
-        res = buildManager.deleteBuild(openshiftBaseURL, appName, namespace, deleteHeader);
+        res = buildManager.deleteBuild(openshiftBaseURL, appName, this.project, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
-        res = deploymentManager.deleteDeployment(openshiftBaseURL, appName, namespace, deleteHeader);
+        res = deploymentManager.deleteDeployment(openshiftBaseURL, appName, this.project, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
-        res = deploymentManager.deletePodsRC(kubernetesBaseURL, appName, namespace, deleteHeader);
+        res = deploymentManager.deletePodsRC(kubernetesBaseURL, appName, this.project, deleteHeader);
         if (!res.is2xxSuccessful() && !res.equals(HttpStatus.NOT_FOUND)) return res;
         if (res.equals(HttpStatus.NOT_FOUND)) logger.debug("No Replication controller, build probably failed");
 
-        res = serviceManager.deleteService(kubernetesBaseURL, appName, namespace, deleteHeader);
+        res = serviceManager.deleteService(kubernetesBaseURL, appName, this.project, deleteHeader);
         if (!res.is2xxSuccessful()) return res;
 
-        res = routeManager.deleteRoute(openshiftBaseURL, appName, namespace, deleteHeader);
+        res = routeManager.deleteRoute(openshiftBaseURL, appName, this.project, deleteHeader);
 
         return res;
     }
 
-    public String createSecret(String token, String privateKey, String namespace) throws UnauthorizedException {
+    public String createSecret(String token, String privateKey) throws UnauthorizedException {
 
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
-        return secretManager.createSecret(kubernetesBaseURL, namespace, privateKey, authHeader);
+        return secretManager.createSecret(kubernetesBaseURL, this.project, privateKey, authHeader);
     }
 
-    public HttpStatus deleteSecret(String token, String secretName, String namespace) throws UnauthorizedException {
+    public HttpStatus deleteSecret(String token, String secretName) throws UnauthorizedException {
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
 
-        HttpStatus entity = secretManager.deleteSecret(kubernetesBaseURL, secretName, namespace, authHeader);
+        HttpStatus entity = secretManager.deleteSecret(kubernetesBaseURL, secretName, this.project, authHeader);
         return entity;
     }
 
-    public BuildingStatus getStatus(String token, String appName, String namespace) throws UnauthorizedException {
+    public AppStatus getStatus(String token, String appName) throws UnauthorizedException {
 
-        BuildingStatus res = BuildingStatus.INITIALISED;
+        AppStatus res = AppStatus.INITIALISED;
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
 
-        BuildingStatus status = buildManager.getApplicationStatus(openshiftBaseURL, appName, namespace, authHeader);
+        AppStatus status = buildManager.getApplicationStatus(openshiftBaseURL, appName, this.project, authHeader);
 
         try {
             switch (status) {
                 case BUILDING:
-                    res = BuildingStatus.BUILDING;
+                    res = AppStatus.BUILDING;
                     break;
                 case FAILED:
-                    res = BuildingStatus.FAILED;
+                    res = AppStatus.FAILED;
                     break;
                 case BUILD_OK:
-                    res = deploymentManager.getDeployStatus(kubernetesBaseURL, appName, namespace, authHeader);
+                    res = deploymentManager.getDeployStatus(kubernetesBaseURL, appName, this.project, authHeader);
                     break;
                 case PAAS_RESOURCE_MISSING:
-                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
+                    res = AppStatus.PAAS_RESOURCE_MISSING;
                     break;
             }
         } catch (NullPointerException e) {
-            res = BuildingStatus.BUILDING;
+            res = AppStatus.BUILDING;
         }
 
         return res;
     }
 
-    public String getApplicationLog(String token, String appName, String namespace, String podName) throws UnauthorizedException {
+    public String getApplicationLog(String token, String appName, String podName) throws UnauthorizedException {
 
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
         HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
 
-        return deploymentManager.getPodLogs(kubernetesBaseURL, namespace, appName, podName, requestEntity);
+        return deploymentManager.getPodLogs(kubernetesBaseURL, this.project, appName, podName, requestEntity);
     }
 
-    public String getBuildLogs(String token, String appName, String namespace) throws UnauthorizedException {
+    public String getBuildLogs(String token, String appName) throws UnauthorizedException {
 
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
-        return buildManager.getBuildLogs(openshiftBaseURL, appName, namespace, authHeader);
+        return buildManager.getBuildLogs(openshiftBaseURL, appName, this.project, authHeader);
     }
 
-    public List<String> getPodList(String token, String appName, String namespace) throws UnauthorizedException {
+    public List<String> getPodList(String token, String appName) throws UnauthorizedException {
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
         HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
-        return deploymentManager.getPodNameList(kubernetesBaseURL, namespace, appName, requestEntity);
+        return deploymentManager.getPodNameList(kubernetesBaseURL, this.project, appName, requestEntity);
     }
 
 }

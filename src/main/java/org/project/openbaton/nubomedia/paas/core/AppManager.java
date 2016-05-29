@@ -23,12 +23,12 @@ import org.openbaton.catalogue.mano.record.VNFCInstance;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.sdk.api.exception.SDKException;
-import org.project.openbaton.nubomedia.paas.core.openbaton.MediaServerGroup;
+import org.project.openbaton.nubomedia.paas.model.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
-import org.project.openbaton.nubomedia.paas.messages.BuildingStatus;
+import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.messages.NubomediaCreateAppRequest;
 import org.project.openbaton.nubomedia.paas.messages.NubomediaPort;
 import org.project.openbaton.nubomedia.paas.model.openbaton.OpenbatonEvent;
@@ -39,12 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.math.BigInteger;
@@ -115,7 +110,7 @@ public class AppManager {
 
         if (evt.getAction().equals(Action.INSTANTIATE_FINISH) && server.getMediaServerGroupID().equals(evt.getPayload().getId())) {
             logger.info("[PAAS]: EVENT_FINISH " + new Date().getTime());
-            app.setStatus(BuildingStatus.INITIALISED);
+            app.setStatus(AppStatus.INITIALISED);
             app.setResourceOK(true);
             appRepo.save(app);
 
@@ -165,20 +160,20 @@ public class AppManager {
                 logger.debug("cloudRepositoryPort " + cloudRepositoryPort + " IP " + cloudRepositoryIp);
 
                 try {
-                    route = osmanager.buildApplication(server.getToken(), app.getAppID(), app.getAppName(), app.getProjectName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(), vnfrID, paaSProperties.getVnfmIP(), paaSProperties.getVnfmPort(), cloudRepositoryIp, cloudRepositoryPort, cdnServerIp);
+                    route = osmanager.buildApplication(server.getToken(), app.getAppID(), app.getAppName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(), vnfrID, paaSProperties.getVnfmIP(), paaSProperties.getVnfmPort(), cloudRepositoryIp, cloudRepositoryPort, cdnServerIp);
 
                 } catch (ResourceAccessException e) {
                     obmanager.deleteDescriptor(server.getNsdID());
                     //obmanager.deleteEvent(server.getEventAllocatedID());
                     //obmanager.deleteEvent(server.getEventErrorID());
-                    app.setStatus(BuildingStatus.FAILED);
+                    app.setStatus(AppStatus.FAILED);
                     appRepo.save(app);
                     deploymentMap.remove(app.getAppID());
                 }
                 logger.info("[PAAS]: SCHEDULED_APP_OS " + new Date().getTime());
             } catch (DuplicatedException e) {
                 app.setRoute(e.getMessage());
-                app.setStatus(BuildingStatus.DUPLICATED);
+                app.setStatus(AppStatus.DUPLICATED);
                 appRepo.save(app);
                 return;
             }
@@ -195,7 +190,7 @@ public class AppManager {
             //obmanager.deleteEvent(server.getEventErrorID());
             //obmanager.deleteEvent(server.getEventAllocatedID());
             obmanager.deleteRecord(server.getMediaServerGroupID());
-            app.setStatus(BuildingStatus.FAILED);
+            app.setStatus(AppStatus.FAILED);
             appRepo.save(app);
             deploymentMap.remove(app.getAppID());
         }

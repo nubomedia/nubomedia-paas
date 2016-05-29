@@ -23,6 +23,7 @@ import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -32,13 +33,10 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(classes = OpenshiftConfiguration.class)
 @EnableJpaRepositories ("org.project.openbaton.nubomedia.paas")
 @EntityScan (basePackages = "org.project.openbaton")
+@EnableScheduling
 @ComponentScan(basePackages = "org.project.openbaton")
-// /@EnableScheduling
 public class Main {
-
-
     public static void main(String[] args) {
-
         ApplicationContext context = SpringApplication.run(Main.class, args);
     }
 }

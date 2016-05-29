@@ -16,21 +16,15 @@
 
 package org.project.openbaton.nubomedia.paas.api;
 
-import org.openbaton.catalogue.mano.common.Ip;
-import org.openbaton.catalogue.mano.common.LifecycleEvent;
-import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
-import org.openbaton.catalogue.mano.record.VNFCInstance;
-import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
-import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
+import org.project.openbaton.nubomedia.paas.utils.OpenshiftProperties;
 import org.project.openbaton.nubomedia.paas.utils.PaaSProperties;
 import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
 import org.project.openbaton.nubomedia.paas.core.OpenshiftManager;
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.paas.messages.*;
-import org.project.openbaton.nubomedia.paas.core.openbaton.MediaServerGroup;
-import org.project.openbaton.nubomedia.paas.model.openbaton.OpenbatonEvent;
+import org.project.openbaton.nubomedia.paas.model.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
@@ -47,8 +41,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.*;
 
 
@@ -72,13 +64,18 @@ public class PaaSAPI {
     @Autowired
     private PaaSProperties paaSProperties;
     @Autowired
+    private OpenshiftProperties openshiftProperties;
+    @Autowired
     private AppManager appManager;
+
+    private String project;
+
 
     @PostConstruct
     private void init() {
-        //System.setProperty("javax.net.ssl.trustStore", paaSProperties.getKeystore());
-        System.setProperty("javax.net.ssl.trustStore", "/etc/nubomedia/openshift-keystore");
+        System.setProperty("javax.net.ssl.trustStore", paaSProperties.getKeystore());
         this.logger = LoggerFactory.getLogger(this.getClass());
+        this.project=openshiftProperties.getProject();
     }
 
     @RequestMapping(value = "/app", method = RequestMethod.POST)
@@ -108,13 +105,8 @@ public class PaaSAPI {
         }
 
         logger.debug("REQUEST" + request.toString());
-
-
-        NubomediaCreateAppResponse res = new NubomediaCreateAppResponse();
         Application app = appManager.createApplication(request, token);
-        res.setApp(app);
-        res.setCode(200);
-        return res;
+        return new NubomediaCreateAppResponse(app,200);
     }
 
     @RequestMapping(value = "/app/{id}", method = RequestMethod.GET)
@@ -144,48 +136,48 @@ public class PaaSAPI {
                 break;
             case INITIALISED:
                 try {
-                    app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                    app.setStatus(osmanager.getStatus(token, app.getAppName()));
                 } catch (ResourceAccessException e) {
-                    app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                    app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
                 }
                 break;
             case BUILDING:
                 try {
-                    app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                    app.setStatus(osmanager.getStatus(token, app.getAppName()));
                 } catch (ResourceAccessException e) {
-                    app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                    app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
                 }
                 break;
             case DEPLOYNG:
                 try {
-                    app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                    app.setStatus(osmanager.getStatus(token, app.getAppName()));
                 } catch (ResourceAccessException e) {
-                    app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                    app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
                 }
                 break;
             case FAILED:
                 logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
                 if (!app.isResourceOK()) {
-                    app.setStatus(BuildingStatus.FAILED);
+                    app.setStatus(AppStatus.FAILED);
                     break;
                 } else {
                     try {
-                        app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                        app.setStatus(osmanager.getStatus(token, app.getAppName()));
                     } catch (ResourceAccessException e) {
-                        app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                        app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
                     }
                 }
                 break;
             case RUNNING:
                 try {
-                    app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
-                    app.setPodList(osmanager.getPodList(token, app.getAppName(), app.getProjectName()));
+                    app.setStatus(osmanager.getStatus(token, app.getAppName()));
+                    app.setPodList(osmanager.getPodList(token, app.getAppName()));
                 } catch (ResourceAccessException e) {
-                    app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                    app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
                 }
                 break;
             case PAAS_RESOURCE_MISSING:
-                app.setStatus(osmanager.getStatus(token, app.getAppName(), app.getProjectName()));
+                app.setStatus(osmanager.getStatus(token, app.getAppName()));
                 break;
         }
 
@@ -212,21 +204,21 @@ public class PaaSAPI {
 
         Application app = appRepo.findFirstByAppID(id);
 
-        if (app.getStatus().equals(BuildingStatus.FAILED) && !app.isResourceOK()) {
+        if (app.getStatus().equals(AppStatus.FAILED) && !app.isResourceOK()) {
 
             res.setId(id);
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
             res.setLog("Something wrong on retrieving resources");
 
-        } else if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)) {
+        } else if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING)) {
             res.setId(id);
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
             res.setLog("The application is retrieving resources " + app.getStatus());
 
             return res;
-        } else if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)) {
+        } else if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
             res.setId(id);
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
@@ -239,9 +231,9 @@ public class PaaSAPI {
             res.setAppName(app.getAppName());
             res.setProjectName(app.getProjectName());
             try {
-                res.setLog(osmanager.getBuildLogs(token, app.getAppName(), app.getProjectName()));
+                res.setLog(osmanager.getBuildLogs(token, app.getAppName()));
             } catch (ResourceAccessException e) {
-                app.setStatus(BuildingStatus.PAAS_RESOURCE_MISSING);
+                app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
                 appRepo.save(app);
                 res.setLog("Openshift is not responding, app " + app.getAppName() + " is not anymore available");
             }
@@ -265,11 +257,11 @@ public class PaaSAPI {
 
         Application app = appRepo.findFirstByAppID(id);
 
-        if (!app.getStatus().equals(BuildingStatus.RUNNING)) {
+        if (!app.getStatus().equals(AppStatus.RUNNING)) {
             return "Application Status " + app.getStatus() + ", logs are not available until the status is RUNNING";
         }
 
-        return osmanager.getApplicationLog(token, app.getAppName(), app.getProjectName(), podName);
+        return osmanager.getApplicationLog(token, app.getAppName(), podName);
 
     }
 
@@ -283,10 +275,6 @@ public class PaaSAPI {
         }
         //BETA
         Iterable<Application> applications = this.appRepo.findAll();
-        for (Application app : applications) {
-            app.setStatus(this.getStatus(token, app));
-        }
-        this.appRepo.save(applications);
         logger.debug("Returning from GET Applications "+applications);
         return applications;
     }
@@ -307,7 +295,6 @@ public class PaaSAPI {
         }
 
         Application app = appRepo.findFirstByAppID(id);
-        app.setStatus(this.getStatus(token, app));
         logger.debug("Deleting " + app.toString());
 
         if (!app.isResourceOK()) {
@@ -315,13 +302,13 @@ public class PaaSAPI {
             String name = app.getAppName();
             String projectName = app.getProjectName();
 
-            if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING) || app.getStatus().equals(BuildingStatus.FAILED)) {
+            if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
                 MediaServerGroup server = deploymentMap.get(id);
                 obmanager.deleteDescriptor(server.getNsdID());
                 //obmanager.deleteEvent(server.getEventAllocatedID());
                 //obmanager.deleteEvent(server.getEventErrorID());
 
-                if (!app.getStatus().equals(BuildingStatus.FAILED) && obmanager.existRecord(server.getMediaServerGroupID())) {
+                if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(server.getMediaServerGroupID())) {
                     obmanager.deleteRecord(app.getNsrID());
                 }
                 deploymentMap.remove(app.getAppID());
@@ -333,7 +320,7 @@ public class PaaSAPI {
 
         }
 
-        if (app.getStatus().equals(BuildingStatus.PAAS_RESOURCE_MISSING)) {
+        if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
             obmanager.deleteRecord(app.getNsrID());
             appRepo.delete(app);
 
@@ -351,7 +338,7 @@ public class PaaSAPI {
         obmanager.deleteRecord(app.getNsrID());
         HttpStatus resDelete = HttpStatus.BAD_REQUEST;
         try {
-            resDelete = osmanager.deleteApplication(token, app.getAppName(), app.getProjectName());
+            resDelete = osmanager.deleteApplication(token, app.getAppName());
         } catch (ResourceAccessException e) {
             logger.info("PaaS Missing");
         }
@@ -371,7 +358,7 @@ public class PaaSAPI {
         }
 
         logger.debug("Creating new secret for " + ncsr.getProjectName() + " with key " + ncsr.getPrivateKey());
-        return osmanager.createSecret(token, ncsr.getPrivateKey(), ncsr.getProjectName());
+        return osmanager.createSecret(token, ncsr.getPrivateKey());
     }
 
     @RequestMapping(value = "/secret/{projectName}/{secretName}", method = RequestMethod.DELETE)
@@ -383,7 +370,7 @@ public class PaaSAPI {
             throw new UnauthorizedException("no auth-token header");
         }
 
-        HttpStatus deleteStatus = osmanager.deleteSecret(token, secretName, projectName);
+        HttpStatus deleteStatus = osmanager.deleteSecret(token, secretName);
         return new NubomediaDeleteSecretResponse(secretName, projectName, deleteStatus.value());
     }
 
@@ -406,69 +393,6 @@ public class PaaSAPI {
     @ResponseStatus(HttpStatus.OK)
     public String getMediaServerIp() {
         return paaSProperties.getVnfmIP();
-    }
-
-
-    private BuildingStatus getStatus(String token, Application app) throws UnauthorizedException {
-
-        BuildingStatus res = null;
-
-        logger.debug("application ("+app.getAppID()+"-"+app.getAppName()+") status is "+app.getStatus());
-
-        switch (app.getStatus()) {
-            case CREATED:
-                res = obmanager.getStatus(app.getNsrID());
-                break;
-            case INITIALIZING:
-                res = obmanager.getStatus(app.getNsrID());
-                break;
-            case INITIALISED:
-                try {
-                    res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
-                } catch (ResourceAccessException e) {
-                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
-                }
-                break;
-            case BUILDING:
-                try {
-                    res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
-                } catch (ResourceAccessException e) {
-                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
-                }
-                break;
-            case DEPLOYNG:
-                try {
-                    res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
-                } catch (ResourceAccessException e) {
-                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
-                }
-                break;
-            case FAILED:
-                logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
-                if (!app.isResourceOK()) {
-                    res = BuildingStatus.FAILED;
-                    break;
-                } else {
-                    try {
-                        res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
-                    } catch (ResourceAccessException e) {
-                        res = BuildingStatus.PAAS_RESOURCE_MISSING;
-                    }
-                }
-                break;
-            case RUNNING:
-                try {
-                    res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
-                } catch (ResourceAccessException e) {
-                    res = BuildingStatus.PAAS_RESOURCE_MISSING;
-                }
-                break;
-            case PAAS_RESOURCE_MISSING:
-                res = osmanager.getStatus(token, app.getAppName(), app.getProjectName());
-                break;
-        }
-
-        return res;
     }
 
 

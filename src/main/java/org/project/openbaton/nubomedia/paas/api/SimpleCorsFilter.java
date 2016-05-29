@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.core;
+package org.project.openbaton.nubomedia.paas.api;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
