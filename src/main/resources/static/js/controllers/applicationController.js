@@ -23,6 +23,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         var maxLoad = 100;
         var marketurl = $cookieStore.get('marketplaceIP');
         $scope.file ='';
+        $scope.appJson = '';
 
         //var marketurl = 'http://localhost:8082/api/v1/app/';
         //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
