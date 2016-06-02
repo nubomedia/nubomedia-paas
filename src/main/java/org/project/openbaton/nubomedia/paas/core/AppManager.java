@@ -67,7 +67,7 @@ public class AppManager {
 
     private static Map<String, MediaServerGroup> deploymentMap = new HashMap<>();
 
-    public Application createApplication(NubomediaCreateAppRequest request, String token) throws turnServerException, StunServerException, SDKException {
+    public Application createApplication(NubomediaCreateAppRequest request, String projectId, String token) throws turnServerException, StunServerException, SDKException {
         String appID = new BigInteger(130, appIDGenerator).toString(64);
         logger.debug("App ID " + appID + "\n");
         List<String> protocols = new ArrayList<>();
@@ -89,7 +89,7 @@ public class AppManager {
 
         deploymentMap.put(mediaServerGroup.getMediaServerGroupID(), mediaServerGroup);
 
-        Application app = new Application(appID, request.getFlavor(), request.getAppName(), request.getProjectName(), "", mediaServerGroup.getMediaServerGroupID(), request.getGitURL(), targetPorts, ports, protocols, null, request.getReplicasNumber(), request.getSecretName(), false);
+        Application app = new Application(appID, request.getFlavor(), request.getAppName(), request.getProjectName(), projectId, "", mediaServerGroup.getMediaServerGroupID(), request.getGitURL(), targetPorts, ports, protocols, null, request.getReplicasNumber(), request.getSecretName(), false);
         appRepo.save(app);
         return app;
     }

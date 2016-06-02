@@ -81,7 +81,7 @@ public class PaaSAPI {
     @RequestMapping(value = "/app", method = RequestMethod.POST)
     public
     @ResponseBody
-    NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException, StunServerException {
+    NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request, @RequestHeader(value = "project-id") String projectId) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException, StunServerException {
         if (token == null) {
             throw new UnauthorizedException("No auth-token header");
         }
@@ -105,14 +105,14 @@ public class PaaSAPI {
         }
 
         logger.debug("REQUEST" + request.toString());
-        Application app = appManager.createApplication(request, token);
+        Application app = appManager.createApplication(request, projectId, token);
         return new NubomediaCreateAppResponse(app,200);
     }
 
     @RequestMapping(value = "/app/{id}", method = RequestMethod.GET)
     public
     @ResponseBody
-    Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws ApplicationNotFoundException, UnauthorizedException {
+    Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws ApplicationNotFoundException, UnauthorizedException {
 
         logger.info("Request status for " + id + " app");
 
@@ -120,11 +120,11 @@ public class PaaSAPI {
             throw new UnauthorizedException("no auth-token header");
         }
 
-        if (!appRepo.exists(id)) {
-            throw new ApplicationNotFoundException("Application with ID not found");
+        if (appRepo.findFirstByAppIdAndProjectId(id, projectId) == null) {
+            throw new ApplicationNotFoundException("Application with ID in Project " + projectId + " not found");
         }
 
-        Application app = appRepo.findFirstByAppID(id);
+        Application app = appRepo.findFirstByAppIdAndProjectId(id, projectId);
         logger.debug("Retrieving status for " + app.toString() + "\nwith status " + app.getStatus());
 
         switch (app.getStatus()) {
@@ -190,7 +190,7 @@ public class PaaSAPI {
     @RequestMapping(value = "/app/{id}/buildlogs", method = RequestMethod.GET)
     public
     @ResponseBody
-    NubomediaBuildLogs getBuildLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException {
+    NubomediaBuildLogs getBuildLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");
@@ -198,11 +198,11 @@ public class PaaSAPI {
 
         NubomediaBuildLogs res = new NubomediaBuildLogs();
 
-        if (!appRepo.exists(id)) {
-            return null;
+        if (appRepo.findFirstByAppIdAndProjectId(id, projectId) == null) {
+            throw new ApplicationNotFoundException("Application with ID in Project " + projectId + " not found");
         }
 
-        Application app = appRepo.findFirstByAppID(id);
+        Application app = appRepo.findFirstByAppIdAndProjectId(id, projectId);
 
         if (app.getStatus().equals(AppStatus.FAILED) && !app.isResourceOK()) {
 
@@ -245,17 +245,17 @@ public class PaaSAPI {
     @RequestMapping(value = "/app/{id}/logs/{podName}", method = RequestMethod.GET)
     public
     @ResponseBody
-    String getApplicationLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id, @PathVariable("podName") String podName) throws UnauthorizedException, ApplicationNotFoundException {
+    String getApplicationLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id, @PathVariable("podName") String podName, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");
         }
 
-        if (!appRepo.exists(id)) {
-            throw new ApplicationNotFoundException("Application with ID not found");
+        if (appRepo.findFirstByAppIdAndProjectId(id, projectId) == null) {
+            throw new ApplicationNotFoundException("Application with ID in Project " + projectId + " not found");
         }
 
-        Application app = appRepo.findFirstByAppID(id);
+        Application app = appRepo.findFirstByAppIdAndProjectId(id, projectId);
 
         if (!app.getStatus().equals(AppStatus.RUNNING)) {
             return "Application Status " + app.getStatus() + ", logs are not available until the status is RUNNING";
@@ -267,14 +267,14 @@ public class PaaSAPI {
 
     @RequestMapping(value = "/app", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public
-    Iterable<Application> getApps(@RequestHeader("Auth-token") String token) throws UnauthorizedException, ApplicationNotFoundException {
+    Iterable<Application> getApps(@RequestHeader("Auth-token") String token, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
         logger.debug("Received request GET Applications");
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");
         }
         //BETA
-        Iterable<Application> applications = this.appRepo.findAll();
+        Iterable<Application> applications = this.appRepo.findByProjectId(projectId);
         logger.debug("Returning from GET Applications "+applications);
         return applications;
     }
@@ -282,7 +282,7 @@ public class PaaSAPI {
     @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
     public
     @ResponseBody
-    NubomediaDeleteAppResponse deleteApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id) throws UnauthorizedException {
+    NubomediaDeleteAppResponse deleteApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");
@@ -290,11 +290,12 @@ public class PaaSAPI {
 
         logger.debug("id " + id);
 
-        if (!appRepo.exists(id)) {
-            return new NubomediaDeleteAppResponse(id, "Application not found", "null", 404);
+        if (appRepo.findFirstByAppIdAndProjectId(id, projectId) == null) {
+            return new NubomediaDeleteAppResponse(id, "Application not found in Project " + projectId + " not found", "null", 404);
         }
 
-        Application app = appRepo.findFirstByAppID(id);
+        Application app = appRepo.findFirstByAppIdAndProjectId(id, projectId);
+
         logger.debug("Deleting " + app.toString());
 
         if (!app.isResourceOK()) {
@@ -351,7 +352,7 @@ public class PaaSAPI {
     @RequestMapping(value = "/secret", method = RequestMethod.POST)
     public
     @ResponseBody
-    String createSecret(@RequestHeader("Auth-token") String token, @RequestBody NubomediaCreateSecretRequest ncsr) throws UnauthorizedException {
+    String createSecret(@RequestHeader("Auth-token") String token, @RequestBody NubomediaCreateSecretRequest ncsr, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");

@@ -36,6 +36,7 @@ public class Application {
     private String appID;
     private String appName;
     private String projectName;
+    private String projectId;
     private String route;
     private String nsrID;
     private String gitURL;
@@ -53,11 +54,12 @@ public class Application {
     private AppStatus status;
     @JsonIgnore private boolean resourceOK;
 
-    public Application(String appID,Flavor flavor, String appName, String projectName, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, List<String> podList, int replicasNumber, String secretName,boolean resourceOK) {
+    public Application(String appID,Flavor flavor, String appName, String projectName, String projectId, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, List<String> podList, int replicasNumber, String secretName,boolean resourceOK) {
         this.appID = appID;
         this.flavor = flavor;
         this.appName = appName;
         this.projectName = projectName;
+        this.projectId = projectId;
         this.route = route;
         this.nsrID = nsrID;
         this.gitURL = gitURL;
@@ -201,11 +203,20 @@ public class Application {
         this.podList = podList;
     }
 
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
     @Override
     public String toString(){
         return "Application with ID: " + appID  + "\n" +
                 "Application name: " + appName + "\n" +
                 "Project: " + projectName + "\n" +
+                "ProjectId: " + projectId + "\n" +
                 "Route: " + route + "\n" +
                 "Git URL: " + gitURL;
     }

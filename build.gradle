@@ -65,7 +65,7 @@ dependencies {
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'mysql:mysql-connector-java:5.1.35'
     compile 'org.springframework.boot:spring-boot-starter-test:' + springBootVersion
-    compile 'org.springframework.boot:spring-boot-starter-amqp:' +springBootVersion
+    compile 'org.springframework.boot:spring-boot-starter-amqp:' + springBootVersion
     compile 'org.springframework.boot:spring-boot:' + springBootVersion
     compile 'org.springframework.boot:spring-boot-autoconfigure:' + springBootVersion
     compile 'org.springframework.boot:spring-boot-starter-web:' + springBootVersion
@@ -73,6 +73,22 @@ dependencies {
     compile 'org.hibernate:hibernate-entitymanager:4.3.10.Final'
     compile 'org.springframework.data:spring-data-jpa:1.8.2.RELEASE'
     compile 'org.hsqldb:hsqldb:2.3.2'
+
+
+    //SECURITY
+    //    compile project(':repository')
+//    compile project(':catalogue')
+//    compile project(':exception')
+    compile 'org.springframework.boot:spring-boot-starter-websocket:' + springBootVersion
+    compile 'org.springframework.security:spring-security-core:4.1.0.RELEASE'
+//    compile 'org.springframework.data:spring-data-commons-core:1.4.1.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-security:' + springBootVersion
+//    compile group: 'org.codehaus.spring-security-oauth', name: 'spring-security-oauth', version: '3.19.SS3'
+
+    compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.7.RELEASE'
+
+    compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.9'
+
 
 }
 
