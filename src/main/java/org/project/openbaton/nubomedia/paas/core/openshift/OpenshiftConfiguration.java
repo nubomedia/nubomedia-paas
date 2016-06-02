@@ -46,4 +46,10 @@ public class OpenshiftConfiguration {
                 .registerTypeAdapter(EnviromentVariable.class,new EnvironmentVariableSerializer())
                 .disableHtmlEscaping().create();
     }
+
+    @Bean
+    public AuthenticationManager getAuthenticationManager() {
+        return new AuthenticationManager();
+    }
+
 }

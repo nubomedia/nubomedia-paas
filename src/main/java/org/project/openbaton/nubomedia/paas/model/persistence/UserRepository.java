@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
+ * Copyright (c) 2015 Fraunhofer FOKUS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,13 @@
 
 package org.project.openbaton.nubomedia.paas.model.persistence;
 
+
+import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
-
 /**
- * Created by maa on 21.10.15.
+ * Created by gca on 25/09/15.
  */
-public interface ApplicationRepository extends CrudRepository<Application, String>, ApplicationRepositoryCustom {
-
-    List<Application> findByAppName(String appName);
-    List<Application> findAll();
-    List<Application> findByProjectId(String projectId);
-    Application findFirstByAppID(String id);
+public interface UserRepository extends CrudRepository<User, String> {
+    User findFirstByUsername(String username);
 }

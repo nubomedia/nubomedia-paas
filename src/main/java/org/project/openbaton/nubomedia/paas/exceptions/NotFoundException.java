@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
+ * Copyright (c) 2015 Fraunhofer FOKUS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.model.persistence;
-
-import org.springframework.data.repository.CrudRepository;
-
-import java.util.List;
+package org.project.openbaton.nubomedia.paas.exceptions;
 
 /**
- * Created by maa on 21.10.15.
+ * Created by lto on 26/05/15.
  */
-public interface ApplicationRepository extends CrudRepository<Application, String>, ApplicationRepositoryCustom {
+public class NotFoundException extends Exception {
+    public NotFoundException(String msg){
+        super(msg);
+    }
 
-    List<Application> findByAppName(String appName);
-    List<Application> findAll();
-    List<Application> findByProjectId(String projectId);
-    Application findFirstByAppID(String id);
+    public NotFoundException(Throwable e) {
+        super(e);
+    }
 }
