@@ -36,7 +36,7 @@ import javax.annotation.PostConstruct;
  */
 @Service
 @Scope
-public class StatusManager {
+public class AppStatusManager {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -57,7 +57,24 @@ public class StatusManager {
     }
 
     @Scheduled(initialDelay=1000, fixedRate=5000)
-    private void refreshApplicationStatus() {
+    private void refreshBuildingApplicationStatus() {
+        //BETA
+        Iterable<Application> applications = this.appRepo.findAll();
+        for (Application app : applications) {
+            if(!app.getStatus().equals(AppStatus.RUNNING))
+            try {
+                app.setStatus(this.getStatus(this.token, app));
+            } catch (UnauthorizedException e) {
+                logger.error("There were issues in connecting to OpenShift ");
+                e.printStackTrace();
+            }
+        }
+        this.appRepo.save(applications);
+    }
+
+
+    @Scheduled(initialDelay=10000, fixedRate=180000)
+    private void refreshAllpplicationStatus() {
         //BETA
         Iterable<Application> applications = this.appRepo.findAll();
         for (Application app : applications) {
@@ -70,6 +87,9 @@ public class StatusManager {
         }
         this.appRepo.save(applications);
     }
+    
+
+
 
     private AppStatus getStatus(String token, Application app) throws UnauthorizedException {
 

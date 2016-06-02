@@ -132,6 +132,7 @@ public class OpenbatonEventReceiver implements CommandLineRunner{
 
     }
 
+
     private EventEndpoint createEventEndpoint(String name, EndpointType type, Action action, String url){
         EventEndpoint eventEndpoint = new EventEndpoint();
         eventEndpoint.setEvent(action);
