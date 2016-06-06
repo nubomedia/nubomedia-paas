@@ -18,30 +18,32 @@ package org.project.openbaton.nubomedia.paas.api;
 
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
-import org.project.openbaton.nubomedia.paas.utils.OpenshiftProperties;
-import org.project.openbaton.nubomedia.paas.utils.PaaSProperties;
 import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
 import org.project.openbaton.nubomedia.paas.core.OpenshiftManager;
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
-import org.project.openbaton.nubomedia.paas.messages.*;
-import org.project.openbaton.nubomedia.paas.model.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.NameStructureException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
+import org.project.openbaton.nubomedia.paas.messages.*;
+import org.project.openbaton.nubomedia.paas.model.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.ApplicationRepository;
+import org.project.openbaton.nubomedia.paas.utils.OpenshiftProperties;
+import org.project.openbaton.nubomedia.paas.utils.PaaSProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -70,18 +72,21 @@ public class PaaSAPI {
 
     private String project;
 
+    @Value("${openshift.token}")
+    private String token;
+
 
     @PostConstruct
     private void init() {
         System.setProperty("javax.net.ssl.trustStore", paaSProperties.getKeystore());
         this.logger = LoggerFactory.getLogger(this.getClass());
-        this.project=openshiftProperties.getProject();
+        this.project = openshiftProperties.getProject();
     }
 
     @RequestMapping(value = "/app", method = RequestMethod.POST)
     public
     @ResponseBody
-    NubomediaCreateAppResponse createApp(@RequestHeader("Auth-Token") String token, @RequestBody NubomediaCreateAppRequest request, @RequestHeader(value = "project-id") String projectId) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException, StunServerException {
+    NubomediaCreateAppResponse createApp(@RequestBody NubomediaCreateAppRequest request, @RequestHeader(value = "project-id") String projectId) throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException, turnServerException, StunServerException {
         if (token == null) {
             throw new UnauthorizedException("No auth-token header");
         }
@@ -106,13 +111,13 @@ public class PaaSAPI {
 
         logger.debug("REQUEST" + request.toString());
         Application app = appManager.createApplication(request, projectId, token);
-        return new NubomediaCreateAppResponse(app,200);
+        return new NubomediaCreateAppResponse(app, 200);
     }
 
     @RequestMapping(value = "/app/{id}", method = RequestMethod.GET)
     public
     @ResponseBody
-    Application getApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws ApplicationNotFoundException, UnauthorizedException {
+    Application getApp(@PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws ApplicationNotFoundException, UnauthorizedException {
 
         logger.info("Request status for " + id + " app");
 
@@ -190,7 +195,7 @@ public class PaaSAPI {
     @RequestMapping(value = "/app/{id}/buildlogs", method = RequestMethod.GET)
     public
     @ResponseBody
-    NubomediaBuildLogs getBuildLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
+    NubomediaBuildLogs getBuildLogs(@PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");
@@ -245,7 +250,7 @@ public class PaaSAPI {
     @RequestMapping(value = "/app/{id}/logs/{podName}", method = RequestMethod.GET)
     public
     @ResponseBody
-    String getApplicationLogs(@RequestHeader("Auth-token") String token, @PathVariable("id") String id, @PathVariable("podName") String podName, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
+    String getApplicationLogs(@PathVariable("id") String id, @PathVariable("podName") String podName, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");
@@ -266,23 +271,17 @@ public class PaaSAPI {
     }
 
     @RequestMapping(value = "/app", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public
-    Iterable<Application> getApps(@RequestHeader("Auth-token") String token, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
+    public Iterable<Application> getApps(@RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
         logger.debug("Received request GET Applications");
-
-        if (token == null) {
-            throw new UnauthorizedException("no auth-token header");
-        }
-        //BETA
         Iterable<Application> applications = this.appRepo.findByProjectId(projectId);
-        logger.debug("Returning from GET Applications "+applications);
+        logger.debug("Returning from GET Applications " + applications);
         return applications;
     }
 
     @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
     public
     @ResponseBody
-    NubomediaDeleteAppResponse deleteApp(@RequestHeader("Auth-token") String token, @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
+    NubomediaDeleteAppResponse deleteApp(@PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");
@@ -304,7 +303,9 @@ public class PaaSAPI {
             String projectName = app.getProjectName();
 
             if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
+                logger.debug("deploymentMap: " + String.valueOf(deploymentMap));
                 MediaServerGroup server = deploymentMap.get(id);
+                logger.debug("server: " + String.valueOf(server));
                 obmanager.deleteDescriptor(server.getNsdID());
                 //obmanager.deleteEvent(server.getEventAllocatedID());
                 //obmanager.deleteEvent(server.getEventErrorID());
@@ -352,7 +353,7 @@ public class PaaSAPI {
     @RequestMapping(value = "/secret", method = RequestMethod.POST)
     public
     @ResponseBody
-    String createSecret(@RequestHeader("Auth-token") String token, @RequestBody NubomediaCreateSecretRequest ncsr, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
+    String createSecret(@RequestBody NubomediaCreateSecretRequest ncsr, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");
@@ -365,7 +366,7 @@ public class PaaSAPI {
     @RequestMapping(value = "/secret/{projectName}/{secretName}", method = RequestMethod.DELETE)
     public
     @ResponseBody
-    NubomediaDeleteSecretResponse deleteSecret(@RequestHeader("Auth-token") String token, @PathVariable("secretName") String secretName, @PathVariable("projectName") String projectName) throws UnauthorizedException {
+    NubomediaDeleteSecretResponse deleteSecret(@PathVariable("secretName") String secretName, @PathVariable("projectName") String projectName) throws UnauthorizedException {
 
         if (token == null) {
             throw new UnauthorizedException("no auth-token header");

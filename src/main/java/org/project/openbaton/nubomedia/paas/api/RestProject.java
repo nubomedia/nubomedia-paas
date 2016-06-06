@@ -27,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Created by lto on 25/05/16.
@@ -63,6 +64,18 @@ public class RestProject {
     public void delete(@PathVariable("id") String id) throws NotAllowedException, NotFoundException {
         log.debug("removing Project with id " + id);
         projectManagement.delete(projectManagement.query(id));
+    }
+
+    /**
+     * Removes all Projects with specified ids from the repository
+     *
+     * @param ids the list of Projects that will be removed
+     */
+    @RequestMapping(value = "/multipledelete", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void multipleDelete(@RequestBody @Valid List<String> ids) throws NotFoundException, NotAllowedException {
+        for (String id : ids)
+            projectManagement.delete(projectManagement.query(id));
     }
 
     /**

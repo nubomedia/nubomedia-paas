@@ -30,7 +30,8 @@ app.controller('LoginController', function ($scope, AuthService, Session, $rootS
     $scope.URL = '';
     $scope.credential = {
         "username": '',
-        "password": ''
+        "password": '',
+        "grant_type": "password"
     };
 
     if (angular.isUndefined($cookieStore.get('loggedNb'))) {
@@ -86,13 +87,24 @@ app.controller('LoginController', function ($scope, AuthService, Session, $rootS
 });
 
 
-app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthService, http) {
+app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthService, http, $rootScope, $window) {
     $('#side-menu').metisMenu();
 
-    var url = $cookieStore.get('URLNb');
+    var url = $cookieStore.get('URLNb') + "/api/v1";
     $scope.logged = $cookieStore.get('loggedNb');
     console.log($scope.logged);
     $location.replace();
+
+    $scope.$watch('projectSelected', function (newValue, oldValue) {
+        console.log(newValue);
+        if (!angular.isUndefined(newValue) && !angular.isUndefined(oldValue)) {
+            $cookieStore.put('projectNb', newValue);
+        }
+        if (!angular.isUndefined(newValue) && angular.isUndefined(oldValue)) {
+            $cookieStore.put('projectNb', newValue);
+            loadNumbers();
+        }
+    });
 
     /**
      * Checks if the user is logged
@@ -123,22 +135,36 @@ app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthServi
     $scope.numberSecGroup = 0;
     $scope.numberService = 0;
 
-    http.get(url + '/api/v1/nubomedia/paas/app/').success(function (data) {
-        console.log(data);
-        $scope.numberApp = data.length;
+    function loadNumbers() {
+        http.get(url + '/nubomedia/paas/app/').success(function (data) {
+            console.log(data);
+            $scope.numberApp = data.length;
 
-    });
+        });
+    }
 
-    /* http.get(url + '/applications').success(function(data) {
-     $scope.numberApp = data.length;
+    $scope.changeProject = function (project) {
+        if (arguments.length === 0) {
+            http.syncGet(url + '/projects/')
+                .then(function (response) {
+                    if (angular.isUndefined($cookieStore.get('projectNb')) || $cookieStore.get('projectNb').id === '') {
+                        $rootScope.projectSelected = response[0];
+                        $cookieStore.put('projectNb', response[0])
+                    } else {
+                        $rootScope.projectSelected = $cookieStore.get('projectNb');
+                    }
+                    $rootScope.projects = response;
+                });
+        }
+        else {
+            $rootScope.projectSelected = project;
+            console.log(project);
+            $cookieStore.put('projectNb', project);
+            $window.location.reload();
+        }
 
-     });
 
-
-     http.get(url + '/secgroups').success(function(data) {
-     $scope.numberSecGroup = data.length;
-
-     });*/
+    };
 
 });
 

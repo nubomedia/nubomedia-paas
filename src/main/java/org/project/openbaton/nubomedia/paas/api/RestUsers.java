@@ -26,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -63,6 +64,18 @@ public class RestUsers {
             userManagement.delete(userManagement.query(username));
         }
         return;
+    }
+
+    /**
+     * Removes all the Users with specified ids from the repository
+     *
+     * @param ids the list of Usernames that will be removed
+     */
+    @RequestMapping(value = "/multipledelete", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void multipleDelete(@RequestBody @Valid List<String> ids)  {
+        for (String username : ids)
+            userManagement.delete(userManagement.query(username));
     }
 
     /**

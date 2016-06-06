@@ -154,7 +154,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             console.log($location.path());
             console.log(marketurl);
             if ($location.path() === '/marketapps')
-                http.get(marketurl)
+                http.getMarket(marketurl)
                     .success(function (response, status) {
                         $scope.apllications = response;
                         console.log(response);
@@ -512,8 +512,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             console.log($scope.vnfrId);
             console.log(urlMediaManager);
 
-            http.syncGet(urlMediaManager)
-                .then(function (data) {
+            http.getMarket(urlMediaManager)
+                .success(function (data) {
                     //console.log(data);
                     $scope.vnfrs = data;
                     console.log($scope.vnfrs);
