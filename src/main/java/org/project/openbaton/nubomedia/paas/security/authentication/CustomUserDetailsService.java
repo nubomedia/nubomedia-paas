@@ -16,11 +16,11 @@
 
 package org.project.openbaton.nubomedia.paas.security.authentication;
 
-//import org.openbaton.catalogue.security.Project;
-//import org.openbaton.catalogue.security.Role;
-//import org.openbaton.catalogue.security.User;
-//import org.openbaton.nfvo.repositories.UserRepository;
-
+import org.project.openbaton.nubomedia.paas.model.persistence.UserRepository;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
+import org.project.openbaton.nubomedia.paas.security.interfaces.ProjectManagement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +39,15 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 @Component
 public class CustomUserDetailsService implements UserDetailsService, CommandLineRunner, UserDetailsManager {
 
-//    @Autowired
-//    private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     @Qualifier("inMemManager")
     private UserDetailsManager inMemManager;
@@ -53,8 +57,8 @@ public class CustomUserDetailsService implements UserDetailsService, CommandLine
     private String adminPwd;
     @Value("${nfvo.security.guest.password:guest}")
     private String guestPwd;
-//    @Autowired
-//    private ProjectManagement projectManagement;
+    @Autowired
+    private ProjectManagement projectManagement;
     @Value("${nfvo.security.project.name:default}")
     private String projectDefaultName;
 
@@ -68,19 +72,19 @@ public class CustomUserDetailsService implements UserDetailsService, CommandLine
 
         log.debug("Creating initial Users...");
 
-//        if (userRepository.findFirstByUsername("admin") == null) {
-//            User ob_admin = new User();
-//            ob_admin.setUsername("admin");
-//            ob_admin.setEnabled(true);
-//            ob_admin.setPassword(BCrypt.hashpw(adminPwd, BCrypt.gensalt(12)));
-//            Set<Role> roles = new HashSet<>();
-//            Role role = new Role();
-//            role.setRole(Role.RoleEnum.OB_ADMIN);
-//            role.setProject("*");
-//            roles.add(role);
-//            ob_admin.setRoles(roles);
-//            userRepository.save(ob_admin);
-//        }
+        if (userRepository.findFirstByUsername("admin") == null) {
+            User ob_admin = new User();
+            ob_admin.setUsername("admin");
+            ob_admin.setEnabled(true);
+            ob_admin.setPassword(BCrypt.hashpw(adminPwd, BCrypt.gensalt(12)));
+            Set<Role> roles = new HashSet<>();
+            Role role = new Role();
+            role.setRole(Role.RoleEnum.OB_ADMIN);
+            role.setProject("*");
+            roles.add(role);
+            ob_admin.setRoles(roles);
+            userRepository.save(ob_admin);
+        }
         if (!inMemManager.userExists("admin")) {
             UserDetails admin = new org.springframework.security.core.userdetails.User("admin", BCrypt.hashpw(adminPwd, BCrypt.gensalt(12)), true, true, true, true, AuthorityUtils.createAuthorityList("OB_ADMIN:*"));
             inMemManager.createUser(admin);
@@ -88,39 +92,39 @@ public class CustomUserDetailsService implements UserDetailsService, CommandLine
             log.debug("Admin" + inMemManager.loadUserByUsername("admin"));
         }
 
-//        if (userRepository.findFirstByUsername("guest") == null) {
-//            User ob_guest = new User();
-//            ob_guest.setUsername("guest");
-//            ob_guest.setPassword(BCrypt.hashpw(guestPwd, BCrypt.gensalt(12)));
-//            ob_guest.setEnabled(true);
-//            Set<Role> roles = new HashSet<>();
-//            Role role = new Role();
-//            role.setRole(Role.RoleEnum.GUEST);
-//            role.setProject("*");
-//            roles.add(role);
-//            ob_guest.setRoles(roles);
-//            userRepository.save(ob_guest);
-//        }
+        if (userRepository.findFirstByUsername("guest") == null) {
+            User ob_guest = new User();
+            ob_guest.setUsername("guest");
+            ob_guest.setPassword(BCrypt.hashpw(guestPwd, BCrypt.gensalt(12)));
+            ob_guest.setEnabled(true);
+            Set<Role> roles = new HashSet<>();
+            Role role = new Role();
+            role.setRole(Role.RoleEnum.GUEST);
+            role.setProject("*");
+            roles.add(role);
+            ob_guest.setRoles(roles);
+            userRepository.save(ob_guest);
+        }
         if (!inMemManager.userExists("guest")) {
             UserDetails guest = new org.springframework.security.core.userdetails.User("guest", BCrypt.hashpw(guestPwd, BCrypt.gensalt(12)), true, true, true, true, AuthorityUtils.createAuthorityList("GUEST:*"));
             inMemManager.createUser(guest);
         }
 
-//        log.debug("User in the DB: ");
-//        for (User user : userRepository.findAll()) {
-//            log.debug("" + user);
-//        }
+        log.debug("User in the DB: ");
+        for (User user : userRepository.findAll()) {
+            log.debug("" + user);
+        }
 
-//        for (User user : userRepository.findAll()) {
-//            if (!user.getUsername().equals("admin") && !user.getUsername().equals("guest")) {
-//                String[] roles = new String[user.getRoles().size()];
-//                for (int i = 0; i < user.getRoles().size(); i++) {
-//                    roles[i] = user.getRoles().toArray(new Role[0])[i].getRole() + ":" + user.getRoles().toArray(new Role[0])[i].getProject();
-//                }
-//                UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.isEnabled(), true, true, true, AuthorityUtils.createAuthorityList(roles));
-//                inMemManager.createUser(userDetails);
-//            }
-//        }
+        for (User user : userRepository.findAll()) {
+            if (!user.getUsername().equals("admin") && !user.getUsername().equals("guest")) {
+                String[] roles = new String[user.getRoles().size()];
+                for (int i = 0; i < user.getRoles().size(); i++) {
+                    roles[i] = user.getRoles().toArray(new Role[0])[i].getRole() + ":" + user.getRoles().toArray(new Role[0])[i].getProject();
+                }
+                UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), user.isEnabled(), true, true, true, AuthorityUtils.createAuthorityList(roles));
+                inMemManager.createUser(userDetails);
+            }
+        }
 
         log.debug("Users in UserDetailManager: ");
         log.info("ADMIN: " + inMemManager.loadUserByUsername("admin"));
@@ -128,14 +132,14 @@ public class CustomUserDetailsService implements UserDetailsService, CommandLine
 
         log.debug("Creating initial Project...");
 
-//        if (projectManagement.queryByName(projectDefaultName) == null) {
-//            Project project = new Project();
-//            project.setName(projectDefaultName);
-//
-//            projectManagement.add(project);
-//            log.debug("Created project: " + project);
-//        } else
-//            log.debug("Project " + projectDefaultName + " already existing");
+        if (projectManagement.queryByName(projectDefaultName) == null) {
+            Project project = new Project();
+            project.setName(projectDefaultName);
+
+            projectManagement.add(project);
+            log.debug("Created project: " + project);
+        } else
+            log.debug("Project " + projectDefaultName + " already existing");
     }
 
     @Override
@@ -146,51 +150,51 @@ public class CustomUserDetailsService implements UserDetailsService, CommandLine
     @Override
     public void updateUser(UserDetails user) {
         inMemManager.updateUser(user);
-//        User userToUpdate = userRepository.findFirstByUsername(user.getUsername());
-//        userToUpdate.setPassword(user.getPassword());
-//        for (GrantedAuthority authority : user.getAuthorities()) {
-//            StringTokenizer stringTokenizer = new StringTokenizer(authority.getAuthority(), ":");
-//            String rl = stringTokenizer.nextToken();
-//            String pj = stringTokenizer.nextToken();
-//            boolean found = false;
-//            for (Role role : userToUpdate.getRoles()) {
-//                if (role.getProject().equals(pj)) {
-//                    role.setRole(Role.RoleEnum.valueOf(rl));
-//                    found = true;
-//                }
-//            }
-//            if (!found) {
-//                Role role = new Role();
-//                role.setRole(Role.RoleEnum.valueOf(rl));
-//                role.setProject(pj);
-//                userToUpdate.getRoles().add(role);
-//            }
-//        }
-//        userRepository.save(userToUpdate);
+        User userToUpdate = userRepository.findFirstByUsername(user.getUsername());
+        userToUpdate.setPassword(user.getPassword());
+        for (GrantedAuthority authority : user.getAuthorities()) {
+            StringTokenizer stringTokenizer = new StringTokenizer(authority.getAuthority(), ":");
+            String rl = stringTokenizer.nextToken();
+            String pj = stringTokenizer.nextToken();
+            boolean found = false;
+            for (Role role : userToUpdate.getRoles()) {
+                if (role.getProject().equals(pj)) {
+                    role.setRole(Role.RoleEnum.valueOf(rl));
+                    found = true;
+                }
+            }
+            if (!found) {
+                Role role = new Role();
+                role.setRole(Role.RoleEnum.valueOf(rl));
+                role.setProject(pj);
+                userToUpdate.getRoles().add(role);
+            }
+        }
+        userRepository.save(userToUpdate);
     }
 
     @Override
     public void deleteUser(String username) {
         inMemManager.deleteUser(username);
-//        userRepository.delete(userRepository.findFirstByUsername(username).getId());
+        userRepository.delete(userRepository.findFirstByUsername(username).getId());
     }
 
     @Override
     public void changePassword(String oldPassword, String newPassword) {
         inMemManager.changePassword(oldPassword, newPassword);
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-//            String currentUserName = authentication.getName();
-//            User user = userRepository.findFirstByUsername(currentUserName);
-//            user.setPassword(newPassword);
-//            userRepository.save(user);
-//            return;
-//        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String currentUserName = authentication.getName();
+            User user = userRepository.findFirstByUsername(currentUserName);
+            user.setPassword(newPassword);
+            userRepository.save(user);
+            return;
+        }
     }
 
     @Override
     public boolean userExists(String username) {
-        return inMemManager.userExists(username) /*&& (userRepository.findFirstByUsername(username) != null)*/;
+        return inMemManager.userExists(username) && (userRepository.findFirstByUsername(username) != null);
     }
 }
 
