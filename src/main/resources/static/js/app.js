@@ -42,6 +42,18 @@ angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCookies'])
                 templateUrl: 'pages/applications/applicationinfo.html',
                 controller: 'applicationsCtrl'
             }).
+            when('/projects', {
+                templateUrl: 'pages/projects.html',
+                controller: 'ProjectCtrl'
+            }).
+            when('/users', {
+                templateUrl: 'pages/users/users.html',
+                controller: 'UserCtrl'
+            }).
+            when('/users/:userId', {
+                templateUrl: 'pages/users/userinfo.html',
+                controller: 'UserCtrl'
+            }).
             otherwise({
                 redirectTo: '/'
             });

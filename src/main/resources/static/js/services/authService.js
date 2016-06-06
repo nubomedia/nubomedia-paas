@@ -21,24 +21,30 @@
 angular.module('app').factory('AuthService', function ($http, Session, $location, http, $cookieStore, $window, $q) {
     var authService = {};
 
+    var clientId = "openbatonOSClient";
+    var clientPass = "secret";
+
     authService.login = function (credentials, URL) {
-        http.syncGet(URL + '/api/v1/nubomedia/config')
-            .then(function (data) {
-                console.log(data);
-                $cookieStore.put('marketplaceIP', 'http://' + data.replace(/['"]+/g, '') + '/api/v1/app/');
-            });
+        var basic = "Basic " + btoa(clientId + ":" + clientPass);
+
         console.log(credentials);
         return $http({
             method: 'POST',
-            url: URL + '/api/v1/nubomedia/paas/auth',
+            url: URL + '/oauth/token',
             headers: {
-                'Content-type': 'application/json'
+                "Authorization": basic,
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            data: credentials
+            data: "username=" + credentials.username + "&password=" + credentials.password + "&grant_type=" + credentials.grant_type
         })
             .then(function (res) {
                 console.log(res);
-                Session.create(URL, res.data.token, credentials.username, true);
+                Session.create(URL, res.data.value, credentials.username, true);
+                http.syncGet(URL + '/api/v1/nubomedia/config')
+                    .then(function (data) {
+                        console.log(data);
+                        $cookieStore.put('marketplaceIP', 'http://' + data.replace(/['"]+/g, '') + '/api/v1/app/');
+                    });
                 $location.path("/");
                 $window.location.reload();
                 return;
@@ -94,7 +100,7 @@ angular.module('app').factory('AuthService', function ($http, Session, $location
         $cookieStore.put('userNameNb', userName);
         $cookieStore.put('tokenNb', token);
         $cookieStore.put('URLNb', URL);
-//        console.log($cookieStore.get('token'));
+        $cookieStore.put('projectNb', {name: 'default', id: ''});
 
     };
     this.destroy = function () {
@@ -106,6 +112,7 @@ angular.module('app').factory('AuthService', function ($http, Session, $location
         $cookieStore.remove('userNameNb');
         $cookieStore.remove('tokenNb');
         $cookieStore.remove('URLNb');
+        $cookieStore.remove('projectNb');
 
     };
     return this;

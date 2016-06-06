@@ -22,7 +22,7 @@ angular.module('app')
         var URL = 'http://emm-dev.nubomedia.eu:8090';
         var customHeaders = {};
 
-        if ($cookieStore.get('tokenNb') === '')
+        if ($cookieStore.get('tokenNb') === '' || angular.isUndefined($cookieStore.get('tokenNb')))
             customHeaders = {
                 'Accept': 'application/json',
                 'Content-type': 'application/json'
@@ -32,12 +32,23 @@ angular.module('app')
             customHeaders = {
                 'Accept': 'application/json',
                 'Content-type': 'application/json',
-                'Auth-token': $cookieStore.get('tokenNb')
+                'Authorization': 'Bearer ' + $cookieStore.get('tokenNb')
             };
         }
 
-
         http.get = function (url) {
+            customHeaders['project-id'] = $cookieStore.get('projectNb').id;
+            console.log(customHeaders);
+            return $http({
+                url: url,
+                method: 'GET',
+                headers: customHeaders
+            })
+        };
+
+        http.getMarket = function (url) {
+            delete customHeaders['project-id'];
+            console.log(customHeaders);
             return $http({
                 url: url,
                 method: 'GET',
@@ -53,7 +64,7 @@ angular.module('app')
                 http.syncGet($cookieStore.get('URLNb') + '/api/v1/nubomedia/config')
                     .then(function (result) {
                         console.log(result);
-                        $cookieStore.put('marketplaceIP',result);
+                        $cookieStore.put('marketplaceIP', result);
                         return result;
                     })
         };
@@ -68,6 +79,7 @@ angular.module('app')
             //    customHeaders['Accept'] = 'application/json';
             //    customHeaders['Content-type'] = 'application/json';
             //}
+            customHeaders['project-id'] = $cookieStore.get('projectNb').id;
             $('#modalSend').modal('show');
             console.log(customHeaders);
             console.log(data);
@@ -92,6 +104,7 @@ angular.module('app')
             });
         };
         http.put = function (url, data) {
+            customHeaders['project-id'] = $cookieStore.get('projectNb').id;
             $('#modalSend').modal('show');
             return $http({
                 url: url,
@@ -102,6 +115,7 @@ angular.module('app')
         };
 
         http.delete = function (url) {
+            customHeaders['project-id'] = $cookieStore.get('projectNb').id;
             $('#modalSend').modal('show');
             return $http({
                 url: url,

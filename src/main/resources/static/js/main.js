@@ -39,7 +39,9 @@ require({
         httpService: "services/httpService",
         servicesServices: "services/servicesServices",
         applicationController: "controllers/applicationController",
-        indexController: "controllers/indexController"
+        indexController: "controllers/indexController",
+        projectController: "controllers/projectController",
+        userController: "controllers/userController"
 
     },
     shim: {
@@ -70,6 +72,12 @@ require({
         },
         bootstrap: {
             deps: ['app']
+        },
+        projectController: {
+            deps: ['app', 'servicesServices', 'httpService', 'angular_cookies','authService']
+        },
+        userController: {
+            deps: ['app', 'servicesServices', 'httpService', 'angular_cookies','authService']
         },
         underscore: {
             exports: '_',
@@ -120,6 +128,8 @@ require({
     'angular_route',
     'vis',
     'indexController',
+    'projectController',
+    'userController',
     'applicationController'
 ], function(require) {
     return require(['bootstrap','vis']);
