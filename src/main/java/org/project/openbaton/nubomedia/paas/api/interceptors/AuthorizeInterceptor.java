@@ -70,13 +70,13 @@ public class AuthorizeInterceptor extends HandlerInterceptorAdapter {
         log.trace("Current User: " + currentUserName);
         log.trace("projectId: " + project);
         log.trace("URI: " + request.getRequestURI());
-        if (request.getRequestURI().equals("/api/v1/projects/") && request.getMethod().equalsIgnoreCase("get")){
+        if (request.getRequestURI().equals("/api/v1/projects") || request.getRequestURI().equals("/api/v1/projects/")){
             return true;
         }
         log.trace("URL: " + request.getRequestURL());
         log.trace("UserManagement: " + userManagement);
         User user = userManagement.queryDB(currentUserName);
-
+        log.trace("User: " + user);
         if (project != null) {
             if (!projectManagement.exist(project)){
                 throw new NotFoundException("Project with id " + project + " was not found");
