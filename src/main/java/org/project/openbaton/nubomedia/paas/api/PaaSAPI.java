@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -361,8 +362,10 @@ public class PaaSAPI {
         }
 
         if (appRepo.findByProjectId(projectId) == null || appRepo.findByProjectId(projectId).size() == 0) {
-            return new NubomediaDeleteAppsProjectResponse(projectId, "Applications not found in Project " + projectId, "null", 404);
+            return new NubomediaDeleteAppsProjectResponse(projectId, "Not Found any Applications in this project", null, 404);
         }
+
+        NubomediaDeleteAppsProjectResponse response = new NubomediaDeleteAppsProjectResponse(projectId, "", new ArrayList<>(), 200);
 
         List<Application> apps = appRepo.findByProjectId(projectId);
 
@@ -387,12 +390,14 @@ public class PaaSAPI {
                 }
 
                 appRepo.delete(app);
+                response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), 200));
                 break;
             }
 
             if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
                 obmanager.deleteRecord(app.getNsrID());
                 appRepo.delete(app);
+                response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), 200));
                 break;
             }
             obmanager.deleteRecord(app.getNsrID());
@@ -404,8 +409,17 @@ public class PaaSAPI {
             }
 
             appRepo.delete(app);
+            response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), resDelete.value()));
         }
-        return new NubomediaDeleteAppsProjectResponse(projectId, projectId, projectId, 200);
+        for (NubomediaDeleteAppResponse singleRes : response.getResponses()) {
+            if (singleRes.getCode() != 200) {
+                response.setCode(singleRes.getCode());
+                response.setMessage("Not all applications were deleted successfully");
+                return response;
+            }
+        }
+        response.setMessage("All applications of this project were removed successfully");
+        return response;
     }
 
     @RequestMapping(value = "/secret", method = RequestMethod.POST)
