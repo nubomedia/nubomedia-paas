@@ -37,8 +37,7 @@ angular.module('app')
         }
 
         http.get = function (url) {
-            customHeaders['project-id'] = $cookieStore.get('projectNb').id;
-            console.log(customHeaders);
+            checkHeaders(url, customHeaders);
             return $http({
                 url: url,
                 method: 'GET',
@@ -47,8 +46,7 @@ angular.module('app')
         };
 
         http.getMarket = function (url) {
-            delete customHeaders['project-id'];
-            console.log(customHeaders);
+            checkHeaders(url, customHeaders);
             return $http({
                 url: url,
                 method: 'GET',
@@ -79,7 +77,7 @@ angular.module('app')
             //    customHeaders['Accept'] = 'application/json';
             //    customHeaders['Content-type'] = 'application/json';
             //}
-            customHeaders['project-id'] = $cookieStore.get('projectNb').id;
+            checkHeaders(url, customHeaders);
             $('#modalSend').modal('show');
             console.log(customHeaders);
             console.log(data);
@@ -104,7 +102,7 @@ angular.module('app')
             });
         };
         http.put = function (url, data) {
-            customHeaders['project-id'] = $cookieStore.get('projectNb').id;
+            checkHeaders(url, customHeaders);
             $('#modalSend').modal('show');
             return $http({
                 url: url,
@@ -115,7 +113,7 @@ angular.module('app')
         };
 
         http.delete = function (url) {
-            customHeaders['project-id'] = $cookieStore.get('projectNb').id;
+            checkHeaders(url, customHeaders);
             $('#modalSend').modal('show');
             return $http({
                 url: url,
@@ -132,6 +130,15 @@ angular.module('app')
             return deferred.promise;
         };
 
+        function checkHeaders(url, customHeaders) {
+            if (url.indexOf('8082') > -1 || url.indexOf('9000') > -1) {
+                delete customHeaders['project-id'];
+
+            } else {
+                customHeaders['project-id'] = $cookieStore.get('projectNb').id;
+            }
+            console.log(customHeaders);
+        }
 
         return http;
     });
