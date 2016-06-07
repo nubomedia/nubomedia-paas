@@ -43,6 +43,7 @@ import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -332,7 +333,7 @@ public class PaaSAPI {
 //        if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
 //
 //            obmanager.deleteRecord(app.getNsrID());
-//            return new NubomediaDeleteAppResponse(id,app.getAppName(),app.getProjectName(),200);
+//            return new NubomediaDeleteAppResponse(id,app.getProjectName(),app.getProjectName(),200);
 //
 //        }
 
@@ -348,6 +349,63 @@ public class PaaSAPI {
         appRepo.delete(app);
 
         return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), resDelete.value());
+    }
+
+    @RequestMapping(value = "/app", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    NubomediaDeleteAppsProjectResponse deleteApp(@RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
+
+        if (token == null) {
+            throw new UnauthorizedException("no auth-token header");
+        }
+
+        if (appRepo.findByProjectId(projectId) == null || appRepo.findByProjectId(projectId).size() == 0) {
+            return new NubomediaDeleteAppsProjectResponse(projectId, "Applications not found in Project " + projectId, "null", 404);
+        }
+
+        List<Application> apps = appRepo.findByProjectId(projectId);
+
+        logger.debug("Deleting " + apps);
+        for (Application app : apps) {
+            if (!app.isResourceOK()) {
+
+                String name = app.getAppName();
+                String projectName = app.getProjectName();
+
+                if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
+                    logger.debug("deploymentMap: " + String.valueOf(deploymentMap));
+                    MediaServerGroup server = deploymentMap.get(app.getAppID());
+                    logger.debug("server: " + String.valueOf(server));
+                    obmanager.deleteDescriptor(server.getNsdID());
+
+                    if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(server.getMediaServerGroupID())) {
+                        obmanager.deleteRecord(app.getNsrID());
+                    }
+                    deploymentMap.remove(app.getAppID());
+
+                }
+
+                appRepo.delete(app);
+                break;
+            }
+
+            if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
+                obmanager.deleteRecord(app.getNsrID());
+                appRepo.delete(app);
+                break;
+            }
+            obmanager.deleteRecord(app.getNsrID());
+            HttpStatus resDelete = HttpStatus.BAD_REQUEST;
+            try {
+                resDelete = osmanager.deleteApplication(token, app.getAppName());
+            } catch (ResourceAccessException e) {
+                logger.info("PaaS Missing");
+            }
+
+            appRepo.delete(app);
+        }
+        return new NubomediaDeleteAppsProjectResponse(projectId, projectId, projectId, 200);
     }
 
     @RequestMapping(value = "/secret", method = RequestMethod.POST)
