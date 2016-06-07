@@ -28,6 +28,9 @@
 </div>
 <div class="row">
     <div class="col-lg-12 ">
+        <button id="deleteMultiple" href="#" class="btn btn-danger pull-right"  ng-style="{'margin-left':'25px'}"
+                title="Delete all the Apps from {{projectSelected.name}} project" data-target="#deleteModal" data-toggle="modal">Delete
+        </button>
         <button id="btn_create_topology" class="btn btn-primary pull-right"
                 title="Create a new App" ng-click="createApp()">Create App
         </button>
@@ -406,4 +409,27 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Delete all the Apps from <b>{{projectSelected.name}}</b> project</h4>
+            </div>
+            <div class="modal-body">
+                <p>You are going to delete these applications:</p>
+                <ul ng-repeat="data in apllications">
+                    <li>{{data.appName}</li>
+                </ul>
+                <p>Please confirm your selection.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" ng-click="deleteAllApp()" data-dismiss="modal">Delete</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div>
