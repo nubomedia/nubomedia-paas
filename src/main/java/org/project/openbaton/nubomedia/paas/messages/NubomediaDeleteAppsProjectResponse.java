@@ -17,24 +17,23 @@
 package org.project.openbaton.nubomedia.paas.messages;
 
 
+import java.util.List;
+
 /**
  * Created by maa on 09.10.15.
  */
 public class NubomediaDeleteAppsProjectResponse {
 
     private String projectId;
-    private String projectName;
-    private String nameSpace;
+    private String message;
     private int code;
+    private List<NubomediaDeleteAppResponse> responses;
 
-    public NubomediaDeleteAppsProjectResponse() {
-    }
-
-    public NubomediaDeleteAppsProjectResponse(String projectId, String projectName, String nameSpace, int deleteStatus) {
+    public NubomediaDeleteAppsProjectResponse(String projectId, String message, List<NubomediaDeleteAppResponse> responses, int code) {
         this.projectId = projectId;
-        this.projectName = projectName;
-        this.nameSpace = nameSpace;
-        this.code = deleteStatus;
+        this.message = message;
+        this.responses = responses;
+        this.code = code;
     }
 
     public String getProjectId() {
@@ -45,27 +44,27 @@ public class NubomediaDeleteAppsProjectResponse {
         this.projectId = projectId;
     }
 
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    public String getNameSpace() {
-        return nameSpace;
-    }
-
-    public void setNameSpace(String nameSpace) {
-        this.nameSpace = nameSpace;
-    }
-
     public int getCode() {
         return code;
     }
 
     public void setCode(int code) {
         this.code = code;
+    }
+
+    public List<NubomediaDeleteAppResponse> getResponses() {
+        return responses;
+    }
+
+    public void setResponses(List<NubomediaDeleteAppResponse> responses) {
+        this.responses = responses;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
