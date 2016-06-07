@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce, $timeout, $location) {
+angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce, $timeout, $location, $rootScope) {
 
         var ip = $cookieStore.get('URLNb');
         var url = ip + '/api/v1/nubomedia/paas/app/';
@@ -317,6 +317,16 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     showError(status, data);
                 });
         };
+    $scope.deleteAllApp = function(){
+        http.delete(url)
+            .success(function (response) {
+                showOk('Deleted all Apps in the ' + $rootScope.projectSelected.name + ' project.');
+                loadTable();
+            })
+            .error(function (data, status) {
+                showError(status, data);
+            });
+    };
 
 
         $scope.changeText = function (text) {
