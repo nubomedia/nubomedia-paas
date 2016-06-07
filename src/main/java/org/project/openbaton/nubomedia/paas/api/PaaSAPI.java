@@ -365,7 +365,7 @@ public class PaaSAPI {
             return new NubomediaDeleteAppsProjectResponse(projectId, "Not Found any Applications in this project", null, 404);
         }
 
-        NubomediaDeleteAppsProjectResponse response = new NubomediaDeleteAppsProjectResponse(projectId, "", new ArrayList<>(), 200);
+        NubomediaDeleteAppsProjectResponse response = new NubomediaDeleteAppsProjectResponse(projectId, "", new ArrayList<NubomediaDeleteAppResponse>(), 200);
 
         List<Application> apps = appRepo.findByProjectId(projectId);
 
