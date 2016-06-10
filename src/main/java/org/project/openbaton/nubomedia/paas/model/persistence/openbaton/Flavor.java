@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Fraunhofer FOKUS
+ * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.model.persistence;
-
-import org.openbaton.catalogue.mano.record.VNFRecordDependency;
-import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
+package org.project.openbaton.nubomedia.paas.model.persistence.openbaton;
 
 /**
- * Created by mob on 04.09.15.
+ * Created by maa on 22.01.16.
  */
-public interface ApplicationRepositoryCustom {
+public enum Flavor {
 
-    Application findFirstByAppIdAndProjectId(String id, String projectId);
+    SMALL("d1.small"),
+    MEDIUM("d1.medium"),
+    LARGE("d1.large");
 
+    private final String value;
+
+    Flavor(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

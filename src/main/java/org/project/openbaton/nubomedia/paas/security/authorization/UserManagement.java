@@ -1,6 +1,6 @@
 package org.project.openbaton.nubomedia.paas.security.authorization;
 
-import org.project.openbaton.nubomedia.paas.model.persistence.UserRepository;
+import org.project.openbaton.nubomedia.paas.repository.security.UserRepository;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
 import org.slf4j.Logger;
@@ -55,8 +55,8 @@ public class UserManagement implements org.project.openbaton.nubomedia.paas.secu
     }
 
     private void checkCurrentUserObAdmin(User currentUser) {
-        if (currentUser.getRoles().iterator().next().getRole().ordinal() != Role.RoleEnum.OB_ADMIN.ordinal())
-            throw new UnauthorizedUserException("Sorry only OB_ADMIN can add/delete/update/query Users");
+        if (currentUser.getRoles().iterator().next().getRole().ordinal() != Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal())
+            throw new UnauthorizedUserException("Sorry only NUBOMEDIA_ADMIN can add/delete/update/query Users");
     }
 
     @Override

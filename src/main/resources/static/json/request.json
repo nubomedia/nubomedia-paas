@@ -1,7 +1,6 @@
 {
   "gitURL":"https://github.com/fhg-fokus-nubomedia/nubomedia-magic-mirror.git",
   "appName":"nubo-magic-mirror",
-  "projectName":"nubomedia",
   "cloudRepository":false,
   "flavor":"MEDIUM",
   "ports":[

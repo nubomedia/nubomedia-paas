@@ -55,7 +55,7 @@ public class Role {
     public enum RoleEnum {
         GUEST,
         ADMIN,
-        OB_ADMIN,
+        NUBOMEDIA_ADMIN,
     }
 }
 

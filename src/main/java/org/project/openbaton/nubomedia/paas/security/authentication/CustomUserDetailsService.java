@@ -16,7 +16,7 @@
 
 package org.project.openbaton.nubomedia.paas.security.authentication;
 
-import org.project.openbaton.nubomedia.paas.model.persistence.UserRepository;
+import org.project.openbaton.nubomedia.paas.repository.security.UserRepository;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
@@ -79,14 +79,14 @@ public class CustomUserDetailsService implements UserDetailsService, CommandLine
             ob_admin.setPassword(BCrypt.hashpw(adminPwd, BCrypt.gensalt(12)));
             Set<Role> roles = new HashSet<>();
             Role role = new Role();
-            role.setRole(Role.RoleEnum.OB_ADMIN);
+            role.setRole(Role.RoleEnum.NUBOMEDIA_ADMIN);
             role.setProject("*");
             roles.add(role);
             ob_admin.setRoles(roles);
             userRepository.save(ob_admin);
         }
         if (!inMemManager.userExists("admin")) {
-            UserDetails admin = new org.springframework.security.core.userdetails.User("admin", BCrypt.hashpw(adminPwd, BCrypt.gensalt(12)), true, true, true, true, AuthorityUtils.createAuthorityList("OB_ADMIN:*"));
+            UserDetails admin = new org.springframework.security.core.userdetails.User("admin", BCrypt.hashpw(adminPwd, BCrypt.gensalt(12)), true, true, true, true, AuthorityUtils.createAuthorityList("NUBOMEDIA_ADMIN:*"));
             inMemManager.createUser(admin);
         } else {
             log.debug("Admin" + inMemManager.loadUserByUsername("admin"));

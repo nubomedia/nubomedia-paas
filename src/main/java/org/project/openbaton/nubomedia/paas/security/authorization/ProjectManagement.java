@@ -3,11 +3,10 @@ package org.project.openbaton.nubomedia.paas.security.authorization;
 
 import org.project.openbaton.nubomedia.paas.exceptions.NotAllowedException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
-import org.project.openbaton.nubomedia.paas.model.persistence.ProjectRepository;
+import org.project.openbaton.nubomedia.paas.repository.security.ProjectRepository;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
-import org.project.openbaton.nubomedia.paas.security.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,12 +32,12 @@ public class ProjectManagement implements org.project.openbaton.nubomedia.paas.s
     public Project add(Project project) {
         User currentUser = getCurrentUser();
         if (currentUser != null) {
-            if (currentUser.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.OB_ADMIN.ordinal())
+            if (currentUser.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal())
                 return projectRepository.save(project);
         }else {
             return projectRepository.save(project);
         }
-        throw new UnauthorizedUserException("Sorry only OB_ADMIN can add project");
+        throw new UnauthorizedUserException("Sorry only NUBOMEDIA_ADMIN can add project");
     }
 
     @Override
@@ -88,7 +87,7 @@ public class ProjectManagement implements org.project.openbaton.nubomedia.paas.s
 
         List<Project> projects = new ArrayList<>();
         User user = getCurrentUser();
-        if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.OB_ADMIN.ordinal() || user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.GUEST.ordinal())
+        if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal() || user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.GUEST.ordinal())
             return projectRepository.findAll();
         for (Role role : user.getRoles())
             projects.add(this.queryByName(role.getProject()));

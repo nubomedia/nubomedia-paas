@@ -81,7 +81,7 @@ public class AuthorizeInterceptor extends HandlerInterceptorAdapter {
             if (!projectManagement.exist(project)){
                 throw new NotFoundException("Project with id " + project + " was not found");
             }
-            if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.OB_ADMIN.ordinal())
+            if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal())
                 return true;
 
             if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.GUEST.ordinal())

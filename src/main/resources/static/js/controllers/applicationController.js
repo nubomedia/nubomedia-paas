@@ -528,7 +528,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     $scope.vnfrs = data;
                     console.log($scope.vnfrs);
                     angular.forEach($scope.vnfrs, function (vnfr, index) {
-                        if ($scope.application.nsrID == vnfr.nsrId) {
+                        if ($scope.application.mediaServerGroup.id== vnfr.nsrId) {
                             console.log(vnfr);
                             $scope.vnfrId = vnfr.vnfrId;
                             loadCapacityHistory();

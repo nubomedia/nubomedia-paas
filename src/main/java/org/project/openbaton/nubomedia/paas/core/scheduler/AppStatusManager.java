@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.core;
+package org.project.openbaton.nubomedia.paas.core.scheduler;
 
+import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
+import org.project.openbaton.nubomedia.paas.core.OpenshiftManager;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
-import org.project.openbaton.nubomedia.paas.model.persistence.ApplicationRepository;
+import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
 import org.project.openbaton.nubomedia.paas.utils.OpenshiftProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +71,13 @@ public class AppStatusManager {
                 logger.error("There were issues in connecting to OpenShift ");
                 e.printStackTrace();
             }
+            try {
+                this.refreshMediaServerGroup(app);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                e.printStackTrace();
+            }
+
         }
         this.appRepo.save(applications);
     }
@@ -92,17 +102,15 @@ public class AppStatusManager {
 
 
     private AppStatus getStatus(String token, Application app) throws UnauthorizedException {
-
         AppStatus res = null;
-
         logger.debug("application ("+app.getAppID()+"-"+app.getAppName()+") status is "+app.getStatus());
 
         switch (app.getStatus()) {
             case CREATED:
-                res = obmanager.getStatus(app.getNsrID());
+                res = obmanager.getStatus(app.getMediaServerGroup().getId());
                 break;
             case INITIALIZING:
-                res = obmanager.getStatus(app.getNsrID());
+                res = obmanager.getStatus(app.getMediaServerGroup().getId());
                 break;
             case INITIALISED:
                 try {
@@ -151,5 +159,9 @@ public class AppStatusManager {
         }
 
         return res;
+    }
+
+    private void refreshMediaServerGroup(Application app) throws Exception {
+        obmanager.updateMediaServerGroup(app);
     }
 }
