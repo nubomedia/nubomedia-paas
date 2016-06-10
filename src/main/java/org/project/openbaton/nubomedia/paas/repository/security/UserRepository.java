@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
+ * Copyright (c) 2015 Fraunhofer FOKUS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.model.openbaton;
+package org.project.openbaton.nubomedia.paas.repository.security;
+
+
+import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
+import org.springframework.data.repository.CrudRepository;
 
 /**
- * Created by maa on 25.01.16.
+ * Created by gca on 25/09/15.
  */
-public enum QoS {
-
-    BRONZE,
-    SILVER,
-    GOLD
-
+public interface UserRepository extends CrudRepository<User, String> {
+    User findFirstByUsername(String username);
 }

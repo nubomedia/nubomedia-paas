@@ -40,8 +40,7 @@ function init {
     if [ ! -f $_nubomedia_config_file ]; then
         if [ $EUID != 0 ]; then
             echo "creating the directory and copying the file"
-            $_ex "mkdir /etc/nubomedia; cp ${_nubomedia_paas_base}/src/main/resources/paas.properties ${_nubomedia_config_file}"
-            #echo "copying the file, insert the administrator password" | sudo -kS cp ${_nubomedia_paas_base}/src/main/resources/paas.properties ${_nubomedia_config_file}
+            $_ex "mkdir /etc/nubomedia; cp ${_nubomedia_paas_base}/src/main/resources/application.properties ${_nubomedia_config_file}"
         else
             echo "creating the directory"
             mkdir /etc/nubomedia

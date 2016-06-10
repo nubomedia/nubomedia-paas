@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.model.openbaton;
+package org.project.openbaton.nubomedia.paas.model.persistence.openbaton;
 
-import com.google.gson.JsonObject;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.openbaton.catalogue.nfvo.Action;
 

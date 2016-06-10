@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.model.persistence;
+package org.project.openbaton.nubomedia.paas.repository.application;
 
-import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
-import org.springframework.data.repository.CrudRepository;
+import org.openbaton.catalogue.mano.record.VNFRecordDependency;
+import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
+import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 
 /**
- * Created by lto on 06/05/15.
+ * Created by mob on 04.09.15.
  */
-public interface ProjectRepository extends CrudRepository<Project, String> {
-    Project findFirstById(String id);
+public interface ApplicationRepositoryCustom {
 
-    Project findFirstByName(String name);
+    Application findFirstByAppIdAndProjectId(String id, String projectId);
+    Application findByMSGroupID(String msGroupId);
+
 }

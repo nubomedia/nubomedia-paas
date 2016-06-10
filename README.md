@@ -14,6 +14,7 @@ The PaaS Manager is implemented in java using the [spring.io] framework. This ma
 * The [PaaS][openshift] is [configured][os-config] and running (this API are tested with version 1.1 of Openshift binaries)
 * A keystore with the PaaS SSL certificates exists and is available on the PaaS API machine (you can use this [guide][keytool] or this [software][portecle] to do that)
 
+
 ## Installation
 
 You can install the Nubomedia PaaS manager either automatically by downloading and executing the bootstrap or manually.
@@ -97,25 +98,6 @@ Here you can configure:
 
 After changing any configuration, you need to restart
 
-Issue tracker
--------------
-
-Issues and bug reports should to posted to the [GitHub NUBOMEDIA-PaaS Issue List](https://github.com/fhg-fokus-nubomedia/nubomedia-paas/issues)
-
-Licensing and distribution
---------------------------
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 
 Support and Contribution
 -------------------------

@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.model.openbaton;
+package org.project.openbaton.nubomedia.paas.repository.application;
+
+import org.project.openbaton.nubomedia.paas.model.persistence.Application;
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
 
 /**
- * Created by maa on 22.01.16.
+ * Created by maa on 21.10.15.
  */
-public enum Flavor {
+public interface ApplicationRepository extends CrudRepository<Application, String>, ApplicationRepositoryCustom{
 
-    SMALL("d1.small"),
-    MEDIUM("d1.medium"),
-    LARGE("d1.large");
-
-    private final String value;
-
-    Flavor(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
+    List<Application> findByAppName(String appName);
+    List<Application> findByProjectId(String projectId);
+    Application findFirstByAppID(String id);
 }

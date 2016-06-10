@@ -27,11 +27,9 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedExcep
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.NameStructureException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.*;
-import org.project.openbaton.nubomedia.paas.model.openbaton.MediaServerGroup;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
-import org.project.openbaton.nubomedia.paas.model.persistence.ApplicationRepository;
-import org.project.openbaton.nubomedia.paas.utils.OpenshiftProperties;
-import org.project.openbaton.nubomedia.paas.utils.PaaSProperties;
+import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,24 +63,23 @@ public class PaaSAPI {
     private OpenbatonManager obmanager;
     @Autowired
     private ApplicationRepository appRepo;
-    @Autowired
-    private PaaSProperties paaSProperties;
-    @Autowired
-    private OpenshiftProperties openshiftProperties;
+
     @Autowired
     private AppManager appManager;
-
-    private String project;
 
     @Value("${openshift.token}")
     private String token;
 
+    @Value("${paas.keystore}")
+    private String paasKeystore;
+
+    @Value("${paas.vnfmIP}")
+    private String vnfmIP;
 
     @PostConstruct
     private void init() {
-        System.setProperty("javax.net.ssl.trustStore", paaSProperties.getKeystore());
+        System.setProperty("javax.net.ssl.trustStore", paasKeystore);
         this.logger = LoggerFactory.getLogger(this.getClass());
-        this.project = openshiftProperties.getProject();
     }
 
     @RequestMapping(value = "/app", method = RequestMethod.POST)
@@ -130,68 +127,147 @@ public class PaaSAPI {
         if (appRepo.findFirstByAppIdAndProjectId(id, projectId) == null) {
             throw new ApplicationNotFoundException("Application with ID in Project " + projectId + " not found");
         }
+        return  appRepo.findFirstByAppIdAndProjectId(id, projectId);
 
-        Application app = appRepo.findFirstByAppIdAndProjectId(id, projectId);
-        logger.debug("Retrieving status for " + app.toString() + "\nwith status " + app.getStatus());
+    }
 
-        switch (app.getStatus()) {
-            case CREATED:
-                app.setStatus(obmanager.getStatus(app.getNsrID()));
-                break;
-            case INITIALIZING:
-                app.setStatus(obmanager.getStatus(app.getNsrID()));
-                break;
-            case INITIALISED:
-                try {
-                    app.setStatus(osmanager.getStatus(token, app.getAppName()));
-                } catch (ResourceAccessException e) {
-                    app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
-                }
-                break;
-            case BUILDING:
-                try {
-                    app.setStatus(osmanager.getStatus(token, app.getAppName()));
-                } catch (ResourceAccessException e) {
-                    app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
-                }
-                break;
-            case DEPLOYNG:
-                try {
-                    app.setStatus(osmanager.getStatus(token, app.getAppName()));
-                } catch (ResourceAccessException e) {
-                    app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
-                }
-                break;
-            case FAILED:
-                logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
-                if (!app.isResourceOK()) {
-                    app.setStatus(AppStatus.FAILED);
-                    break;
-                } else {
-                    try {
-                        app.setStatus(osmanager.getStatus(token, app.getAppName()));
-                    } catch (ResourceAccessException e) {
-                        app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
-                    }
-                }
-                break;
-            case RUNNING:
-                try {
-                    app.setStatus(osmanager.getStatus(token, app.getAppName()));
-                    app.setPodList(osmanager.getPodList(token, app.getAppName()));
-                } catch (ResourceAccessException e) {
-                    app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
-                }
-                break;
-            case PAAS_RESOURCE_MISSING:
-                app.setStatus(osmanager.getStatus(token, app.getAppName()));
-                break;
+
+    @RequestMapping(value = "/app", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Iterable<Application> getApps(@RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
+        logger.debug("Received request GET Applications");
+        Iterable<Application> applications = this.appRepo.findByProjectId(projectId);
+        logger.debug("Returning from GET Applications " + applications);
+        return applications;
+    }
+
+
+
+    @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    NubomediaDeleteAppResponse deleteApp(@PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
+
+        if (token == null) {
+            throw new UnauthorizedException("no auth-token header");
         }
 
-        appRepo.save(app);
+        logger.debug("id " + id);
 
-        return app;
+        if (appRepo.findFirstByAppIdAndProjectId(id, projectId) == null) {
+            return new NubomediaDeleteAppResponse(id, "Application not found in Project " + projectId + " not found", "null", 404);
+        }
 
+        Application app = appRepo.findFirstByAppIdAndProjectId(id, projectId);
+
+        logger.debug("Deleting " + app.toString());
+
+        if (!app.isResourceOK()) {
+
+            String name = app.getAppName();
+            String projectName = app.getProjectName();
+
+            if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
+                logger.debug("deploymentMap: " + String.valueOf(deploymentMap));
+                MediaServerGroup server = deploymentMap.get(id);
+                logger.debug("server: " + String.valueOf(server));
+                obmanager.deleteDescriptor(server.getNsdID());
+                if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(server.getId())) {
+                    obmanager.deleteRecord(app.getMediaServerGroup().getId());
+                }
+                deploymentMap.remove(app.getAppID());
+
+            }
+
+            appRepo.delete(app);
+            return new NubomediaDeleteAppResponse(id, name, projectName, 200);
+
+        }
+
+        if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
+            obmanager.deleteRecord(app.getMediaServerGroup().getId());
+            appRepo.delete(app);
+
+            return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), 200);
+        }
+
+
+        obmanager.deleteRecord(app.getMediaServerGroup().getId());
+        HttpStatus resDelete = HttpStatus.BAD_REQUEST;
+        try {
+            resDelete = osmanager.deleteApplication(token, app.getAppName());
+        } catch (ResourceAccessException e) {
+            logger.info("PaaS Missing");
+        }
+
+        appRepo.delete(app);
+
+        return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), resDelete.value());
+    }
+
+    @RequestMapping(value = "/app", method = RequestMethod.DELETE)
+    public
+    @ResponseBody
+    NubomediaDeleteAppsProjectResponse deleteApp(@RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
+
+        if (token == null) {
+            throw new UnauthorizedException("no auth-token header");
+        }
+
+        if (appRepo.findByProjectId(projectId) == null || appRepo.findByProjectId(projectId).size() == 0) {
+            return new NubomediaDeleteAppsProjectResponse(projectId, "Not Found any Applications in this project", null, 404);
+        }
+
+        NubomediaDeleteAppsProjectResponse response = new NubomediaDeleteAppsProjectResponse(projectId, "", new ArrayList<NubomediaDeleteAppResponse>(), 200);
+
+        List<Application> apps = appRepo.findByProjectId(projectId);
+
+        logger.debug("Deleting " + apps);
+        for (Application app : apps) {
+            if (!app.isResourceOK()) {
+                if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
+                    logger.debug("deploymentMap: " + String.valueOf(deploymentMap));
+                    MediaServerGroup server = deploymentMap.get(app.getAppID());
+                    logger.debug("server: " + String.valueOf(server));
+                    obmanager.deleteDescriptor(server.getNsdID());
+
+                    if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(server.getId())) {
+                        obmanager.deleteRecord(app.getMediaServerGroup().getId());
+                    }
+                    deploymentMap.remove(app.getAppID());
+
+                }
+
+                appRepo.delete(app);
+                response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), 200));
+                break;
+            }
+
+            if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
+                obmanager.deleteRecord(app.getMediaServerGroup().getId());
+                appRepo.delete(app);
+                response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), 200));
+                break;
+            }
+            obmanager.deleteRecord(app.getMediaServerGroup().getId());
+            HttpStatus resDelete = HttpStatus.BAD_REQUEST;
+            try {
+                resDelete = osmanager.deleteApplication(token, app.getAppName());
+            } catch (ResourceAccessException e) {
+                logger.info("PaaS Missing");
+            }
+
+            appRepo.delete(app);
+            response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), resDelete.value()));
+        }
+        for (NubomediaDeleteAppResponse singleRes : response.getResponses()) {
+            if (singleRes.getCode() != 200) {
+                response.setCode(singleRes.getCode());
+                response.setMessage("Not all applications were deleted successfully");
+                return response;
+            }
+        }
+        response.setMessage("All applications of this project were removed successfully");
+        return response;
     }
 
     @RequestMapping(value = "/app/{id}/buildlogs", method = RequestMethod.GET)
@@ -272,155 +348,6 @@ public class PaaSAPI {
 
     }
 
-    @RequestMapping(value = "/app", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<Application> getApps(@RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
-        logger.debug("Received request GET Applications");
-        Iterable<Application> applications = this.appRepo.findByProjectId(projectId);
-        logger.debug("Returning from GET Applications " + applications);
-        return applications;
-    }
-
-    @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
-    public
-    @ResponseBody
-    NubomediaDeleteAppResponse deleteApp(@PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
-
-        if (token == null) {
-            throw new UnauthorizedException("no auth-token header");
-        }
-
-        logger.debug("id " + id);
-
-        if (appRepo.findFirstByAppIdAndProjectId(id, projectId) == null) {
-            return new NubomediaDeleteAppResponse(id, "Application not found in Project " + projectId + " not found", "null", 404);
-        }
-
-        Application app = appRepo.findFirstByAppIdAndProjectId(id, projectId);
-
-        logger.debug("Deleting " + app.toString());
-
-        if (!app.isResourceOK()) {
-
-            String name = app.getAppName();
-            String projectName = app.getProjectName();
-
-            if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
-                logger.debug("deploymentMap: " + String.valueOf(deploymentMap));
-                MediaServerGroup server = deploymentMap.get(id);
-                logger.debug("server: " + String.valueOf(server));
-                obmanager.deleteDescriptor(server.getNsdID());
-                //obmanager.deleteEvent(server.getEventAllocatedID());
-                //obmanager.deleteEvent(server.getEventErrorID());
-
-                if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(server.getMediaServerGroupID())) {
-                    obmanager.deleteRecord(app.getNsrID());
-                }
-                deploymentMap.remove(app.getAppID());
-
-            }
-
-            appRepo.delete(app);
-            return new NubomediaDeleteAppResponse(id, name, projectName, 200);
-
-        }
-
-        if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
-            obmanager.deleteRecord(app.getNsrID());
-            appRepo.delete(app);
-
-            return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), 200);
-        }
-
-//        if (app.getStatus().equals(BuildingStatus.CREATED) || app.getStatus().equals(BuildingStatus.INITIALIZING)){
-//
-//            obmanager.deleteRecord(app.getNsrID());
-//            return new NubomediaDeleteAppResponse(id,app.getProjectName(),app.getProjectName(),200);
-//
-//        }
-
-
-        obmanager.deleteRecord(app.getNsrID());
-        HttpStatus resDelete = HttpStatus.BAD_REQUEST;
-        try {
-            resDelete = osmanager.deleteApplication(token, app.getAppName());
-        } catch (ResourceAccessException e) {
-            logger.info("PaaS Missing");
-        }
-
-        appRepo.delete(app);
-
-        return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), resDelete.value());
-    }
-
-    @RequestMapping(value = "/app", method = RequestMethod.DELETE)
-    public
-    @ResponseBody
-    NubomediaDeleteAppsProjectResponse deleteApp(@RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
-
-        if (token == null) {
-            throw new UnauthorizedException("no auth-token header");
-        }
-
-        if (appRepo.findByProjectId(projectId) == null || appRepo.findByProjectId(projectId).size() == 0) {
-            return new NubomediaDeleteAppsProjectResponse(projectId, "Not Found any Applications in this project", null, 404);
-        }
-
-        NubomediaDeleteAppsProjectResponse response = new NubomediaDeleteAppsProjectResponse(projectId, "", new ArrayList<NubomediaDeleteAppResponse>(), 200);
-
-        List<Application> apps = appRepo.findByProjectId(projectId);
-
-        logger.debug("Deleting " + apps);
-        for (Application app : apps) {
-            if (!app.isResourceOK()) {
-
-                String name = app.getAppName();
-                String projectName = app.getProjectName();
-
-                if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
-                    logger.debug("deploymentMap: " + String.valueOf(deploymentMap));
-                    MediaServerGroup server = deploymentMap.get(app.getAppID());
-                    logger.debug("server: " + String.valueOf(server));
-                    obmanager.deleteDescriptor(server.getNsdID());
-
-                    if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(server.getMediaServerGroupID())) {
-                        obmanager.deleteRecord(app.getNsrID());
-                    }
-                    deploymentMap.remove(app.getAppID());
-
-                }
-
-                appRepo.delete(app);
-                response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), 200));
-                break;
-            }
-
-            if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
-                obmanager.deleteRecord(app.getNsrID());
-                appRepo.delete(app);
-                response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), 200));
-                break;
-            }
-            obmanager.deleteRecord(app.getNsrID());
-            HttpStatus resDelete = HttpStatus.BAD_REQUEST;
-            try {
-                resDelete = osmanager.deleteApplication(token, app.getAppName());
-            } catch (ResourceAccessException e) {
-                logger.info("PaaS Missing");
-            }
-
-            appRepo.delete(app);
-            response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), resDelete.value()));
-        }
-        for (NubomediaDeleteAppResponse singleRes : response.getResponses()) {
-            if (singleRes.getCode() != 200) {
-                response.setCode(singleRes.getCode());
-                response.setMessage("Not all applications were deleted successfully");
-                return response;
-            }
-        }
-        response.setMessage("All applications of this project were removed successfully");
-        return response;
-    }
 
     @RequestMapping(value = "/secret", method = RequestMethod.POST)
     public
@@ -466,7 +393,7 @@ public class PaaSAPI {
     @RequestMapping(value = "/server-ip/", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public String getMediaServerIp() {
-        return paaSProperties.getVnfmIP();
+        return vnfmIP;
     }
 
 

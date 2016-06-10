@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Fraunhofer FOKUS
+ * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.model.persistence;
+package org.project.openbaton.nubomedia.paas.repository.msgroup;
 
-
-import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * Created by gca on 25/09/15.
+ * Created by gca on 10/06/16.
  */
-public interface UserRepository extends CrudRepository<User, String> {
-    User findFirstByUsername(String username);
+public interface MSGroupRepository extends CrudRepository<MediaServerGroup, String> {
+
 }

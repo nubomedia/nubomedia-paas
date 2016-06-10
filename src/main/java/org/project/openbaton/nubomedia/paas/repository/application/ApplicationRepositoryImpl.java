@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.model.persistence;
+package org.project.openbaton.nubomedia.paas.repository.application;
 
-import org.openbaton.catalogue.mano.record.VNFRecordDependency;
-import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
+import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Created by mob on 03.09.15.
  */
 @Transactional(readOnly = true)
-public class ApplicationRepositoryImpl implements ApplicationRepositoryCustom {
+public class ApplicationRepositoryImpl implements ApplicationRepositoryCustom{
 
     @Autowired
     private ApplicationRepository applicationRepository;
@@ -39,4 +38,17 @@ public class ApplicationRepositoryImpl implements ApplicationRepositoryCustom {
         }
         return null;
     }
+
+    @Override
+    public Application findByMSGroupID(String msGroupId) {
+        for (Application app : applicationRepository.findAll()) {
+            if (app.getMediaServerGroup().getId().equals(msGroupId)) {
+                return app;
+            }
+        }
+        return null;
+    }
+
 }
+
+

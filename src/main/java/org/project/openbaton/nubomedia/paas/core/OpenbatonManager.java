@@ -20,15 +20,18 @@ import org.openbaton.catalogue.mano.common.*;
 import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
+import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.*;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.util.NSDUtil;
+import org.project.openbaton.nubomedia.paas.core.util.NSRUtil;
+import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.utils.NfvoProperties;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
-import org.project.openbaton.nubomedia.paas.model.openbaton.Flavor;
-import org.project.openbaton.nubomedia.paas.model.openbaton.MediaServerGroup;
-import org.project.openbaton.nubomedia.paas.model.openbaton.QoS;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.QoS;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.slf4j.Logger;
@@ -39,9 +42,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by lto on 24/09/15.
@@ -104,9 +105,8 @@ public class OpenbatonManager {
 
 
     public MediaServerGroup createMediaServerGroup(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, boolean cdnConnectorSet, QoS qos, boolean turnServerActivate, String serverTurnIp, String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
-
-        logger.debug("FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
-
+        logger.debug("Creating Media Server Group with: FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
+        MediaServerGroup mediaServerGroup = new MediaServerGroup();
         NetworkServiceDescriptor targetNSD = nsdUtil.getNetworkServiceDescriptor(networkServiceDescriptorNubo,flavorID,qos,turnServerActivate, serverTurnIp,serverTurnUsername,serverTurnPassword,stunServerActivate, stunServerIp, stunServerPort, scaleInOut,scale_out_threshold);
         if (cloudRepositorySet && !cdnConnectorSet){
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
@@ -131,19 +131,33 @@ public class OpenbatonManager {
         }
 
         targetNSD = nfvoRequestor.getNetworkServiceDescriptorAgent().create(targetNSD);
-
-        MediaServerGroup mediaServerGroup = new MediaServerGroup();
         mediaServerGroup.setNsdID(targetNSD.getId());
-        mediaServerGroup.setAppId(appID);
-        NetworkServiceRecord nsr = null;
-
-        nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
+        NetworkServiceRecord nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
         logger.debug("NSR " + nsr.toString());
-        mediaServerGroup.setMediaServerGroupID(nsr.getId());
+        mediaServerGroup.setId(nsr.getId());
         logger.debug("Result " + mediaServerGroup.toString());
         return mediaServerGroup;
     }
 
+    public void updateMediaServerGroup(Application application) throws Exception {
+        NetworkServiceRecord nsr = null;
+        try {
+            nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(application.getMediaServerGroup().getId());
+        } catch (SDKException | ClassNotFoundException e) {
+            String message = "no NSR found, the media server group cannot be updated";
+            logger.debug(message);
+            throw new Exception(message);
+        }
+        for (VirtualNetworkFunctionRecord record : nsr.getVnfr()) {
+
+            if (record.getEndpoint().equals("media-server")) {
+                logger.debug("found record media-server");
+                application.getMediaServerGroup().setFloatingIPs(NSRUtil.getFloatingIPs(record));
+                application.getMediaServerGroup().setHostnames(NSRUtil.getHostnames(record));
+            }
+        }
+        return;
+    }
 
 
     public AppStatus getStatus(String nsrID) {

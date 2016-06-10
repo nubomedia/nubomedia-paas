@@ -17,13 +17,12 @@
 package org.project.openbaton.nubomedia.paas.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.openbaton.catalogue.mano.descriptor.Policy;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
-import org.project.openbaton.nubomedia.paas.model.openbaton.Flavor;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -38,8 +37,13 @@ public class Application {
     private String projectName;
     private String projectId;
     private String route;
-    private String nsrID;
     private String gitURL;
+    private int replicasNumber;
+    private String secretName;
+    private Flavor flavor;
+    private AppStatus status;
+
+    @JsonIgnore private boolean resourceOK;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Integer> targetPorts;
     @ElementCollection(fetch = FetchType.EAGER)
@@ -48,11 +52,12 @@ public class Application {
     private List<String> protocols;
     @ElementCollection (fetch = FetchType.EAGER)
     private List<String> podList;
-    private int replicasNumber;
-    private String secretName;
-    private Flavor flavor;
-    private AppStatus status;
-    @JsonIgnore private boolean resourceOK;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private MediaServerGroup mediaServerGroup;
+
+
+
 
     public Application(String appID,Flavor flavor, String appName, String projectName, String projectId, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, List<String> podList, int replicasNumber, String secretName,boolean resourceOK) {
         this.appID = appID;
@@ -61,7 +66,6 @@ public class Application {
         this.projectName = projectName;
         this.projectId = projectId;
         this.route = route;
-        this.nsrID = nsrID;
         this.gitURL = gitURL;
         this.targetPorts = targetPorts;
 
@@ -107,12 +111,12 @@ public class Application {
         this.route = route;
     }
 
-    public String getNsrID() {
-        return nsrID;
+    public MediaServerGroup getMediaServerGroup() {
+        return mediaServerGroup;
     }
 
-    public void setNsrID(String nsrID) {
-        this.nsrID = nsrID;
+    public void setMediaServerGroup(MediaServerGroup mediaServerGroup) {
+        this.mediaServerGroup = mediaServerGroup;
     }
 
     public String getGitURL() {
@@ -212,12 +216,24 @@ public class Application {
     }
 
     @Override
-    public String toString(){
-        return "Application with ID: " + appID  + "\n" +
-                "Application name: " + appName + "\n" +
-                "Project: " + projectName + "\n" +
-                "ProjectId: " + projectId + "\n" +
-                "Route: " + route + "\n" +
-                "Git URL: " + gitURL;
+    public String toString() {
+        return "Application{" +
+                "appID='" + appID + '\'' +
+                ", appName='" + appName + '\'' +
+                ", projectName='" + projectName + '\'' +
+                ", projectId='" + projectId + '\'' +
+                ", route='" + route + '\'' +
+                ", gitURL='" + gitURL + '\'' +
+                ", replicasNumber=" + replicasNumber +
+                ", secretName='" + secretName + '\'' +
+                ", flavor=" + flavor +
+                ", status=" + status +
+                ", resourceOK=" + resourceOK +
+                ", targetPorts=" + targetPorts +
+                ", ports=" + ports +
+                ", protocols=" + protocols +
+                ", podList=" + podList +
+                ", mediaServerGroup=" + mediaServerGroup +
+                '}';
     }
 }

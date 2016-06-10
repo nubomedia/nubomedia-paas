@@ -18,17 +18,14 @@ package org.project.openbaton.nubomedia.paas.events;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
-import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.catalogue.nfvo.EndpointType;
 import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
-import org.project.openbaton.nubomedia.paas.model.openbaton.OpenbatonEvent;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenbatonEvent;
 import org.project.openbaton.nubomedia.paas.utils.NfvoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 /**
@@ -78,7 +74,7 @@ public class OpenbatonEventReceiver implements CommandLineRunner{
         try {
             openbatonEvent = getOpenbatonEvent(message);
             logger.debug("Received nfvo event with action: " + openbatonEvent.getAction());
-            appManager.startOpenshiftBuild(openbatonEvent, openbatonEvent.getPayload().getId());
+            appManager.startOpenshiftBuild(openbatonEvent);
 
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
