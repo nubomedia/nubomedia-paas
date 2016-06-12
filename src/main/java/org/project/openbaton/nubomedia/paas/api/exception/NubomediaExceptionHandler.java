@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.api;
+package org.project.openbaton.nubomedia.paas.api.exception;
 
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.paas.messages.NubomediaAppNotFoundMessage;

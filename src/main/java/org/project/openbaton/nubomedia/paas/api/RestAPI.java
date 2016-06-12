@@ -52,10 +52,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/nubomedia/paas")
-public class PaaSAPI {
-
-    private static Map<String, MediaServerGroup> deploymentMap = new HashMap<>();
-    private Logger logger;
+public class RestAPI {
+    private static final Logger logger = LoggerFactory.getLogger(RestAPI.class);
 
     @Autowired
     private OpenshiftManager osmanager;
@@ -79,9 +77,20 @@ public class PaaSAPI {
     @PostConstruct
     private void init() {
         System.setProperty("javax.net.ssl.trustStore", paasKeystore);
-        this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
+    /**
+     *
+     * @param request
+     * @param projectId
+     * @return
+     * @throws SDKException
+     * @throws UnauthorizedException
+     * @throws DuplicatedException
+     * @throws NameStructureException
+     * @throws turnServerException
+     * @throws StunServerException
+     */
     @RequestMapping(value = "/app", method = RequestMethod.POST)
     public
     @ResponseBody
@@ -113,25 +122,34 @@ public class PaaSAPI {
         return new NubomediaCreateAppResponse(app, 200);
     }
 
+    /**
+     *
+     * @param id
+     * @param projectId
+     * @return
+     * @throws ApplicationNotFoundException
+     * @throws UnauthorizedException
+     */
     @RequestMapping(value = "/app/{id}", method = RequestMethod.GET)
     public
     @ResponseBody
     Application getApp(@PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws ApplicationNotFoundException, UnauthorizedException {
-
         logger.info("Request status for " + id + " app");
-
-        if (token == null) {
-            throw new UnauthorizedException("no auth-token header");
-        }
-
-        if (appRepo.findFirstByAppIdAndProjectId(id, projectId) == null) {
+        Application app = null;
+        if ( (app = appRepo.findFirstByAppIdAndProjectId(id, projectId)) == null) {
             throw new ApplicationNotFoundException("Application with ID in Project " + projectId + " not found");
         }
-        return  appRepo.findFirstByAppIdAndProjectId(id, projectId);
+        return app;
 
     }
 
-
+    /**
+     *
+     * @param projectId
+     * @return
+     * @throws UnauthorizedException
+     * @throws ApplicationNotFoundException
+     */
     @RequestMapping(value = "/app", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Iterable<Application> getApps(@RequestHeader(value = "project-id") String projectId) throws UnauthorizedException, ApplicationNotFoundException {
         logger.debug("Received request GET Applications");
@@ -141,41 +159,37 @@ public class PaaSAPI {
     }
 
 
-
+    /**
+     *
+     * @param id
+     * @param projectId
+     * @return
+     * @throws UnauthorizedException
+     */
     @RequestMapping(value = "/app/{id}", method = RequestMethod.DELETE)
     public
     @ResponseBody
     NubomediaDeleteAppResponse deleteApp(@PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
-
-        if (token == null) {
-            throw new UnauthorizedException("no auth-token header");
-        }
-
-        logger.debug("id " + id);
-
-        if (appRepo.findFirstByAppIdAndProjectId(id, projectId) == null) {
+        logger.debug("Received delete Application (id " + id+")request");
+        Application app = null;
+        if ((app=appRepo.findFirstByAppIdAndProjectId(id, projectId)) == null) {
             return new NubomediaDeleteAppResponse(id, "Application not found in Project " + projectId + " not found", "null", 404);
         }
 
-        Application app = appRepo.findFirstByAppIdAndProjectId(id, projectId);
+        logger.debug("Retrieved Application to be deleted " + app);
 
-        logger.debug("Deleting " + app.toString());
-
+        // check that the app has been instantiated on openshift
         if (!app.isResourceOK()) {
 
             String name = app.getAppName();
             String projectName = app.getProjectName();
 
             if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
-                logger.debug("deploymentMap: " + String.valueOf(deploymentMap));
-                MediaServerGroup server = deploymentMap.get(id);
-                logger.debug("server: " + String.valueOf(server));
-                obmanager.deleteDescriptor(server.getNsdID());
-                if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(server.getId())) {
+                logger.debug("media server group: " + app.getMediaServerGroup());
+                obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
+                if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(app.getMediaServerGroup().getId())) {
                     obmanager.deleteRecord(app.getMediaServerGroup().getId());
                 }
-                deploymentMap.remove(app.getAppID());
-
             }
 
             appRepo.delete(app);
@@ -184,6 +198,7 @@ public class PaaSAPI {
         }
 
         if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
+            obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
             obmanager.deleteRecord(app.getMediaServerGroup().getId());
             appRepo.delete(app);
 
@@ -196,7 +211,7 @@ public class PaaSAPI {
         try {
             resDelete = osmanager.deleteApplication(token, app.getAppName());
         } catch (ResourceAccessException e) {
-            logger.info("PaaS Missing");
+            logger.info("Application does not exist on the PaaS");
         }
 
         appRepo.delete(app);
@@ -204,14 +219,17 @@ public class PaaSAPI {
         return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), resDelete.value());
     }
 
+
+    /**
+     *
+     * @param projectId
+     * @return
+     * @throws UnauthorizedException
+     */
     @RequestMapping(value = "/app", method = RequestMethod.DELETE)
     public
     @ResponseBody
     NubomediaDeleteAppsProjectResponse deleteApp(@RequestHeader(value = "project-id") String projectId) throws UnauthorizedException {
-
-        if (token == null) {
-            throw new UnauthorizedException("no auth-token header");
-        }
 
         if (appRepo.findByProjectId(projectId) == null || appRepo.findByProjectId(projectId).size() == 0) {
             return new NubomediaDeleteAppsProjectResponse(projectId, "Not Found any Applications in this project", null, 404);
@@ -225,16 +243,12 @@ public class PaaSAPI {
         for (Application app : apps) {
             if (!app.isResourceOK()) {
                 if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
-                    logger.debug("deploymentMap: " + String.valueOf(deploymentMap));
-                    MediaServerGroup server = deploymentMap.get(app.getAppID());
-                    logger.debug("server: " + String.valueOf(server));
-                    obmanager.deleteDescriptor(server.getNsdID());
+                    logger.debug("media server group: " + app.getMediaServerGroup());
+                    obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
 
-                    if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(server.getId())) {
+                    if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(app.getMediaServerGroup().getId())) {
                         obmanager.deleteRecord(app.getMediaServerGroup().getId());
                     }
-                    deploymentMap.remove(app.getAppID());
-
                 }
 
                 appRepo.delete(app);
@@ -270,6 +284,14 @@ public class PaaSAPI {
         return response;
     }
 
+    /**
+     *
+     * @param id
+     * @param projectId
+     * @return
+     * @throws UnauthorizedException
+     * @throws ApplicationNotFoundException
+     */
     @RequestMapping(value = "/app/{id}/buildlogs", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -325,6 +347,15 @@ public class PaaSAPI {
         return res;
     }
 
+    /**
+     * s
+     * @param id
+     * @param podName
+     * @param projectId
+     * @return
+     * @throws UnauthorizedException
+     * @throws ApplicationNotFoundException
+     */
     @RequestMapping(value = "/app/{id}/logs/{podName}", method = RequestMethod.GET)
     public
     @ResponseBody

@@ -46,38 +46,30 @@ public class ResourceServer extends ResourceServerConfigurerAdapter {
         http.headers()
                 .frameOptions().disable();
 
-        boolean enabled = Boolean.parseBoolean(enabledSt);
+        log.info("Security is enabled");
+        http
+                .authorizeRequests()
+                .regexMatchers(HttpMethod.POST, "/api/v1/")
+                .access("#oauth2.hasScope('write')")
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                .and()
+                .exceptionHandling();
 
-        // API calls
-        if (true) {
-            log.info("Security is enabled");
-            http
-                    .authorizeRequests()
-                    .regexMatchers(HttpMethod.POST, "/api/v1/")
-                    .access("#oauth2.hasScope('write')")
-                    .and()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.NEVER)
-                    .and()
-                    .exceptionHandling();
+        http
+                .authorizeRequests()
+                .antMatchers(HttpMethod.POST,"/api/**")
+                .access("#oauth2.hasScope('write')")
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                .and()
+                .exceptionHandling();
+        http
+                .authorizeRequests()
+                .regexMatchers(HttpMethod.GET, "/api/v1/").permitAll();
 
-            http
-                    .authorizeRequests()
-                    .antMatchers(HttpMethod.POST,"/api/**")
-                    .access("#oauth2.hasScope('write')")
-                    .and()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.NEVER)
-                    .and()
-                    .exceptionHandling();
-            http
-                    .authorizeRequests()
-                    .regexMatchers(HttpMethod.GET, "/api/v1/").permitAll();
-        } else {
-            log.warn("Security is not enabled!");
-            http
-                    .authorizeRequests().anyRequest().permitAll();
-        }
     }
 
 

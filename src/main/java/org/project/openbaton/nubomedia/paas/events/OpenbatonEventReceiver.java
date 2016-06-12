@@ -25,7 +25,7 @@ import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
-import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenbatonEvent;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
 import org.project.openbaton.nubomedia.paas.utils.NfvoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,11 +70,11 @@ public class OpenbatonEventReceiver implements CommandLineRunner{
     }
 
     public void receiveNewNsr(String message) {
-        OpenbatonEvent openbatonEvent;
+        OpenBatonEvent openBatonEvent;
         try {
-            openbatonEvent = getOpenbatonEvent(message);
-            logger.debug("Received nfvo event with action: " + openbatonEvent.getAction());
-            appManager.startOpenshiftBuild(openbatonEvent);
+            openBatonEvent = getOpenbatonEvent(message);
+            logger.debug("Received nfvo event with action: " + openBatonEvent.getAction());
+            appManager.startOpenshiftBuild(openBatonEvent);
 
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
@@ -84,11 +84,11 @@ public class OpenbatonEventReceiver implements CommandLineRunner{
 
 
     public void deleteNsr(String message){
-        OpenbatonEvent openbatonEvent;
+        OpenBatonEvent openBatonEvent;
         try {
-            openbatonEvent = getOpenbatonEvent(message);
+            openBatonEvent = getOpenbatonEvent(message);
 
-            logger.debug("Received nfvo event with action: " + openbatonEvent.getAction());
+            logger.debug("Received nfvo event with action: " + openBatonEvent.getAction());
 
         } catch (Exception e) {
             logger.warn(e.getMessage(),e);
@@ -96,15 +96,15 @@ public class OpenbatonEventReceiver implements CommandLineRunner{
         }
     }
 
-    private OpenbatonEvent getOpenbatonEvent(String message) throws Exception {
-        OpenbatonEvent openbatonEvent;
+    private OpenBatonEvent getOpenbatonEvent(String message) throws Exception {
+        OpenBatonEvent openBatonEvent;
 
         try {
-            openbatonEvent = mapper.fromJson(message, OpenbatonEvent.class);
+            openBatonEvent = mapper.fromJson(message, OpenBatonEvent.class);
         } catch (JsonParseException e) {
             throw new Exception(e.getMessage(),e);
         }
-        return openbatonEvent;
+        return openBatonEvent;
     }
 
     private void createEventCreationEndpoint(){
