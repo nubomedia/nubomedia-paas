@@ -16,24 +16,25 @@
 
 package org.project.openbaton.nubomedia.paas.core;
 
-import org.openbaton.catalogue.mano.common.*;
+import org.openbaton.catalogue.mano.common.LifecycleEvent;
 import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
-import org.openbaton.catalogue.nfvo.*;
+import org.openbaton.catalogue.nfvo.EventEndpoint;
+import org.openbaton.catalogue.nfvo.VimInstance;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.util.NSDUtil;
 import org.project.openbaton.nubomedia.paas.core.util.NSRUtil;
-import org.project.openbaton.nubomedia.paas.model.persistence.Application;
-import org.project.openbaton.nubomedia.paas.utils.NfvoProperties;
+import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
+import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
+import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.QoS;
-import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
-import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
+import org.project.openbaton.nubomedia.paas.utils.NfvoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by lto on 24/09/15.
@@ -157,7 +160,6 @@ public class OpenbatonManager {
                 application.getMediaServerGroup().setHostnames(NSRUtil.getHostnames(record));
             }
         }
-        return;
     }
 
 
@@ -203,10 +205,7 @@ public class OpenbatonManager {
     public boolean existRecord(String nsrID){
 
         try {
-            if (nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID) != null)
-                return true;
-            else
-                return false;
+            return nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID) != null;
 
         } catch (SDKException | ClassNotFoundException e) {
             e.printStackTrace();

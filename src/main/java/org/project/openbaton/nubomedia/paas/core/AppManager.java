@@ -21,7 +21,6 @@ import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.util.NSRUtil;
-import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
@@ -29,8 +28,9 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedExc
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.messages.NubomediaCreateAppRequest;
 import org.project.openbaton.nubomedia.paas.messages.NubomediaPort;
-import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
 import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
 import org.project.openbaton.nubomedia.paas.utils.PaaSProperties;
 import org.slf4j.Logger;
@@ -43,7 +43,9 @@ import org.springframework.web.client.ResourceAccessException;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by gca on 24/05/16.
@@ -56,7 +58,7 @@ public class AppManager {
     @Autowired
     private ApplicationRepository appRepo;
     @Autowired
-    private OpenshiftManager osmanager;
+    private OpenShiftManager osmanager;
     @Autowired
     private OpenbatonManager obmanager;
     @Autowired

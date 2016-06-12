@@ -16,8 +16,8 @@
 
 package org.project.openbaton.nubomedia.paas.core.scheduler;
 
+import org.project.openbaton.nubomedia.paas.core.OpenShiftManager;
 import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
-import org.project.openbaton.nubomedia.paas.core.OpenshiftManager;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
@@ -42,7 +42,7 @@ public class AppStatusManager {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private OpenshiftManager osmanager;
+    private OpenShiftManager osmanager;
     @Autowired
     private OpenbatonManager obmanager;
 
@@ -101,7 +101,7 @@ public class AppStatusManager {
 
 
     private AppStatus getStatus(String token, Application app) throws UnauthorizedException {
-        AppStatus res = null;
+        AppStatus res;
         logger.debug("application ("+app.getAppID()+"-"+app.getAppName()+") status is "+app.getStatus());
 
         switch (app.getStatus()) {

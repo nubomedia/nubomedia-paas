@@ -55,17 +55,19 @@ public class MetadataTypeAdapter extends TypeAdapter<Metadata> {
         while(in.hasNext()){
             String nameObj = in.nextName();
 
-            if(nameObj.equals("name")){
-                name = in.nextString();
-            }
-            else if(nameObj.equals("selfLink")){
-                selfLink = in.nextString();
-            }
-            else if(nameObj.equals("resourceVersion")){
-                resourceVersion = in.nextString();
-            }
-            else{
-                in.skipValue();
+            switch (nameObj) {
+                case "name":
+                    name = in.nextString();
+                    break;
+                case "selfLink":
+                    selfLink = in.nextString();
+                    break;
+                case "resourceVersion":
+                    resourceVersion = in.nextString();
+                    break;
+                default:
+                    in.skipValue();
+                    break;
             }
 
         }

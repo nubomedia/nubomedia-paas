@@ -17,10 +17,10 @@
 package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import com.google.gson.Gson;
-import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
+import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.openshift.DeploymentConfig;
 import org.project.openbaton.nubomedia.paas.model.openshift.HorizontalPodAutoscaler;
 import org.project.openbaton.nubomedia.paas.model.openshift.Pod;
@@ -66,7 +66,7 @@ public class DeploymentManager {
         DeploymentConfig message = MessageBuilderFactory.getDeployMessage(appName, dockerRepo, ports, protocols, repnumbers);
         logger.debug(mapper.toJson(message, DeploymentConfig.class));
         String URL = baseURL + namespace + suffix;
-        HttpEntity<String> deployEntity = new HttpEntity<String>(mapper.toJson(message,DeploymentConfig.class),authHeader);
+        HttpEntity<String> deployEntity = new HttpEntity<>(mapper.toJson(message, DeploymentConfig.class), authHeader);
         ResponseEntity<String> response = template.exchange(URL, HttpMethod.POST,deployEntity,String.class);
         logger.debug("Deployment response: " + response);
 

@@ -16,7 +16,6 @@
 
 package org.project.openbaton.nubomedia.paas.utils;
 
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 

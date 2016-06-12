@@ -24,12 +24,12 @@ import java.io.Serializable;
 /**
  * Created by maa on 21.10.15.
  */
-public class OpenbatonEvent implements Serializable{
+public class OpenBatonEvent implements Serializable {
 
     private Action action;
     private NetworkServiceRecord payload;
 
-    public OpenbatonEvent() {
+    public OpenBatonEvent() {
     }
 
     public Action getAction() {
