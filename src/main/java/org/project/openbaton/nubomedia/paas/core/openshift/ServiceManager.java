@@ -54,7 +54,7 @@ public class ServiceManager {
         logger.debug("Writing service creation " + mapper.toJson(message,ServiceConfig.class));
 
         String URL = kubernetesBaseURL + namespace + suffix;
-        HttpEntity<String> serviceEntity = new HttpEntity<String>(mapper.toJson(message,ServiceConfig.class),authHeader);
+        HttpEntity<String> serviceEntity = new HttpEntity<>(mapper.toJson(message, ServiceConfig.class), authHeader);
         ResponseEntity response = template.exchange(URL, HttpMethod.POST,serviceEntity,String.class);
 
         if(response.getStatusCode().equals(HttpStatus.CONFLICT)){

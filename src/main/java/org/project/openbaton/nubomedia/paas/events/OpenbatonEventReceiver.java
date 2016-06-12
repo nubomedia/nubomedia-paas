@@ -42,7 +42,7 @@ import javax.annotation.PreDestroy;
 public class OpenbatonEventReceiver implements CommandLineRunner{
     private static final Logger logger = LoggerFactory.getLogger(OpenbatonEventReceiver.class);
 
-    private Gson mapper = new GsonBuilder().serializeNulls().create();;
+    private Gson mapper = new GsonBuilder().serializeNulls().create();
     private EventEndpoint eventEndpointCreation, eventEndpointError;
     @Autowired
     private NfvoProperties nfvoProperties;
@@ -78,7 +78,6 @@ public class OpenbatonEventReceiver implements CommandLineRunner{
 
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
-            return;
         }
     }
 
@@ -92,7 +91,6 @@ public class OpenbatonEventReceiver implements CommandLineRunner{
 
         } catch (Exception e) {
             logger.warn(e.getMessage(),e);
-            return;
         }
     }
 

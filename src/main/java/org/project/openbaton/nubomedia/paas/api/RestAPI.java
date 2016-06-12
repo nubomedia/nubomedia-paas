@@ -18,8 +18,8 @@ package org.project.openbaton.nubomedia.paas.api;
 
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
+import org.project.openbaton.nubomedia.paas.core.OpenShiftManager;
 import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
-import org.project.openbaton.nubomedia.paas.core.OpenshiftManager;
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
@@ -27,7 +27,6 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedExcep
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.NameStructureException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.*;
-import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
 import org.slf4j.Logger;
@@ -41,9 +40,7 @@ import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -56,7 +53,7 @@ public class RestAPI {
     private static final Logger logger = LoggerFactory.getLogger(RestAPI.class);
 
     @Autowired
-    private OpenshiftManager osmanager;
+    private OpenShiftManager osmanager;
     @Autowired
     private OpenbatonManager obmanager;
     @Autowired
@@ -412,12 +409,13 @@ public class RestAPI {
     NubomediaAuthorizationResponse authorize(@RequestBody NubomediaAuthorizationRequest request) throws UnauthorizedException {
 
         String token = osmanager.authenticate(request.getUsername(), request.getPassword());
-        if (token.equals("Unauthorized")) {
-            return new NubomediaAuthorizationResponse(token, 401);
-        } else if (token.equals("PaaS Missing")) {
-            return new NubomediaAuthorizationResponse(token, 404);
-        } else {
-            return new NubomediaAuthorizationResponse(token, 200);
+        switch (token) {
+            case "Unauthorized":
+                return new NubomediaAuthorizationResponse(token, 401);
+            case "PaaS Missing":
+                return new NubomediaAuthorizationResponse(token, 404);
+            default:
+                return new NubomediaAuthorizationResponse(token, 200);
         }
     }
 

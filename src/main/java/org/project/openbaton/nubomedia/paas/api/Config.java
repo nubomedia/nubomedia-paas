@@ -16,9 +16,6 @@
 
 package org.project.openbaton.nubomedia.paas.api;
 
-import org.openbaton.catalogue.nfvo.Configuration;
-import org.project.openbaton.nubomedia.paas.utils.PaaSProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

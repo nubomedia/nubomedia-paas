@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @ConfigurationProperties (prefix="openshift")
-public class OpenshiftProperties {
+public class OpenShiftProperties {
 
     private String baseURL;
     private String domainName;

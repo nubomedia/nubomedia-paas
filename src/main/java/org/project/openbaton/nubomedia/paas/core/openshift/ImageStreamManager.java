@@ -52,7 +52,7 @@ public class ImageStreamManager {
         ImageStreamConfig message = MessageBuilderFactory.getImageStreamMessage(appName);
         logger.debug("Sending message " + mapper.toJson(message,ImageStreamConfig.class));
         String URL = baseURL + namespace + suffix;
-        HttpEntity<String> imageStreamEntity = new HttpEntity<String>(mapper.toJson(message,ImageStreamConfig.class),authHeader);
+        HttpEntity<String> imageStreamEntity = new HttpEntity<>(mapper.toJson(message, ImageStreamConfig.class), authHeader);
 
         ResponseEntity<String> response = template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
         logger.debug("response " + response.getBody());

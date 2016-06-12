@@ -54,7 +54,7 @@ public class RouteManager {
 
         String URL = baseURL + namespace + suffix;
         //HttpEntity<String> routeEntity = new HttpEntity<String>(mapper.toJson(message, RouteConfig.class), authHeader);
-        HttpEntity<String> routeEntity = new HttpEntity<String>(mapper.toJson(routeConfig, RouteConfig.class), authHeader);
+        HttpEntity<String> routeEntity = new HttpEntity<>(mapper.toJson(routeConfig, RouteConfig.class), authHeader);
         ResponseEntity response = template.exchange(URL, HttpMethod.POST, routeEntity, String.class);
 
         if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
