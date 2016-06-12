@@ -53,7 +53,7 @@ public class NSDUtil {
     }
 
     public NetworkServiceDescriptor getNetworkServiceDescriptor(NetworkServiceDescriptor nsd, Flavor flavor, QoS Qos, boolean turnServerActivate, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, boolean stunServerActivate, String stunServerAddress, String stunServerPort, int scaleInOut, double scale_out_threshold) throws turnServerException, StunServerException {
-        logger.debug("Start configure");
+        logger.debug("Start configuring network service descriptor");
         nsd = this.injectFlavor(flavor.getValue(), this.imageName, nsd);
         logger.debug("After flavor the nsd is\n" + nsd.toString() + "\n****************************");
 

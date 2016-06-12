@@ -1,6 +1,6 @@
 {
-  "gitURL":"https://github.com/fhg-fokus-nubomedia/nubomedia-magic-mirror.git",
-  "appName":"nubo-magic-mirror",
+  "gitURL":"git@github.com:fhg-fokus-nubomedia/nubomedia-magic-mirror-jar.git",
+  "appName":"magic-mirror",
   "cloudRepository":false,
   "flavor":"MEDIUM",
   "ports":[
@@ -15,7 +15,7 @@
       "protocol":"TCP"
     }
   ],
-  "replicasNumber":2,
+  "replicasNumber":1,
   "secretName":"",
   "turnServerActivate":false,
   "stunServerActivate":false,

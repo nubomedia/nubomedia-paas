@@ -21,7 +21,7 @@ package org.project.openbaton.nubomedia.paas.messages;
  */
 public enum AppStatus {
 
-    CREATED,
+    CREATED, // application object created
     INITIALIZING,
     INITIALISED,
     DUPLICATED,

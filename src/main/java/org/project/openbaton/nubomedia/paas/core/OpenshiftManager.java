@@ -19,7 +19,7 @@ package org.project.openbaton.nubomedia.paas.core;
 
 import com.google.gson.Gson;
 import org.project.openbaton.nubomedia.paas.core.openshift.*;
-import org.project.openbaton.nubomedia.paas.utils.OpenshiftProperties;
+import org.project.openbaton.nubomedia.paas.utils.OpenShiftProperties;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
@@ -64,7 +64,7 @@ public class OpenshiftManager {
     @Autowired
     private AuthenticationManager authManager;
     @Autowired
-    private OpenshiftProperties properties;
+    private OpenShiftProperties properties;
 
     private Logger logger;
     private String openshiftBaseURL;
@@ -170,8 +170,7 @@ public class OpenshiftManager {
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
 
-        HttpStatus entity = secretManager.deleteSecret(kubernetesBaseURL, secretName, this.project, authHeader);
-        return entity;
+        return secretManager.deleteSecret(kubernetesBaseURL, secretName, this.project, authHeader);
     }
 
     public AppStatus getStatus(String token, String appName) throws UnauthorizedException {

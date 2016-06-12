@@ -29,7 +29,7 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedExc
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.messages.NubomediaCreateAppRequest;
 import org.project.openbaton.nubomedia.paas.messages.NubomediaPort;
-import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenbatonEvent;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
 import org.project.openbaton.nubomedia.paas.utils.PaaSProperties;
@@ -72,8 +72,11 @@ public class AppManager {
 
 
     public Application createApplication(NubomediaCreateAppRequest request, String projectId, String token) throws turnServerException, StunServerException, SDKException {
+        // generating ID
         String appID = new BigInteger(130, appIDGenerator).toString(64);
         logger.debug("App ID " + appID + "\n");
+
+
         List<String> protocols = new ArrayList<>();
         List<Integer> targetPorts = new ArrayList<>();
         List<Integer> ports = new ArrayList<>();
@@ -84,7 +87,7 @@ public class AppManager {
             ports.add(port.getPort());
         }
 
-        logger.debug("request params " + request.getAppName() + " " + request.getGitURL() + " " + openshiftProject + " " + ports + " " + protocols + " " + request.getReplicasNumber());
+        logger.debug("request params " + request.getAppName() + " " + request.getGitURL() + " " + ports + " " + protocols + " " + request.getReplicasNumber());
 
         //Openbaton MediaServer Request
         logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
@@ -121,7 +124,7 @@ public class AppManager {
      * @param evt
      * @throws UnauthorizedException
      */
-    public void startOpenshiftBuild(OpenbatonEvent evt) throws UnauthorizedException {
+    public void startOpenshiftBuild(OpenBatonEvent evt) throws UnauthorizedException {
         String mediaServerGroupID = evt.getPayload().getId();
         logger.debug("starting callback for app with media server group ID " + mediaServerGroupID);
         logger.info("Received event " + evt);

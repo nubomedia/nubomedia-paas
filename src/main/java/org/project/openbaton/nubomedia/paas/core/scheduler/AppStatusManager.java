@@ -20,10 +20,9 @@ import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
 import org.project.openbaton.nubomedia.paas.core.OpenshiftManager;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
-import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
-import org.project.openbaton.nubomedia.paas.utils.OpenshiftProperties;
+import org.project.openbaton.nubomedia.paas.utils.OpenShiftProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,7 @@ public class AppStatusManager {
     @Autowired
     private ApplicationRepository appRepo;
     @Autowired
-    private OpenshiftProperties properties;
+    private OpenShiftProperties properties;
 
     private String token;
 
@@ -112,27 +111,6 @@ public class AppStatusManager {
             case INITIALIZING:
                 res = obmanager.getStatus(app.getMediaServerGroup().getId());
                 break;
-            case INITIALISED:
-                try {
-                    res = osmanager.getStatus(token, app.getAppName());
-                } catch (ResourceAccessException e) {
-                    res = AppStatus.PAAS_RESOURCE_MISSING;
-                }
-                break;
-            case BUILDING:
-                try {
-                    res = osmanager.getStatus(token, app.getAppName());
-                } catch (ResourceAccessException e) {
-                    res = AppStatus.PAAS_RESOURCE_MISSING;
-                }
-                break;
-            case DEPLOYNG:
-                try {
-                    res = osmanager.getStatus(token, app.getAppName());
-                } catch (ResourceAccessException e) {
-                    res = AppStatus.PAAS_RESOURCE_MISSING;
-                }
-                break;
             case FAILED:
                 logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
                 if (!app.isResourceOK()) {
@@ -146,15 +124,12 @@ public class AppStatusManager {
                     }
                 }
                 break;
-            case RUNNING:
+            default:
                 try {
                     res = osmanager.getStatus(token, app.getAppName());
                 } catch (ResourceAccessException e) {
                     res = AppStatus.PAAS_RESOURCE_MISSING;
                 }
-                break;
-            case PAAS_RESOURCE_MISSING:
-                res = osmanager.getStatus(token, app.getAppName());
                 break;
         }
 

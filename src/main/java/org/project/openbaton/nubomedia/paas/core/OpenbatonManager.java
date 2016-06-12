@@ -107,6 +107,7 @@ public class OpenbatonManager {
     public MediaServerGroup createMediaServerGroup(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, boolean cdnConnectorSet, QoS qos, boolean turnServerActivate, String serverTurnIp, String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
         logger.debug("Creating Media Server Group with: FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
         MediaServerGroup mediaServerGroup = new MediaServerGroup();
+        // building network service descriptor
         NetworkServiceDescriptor targetNSD = nsdUtil.getNetworkServiceDescriptor(networkServiceDescriptorNubo,flavorID,qos,turnServerActivate, serverTurnIp,serverTurnUsername,serverTurnPassword,stunServerActivate, stunServerIp, stunServerPort, scaleInOut,scale_out_threshold);
         if (cloudRepositorySet && !cdnConnectorSet){
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
@@ -202,12 +203,11 @@ public class OpenbatonManager {
     public boolean existRecord(String nsrID){
 
         try {
-            if (nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID) != null){
+            if (nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID) != null)
                 return true;
-            }
-            else{
+            else
                 return false;
-            }
+
         } catch (SDKException | ClassNotFoundException e) {
             e.printStackTrace();
             return false;

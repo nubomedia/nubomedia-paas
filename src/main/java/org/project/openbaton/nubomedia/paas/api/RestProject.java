@@ -35,7 +35,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/projects")
 public class RestProject {
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger log = LoggerFactory.getLogger(RestProject.class);
 
     @Autowired
     private ProjectManagement projectManagement;
