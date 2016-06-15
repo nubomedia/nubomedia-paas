@@ -22,13 +22,12 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         var urlMediaManager = '';
         var maxLoad = 100;
         var marketurl = $cookieStore.get('marketplaceIP');
-        $scope.file ='';
+        $scope.file = '';
         $scope.appJson = '';
 
         //var marketurl = 'http://localhost:8082/api/v1/app/';
         //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
         //console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
-
 
 
         if (angular.isUndefined($cookieStore.get('server-ip'))) {
@@ -154,13 +153,17 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             console.log($location.path());
             console.log(marketurl);
             if ($location.path() === '/marketapps')
-                http.getMarket(marketurl)
+                http.get(marketurl)
                     .success(function (response, status) {
                         $scope.apllications = response;
                         console.log(response);
 
                     }).error(function (data, status) {
-                    showError(status, data);
+                    if (status === 404)
+                        showError(status, "The Server is offline");
+                    else
+                        showError(status, data);
+
                 });
             else
                 http.get(url)
@@ -239,13 +242,13 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 postTopology = $scope.file;
                 console.log("It's a File!")
             }
-            else if ($scope.appJson !== ''){
+            else if ($scope.appJson !== '') {
                 postTopology = $scope.appJson;
                 console.log("It's a TextArea!")
 
             }
 
-            else if (angular.isUndefined(postTopology)){
+            else if (angular.isUndefined(postTopology)) {
                 postTopology = $scope.appCreate;
                 console.log("It's a Form!")
 
@@ -390,15 +393,64 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             });
         };
 
-        /*function marketplaceIP() {
-            if (angular.isUndefined(marketurl)) {
-                http.syncGet($cookieStore.get('URLNb') + '/api/v1/nubomedia/config')
-                    .then(function (result) {
-                        console.log(result);
-                        marketurl = result.data + ':8082/api/v1/app/';
-                    })
-            }
-        }*/
+
+        /* -- multiple delete functions Start -- */
+
+        $scope.multipleDeleteReq = function(){
+            var ids = [];
+            angular.forEach($scope.selection.ids, function (value, k) {
+                if (value) {
+                    ids.push(k);
+                }
+            });
+            //console.log(ids);
+            http.post(url + 'multipledelete', ids)
+                .success(function (response) {
+                    showOk('Applications: ' + ids.toString() + ' deleted.');
+                    loadTable();
+                })
+                .error(function (response, status) {
+                    showError(response, status);
+                });
+
+        };
+
+        $scope.main = {checkbox: false};
+        $scope.$watch('main', function (newValue, oldValue) {
+            ////console.log(newValue.checkbox);
+            ////console.log($scope.selection.ids);
+            angular.forEach($scope.selection.ids, function (value, k) {
+                $scope.selection.ids[k] = newValue.checkbox;
+            });
+            //console.log($scope.selection.ids);
+        }, true);
+
+        $scope.$watch('selection', function (newValue, oldValue) {
+            //console.log(newValue);
+            var keepGoing = true;
+            angular.forEach($scope.selection.ids, function (value, k) {
+                if (keepGoing) {
+                    if ($scope.selection.ids[k]) {
+                        $scope.multipleDelete = false;
+                        keepGoing = false;
+                    }
+                    else {
+                        $scope.multipleDelete = true;
+                    }
+                }
+
+            });
+            if (keepGoing)
+                $scope.mainCheckbox = false;
+        }, true);
+
+        $scope.multipleDelete = true;
+
+        $scope.selection = {};
+        $scope.selection.ids = {};
+        /* -- multiple delete functions END -- */
+
+
         function n2br(str) {
             str = str.replace(/(?:\\[rn]|[\r\n]+)+/g, "<br />");
             //return str.replace(/\r\n|\r|\n//g, "<br />");
