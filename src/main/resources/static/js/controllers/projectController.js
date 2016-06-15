@@ -26,7 +26,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
         //console.log(ids);
         http.post(url + 'multipledelete', ids)
             .success(function (response) {
-                showOk('Event: ' + ids.toString() + ' deleted.');
+                showOk('Projects: ' + ids.toString() + ' deleted.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -117,7 +117,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
         });
         $('.modal').modal('hide');
         if (status === 401) {
-            console.error(status + ' Status unauthorized')
+            console.error(status + ' Status unauthorized');
             AuthService.logout();
         }
     }

@@ -68,7 +68,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
         //console.log(ids);
         http.post(url + 'multipledelete', ids)
             .success(function (response) {
-                showOk('user: ' + ids.toString() + ' deleted.');
+                showOk('Users: ' + ids.toString() + ' deleted.');
                 loadTable();
             })
             .error(function (response, status) {

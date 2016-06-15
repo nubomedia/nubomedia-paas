@@ -45,14 +45,6 @@ angular.module('app')
             })
         };
 
-        http.getMarket = function (url) {
-            checkHeaders(url, customHeaders);
-            return $http({
-                url: url,
-                method: 'GET',
-                headers: customHeaders
-            })
-        };
 
 
         http.getMarketplaceIp = function () {
