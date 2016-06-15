@@ -12,7 +12,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
     $scope.roles = [
         'GUEST',
         'ADMIN',
-        'OB_ADMIN'
+        'NUBOMEDIA_ADMIN'
     ];
 
     loadTable();
