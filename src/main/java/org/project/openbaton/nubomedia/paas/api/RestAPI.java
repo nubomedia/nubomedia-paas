@@ -21,6 +21,8 @@ import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.core.OpenShiftManager;
 import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
+import org.project.openbaton.nubomedia.paas.exceptions.NotAllowedException;
+import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
@@ -39,6 +41,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,13 +184,7 @@ public class RestAPI {
             String name = app.getAppName();
             String projectName = app.getProjectName();
 
-            if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
-                logger.debug("media server group: " + app.getMediaServerGroup());
-                obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
-                if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(app.getMediaServerGroup().getId())) {
-                    obmanager.deleteRecord(app.getMediaServerGroup().getId());
-                }
-            }
+            checkAppStatus(app);
 
             appRepo.delete(app);
             return new NubomediaDeleteAppResponse(id, name, projectName, 200);
@@ -216,6 +213,30 @@ public class RestAPI {
         return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), resDelete.value());
     }
 
+    private void checkAppStatus(Application app) {
+        if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
+            logger.debug("media server group: " + app.getMediaServerGroup());
+            obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
+            if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(app.getMediaServerGroup().getId())) {
+                obmanager.deleteRecord(app.getMediaServerGroup().getId());
+            }
+        }
+    }
+
+    /**
+     * Deletes all the Apps specified in the list of ids
+     * @param projectId
+     * @param ids
+     * @throws NotFoundException
+     * @throws NotAllowedException
+     * @throws UnauthorizedException
+     */
+    @RequestMapping(value = "/multipledelete", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void multipleDelete(@RequestHeader(value = "project-id") String projectId, @RequestBody @Valid List<String> ids) throws NotFoundException, NotAllowedException, UnauthorizedException {
+        for (String id : ids)
+            deleteApp(id,projectId);
+    }
 
     /**
      *
@@ -239,15 +260,7 @@ public class RestAPI {
         logger.debug("Deleting " + apps);
         for (Application app : apps) {
             if (!app.isResourceOK()) {
-                if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
-                    logger.debug("media server group: " + app.getMediaServerGroup());
-                    obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
-
-                    if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(app.getMediaServerGroup().getId())) {
-                        obmanager.deleteRecord(app.getMediaServerGroup().getId());
-                    }
-                }
-
+                checkAppStatus(app);
                 appRepo.delete(app);
                 response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), 200));
                 break;

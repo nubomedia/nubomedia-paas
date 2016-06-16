@@ -417,8 +417,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         $scope.main = {checkbox: false};
         $scope.$watch('main', function (newValue, oldValue) {
-            ////console.log(newValue.checkbox);
-            ////console.log($scope.selection.ids);
+            //console.log(newValue.checkbox);
+            //console.log($scope.selection.ids);
             angular.forEach($scope.selection.ids, function (value, k) {
                 $scope.selection.ids[k] = newValue.checkbox;
             });
@@ -740,12 +740,12 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                 // remove all data points which are no longer visible
                 //var range = graph2d.getWindow();
                 //var interval = range.end - range.start;
-                ////var oldIds = dataset.getIds({
-                ////    filter: function (item) {
-                ////        return item.x < range.start - interval;
-                ////    }
-                ////});
-                ////dataset.remove(oldIds);
+                //var oldIds = dataset.getIds({
+                //    filter: function (item) {
+                //        return item.x < range.start - interval;
+                //    }
+                //});
+                //dataset.remove(oldIds);
 
                 setTimeout(addDataPoint, DELAY);
             }
