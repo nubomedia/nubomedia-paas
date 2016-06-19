@@ -1,12 +1,28 @@
+/*
+ * Copyright (c) 2015-2016 Fraunhofer FOKUS
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.project.openbaton.nubomedia.paas.security.authorization;
 
 
 import org.project.openbaton.nubomedia.paas.exceptions.NotAllowedException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
-import org.project.openbaton.nubomedia.paas.repository.security.ProjectRepository;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
+import org.project.openbaton.nubomedia.paas.repository.security.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,8 +60,7 @@ public class ProjectManagement implements org.project.openbaton.nubomedia.paas.s
     public void delete(Project project) throws NotAllowedException {
         Project projectToDelete = projectRepository.findFirstById(project.getId());
         User user = getCurrentUser();
-        for (Role role : user.getRoles())
-            if (role.getProject().equals(projectToDelete.getName())) {
+        if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) {
                 projectRepository.delete(projectToDelete);
                 return;
             }
@@ -56,6 +71,8 @@ public class ProjectManagement implements org.project.openbaton.nubomedia.paas.s
     public Project update(Project new_project) {
         Project project = projectRepository.findFirstById(new_project.getId());
         User user = getCurrentUser();
+        if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal())
+            return projectRepository.save(new_project);
         for (Role role : user.getRoles())
             if (role.getProject().equals(project.getName()))
                 return projectRepository.save(new_project);
@@ -71,6 +88,8 @@ public class ProjectManagement implements org.project.openbaton.nubomedia.paas.s
     public Project query(String id) throws NotFoundException {
         Project project = projectRepository.findFirstById(id);
         User user = getCurrentUser();
+        if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal())
+            return project;
         for (Role role : user.getRoles())
             if (role.getProject().equals(project.getName()))
                 return project;
