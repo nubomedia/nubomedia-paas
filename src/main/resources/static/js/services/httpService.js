@@ -123,10 +123,11 @@ angular.module('app')
         };
 
         function checkHeaders(url, customHeaders) {
-            if (url.indexOf('8081') > -1) {
-                customHeaders['project-id'] = $cookieStore.get('projectNb').id;
-            } else {
+            if (url.indexOf('8082') > -1 || url.indexOf('9000') > -1) {
                 delete customHeaders['project-id'];
+
+            } else {
+                customHeaders['project-id'] = $cookieStore.get('projectNb').id;
             }
             console.log(customHeaders);
         }
