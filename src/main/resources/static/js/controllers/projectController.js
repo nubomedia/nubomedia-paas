@@ -72,7 +72,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
 
 
     $scope.types = ['REST', 'RABBIT', 'JMS'];
-    $scope.deleteEvent = function (data) {
+    $scope.deleteProject = function (data) {
         http.delete(url + data.id)
             .success(function (response) {
                 showOk('Project : ' + data.name + ' deleted.');
