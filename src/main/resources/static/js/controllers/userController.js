@@ -116,7 +116,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
     $scope.deleteuser = function (data) {
         http.delete(url + data.id)
             .success(function (response) {
-                showOk('user: ' + data.name + ' deleted.');
+                showOk('User: ' + data.name + ' deleted.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -133,7 +133,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
         //console.log($scope.userObj);
         http.post(url, $scope.userObj)
             .success(function (response) {
-                showOk('Project: ' + $scope.userObj.name + ' saved.');
+                showOk('User: ' + $scope.userObj.username + ' saved.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -156,7 +156,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
             http.get(url)
                 .success(function (response) {
                     $scope.users = response;
-                    //console.log(response);
+                    console.log(response);
                 })
                 .error(function (data, status) {
                     showError(data, status);
