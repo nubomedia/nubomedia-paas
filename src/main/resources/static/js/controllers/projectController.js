@@ -75,7 +75,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
     $scope.deleteEvent = function (data) {
         http.delete(url + data.id)
             .success(function (response) {
-                showOk('Event: ' + data.name + ' deleted.');
+                showOk('Project : ' + data.name + ' deleted.');
                 loadTable();
             })
             .error(function (response, status) {
