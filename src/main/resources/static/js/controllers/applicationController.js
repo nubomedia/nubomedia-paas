@@ -574,7 +574,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             console.log($scope.vnfrId);
             console.log(urlMediaManager);
 
-            http.getMarket(urlMediaManager)
+            http.get(urlMediaManager)
                 .success(function (data) {
                     //console.log(data);
                     $scope.vnfrs = data;
