@@ -17,6 +17,7 @@ package org.project.openbaton.nubomedia.paas.api;
 
 import org.project.openbaton.nubomedia.paas.exceptions.NotAllowedException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
+import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.security.interfaces.ProjectManagement;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class RestProject {
 
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") String id) throws NotAllowedException, NotFoundException {
+    public void delete(@PathVariable("id") String id) throws NotAllowedException, NotFoundException, UnauthorizedException {
         log.debug("removing Project with id " + id);
         projectManagement.delete(projectManagement.query(id));
     }
@@ -73,7 +74,7 @@ public class RestProject {
      */
     @RequestMapping(value = "/multipledelete", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void multipleDelete(@RequestBody @Valid List<String> ids) throws NotFoundException, NotAllowedException {
+    public void multipleDelete(@RequestBody @Valid List<String> ids) throws NotFoundException, NotAllowedException, UnauthorizedException {
         for (String id : ids)
             projectManagement.delete(projectManagement.query(id));
     }
