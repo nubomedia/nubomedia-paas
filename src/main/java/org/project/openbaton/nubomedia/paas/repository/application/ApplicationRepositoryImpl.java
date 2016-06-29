@@ -32,7 +32,7 @@ public class ApplicationRepositoryImpl implements ApplicationRepositoryCustom{
     @Override
     public Application findFirstByAppIdAndProjectId(String id, String projectId) {
         for (Application app : applicationRepository.findAll()) {
-            if (app.getAppID().equals(id) && app.getProjectId().equals(projectId)) {
+            if (app.getId().equals(id) && app.getProjectId().equals(projectId)) {
                 return app;
             }
         }

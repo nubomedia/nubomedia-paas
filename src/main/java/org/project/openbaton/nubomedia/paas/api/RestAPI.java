@@ -181,7 +181,7 @@ public class RestAPI {
         // check that the app has been instantiated on openshift
         if (!app.isResourceOK()) {
 
-            String name = app.getAppName();
+            String name = app.getName();
             String projectName = app.getProjectName();
 
             checkAppStatus(app);
@@ -193,32 +193,32 @@ public class RestAPI {
 
         if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
             obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
-            obmanager.deleteRecord(app.getMediaServerGroup().getId());
+            obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
             appRepo.delete(app);
 
-            return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), 200);
+            return new NubomediaDeleteAppResponse(id, app.getName(), app.getProjectName(), 200);
         }
 
 
-        obmanager.deleteRecord(app.getMediaServerGroup().getId());
+        obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
         HttpStatus resDelete = HttpStatus.BAD_REQUEST;
         try {
-            resDelete = osmanager.deleteApplication(token, app.getAppName());
+            resDelete = osmanager.deleteApplication(token, app.getName());
         } catch (ResourceAccessException e) {
             logger.info("Application does not exist on the PaaS");
         }
 
         appRepo.delete(app);
 
-        return new NubomediaDeleteAppResponse(id, app.getAppName(), app.getProjectName(), resDelete.value());
+        return new NubomediaDeleteAppResponse(id, app.getName(), app.getProjectName(), resDelete.value());
     }
 
     private void checkAppStatus(Application app) {
         if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING) || app.getStatus().equals(AppStatus.FAILED)) {
             logger.debug("media server group: " + app.getMediaServerGroup());
             obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
-            if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(app.getMediaServerGroup().getId())) {
-                obmanager.deleteRecord(app.getMediaServerGroup().getId());
+            if (!app.getStatus().equals(AppStatus.FAILED) && obmanager.existRecord(app.getMediaServerGroup().getNsrID())) {
+                obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
             }
         }
     }
@@ -262,26 +262,26 @@ public class RestAPI {
             if (!app.isResourceOK()) {
                 checkAppStatus(app);
                 appRepo.delete(app);
-                response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), 200));
+                response.getResponses().add(new NubomediaDeleteAppResponse(app.getId(), app.getName(), app.getProjectName(), 200));
                 break;
             }
 
             if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
-                obmanager.deleteRecord(app.getMediaServerGroup().getId());
+                obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
                 appRepo.delete(app);
-                response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), 200));
+                response.getResponses().add(new NubomediaDeleteAppResponse(app.getId(), app.getName(), app.getProjectName(), 200));
                 break;
             }
-            obmanager.deleteRecord(app.getMediaServerGroup().getId());
+            obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
             HttpStatus resDelete = HttpStatus.BAD_REQUEST;
             try {
-                resDelete = osmanager.deleteApplication(token, app.getAppName());
+                resDelete = osmanager.deleteApplication(token, app.getName());
             } catch (ResourceAccessException e) {
                 logger.info("PaaS Missing");
             }
 
             appRepo.delete(app);
-            response.getResponses().add(new NubomediaDeleteAppResponse(app.getAppID(), app.getAppName(), app.getProjectName(), resDelete.value()));
+            response.getResponses().add(new NubomediaDeleteAppResponse(app.getId(), app.getName(), app.getProjectName(), resDelete.value()));
         }
         for (NubomediaDeleteAppResponse singleRes : response.getResponses()) {
             if (singleRes.getCode() != 200) {
@@ -322,20 +322,20 @@ public class RestAPI {
         if (app.getStatus().equals(AppStatus.FAILED) && !app.isResourceOK()) {
 
             res.setId(id);
-            res.setAppName(app.getAppName());
+            res.setAppName(app.getName());
             res.setProjectName(app.getProjectName());
             res.setLog("Something wrong on retrieving resources");
 
         } else if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING)) {
             res.setId(id);
-            res.setAppName(app.getAppName());
+            res.setAppName(app.getName());
             res.setProjectName(app.getProjectName());
             res.setLog("The application is retrieving resources " + app.getStatus());
 
             return res;
         } else if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
             res.setId(id);
-            res.setAppName(app.getAppName());
+            res.setAppName(app.getName());
             res.setProjectName(app.getProjectName());
             res.setLog("PaaS components are missing, send an email to the administrator to check the PaaS status");
 
@@ -343,14 +343,14 @@ public class RestAPI {
         } else {
 
             res.setId(id);
-            res.setAppName(app.getAppName());
+            res.setAppName(app.getName());
             res.setProjectName(app.getProjectName());
             try {
-                res.setLog(osmanager.getBuildLogs(token, app.getAppName()));
+                res.setLog(osmanager.getBuildLogs(token, app.getName()));
             } catch (ResourceAccessException e) {
                 app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
                 appRepo.save(app);
-                res.setLog("Openshift is not responding, app " + app.getAppName() + " is not anymore available");
+                res.setLog("Openshift is not responding, app " + app.getName() + " is not anymore available");
             }
         }
 
@@ -385,7 +385,7 @@ public class RestAPI {
             return "Application Status " + app.getStatus() + ", logs are not available until the status is RUNNING";
         }
 
-        return osmanager.getApplicationLog(token, app.getAppName(), podName);
+        return osmanager.getApplicationLog(token, app.getName(), podName);
 
     }
 

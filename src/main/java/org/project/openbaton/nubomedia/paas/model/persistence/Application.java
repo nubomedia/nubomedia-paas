@@ -17,7 +17,7 @@
 package org.project.openbaton.nubomedia.paas.model.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openbaton.catalogue.mano.descriptor.Policy;
+import org.openbaton.catalogue.util.IdGenerator;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
@@ -32,8 +32,8 @@ import java.util.List;
 public class Application {
 
     @Id
-    private String appID;
-    private String appName;
+    private String id;
+    private String name;
     private String projectName;
     private String projectId;
     private String route;
@@ -59,10 +59,9 @@ public class Application {
 
 
 
-    public Application(String appID,Flavor flavor, String appName, String projectName, String projectId, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, List<String> podList, int replicasNumber, String secretName,boolean resourceOK) {
-        this.appID = appID;
+    public Application(Flavor flavor, String name, String projectName, String projectId, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, List<String> podList, int replicasNumber, String secretName,boolean resourceOK) {
         this.flavor = flavor;
-        this.appName = appName;
+        this.name = name;
         this.projectName = projectName;
         this.projectId = projectId;
         this.route = route;
@@ -87,12 +86,21 @@ public class Application {
     public Application() {
     }
 
-    public String getAppName() {
-        return appName;
+    @PrePersist
+    public void ensureId(){
+        id = IdGenerator.createUUID();
     }
 
-    public void setAppName(String appName) {
-        this.appName = appName;
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getProjectName() {
@@ -149,14 +157,6 @@ public class Application {
 
     public void setFlavor(Flavor flavor) {
         this.flavor = flavor;
-    }
-
-    public String getAppID() {
-        return appID;
-    }
-
-    public void setAppID(String appID) {
-        this.appID = appID;
     }
 
     public AppStatus getStatus() {
@@ -218,8 +218,8 @@ public class Application {
     @Override
     public String toString() {
         return "Application{" +
-                "appID='" + appID + '\'' +
-                ", appName='" + appName + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
                 ", projectName='" + projectName + '\'' +
                 ", projectId='" + projectId + '\'' +
                 ", route='" + route + '\'' +

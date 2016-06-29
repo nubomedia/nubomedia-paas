@@ -16,10 +16,9 @@
 
 package org.project.openbaton.nubomedia.paas.model.persistence.openbaton;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
+import org.openbaton.catalogue.util.IdGenerator;
+
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -31,12 +30,22 @@ public class MediaServerGroup {
     @Id
     private String id;
     private String nsdID;
+    private String nsrID;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> floatingIPs;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> hostnames;
 
     public MediaServerGroup() {
+    }
+
+    @PrePersist
+    public void ensureId(){
+        id = IdGenerator.createUUID();
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getNsdID() {
@@ -47,12 +56,12 @@ public class MediaServerGroup {
         this.nsdID = nsdID;
     }
 
-    public String getId() {
-        return id;
+    public String getNsrID() {
+        return nsrID;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setNsrID(String nsrID) {
+        this.nsrID = nsrID;
     }
 
     public List<String> getFloatingIPs() {
@@ -76,6 +85,9 @@ public class MediaServerGroup {
         return "MediaServerGroup{" +
                 "id='" + id + '\'' +
                 ", nsdID='" + nsdID + '\'' +
+                ", nsrID='" + nsrID + '\'' +
+                ", floatingIPs=" + floatingIPs +
+                ", hostnames=" + hostnames +
                 '}';
     }
 }

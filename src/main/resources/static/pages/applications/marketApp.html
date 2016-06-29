@@ -50,7 +50,7 @@
                 <tr>
                     <th><input type="checkbox" ng-model="main.checkbox"></th>
                     <th ng-click="predicate = 'id';reverse = !reverse">id <i class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'appName';reverse = !reverse">appName <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'name';reverse = !reverse">name <i class="fa fa-sort"></i></th>
                     <th ng-click="predicate = 'flavor'; reverse = !reverse">flavor <i class="fa fa-sort"></i></th>
                     <th ng-click="predicate = 'projectName'; reverse = !reverse">projectName <i
                             class="fa fa-sort"></i></th>
@@ -62,7 +62,7 @@
                 <tr ng-repeat="data in apllications| orderBy:predicate:reverse">
                     <td><input type="checkbox" ng-init="selection.ids[data.id] = false" ng-model="selection.ids[data.id]" name="group" id="{{data.id}}" /></td>
                     <td><a href="#marketapps/{{data.id}}" ng-click="setApp(data)">{{data.id}}</a></td>
-                    <td>{{data.appName}}</td>
+                    <td>{{data.name}}</td>
                     <td>{{data.flavor}}</td>
                     <td>{{data.projectName}}</td>
                     <td>{{data.provider}}</td>

@@ -51,7 +51,7 @@
                 <tr>
                     <th><input type="checkbox" ng-model="main.checkbox"></th>
                     <th ng-click="predicate = 'appID';reverse = !reverse">appID <i class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'appName';reverse = !reverse">appName <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'name';reverse = !reverse">name <i class="fa fa-sort"></i></th>
                     <th ng-if="application.route" ng-click="predicate = 'route';reverse = !reverse">route <i
                             class="fa fa-sort"></i></th>
                     <th ng-click="predicate = 'flavor'; reverse = !reverse">flavor <i class="fa fa-sort"></i></th>
@@ -65,7 +65,7 @@
                 <tr ng-repeat="data in apllications| orderBy:predicate:reverse">
                     <td><input type="checkbox" ng-init="selection.ids[data.appID] = false" ng-model="selection.ids[data.appID]" name="group" id="{{data.id}}" /></td>
                     <td><a href="#applications/{{data.appID}}">{{data.appID}}</a></td>
-                    <td>{{data.appName}}</td>
+                    <td>{{data.name}}</td>
                     <td ng-if="application.route"><a href="http://{{application.route}}" target="_blank">url</a></td>
                     <td>{{data.flavor}}</td>
                     <td>{{data.projectName}}</td>
@@ -425,7 +425,7 @@
             <div class="modal-body">
                 <p>You are going to delete these applications:</p>
                 <ul ng-repeat="data in apllications">
-                    <li>{{data.appName}</li>
+                    <li>{{data.name}</li>
                 </ul>
                 <p>Please confirm your selection.</p>
             </div>
