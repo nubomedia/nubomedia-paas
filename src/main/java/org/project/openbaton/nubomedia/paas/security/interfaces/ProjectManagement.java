@@ -2,6 +2,7 @@ package org.project.openbaton.nubomedia.paas.security.interfaces;
 
 import org.project.openbaton.nubomedia.paas.exceptions.NotAllowedException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
+import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 
 /**
@@ -18,7 +19,7 @@ public interface ProjectManagement {
      *
      * @param project
      */
-    void delete(Project project) throws NotAllowedException;
+    void delete(Project project) throws NotAllowedException, UnauthorizedException;
 
     /**
      *
