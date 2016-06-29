@@ -17,8 +17,10 @@
 package org.project.openbaton.nubomedia.paas.security.authorization;
 
 
+import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.exceptions.NotAllowedException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
+import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
@@ -42,6 +44,9 @@ public class ProjectManagement implements org.project.openbaton.nubomedia.paas.s
     private org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement userManagement;
 
     @Autowired
+    private AppManager appManager;
+
+    @Autowired
     private ProjectRepository projectRepository;
 
     @Override
@@ -50,20 +55,21 @@ public class ProjectManagement implements org.project.openbaton.nubomedia.paas.s
         if (currentUser != null) {
             if (currentUser.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal())
                 return projectRepository.save(project);
-        }else {
+        } else {
             return projectRepository.save(project);
         }
         throw new UnauthorizedUserException("Sorry only NUBOMEDIA_ADMIN can add project");
     }
 
     @Override
-    public void delete(Project project) throws NotAllowedException {
+    public void delete(Project project) throws NotAllowedException, UnauthorizedException {
         Project projectToDelete = projectRepository.findFirstById(project.getId());
         User user = getCurrentUser();
         if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) {
-                projectRepository.delete(projectToDelete);
-                return;
-            }
+            appManager.deleteApps(project.getId());
+            projectRepository.delete(projectToDelete);
+            return;
+        }
         throw new UnauthorizedUserException("Project not under the project chosen, are you trying to hack us? Just kidding, it's a bug :)");
     }
 
