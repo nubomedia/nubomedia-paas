@@ -77,23 +77,23 @@ public class AppManager {
         if (token == null) {
             throw new UnauthorizedException("No auth-token header");
         }
-        if (request.getAppName().length() > 18) {
+        if (request.getName().length() > 18) {
             throw new NameStructureException("Name is too long");
         }
-        if (request.getAppName().contains(".")) {
+        if (request.getName().contains(".")) {
             throw new NameStructureException("Name can't contains dots");
         }
 
-        if (request.getAppName().contains("_")) {
+        if (request.getName().contains("_")) {
             throw new NameStructureException("Name can't contain underscore");
         }
 
-        if (!request.getAppName().matches("[a-z0-9]+(?:[._-][a-z0-9]+)*")) {
+        if (!request.getName().matches("[a-z0-9]+(?:[._-][a-z0-9]+)*")) {
             throw new NameStructureException("Name must match [a-z0-9]+(?:[._-][a-z0-9]+)*");
         }
 
-        if (!appRepo.findByAppName(request.getAppName()).isEmpty()) {
-            throw new DuplicatedException("Application with " + request.getAppName() + " already exist");
+        if (!appRepo.findByName(request.getName()).isEmpty()) {
+            throw new DuplicatedException("Application with " + request.getName() + " already exist");
         }
 
         logger.debug("REQUEST" + request.toString());
@@ -108,7 +108,7 @@ public class AppManager {
             ports.add(port.getPort());
         }
 
-        logger.debug("request params " + request.getAppName() + " " + request.getGitURL() + " " + ports + " " + protocols + " " + request.getReplicasNumber());
+        logger.debug("request params " + request.getName() + " " + request.getGitURL() + " " + ports + " " + protocols + " " + request.getReplicasNumber());
 
         //Openbaton MediaServer Request
         logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
@@ -116,7 +116,7 @@ public class AppManager {
 
         // Creating the application
         Application app = new Application();
-        app.setName(request.getAppName());
+        app.setName(request.getName());
         app.setProjectName(openshiftProject);
         app.setProjectId(projectId);
         app.setMediaServerGroup(mediaServerGroup);
@@ -145,11 +145,11 @@ public class AppManager {
      * @throws UnauthorizedException
      */
     public void startOpenshiftBuild(OpenBatonEvent evt) throws UnauthorizedException {
-        String mediaServerGroupID = evt.getPayload().getId();
-        logger.debug("starting callback for app with media server group ID " + mediaServerGroupID);
+        String nsrId = evt.getPayload().getId();
+        logger.debug("starting callback for app with media server group ID " + nsrId);
         logger.info("Received event " + evt);
 
-        Application app = appRepo.findByMSGroupID(mediaServerGroupID);
+        Application app = appRepo.findByNsrId(nsrId);
         MediaServerGroup mediaServerGroup = app.getMediaServerGroup();
         if (evt.getAction().equals(Action.INSTANTIATE_FINISH) && mediaServerGroup.getNsrID().equals(evt.getPayload().getId())) {
             logger.info("[PAAS]: EVENT_FINISH " + new Date().getTime());
@@ -362,27 +362,27 @@ public class AppManager {
 
         if (app.getStatus().equals(AppStatus.FAILED) && !app.isResourceOK()) {
             res.setId(id);
-            res.setAppName(app.getName());
+            res.setName(app.getName());
             res.setProjectName(app.getProjectName());
             res.setLog("Something wrong on retrieving resources");
 
         } else if (app.getStatus().equals(AppStatus.CREATED) || app.getStatus().equals(AppStatus.INITIALIZING)) {
             res.setId(id);
-            res.setAppName(app.getName());
+            res.setName(app.getName());
             res.setProjectName(app.getProjectName());
             res.setLog("The application is retrieving resources " + app.getStatus());
 
             return res;
         } else if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
             res.setId(id);
-            res.setAppName(app.getName());
+            res.setName(app.getName());
             res.setProjectName(app.getProjectName());
             res.setLog("PaaS components are missing, send an email to the administrator to check the PaaS status");
 
             return res;
         } else {
             res.setId(id);
-            res.setAppName(app.getName());
+            res.setName(app.getName());
             res.setProjectName(app.getProjectName());
             try {
                 res.setLog(osmanager.getBuildLogs(token, app.getName()));
