@@ -160,7 +160,6 @@ public class OpenShiftManager {
     }
 
     public String createSecret(String token, String privateKey) throws UnauthorizedException {
-
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
         return secretManager.createSecret(kubernetesBaseURL, this.project, privateKey, authHeader);
@@ -169,18 +168,14 @@ public class OpenShiftManager {
     public HttpStatus deleteSecret(String token, String secretName) throws UnauthorizedException {
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
-
         return secretManager.deleteSecret(kubernetesBaseURL, secretName, this.project, authHeader);
     }
 
     public AppStatus getStatus(String token, String appName) throws UnauthorizedException {
-
         AppStatus res = AppStatus.INITIALISED;
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
-
         AppStatus status = buildManager.getApplicationStatus(openshiftBaseURL, appName, this.project, authHeader);
-
         try {
             switch (status) {
                 case BUILDING:
@@ -199,21 +194,17 @@ public class OpenShiftManager {
         } catch (NullPointerException e) {
             res = AppStatus.BUILDING;
         }
-
         return res;
     }
 
     public String getApplicationLog(String token, String appName, String podName) throws UnauthorizedException {
-
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
         HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
-
         return deploymentManager.getPodLogs(kubernetesBaseURL, this.project, appName, podName, requestEntity);
     }
 
     public String getBuildLogs(String token, String appName) throws UnauthorizedException {
-
         HttpHeaders authHeader = new HttpHeaders();
         authHeader.add("Authorization", "Bearer " + token);
         return buildManager.getBuildLogs(openshiftBaseURL, appName, this.project, authHeader);
