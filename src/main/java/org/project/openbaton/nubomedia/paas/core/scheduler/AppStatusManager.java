@@ -54,22 +54,22 @@ public class AppStatusManager {
     private String token;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         token = properties.getToken();
     }
 
-    @Scheduled(initialDelay=1000, fixedRate=5000)
+    @Scheduled(initialDelay = 1000, fixedRate = 5000)
     private void refreshBuildingApplicationStatus() {
         //BETA
         Iterable<Application> applications = this.appRepo.findAll();
         for (Application app : applications) {
-            if(!app.getStatus().equals(AppStatus.RUNNING))
-            try {
-                app.setStatus(this.getStatus(this.token, app));
-            } catch (UnauthorizedException e) {
-                logger.error("There were issues in connecting to OpenShift ");
-                e.printStackTrace();
-            }
+            if (!app.getStatus().equals(AppStatus.RUNNING))
+                try {
+                    app.setStatus(this.getStatus(this.token, app));
+                } catch (UnauthorizedException e) {
+                    logger.error("There were issues in connecting to OpenShift ");
+                    e.printStackTrace();
+                }
             try {
                 this.refreshMediaServerGroup(app);
             } catch (Exception e) {
@@ -82,7 +82,7 @@ public class AppStatusManager {
     }
 
 
-    @Scheduled(initialDelay=10000, fixedRate=180000)
+    @Scheduled(initialDelay = 10000, fixedRate = 180000)
     private void refreshAllpplicationStatus() {
         //BETA
         Iterable<Application> applications = this.appRepo.findAll();
@@ -96,20 +96,18 @@ public class AppStatusManager {
         }
         this.appRepo.save(applications);
     }
-    
-
 
 
     private AppStatus getStatus(String token, Application app) throws UnauthorizedException {
         AppStatus res;
-        logger.debug("application ("+app.getAppID()+"-"+app.getAppName()+") status is "+app.getStatus());
+        logger.debug("application (" + app.getId() + "-" + app.getName() + ") status is " + app.getStatus());
 
         switch (app.getStatus()) {
             case CREATED:
-                res = obmanager.getStatus(app.getMediaServerGroup().getId());
+                res = obmanager.getStatus(app.getMediaServerGroup().getNsrID());
                 break;
             case INITIALIZING:
-                res = obmanager.getStatus(app.getMediaServerGroup().getId());
+                res = obmanager.getStatus(app.getMediaServerGroup().getNsrID());
                 break;
             case FAILED:
                 logger.debug("FAILED: app has resource ok? " + app.isResourceOK());
@@ -118,7 +116,7 @@ public class AppStatusManager {
                     break;
                 } else {
                     try {
-                        res = osmanager.getStatus(token, app.getAppName());
+                        res = osmanager.getStatus(token, app.getName());
                     } catch (ResourceAccessException e) {
                         res = AppStatus.PAAS_RESOURCE_MISSING;
                     }
@@ -126,7 +124,7 @@ public class AppStatusManager {
                 break;
             default:
                 try {
-                    res = osmanager.getStatus(token, app.getAppName());
+                    res = osmanager.getStatus(token, app.getName());
                 } catch (ResourceAccessException e) {
                     res = AppStatus.PAAS_RESOURCE_MISSING;
                 }

@@ -65,8 +65,6 @@ public class OpenbatonManager {
     @Autowired
     private NSDUtil nsdUtil;
 
-    private EventEndpoint eventEndpointCreation, eventEndpointError;
-
     @Autowired
     @Qualifier("networkServiceDescriptorNubo")
     private NetworkServiceDescriptor networkServiceDescriptorNubo;
@@ -107,8 +105,8 @@ public class OpenbatonManager {
     }
 
 
-    public MediaServerGroup createMediaServerGroup(Flavor flavorID, String appID, String callbackUrl, boolean cloudRepositorySet, boolean cdnConnectorSet, QoS qos, boolean turnServerActivate, String serverTurnIp, String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
-        logger.debug("Creating Media Server Group with: FlavorID " + flavorID + " appID " + appID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
+    public MediaServerGroup createMediaServerGroup(Flavor flavorID, String callbackUrl, boolean cloudRepositorySet, boolean cdnConnectorSet, QoS qos, boolean turnServerActivate, String serverTurnIp, String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
+        logger.debug("Creating Media Server Group with: FlavorID " + flavorID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
         MediaServerGroup mediaServerGroup = new MediaServerGroup();
         // building network service descriptor
         NetworkServiceDescriptor targetNSD = nsdUtil.getNetworkServiceDescriptor(networkServiceDescriptorNubo,flavorID,qos,turnServerActivate, serverTurnIp,serverTurnUsername,serverTurnPassword,stunServerActivate, stunServerIp, stunServerPort, scaleInOut,scale_out_threshold);
@@ -138,7 +136,7 @@ public class OpenbatonManager {
         mediaServerGroup.setNsdID(targetNSD.getId());
         NetworkServiceRecord nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
         logger.debug("NSR " + nsr.toString());
-        mediaServerGroup.setId(nsr.getId());
+        mediaServerGroup.setNsrID(nsr.getId());
         logger.debug("Result " + mediaServerGroup.toString());
         return mediaServerGroup;
     }
@@ -146,7 +144,7 @@ public class OpenbatonManager {
     public void updateMediaServerGroup(Application application) throws Exception {
         NetworkServiceRecord nsr = null;
         try {
-            nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(application.getMediaServerGroup().getId());
+            nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(application.getMediaServerGroup().getNsrID());
         } catch (SDKException | ClassNotFoundException e) {
             String message = "no NSR found, the media server group cannot be updated";
             logger.debug(message);

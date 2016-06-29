@@ -74,11 +74,6 @@ public class AppManager {
 
 
     public Application createApplication(NubomediaCreateAppRequest request, String projectId, String token) throws turnServerException, StunServerException, SDKException {
-        // generating ID
-        String appID = new BigInteger(130, appIDGenerator).toString(64);
-        logger.debug("App ID " + appID + "\n");
-
-
         List<String> protocols = new ArrayList<>();
         List<Integer> targetPorts = new ArrayList<>();
         List<Integer> ports = new ArrayList<>();
@@ -93,12 +88,11 @@ public class AppManager {
 
         //Openbaton MediaServer Request
         logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
-        MediaServerGroup mediaServerGroup = this.obmanager.createMediaServerGroup(request.getFlavor(), appID, this.paaSProperties.getInternalURL(), request.isCloudRepository(), request.isCdnConnector(), request.getQualityOfService(), request.isTurnServerActivate(), request.getTurnServerUrl(), request.getTurnServerUsername(), request.getTurnServerPassword(), request.isStunServerActivate(), request.getStunServerIp(), request.getStunServerPort(), request.getScaleInOut(), request.getScale_out_threshold());
+        MediaServerGroup mediaServerGroup = this.obmanager.createMediaServerGroup(request.getFlavor(), this.paaSProperties.getInternalURL(), request.isCloudRepository(), request.isCdnConnector(), request.getQualityOfService(), request.isTurnServerActivate(), request.getTurnServerUrl(), request.getTurnServerUsername(), request.getTurnServerPassword(), request.isStunServerActivate(), request.getStunServerIp(), request.getStunServerPort(), request.getScaleInOut(), request.getScale_out_threshold());
 
         // Creating the application
         Application app = new Application();
-        app.setAppID(appID);
-        app.setAppName(request.getAppName());
+        app.setName(request.getAppName());
         app.setProjectName(openshiftProject);
         app.setProjectId(projectId);
         app.setMediaServerGroup(mediaServerGroup);
@@ -133,7 +127,7 @@ public class AppManager {
 
         Application app = appRepo.findByMSGroupID(mediaServerGroupID);
         MediaServerGroup mediaServerGroup = app.getMediaServerGroup();
-        if (evt.getAction().equals(Action.INSTANTIATE_FINISH) && mediaServerGroup.getId().equals(evt.getPayload().getId())) {
+        if (evt.getAction().equals(Action.INSTANTIATE_FINISH) && mediaServerGroup.getNsrID().equals(evt.getPayload().getId())) {
             logger.info("[PAAS]: EVENT_FINISH " + new Date().getTime());
             app.setStatus(AppStatus.INITIALISED);
             app.setResourceOK(true);
@@ -194,7 +188,7 @@ public class AppManager {
                 logger.debug("cloudRepositoryPort " + cloudRepositoryPort + " IP " + cloudRepositoryIp);
 
                 try {
-                    route = osmanager.buildApplication(token, app.getAppID(), app.getAppName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(), vnfrID, paaSProperties.getVnfmIP(), paaSProperties.getVnfmPort(), cloudRepositoryIp, cloudRepositoryPort, cdnServerIp);
+                    route = osmanager.buildApplication(token, app.getId(), app.getName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(), vnfrID, paaSProperties.getVnfmIP(), paaSProperties.getVnfmPort(), cloudRepositoryIp, cloudRepositoryPort, cdnServerIp);
 
                 } catch (ResourceAccessException e) {
                     obmanager.deleteDescriptor(mediaServerGroup.getNsdID());
@@ -213,7 +207,7 @@ public class AppManager {
             appRepo.save(app);
         } else if (evt.getAction().equals(Action.ERROR)) {
             obmanager.deleteDescriptor(mediaServerGroup.getNsdID());
-            obmanager.deleteRecord(mediaServerGroup.getId());
+            obmanager.deleteRecord(mediaServerGroup.getNsrID());
             app.setStatus(AppStatus.FAILED);
             appRepo.save(app);
         }
