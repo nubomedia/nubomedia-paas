@@ -43,23 +43,22 @@ public class Application {
     private Flavor flavor;
     private AppStatus status;
 
-    @JsonIgnore private boolean resourceOK;
+    @JsonIgnore
+    private boolean resourceOK;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Integer> targetPorts;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Integer> ports;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> protocols;
-    @ElementCollection (fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> podList;
 
     @OneToOne(cascade = CascadeType.ALL)
     private MediaServerGroup mediaServerGroup;
 
 
-
-
-    public Application(Flavor flavor, String name, String projectName, String projectId, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, List<String> podList, int replicasNumber, String secretName,boolean resourceOK) {
+    public Application(Flavor flavor, String name, String projectName, String projectId, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, List<String> podList, int replicasNumber, String secretName, boolean resourceOK) {
         this.flavor = flavor;
         this.name = name;
         this.projectName = projectName;
@@ -68,10 +67,9 @@ public class Application {
         this.gitURL = gitURL;
         this.targetPorts = targetPorts;
 
-        if(ports == null){
+        if (ports == null) {
             this.ports = targetPorts;
-        }
-        else{
+        } else {
             this.ports = ports;
         }
 
@@ -87,7 +85,7 @@ public class Application {
     }
 
     @PrePersist
-    public void ensureId(){
+    public void ensureId() {
         id = IdGenerator.createUUID();
     }
 
