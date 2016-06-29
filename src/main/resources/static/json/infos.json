@@ -1,6 +1,6 @@
 {
   "gitURL": "URL of the git repository where the Dockerfile of the application can be found. If the repository is public the link has to be the https version, if is private has to be the ssh version)",
-  "appName": "the application name to be for creating the DNS entry of your application",
+  "name": "the application name to be for creating the DNS entry of your application",
   "cloudRepository": "boolean value. If true the Cloud Repository will be deployed along your application",
   "cloudRepoPort": "represent the port number for the Cloud Repository. It will be used by the Kurento-server-repository for talking with MongoDB",
   "qualityOfService": "If enabled it provides dedicated bandwidth levels between KMS instances (optional)",
