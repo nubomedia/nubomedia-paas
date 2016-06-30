@@ -130,6 +130,7 @@ public class AppManager {
         app.setResourceOK(false);
         app.setFlavor(request.getFlavor());
         app.setStatus(AppStatus.CREATED);
+        app.setCreatedAt(new Date());
 
         appRepo.save(app);
         return app;
