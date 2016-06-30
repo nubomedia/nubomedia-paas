@@ -23,6 +23,7 @@ import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,6 +43,8 @@ public class Application {
     private String secretName;
     private Flavor flavor;
     private AppStatus status;
+
+    private Date createdAt;
 
     @JsonIgnore
     private boolean resourceOK;
@@ -213,6 +216,14 @@ public class Application {
         this.projectId = projectId;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "Application{" +
@@ -226,6 +237,7 @@ public class Application {
                 ", secretName='" + secretName + '\'' +
                 ", flavor=" + flavor +
                 ", status=" + status +
+                ", createdAt=" + createdAt +
                 ", resourceOK=" + resourceOK +
                 ", targetPorts=" + targetPorts +
                 ", ports=" + ports +
