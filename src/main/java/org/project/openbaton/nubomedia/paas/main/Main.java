@@ -17,23 +17,24 @@
 package org.project.openbaton.nubomedia.paas.main;
 
 import org.project.openbaton.nubomedia.paas.core.openshift.OpenshiftConfiguration;
+import org.project.openbaton.nubomedia.paas.events.ConfigurationBeans;
+import org.project.openbaton.nubomedia.paas.main.utils.BeanSchedulerConfiguration;
+import org.project.openbaton.nubomedia.paas.main.utils.OpenbatonConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Created by lto on 24/09/15.
  */
 @SpringBootApplication
-@ContextConfiguration(classes = OpenshiftConfiguration.class)
-@EnableJpaRepositories ("org.project.openbaton.nubomedia.paas")
-@EntityScan (basePackages = "org.project.openbaton")
-@EnableScheduling
+@ContextConfiguration(classes = {OpenshiftConfiguration.class, OpenbatonConfiguration.class, BeanSchedulerConfiguration.class, ConfigurationBeans.class, })
+@EnableJpaRepositories("org.project.openbaton.nubomedia.paas")
+@EntityScan(basePackages = "org.project.openbaton")
 @ComponentScan(basePackages = "org.project.openbaton")
 public class Main {
     public static void main(String[] args) {
