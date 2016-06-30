@@ -75,10 +75,10 @@ public class MessageBuilderFactory {
         return smb.buildMessage();
     }
 
-    public static RouteConfig getRouteMessage(String name, String appID, String domainName) {
+    public static RouteConfig getRouteMessage(String name, String id, String domainName) {
 
         RouteTls tls = new RouteTls("passthrough",null,null,null,null);
-        RouteMessageBuilder rmb = new RouteMessageBuilder(name, appID, domainName, tls);
+        RouteMessageBuilder rmb = new RouteMessageBuilder(name, id, domainName, tls);
         return rmb.buildMessage();
     }
 
