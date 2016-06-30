@@ -21,7 +21,6 @@ import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
-import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.openbaton.catalogue.nfvo.VimInstance;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
@@ -70,7 +69,7 @@ public class OpenbatonManager {
     private NetworkServiceDescriptor networkServiceDescriptorNubo;
     private Logger logger;
     private NFVORequestor nfvoRequestor;
-    private String apiPath ;
+    private String apiPath;
 
     @PostConstruct
     private void init() throws IOException {
@@ -82,16 +81,15 @@ public class OpenbatonManager {
         try {
             this.logger.debug("Trying to create the VIM Instance " + vimInstance.getName());
             vimInstance = this.nfvoRequestor.getVimInstanceAgent().create(vimInstance);
-        } catch (SDKException e){
+        } catch (SDKException e) {
             try {
                 this.logger.warn("The VIM Instance " + vimInstance.getName() + " already exists, updating it");
                 List<VimInstance> instances = nfvoRequestor.getVimInstanceAgent().findAll();
-                for (VimInstance instance : instances){
-                    if (vimInstance.getName().equals(instance.getName())){
-                        if (!vimInstance.getAuthUrl().equals(instance.getAuthUrl()) && !vimInstance.getUsername().equals(instance.getUsername()) && !vimInstance.getPassword().equals(instance.getPassword())){
-                            nfvoRequestor.getVimInstanceAgent().update(vimInstance,instance.getId());
-                        }
-                        else{
+                for (VimInstance instance : instances) {
+                    if (vimInstance.getName().equals(instance.getName())) {
+                        if (!vimInstance.getAuthUrl().equals(instance.getAuthUrl()) && !vimInstance.getUsername().equals(instance.getUsername()) && !vimInstance.getPassword().equals(instance.getPassword())) {
+                            nfvoRequestor.getVimInstanceAgent().update(vimInstance, instance.getId());
+                        } else {
                             vimInstance = instance;
                         }
                     }
@@ -109,8 +107,8 @@ public class OpenbatonManager {
         logger.debug("Creating Media Server Group with: FlavorID " + flavorID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
         MediaServerGroup mediaServerGroup = new MediaServerGroup();
         // building network service descriptor
-        NetworkServiceDescriptor targetNSD = nsdUtil.getNetworkServiceDescriptor(networkServiceDescriptorNubo,flavorID,qos,turnServerActivate, serverTurnIp,serverTurnUsername,serverTurnPassword,stunServerActivate, stunServerIp, stunServerPort, scaleInOut,scale_out_threshold);
-        if (cloudRepositorySet && !cdnConnectorSet){
+        NetworkServiceDescriptor targetNSD = nsdUtil.getNetworkServiceDescriptor(networkServiceDescriptorNubo, flavorID, qos, turnServerActivate, serverTurnIp, serverTurnUsername, serverTurnPassword, stunServerActivate, stunServerIp, stunServerPort, scaleInOut, scale_out_threshold);
+        if (cloudRepositorySet && !cdnConnectorSet) {
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
             vnfds.add(cloudRepository);
             logger.debug("VNFDS " + vnfds.toString());
@@ -119,8 +117,8 @@ public class OpenbatonManager {
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
             VirtualNetworkFunctionDescriptor cdnConnectorVnfd = cloudRepository;
             Set<LifecycleEvent> lifecycleEvents = new HashSet<>();
-            for (LifecycleEvent lce : cdnConnectorVnfd.getLifecycle_event()){
-                if (lce.getEvent().name().equals("START")){
+            for (LifecycleEvent lce : cdnConnectorVnfd.getLifecycle_event()) {
+                if (lce.getEvent().name().equals("START")) {
                     List<String> lces = lce.getLifecycle_events();
                     lces.add("start-cdn.sh");
                 }
@@ -172,7 +170,7 @@ public class OpenbatonManager {
         }
 
         if (nsr != null) {
-            if(nsr.getStatus() != null) {
+            if (nsr.getStatus() != null) {
                 switch (nsr.getStatus()) {
                     case NULL:
                         res = AppStatus.CREATED;
@@ -187,12 +185,10 @@ public class OpenbatonManager {
                         res = AppStatus.INITIALISED;
                         break;
                 }
-            }
-            else{
+            } else {
                 res = AppStatus.FAILED;
             }
-        }
-        else{
+        } else {
             res = AppStatus.FAILED;
         }
 
@@ -200,7 +196,7 @@ public class OpenbatonManager {
         return res;
     }
 
-    public boolean existRecord(String nsrID){
+    public boolean existRecord(String nsrID) {
 
         try {
             return nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID) != null;
@@ -220,10 +216,10 @@ public class OpenbatonManager {
     }
 
 
-    public void deleteDescriptor(String nsdID){
+    public void deleteDescriptor(String nsdID) {
         try {
             this.nfvoRequestor.getNetworkServiceDescriptorAgent().delete(nsdID);
-        } catch (SDKException e){
+        } catch (SDKException e) {
             e.printStackTrace();
         }
     }
