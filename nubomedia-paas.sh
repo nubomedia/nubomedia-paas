@@ -71,7 +71,7 @@ function start {
 
 function start_fg {
     start_checks
-    java -jar "build/libs/${_process_name}-$_version.jar" --spring.config.location=file:${_openbaton_config_file}
+    java -jar "build/libs/${_process_name}-$_version.jar" --spring.config.location=file:${_nubomedia_config_file}
 }
 
 
