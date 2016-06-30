@@ -24,13 +24,13 @@ import org.project.openbaton.nubomedia.paas.model.openshift.*;
 public class RouteMessageBuilder {
 
     private String name;
-    private String appID;
+    private String id;
     private String domainName;
     private RouteTls tls;
 
-    public RouteMessageBuilder(String name, String appID, String domainName, RouteTls tls){
+    public RouteMessageBuilder(String name, String id, String domainName, RouteTls tls){
         this.name = name;
-        this.appID = appID;
+        this.id = id;
         this.domainName = domainName;
         this.tls = tls;
     }
@@ -39,7 +39,7 @@ public class RouteMessageBuilder {
 
         Metadata metadata = new Metadata(name + "-route","","");
         BuildElements be = new BuildElements("Service",name+"-svc");
-        RouteSpec spec = new RouteSpec(name+ appID + "." + domainName,be,tls,new RouteSpec.Status());
+        RouteSpec spec = new RouteSpec(name+ id + "." + domainName,be,tls,new RouteSpec.Status());
 
         return new RouteConfig(metadata,spec);
     }
