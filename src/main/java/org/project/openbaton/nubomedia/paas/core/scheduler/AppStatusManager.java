@@ -61,11 +61,14 @@ public class AppStatusManager {
     @Scheduled(initialDelay = 1000, fixedRate = 5000)
     private void refreshBuildingApplicationStatus() {
         //BETA
+        logger.trace("Refreshing Application (building) status");
         Iterable<Application> applications = this.appRepo.findAll();
         for (Application app : applications) {
             if (!app.getStatus().equals(AppStatus.RUNNING))
+                logger.trace("Updating Application status of " + app.getName() + " while building");
                 try {
                     app.setStatus(this.getStatus(this.token, app));
+                    logger.trace("Updated Application status: " + app);
                 } catch (UnauthorizedException e) {
                     logger.error("There were issues in connecting to OpenShift ");
                     e.printStackTrace();
@@ -83,12 +86,16 @@ public class AppStatusManager {
 
 
     @Scheduled(initialDelay = 10000, fixedRate = 180000)
-    private void refreshAllpplicationStatus() {
-        //BETA
+    private void refreshApplicationStatus() {
+        // /BETA
+        logger.trace("Refreshing Application (running) status");
         Iterable<Application> applications = this.appRepo.findAll();
         for (Application app : applications) {
+            logger.trace("Updating Application status of " + app.getName() + " while running");
             try {
                 app.setStatus(this.getStatus(this.token, app));
+                logger.trace("Updated Application status: " + app);
+                app.setPodList(osmanager.getPodList(this.token, app.getName()));
             } catch (UnauthorizedException e) {
                 logger.error("There were issues in connecting to OpenShift ");
                 e.printStackTrace();
