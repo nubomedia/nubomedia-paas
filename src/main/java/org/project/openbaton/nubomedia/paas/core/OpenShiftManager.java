@@ -85,15 +85,15 @@ public class OpenShiftManager {
 
     }
 
-    public String buildApplication(String token, String appID, String appName, String gitURL, int[] ports, int[] targetPorts, String[] protocols, int replicasnumber, String secretName, String mediaServerGID, String vnfmIp, String vnfmPort, String cloudRepositoryIp, String cloudRepositoryPort, String cdnServerIp) throws DuplicatedException, UnauthorizedException {
+    public String buildApplication(String token, String id, String name, String gitURL, int[] ports, int[] targetPorts, String[] protocols, int replicasnumber, String secretName, String mediaServerGID, String vnfmIp, String vnfmPort, String cloudRepositoryIp, String cloudRepositoryPort, String cdnServerIp) throws DuplicatedException, UnauthorizedException {
 
         HttpHeaders creationHeader = new HttpHeaders();
         creationHeader.add("Authorization", "Bearer " + token);
         creationHeader.add("Content-type", "application/json");
 
-        logger.info("Starting build app " + appName + " in project " + this.project);
+        logger.info("Starting build app " + name + " in project " + this.project);
 
-        ResponseEntity<String> appBuilEntity = imageStreamManager.makeImageStream(openshiftBaseURL, appName, this.project, creationHeader);
+        ResponseEntity<String> appBuilEntity = imageStreamManager.makeImageStream(openshiftBaseURL, name, this.project, creationHeader);
         if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
             logger.debug("Failed creation of imagestream " + appBuilEntity.toString());
             return appBuilEntity.getBody();
@@ -101,27 +101,27 @@ public class OpenShiftManager {
 
         ImageStreamConfig isConfig = mapper.fromJson(appBuilEntity.getBody(), ImageStreamConfig.class);
 
-        RouteConfig routeConfig = MessageBuilderFactory.getRouteMessage(appName, appID, properties.getDomainName());
+        RouteConfig routeConfig = MessageBuilderFactory.getRouteMessage(name, id, properties.getDomainName());
 
-        appBuilEntity = buildManager.createBuild(openshiftBaseURL, appName, this.project, gitURL, isConfig.getStatus().getDockerImageRepository(), creationHeader, secretName, mediaServerGID, vnfmIp, vnfmPort, cloudRepositoryIp, cloudRepositoryPort, cdnServerIp, routeConfig);
+        appBuilEntity = buildManager.createBuild(openshiftBaseURL, name, this.project, gitURL, isConfig.getStatus().getDockerImageRepository(), creationHeader, secretName, mediaServerGID, vnfmIp, vnfmPort, cloudRepositoryIp, cloudRepositoryPort, cdnServerIp, routeConfig);
         if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
             logger.debug("Failed creation of buildconfig " + appBuilEntity.toString());
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = deploymentManager.makeDeployment(openshiftBaseURL, appName, isConfig.getStatus().getDockerImageRepository(), targetPorts, protocols, replicasnumber, this.project, creationHeader);
+        appBuilEntity = deploymentManager.makeDeployment(openshiftBaseURL, name, isConfig.getStatus().getDockerImageRepository(), targetPorts, protocols, replicasnumber, this.project, creationHeader);
         if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
             logger.debug("Failed creation of deploymentconfig " + appBuilEntity.toString());
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = serviceManager.makeService(kubernetesBaseURL, appName, this.project, ports, targetPorts, protocols, creationHeader);
+        appBuilEntity = serviceManager.makeService(kubernetesBaseURL, name, this.project, ports, targetPorts, protocols, creationHeader);
         if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
             logger.debug("Failed creation of service " + appBuilEntity.toString());
             return appBuilEntity.getBody();
         }
 
-        appBuilEntity = routeManager.makeRoute(openshiftBaseURL, appID, appName, this.project, properties.getDomainName(), creationHeader, routeConfig);
+        appBuilEntity = routeManager.makeRoute(openshiftBaseURL, id, name, this.project, properties.getDomainName(), creationHeader, routeConfig);
         if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
             logger.debug("Failed creation of route " + appBuilEntity.toString());
             return appBuilEntity.getBody();
