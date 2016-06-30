@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface ApplicationRepository extends CrudRepository<Application, String>, ApplicationRepositoryCustom{
 
-    List<Application> findByAppName(String appName);
+    List<Application> findByName(String name);
     List<Application> findByProjectId(String projectId);
-    Application findFirstByAppID(String id);
+    Application findFirstById(String id);
 }

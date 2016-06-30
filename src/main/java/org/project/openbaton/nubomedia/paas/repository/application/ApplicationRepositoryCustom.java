@@ -26,6 +26,7 @@ import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 public interface ApplicationRepositoryCustom {
 
     Application findFirstByAppIdAndProjectId(String id, String projectId);
+    Application findByNsrId(String nsrId);
     Application findByMSGroupID(String msGroupId);
 
 }

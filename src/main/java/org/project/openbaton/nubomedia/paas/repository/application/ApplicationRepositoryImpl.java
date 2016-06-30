@@ -40,6 +40,16 @@ public class ApplicationRepositoryImpl implements ApplicationRepositoryCustom{
     }
 
     @Override
+    public Application findByNsrId(String nsrId) {
+        for (Application app : applicationRepository.findAll()) {
+            if (app.getMediaServerGroup().getNsrID().equals(nsrId)) {
+                return app;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Application findByMSGroupID(String msGroupId) {
         for (Application app : applicationRepository.findAll()) {
             if (app.getMediaServerGroup().getId().equals(msGroupId)) {
