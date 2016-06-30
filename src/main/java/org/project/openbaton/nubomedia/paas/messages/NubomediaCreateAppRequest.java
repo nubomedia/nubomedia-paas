@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class NubomediaCreateAppRequest {
 
     private String gitURL;
-    private String appName;
+    private String name;
     private NubomediaPort[] ports;
     private Flavor flavor;
     private int replicasNumber;
@@ -56,12 +56,12 @@ public class NubomediaCreateAppRequest {
         this.gitURL = gitURL;
     }
 
-    public String getAppName() {
-        return appName;
+    public String getName() {
+        return name;
     }
 
-    public void setAppName(String appName) {
-        this.appName = appName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public NubomediaPort[] getPorts() {
@@ -196,7 +196,7 @@ public class NubomediaCreateAppRequest {
     public String toString() {
         return "NubomediaCreateAppRequest{" +
                 "gitURL='" + gitURL + '\'' +
-                ", appName='" + appName + '\'' +
+                ", name='" + name + '\'' +
                 ", ports=" + Arrays.toString(ports) +
                 ", flavor=" + flavor +
                 ", replicasNumber=" + replicasNumber +
