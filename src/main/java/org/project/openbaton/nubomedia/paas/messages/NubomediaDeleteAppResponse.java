@@ -22,35 +22,35 @@ package org.project.openbaton.nubomedia.paas.messages;
  */
 public class NubomediaDeleteAppResponse {
 
-    private String appID;
-    private String appName;
+    private String id;
+    private String name;
     private String nameSpace;
     private int code;
 
     public NubomediaDeleteAppResponse() {
     }
 
-    public NubomediaDeleteAppResponse(String appID, String appName, String nameSpace, int deleteStatus) {
-        this.appID = appID;
-        this.appName = appName;
+    public NubomediaDeleteAppResponse(String id, String name, String nameSpace, int deleteStatus) {
+        this.id = id;
+        this.name = name;
         this.nameSpace = nameSpace;
         this.code = deleteStatus;
     }
 
-    public String getAppID() {
-        return appID;
+    public String getId() {
+        return id;
     }
 
-    public void setAppID(String appID) {
-        this.appID = appID;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getAppName() {
-        return appName;
+    public String getName() {
+        return name;
     }
 
-    public void setAppName(String appName) {
-        this.appName = appName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getNameSpace() {
