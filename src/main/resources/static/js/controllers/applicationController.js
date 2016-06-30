@@ -159,12 +159,12 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                         console.log(response);
 
                     }).error(function (data, status) {
-                    if (status === 404)
-                        showError(status, "The Server is offline");
-                    else
-                        showError(status, data);
+                        if (status === 404)
+                            showError(status, "The Server is offline");
+                        else
+                            showError(status, data);
 
-                });
+                    });
             else
                 http.get(url)
                     .success(function (response, status) {
@@ -172,8 +172,8 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                         console.log(response);
 
                     }).error(function (data, status) {
-                    showError(status, data);
-                });
+                        showError(status, data);
+                    });
         }
 
         $scope.closeAlert = function (index) {
@@ -320,16 +320,16 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     showError(status, data);
                 });
         };
-    $scope.deleteAllApp = function(){
-        http.delete(url)
-            .success(function (response) {
-                showOk('Deleted all Apps in the ' + $rootScope.projectSelected.name + ' project.');
-                loadTable();
-            })
-            .error(function (data, status) {
-                showError(status, data);
-            });
-    };
+        $scope.deleteAllApp = function () {
+            http.delete(url)
+                .success(function (response) {
+                    showOk('Deleted all Apps in the ' + $rootScope.projectSelected.name + ' project.');
+                    loadTable();
+                })
+                .error(function (data, status) {
+                    showError(status, data);
+                });
+        };
 
 
         $scope.changeText = function (text) {
@@ -396,7 +396,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
 
         /* -- multiple delete functions Start -- */
 
-        $scope.multipleDeleteReq = function(){
+        $scope.multipleDeleteReq = function () {
             var ids = [];
             angular.forEach($scope.selection.ids, function (value, k) {
                 if (value) {
@@ -539,7 +539,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     , myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection   //compatibility for firefox and chrome
                     , pc = new myPeerConnection({iceServers: [turnConfig]})
                     , noop = function () {
-                };
+                    };
                 pc.createDataChannel("");    //create a bogus data channel
                 pc.createOffer(function (sdp) {
                     if (sdp.sdp.indexOf('typ relay') > -1) { // sometimes sdp contains the ice candidates...
@@ -580,7 +580,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     $scope.vnfrs = data;
                     console.log($scope.vnfrs);
                     angular.forEach($scope.vnfrs, function (vnfr, index) {
-                        if ($scope.application.mediaServerGroup.id== vnfr.nsrId) {
+                        if ($scope.application.mediaServerGroup.nsrID == vnfr.nsrId) {
                             console.log(vnfr);
                             $scope.vnfrId = vnfr.vnfrId;
                             loadCapacityHistory();
@@ -589,7 +589,6 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
                     });
 
                 });
-
         }
 
 
