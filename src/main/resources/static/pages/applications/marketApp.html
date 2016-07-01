@@ -42,7 +42,7 @@
             <div ng-bind-html="alert.msg"></div>
         </alert>
 
-        <div class="table-responsive" ng-if="apllications.length > 0">
+        <div class="table-responsive" ng-if="applications.length > 0">
             <table
                     class="table table-bordered table-striped table-hover tablesorter"
                     id="topoTabletable">
@@ -57,7 +57,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="data in apllications| orderBy:predicate:reverse">
+                <tr ng-repeat="data in applications| orderBy:predicate:reverse">
                     <td><input type="checkbox" ng-init="selection.ids[data.id] = false" ng-model="selection.ids[data.id]" name="group" id="{{data.id}}" /></td>
                     <td><a href="#marketapps/{{data.id}}" ng-click="setApp(data)">{{data.id}}</a></td>
                     <td>{{data.name}}</td>

@@ -43,7 +43,7 @@
             <div ng-bind-html="alert.msg"></div>
         </alert>
 
-        <div class="table-responsive" ng-if="apllications.length > 0">
+        <div class="table-responsive" ng-if="applications.length > 0">
             <table
                     class="table table-bordered table-striped table-hover tablesorter"
                     id="topoTabletable">
@@ -421,7 +421,7 @@
             </div>
             <div class="modal-body">
                 <p>You are going to delete these applications:</p>
-                <ul ng-repeat="data in apllications">
+                <ul ng-repeat="data in applications">
                     <li>{{data.name}</li>
                 </ul>
                 <p>Please confirm your selection.</p>

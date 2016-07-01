@@ -48,7 +48,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
 
         $scope.alerts = [];
-        $scope.apllications = [];
+        $scope.applications = [];
         $scope.flavors = ["SMALL", "MEDIUM", "LARGE"];
         $scope._qualityOfService = ["BRONZE", "SILVER", "GOLD"];
         $scope._turnServer = {
@@ -155,7 +155,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             if ($location.path() === '/marketapps')
                 http.get(marketurl)
                     .success(function (response, status) {
-                        $scope.apllications = response;
+                        $scope.applications = response;
                         console.log(response);
 
                     }).error(function (data, status) {
@@ -168,7 +168,7 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             else
                 http.get(url)
                     .success(function (response, status) {
-                        $scope.apllications = response;
+                        $scope.applications = response;
                         console.log(response);
 
                     }).error(function (data, status) {
