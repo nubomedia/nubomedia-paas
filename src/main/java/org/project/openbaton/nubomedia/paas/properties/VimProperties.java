@@ -23,98 +23,97 @@ import org.springframework.stereotype.Service;
  * Created by maa on 22.01.16.
  */
 @Service
-@ConfigurationProperties(prefix="vim")
+@ConfigurationProperties(prefix = "vim")
 public class VimProperties {
 
-    private String authURL;
-    private String username;
-    private String password;
-    private String keypair;
-    private String tenant;
-    private String type;
-    private String locationName;
-    private String locationLatitude;
-    private String locationLongitude;
-    private String name;
+  private String authURL;
+  private String username;
+  private String password;
+  private String keypair;
+  private String tenant;
+  private String type;
+  private String locationName;
+  private String locationLatitude;
+  private String locationLongitude;
+  private String name;
 
+  public String getAuthURL() {
+    return authURL;
+  }
 
-    public String getAuthURL() {
-        return authURL;
-    }
+  public void setAuthURL(String authURL) {
+    this.authURL = authURL;
+  }
 
-    public void setAuthURL(String authURL) {
-        this.authURL = authURL;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public String getKeypair() {
+    return keypair;
+  }
 
-    public String getKeypair() {
-        return keypair;
-    }
+  public void setKeypair(String keypair) {
+    this.keypair = keypair;
+  }
 
-    public void setKeypair(String keypair) {
-        this.keypair = keypair;
-    }
+  public String getTenant() {
+    return tenant;
+  }
 
-    public String getTenant() {
-        return tenant;
-    }
+  public void setTenant(String tenant) {
+    this.tenant = tenant;
+  }
 
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public String getType() {
-        return type;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+  public String getLocationName() {
+    return locationName;
+  }
 
-    public String getLocationName() {
-        return locationName;
-    }
+  public void setLocationName(String locationName) {
+    this.locationName = locationName;
+  }
 
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
-    }
+  public String getLocationLatitude() {
+    return locationLatitude;
+  }
 
-    public String getLocationLatitude() {
-        return locationLatitude;
-    }
+  public void setLocationLatitude(String locationLatitude) {
+    this.locationLatitude = locationLatitude;
+  }
 
-    public void setLocationLatitude(String locationLatitude) {
-        this.locationLatitude = locationLatitude;
-    }
+  public String getLocationLongitude() {
+    return locationLongitude;
+  }
 
-    public String getLocationLongitude() {
-        return locationLongitude;
-    }
+  public void setLocationLongitude(String locationLongitude) {
+    this.locationLongitude = locationLongitude;
+  }
 
-    public void setLocationLongitude(String locationLongitude) {
-        this.locationLongitude = locationLongitude;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 }

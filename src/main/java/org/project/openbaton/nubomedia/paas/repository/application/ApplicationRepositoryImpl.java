@@ -24,41 +24,37 @@ import org.springframework.transaction.annotation.Transactional;
  * Created by mob on 03.09.15.
  */
 @Transactional(readOnly = true)
-public class ApplicationRepositoryImpl implements ApplicationRepositoryCustom{
+public class ApplicationRepositoryImpl implements ApplicationRepositoryCustom {
 
-    @Autowired
-    private ApplicationRepository applicationRepository;
+  @Autowired private ApplicationRepository applicationRepository;
 
-    @Override
-    public Application findFirstByAppIdAndProjectId(String id, String projectId) {
-        for (Application app : applicationRepository.findAll()) {
-            if (app.getId().equals(id) && app.getProjectId().equals(projectId)) {
-                return app;
-            }
-        }
-        return null;
+  @Override
+  public Application findFirstByAppIdAndProjectId(String id, String projectId) {
+    for (Application app : applicationRepository.findAll()) {
+      if (app.getId().equals(id) && app.getProjectId().equals(projectId)) {
+        return app;
+      }
     }
+    return null;
+  }
 
-    @Override
-    public Application findByNsrId(String nsrId) {
-        for (Application app : applicationRepository.findAll()) {
-            if (app.getMediaServerGroup().getNsrID().equals(nsrId)) {
-                return app;
-            }
-        }
-        return null;
+  @Override
+  public Application findByNsrId(String nsrId) {
+    for (Application app : applicationRepository.findAll()) {
+      if (app.getMediaServerGroup().getNsrID().equals(nsrId)) {
+        return app;
+      }
     }
+    return null;
+  }
 
-    @Override
-    public Application findByMSGroupID(String msGroupId) {
-        for (Application app : applicationRepository.findAll()) {
-            if (app.getMediaServerGroup().getId().equals(msGroupId)) {
-                return app;
-            }
-        }
-        return null;
+  @Override
+  public Application findByMSGroupID(String msGroupId) {
+    for (Application app : applicationRepository.findAll()) {
+      if (app.getMediaServerGroup().getId().equals(msGroupId)) {
+        return app;
+      }
     }
-
+    return null;
+  }
 }
-
-

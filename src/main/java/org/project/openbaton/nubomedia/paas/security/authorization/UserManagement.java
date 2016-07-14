@@ -19,84 +19,103 @@ import org.springframework.stereotype.Service;
  * Created by lto on 25/02/16.
  */
 @Service
-public class UserManagement implements org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement {
+public class UserManagement
+    implements org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement {
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-    @Autowired
-    @Qualifier("customUserDetailsService")
-    private UserDetailsManager userDetailsManager;
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+  @Autowired
+  @Qualifier("customUserDetailsService")
+  private UserDetailsManager userDetailsManager;
 
-    @Override
-    public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserName = authentication.getName();
-        return queryDB(currentUserName);
+  private Logger log = LoggerFactory.getLogger(this.getClass());
+
+  @Override
+  public User getCurrentUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String currentUserName = authentication.getName();
+    return queryDB(currentUserName);
+  }
+
+  @Override
+  public User add(User user) {
+
+    checkCurrentUserObAdmin(getCurrentUser());
+
+    String[] roles = new String[user.getRoles().size()];
+
+    Role[] objects = user.getRoles().toArray(new Role[0]);
+    for (int i = 0; i < user.getRoles().size(); i++) {
+      roles[i] = objects[i].getRole() + ":" + objects[i].getProject();
     }
 
-    @Override
-    public User add(User user) {
+    org.springframework.security.core.userdetails.User userToAdd =
+        new org.springframework.security.core.userdetails.User(
+            user.getUsername(),
+            BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12)),
+            user.isEnabled(),
+            true,
+            true,
+            true,
+            AuthorityUtils.createAuthorityList(roles));
+    user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12)));
+    userDetailsManager.createUser(userToAdd);
+    return userRepository.save(user);
+  }
 
-        checkCurrentUserObAdmin(getCurrentUser());
+  private void checkCurrentUserObAdmin(User currentUser) {
+    if (currentUser.getRoles().iterator().next().getRole().ordinal()
+        != Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal())
+      throw new UnauthorizedUserException(
+          "Sorry only NUBOMEDIA_ADMIN can add/delete/update/query Users");
+  }
 
-        String[] roles = new String[user.getRoles().size()];
+  @Override
+  public void delete(User user) {
+    checkCurrentUserObAdmin(getCurrentUser());
+    userDetailsManager.deleteUser(user.getUsername());
+    userRepository.delete(user);
+  }
 
-        Role[] objects = user.getRoles().toArray(new Role[0]);
-        for (int i = 0; i < user.getRoles().size(); i++) {
-            roles[i] = objects[i].getRole() + ":" + objects[i].getProject();
-        }
+  @Override
+  public User update(User new_user) {
 
-        org.springframework.security.core.userdetails.User userToAdd= new org.springframework.security.core.userdetails.User(user.getUsername(), BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12)), user.isEnabled(), true, true, true, AuthorityUtils.createAuthorityList(roles));
-        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12)));
-        userDetailsManager.createUser(userToAdd);
-        return userRepository.save(user);
+    checkCurrentUserObAdmin(getCurrentUser());
+    String[] roles = new String[new_user.getRoles().size()];
+
+    Role[] objects = new_user.getRoles().toArray(new Role[0]);
+    for (int i = 0; i < new_user.getRoles().size(); i++) {
+      roles[i] = objects[i].getRole() + ":" + objects[i].getProject();
     }
 
-    private void checkCurrentUserObAdmin(User currentUser) {
-        if (currentUser.getRoles().iterator().next().getRole().ordinal() != Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal())
-            throw new UnauthorizedUserException("Sorry only NUBOMEDIA_ADMIN can add/delete/update/query Users");
-    }
+    org.springframework.security.core.userdetails.User userToUpdate =
+        new org.springframework.security.core.userdetails.User(
+            new_user.getUsername(),
+            BCrypt.hashpw(new_user.getPassword(), BCrypt.gensalt(12)),
+            new_user.isEnabled(),
+            true,
+            true,
+            true,
+            AuthorityUtils.createAuthorityList(roles));
+    userDetailsManager.updateUser(userToUpdate);
+    return userRepository.save(new_user);
+  }
 
-    @Override
-    public void delete(User user) {
-        checkCurrentUserObAdmin(getCurrentUser());
-        userDetailsManager.deleteUser(user.getUsername());
-        userRepository.delete(user);
-    }
+  @Override
+  public Iterable<User> query() {
+    checkCurrentUserObAdmin(getCurrentUser());
+    return userRepository.findAll();
+  }
 
-    @Override
-    public User update(User new_user) {
+  @Override
+  public User query(String username) {
+    checkCurrentUserObAdmin(getCurrentUser());
+    log.trace("Looking for user: " + username);
+    return userRepository.findFirstByUsername(username);
+  }
 
-        checkCurrentUserObAdmin(getCurrentUser());
-        String[] roles = new String[new_user.getRoles().size()];
-
-        Role[] objects = new_user.getRoles().toArray(new Role[0]);
-        for (int i = 0; i < new_user.getRoles().size(); i++) {
-            roles[i] = objects[i].getRole() + ":" + objects[i].getProject();
-        }
-
-        org.springframework.security.core.userdetails.User userToUpdate = new org.springframework.security.core.userdetails.User(new_user.getUsername(), BCrypt.hashpw(new_user.getPassword(), BCrypt.gensalt(12)), new_user.isEnabled(), true, true, true, AuthorityUtils.createAuthorityList(roles));
-        userDetailsManager.updateUser(userToUpdate);
-        return userRepository.save(new_user);
-    }
-
-    @Override
-    public Iterable<User> query() {
-        checkCurrentUserObAdmin(getCurrentUser());
-        return userRepository.findAll();
-    }
-
-    @Override
-    public User query(String username) {
-        checkCurrentUserObAdmin(getCurrentUser());
-        log.trace("Looking for user: " + username);
-        return userRepository.findFirstByUsername(username);
-    }
-
-    @Override
-    public User queryDB(String username) {
-        return userRepository.findFirstByUsername(username);
-    }
+  @Override
+  public User queryDB(String username) {
+    return userRepository.findFirstByUsername(username);
+  }
 }

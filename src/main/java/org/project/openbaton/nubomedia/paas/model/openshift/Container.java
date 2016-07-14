@@ -23,85 +23,83 @@ import java.util.List;
  */
 public class Container {
 
-    private String name;
-    private String image;
-    private Port[] ports;
-    private List<ContainerVolume> volumeMounts;
+  private String name;
+  private String image;
+  private Port[] ports;
+  private List<ContainerVolume> volumeMounts;
 
-    public static class Port{
-        String protocol;
-        int containerPort;
+  public static class Port {
+    String protocol;
+    int containerPort;
 
-        public Port(String protocol, int containerPort) {
-            this.protocol = protocol;
-            this.containerPort = containerPort;
-        }
-
-        public Port() {
-        }
-
-        public String getProtocol() {
-            return protocol;
-        }
-
-        public void setProtocol(String protocol) {
-            this.protocol = protocol;
-        }
-
-        public int getContainerPort() {
-            return containerPort;
-        }
-
-        public void setContainerPort(int containerPort) {
-            this.containerPort = containerPort;
-        }
+    public Port(String protocol, int containerPort) {
+      this.protocol = protocol;
+      this.containerPort = containerPort;
     }
 
-    public Container(String name, String image, Port[] ports, List<ContainerVolume> volumeMounts) {
-        this.name = name;
-        this.image = image;
-        this.ports = ports;
-        this.volumeMounts = volumeMounts;
+    public Port() {}
+
+    public String getProtocol() {
+      return protocol;
     }
 
-    public Container(String name, String image, Port[] ports) {
-        this.name = name;
-        this.image = image;
-        this.ports = ports;
+    public void setProtocol(String protocol) {
+      this.protocol = protocol;
     }
 
-    public Container() {
+    public int getContainerPort() {
+      return containerPort;
     }
 
-    public String getName() {
-        return name;
+    public void setContainerPort(int containerPort) {
+      this.containerPort = containerPort;
     }
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public Container(String name, String image, Port[] ports, List<ContainerVolume> volumeMounts) {
+    this.name = name;
+    this.image = image;
+    this.ports = ports;
+    this.volumeMounts = volumeMounts;
+  }
 
-    public String getImage() {
-        return image;
-    }
+  public Container(String name, String image, Port[] ports) {
+    this.name = name;
+    this.image = image;
+    this.ports = ports;
+  }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
+  public Container() {}
 
-    public Port[] getPorts() {
-        return ports;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setPorts(Port[] ports) {
-        this.ports = ports;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public List<ContainerVolume> getVolumeMounts() {
-        return volumeMounts;
-    }
+  public String getImage() {
+    return image;
+  }
 
-    public void setVolumeMounts(List<ContainerVolume> volumeMounts) {
-        this.volumeMounts = volumeMounts;
-    }
+  public void setImage(String image) {
+    this.image = image;
+  }
+
+  public Port[] getPorts() {
+    return ports;
+  }
+
+  public void setPorts(Port[] ports) {
+    this.ports = ports;
+  }
+
+  public List<ContainerVolume> getVolumeMounts() {
+    return volumeMounts;
+  }
+
+  public void setVolumeMounts(List<ContainerVolume> volumeMounts) {
+    this.volumeMounts = volumeMounts;
+  }
 }

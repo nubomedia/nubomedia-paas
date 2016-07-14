@@ -37,69 +37,70 @@ import java.net.URI;
 @Service
 public class AuthenticationManager {
 
-    @Autowired RestTemplate template;
-    private Logger logger;
-    private String suffix;
+  @Autowired RestTemplate template;
+  private Logger logger;
+  private String suffix;
 
-    @PostConstruct
-    private void init(){
-        template.setRequestFactory(new AvoidRedirectRequestFactory());
-        this.logger = LoggerFactory.getLogger(this.getClass());
-        this.suffix = "/oauth/authorize";
+  @PostConstruct
+  private void init() {
+    template.setRequestFactory(new AvoidRedirectRequestFactory());
+    this.logger = LoggerFactory.getLogger(this.getClass());
+    this.suffix = "/oauth/authorize";
+  }
+
+  //TODO rewrite when openshift uses correctly /oauth/token
+  public String authenticate(String baseURL, String username, String password)
+      throws UnauthorizedException {
+
+    String res = "";
+
+    String authBase = username + ":" + password;
+    String authHeader = "Basic " + Base64.encodeBase64String(authBase.getBytes());
+    logger.debug("Auth header " + authHeader);
+
+    String url = baseURL + suffix;
+
+    HttpHeaders authHeaders = new HttpHeaders();
+    authHeaders.add("Authorization", authHeader);
+    authHeaders.add("X-CSRF-Token", "1");
+
+    UriComponentsBuilder builder =
+        UriComponentsBuilder.fromHttpUrl(url)
+            .queryParam("client_id", "openshift-challenging-client")
+            .queryParam("response_type", "token");
+
+    HttpEntity<String> authEntity = new HttpEntity<>(authHeaders);
+    ResponseEntity<String> response = null;
+    try {
+      response =
+          template.exchange(
+              builder.build().encode().toUriString(), HttpMethod.GET, authEntity, String.class);
+    } catch (ResourceAccessException e) {
+      return "PaaS Missing";
+    } catch (HttpClientErrorException e) {
+      throw new UnauthorizedException(
+          "Username: " + username + " password: " + password + " are invalid");
     }
 
-    //TODO rewrite when openshift uses correctly /oauth/token
-    public String authenticate(String baseURL, String username, String password) throws UnauthorizedException{
+    logger.debug("Response " + response.toString());
 
-        String res = "";
+    if (response.getStatusCode().equals(HttpStatus.FOUND)) {
 
-        String authBase = username + ":" + password;
-        String authHeader = "Basic " + Base64.encodeBase64String(authBase.getBytes());
-        logger.debug("Auth header " + authHeader);
+      URI location = response.getHeaders().getLocation();
+      logger.debug("Location " + location);
+      res = this.getToken(location.toString());
 
-        String url = baseURL + suffix;
+    } else if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 
-        HttpHeaders authHeaders = new HttpHeaders();
-        authHeaders.add("Authorization", authHeader);
-        authHeaders.add("X-CSRF-Token","1");
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("client_id","openshift-challenging-client")
-                .queryParam("response_type","token");
-
-        HttpEntity<String> authEntity = new HttpEntity<>(authHeaders);
-        ResponseEntity<String> response = null;
-        try {
-            response = template.exchange(builder.build().encode().toUriString(), HttpMethod.GET, authEntity, String.class);
-        } catch (ResourceAccessException e){
-            return "PaaS Missing";
-        } catch (HttpClientErrorException e){
-            throw new UnauthorizedException("Username: " + username + " password: " + password + " are invalid");
-        }
-
-        logger.debug("Response " + response.toString());
-
-        if(response.getStatusCode().equals(HttpStatus.FOUND)){
-
-            URI location = response.getHeaders().getLocation();
-            logger.debug("Location " + location);
-            res = this.getToken(location.toString());
-
-        }
-        else if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
-            throw new UnauthorizedException("Username: " + username + " password: " + password + " are invalid");
-        }
-
-        return res;
+      throw new UnauthorizedException(
+          "Username: " + username + " password: " + password + " are invalid");
     }
 
+    return res;
+  }
 
-    private String getToken (String header){
+  private String getToken(String header) {
 
-        return header.substring(header.indexOf("=")+1,header.indexOf("&"));
-
-    }
-
+    return header.substring(header.indexOf("=") + 1, header.indexOf("&"));
+  }
 }
-

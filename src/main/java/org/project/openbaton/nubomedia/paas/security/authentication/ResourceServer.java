@@ -36,45 +36,38 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 @ConfigurationProperties
 public class ResourceServer extends ResourceServerConfigurerAdapter {
 
+  @Value("market.security.enabled:true")
+  private String enabledSt;
 
-    @Value("market.security.enabled:true")
-    private String enabledSt;
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+  private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.headers()
-                .frameOptions().disable();
+  @Override
+  public void configure(HttpSecurity http) throws Exception {
+    http.headers().frameOptions().disable();
 
-        log.info("Security is enabled");
-        http
-                .authorizeRequests()
-                .regexMatchers(HttpMethod.POST, "/api/v1/")
-                .access("#oauth2.hasScope('write')")
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.NEVER)
-                .and()
-                .exceptionHandling();
+    log.info("Security is enabled");
+    http.authorizeRequests()
+        .regexMatchers(HttpMethod.POST, "/api/v1/")
+        .access("#oauth2.hasScope('write')")
+        .and()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+        .and()
+        .exceptionHandling();
 
-        http
-                .authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/api/**")
-                .access("#oauth2.hasScope('write')")
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.NEVER)
-                .and()
-                .exceptionHandling();
-        http
-                .authorizeRequests()
-                .regexMatchers(HttpMethod.GET, "/api/v1/").permitAll();
+    http.authorizeRequests()
+        .antMatchers(HttpMethod.POST, "/api/**")
+        .access("#oauth2.hasScope('write')")
+        .and()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+        .and()
+        .exceptionHandling();
+    http.authorizeRequests().regexMatchers(HttpMethod.GET, "/api/v1/").permitAll();
+  }
 
-    }
-
-
-    @Override
-    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        resources.resourceId(OAuth2AuthorizationServerConfig.RESOURCE_ID);
-    }
+  @Override
+  public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+    resources.resourceId(OAuth2AuthorizationServerConfig.RESOURCE_ID);
+  }
 }

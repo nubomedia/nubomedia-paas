@@ -21,12 +21,19 @@ package org.project.openbaton.nubomedia.paas.exceptions.openbaton;
  */
 public class turnServerException extends Exception {
 
-    public turnServerException(){super();}
+  public turnServerException() {
+    super();
+  }
 
-    public turnServerException(Throwable throwable){ super(throwable);}
+  public turnServerException(Throwable throwable) {
+    super(throwable);
+  }
 
-    public turnServerException(String message){ super(message);}
+  public turnServerException(String message) {
+    super(message);
+  }
 
-    public turnServerException(String message, Throwable throwable){ super(message,throwable); }
-
+  public turnServerException(String message, Throwable throwable) {
+    super(message, throwable);
+  }
 }

@@ -21,25 +21,24 @@ package org.project.openbaton.nubomedia.paas.messages;
  */
 public class NubomediaCreateSecretRequest {
 
-    private String projectName;
-    private String privateKey;
+  private String projectName;
+  private String privateKey;
 
-    public NubomediaCreateSecretRequest() {
-    }
+  public NubomediaCreateSecretRequest() {}
 
-    public String getProjectName() {
-        return projectName;
-    }
+  public String getProjectName() {
+    return projectName;
+  }
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
+  public void setProjectName(String projectName) {
+    this.projectName = projectName;
+  }
 
-    public String getPrivateKey() {
-        return privateKey;
-    }
+  public String getPrivateKey() {
+    return privateKey;
+  }
 
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
-    }
+  public void setPrivateKey(String privateKey) {
+    this.privateKey = privateKey;
+  }
 }

@@ -52,177 +52,226 @@ import java.util.Set;
 @Service
 public class OpenbatonManager {
 
-    @Autowired
-    private VimInstance vimInstance;
+  @Autowired private VimInstance vimInstance;
 
-    @Autowired
-    private NfvoProperties nfvoProperties;
+  @Autowired private NfvoProperties nfvoProperties;
 
-    @Autowired
-    private VirtualNetworkFunctionDescriptor cloudRepository;
+  @Autowired private VirtualNetworkFunctionDescriptor cloudRepository;
 
-    @Autowired
-    private NSDUtil nsdUtil;
+  @Autowired private NSDUtil nsdUtil;
 
-    @Autowired
-    @Qualifier("networkServiceDescriptorNubo")
-    private NetworkServiceDescriptor networkServiceDescriptorNubo;
-    private Logger logger;
-    private NFVORequestor nfvoRequestor;
-    private String apiPath;
+  @Autowired
+  @Qualifier("networkServiceDescriptorNubo")
+  private NetworkServiceDescriptor networkServiceDescriptorNubo;
 
-    @PostConstruct
-    private void init() throws IOException {
+  private Logger logger;
+  private NFVORequestor nfvoRequestor;
+  private String apiPath;
 
-        this.logger = LoggerFactory.getLogger(this.getClass());
-        this.nfvoRequestor = new NFVORequestor(nfvoProperties.getUsername(), nfvoProperties.getPassword(), nfvoProperties.getIp(), nfvoProperties.getPort(), "1");
-        this.apiPath = "/api/v1/nubomedia/paas";
-        this.logger.info("Starting the Open Baton Manager Bean");
-        try {
-            this.logger.debug("Trying to create the VIM Instance " + vimInstance.getName());
-            vimInstance = this.nfvoRequestor.getVimInstanceAgent().create(vimInstance);
-        } catch (SDKException e) {
-            try {
-                this.logger.warn("The VIM Instance " + vimInstance.getName() + " already exists, updating it");
-                List<VimInstance> instances = nfvoRequestor.getVimInstanceAgent().findAll();
-                for (VimInstance instance : instances) {
-                    if (vimInstance.getName().equals(instance.getName())) {
-                        if (!vimInstance.getAuthUrl().equals(instance.getAuthUrl()) && !vimInstance.getUsername().equals(instance.getUsername()) && !vimInstance.getPassword().equals(instance.getPassword())) {
-                            nfvoRequestor.getVimInstanceAgent().update(vimInstance, instance.getId());
-                        } else {
-                            vimInstance = instance;
-                        }
-                    }
-                }
-            } catch (SDKException | ClassNotFoundException e1) {
-                e1.printStackTrace();
-            }
-        }
-        logger.debug("VIM instance created");
+  @PostConstruct
+  private void init() throws IOException {
 
-    }
-
-
-    public MediaServerGroup createMediaServerGroup(String appName, Flavor flavorID, String callbackUrl, boolean cloudRepositorySet, boolean cdnConnectorSet, QoS qos, boolean turnServerActivate, String serverTurnIp, String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
-        logger.debug("Creating Media Server Group with name: " + appName + " with: FlavorID " + flavorID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
-        MediaServerGroup mediaServerGroup = new MediaServerGroup();
-        // building network service descriptor
-        NetworkServiceDescriptor targetNSD = nsdUtil.getNetworkServiceDescriptor(networkServiceDescriptorNubo, flavorID, qos, turnServerActivate, serverTurnIp, serverTurnUsername, serverTurnPassword, stunServerActivate, stunServerIp, stunServerPort, scaleInOut, scale_out_threshold);
-        targetNSD.setName(appName);
-        if (cloudRepositorySet && !cdnConnectorSet) {
-            Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
-            vnfds.add(cloudRepository);
-            logger.debug("VNFDS " + vnfds.toString());
-            targetNSD.setVnfd(vnfds);
-        } else if (cdnConnectorSet) {
-            Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
-            VirtualNetworkFunctionDescriptor cdnConnectorVnfd = cloudRepository;
-            Set<LifecycleEvent> lifecycleEvents = new HashSet<>();
-            for (LifecycleEvent lce : cdnConnectorVnfd.getLifecycle_event()) {
-                if (lce.getEvent().name().equals("START")) {
-                    List<String> lces = lce.getLifecycle_events();
-                    lces.add("start-cdn.sh");
-                }
-                lifecycleEvents.add(lce);
-            }
-            cdnConnectorVnfd.setLifecycle_event(lifecycleEvents);
-
-            vnfds.add(cdnConnectorVnfd);
-            targetNSD.setVnfd(vnfds);
-        }
-
-        targetNSD = nfvoRequestor.getNetworkServiceDescriptorAgent().create(targetNSD);
-        mediaServerGroup.setNsdID(targetNSD.getId());
-        NetworkServiceRecord nsr = nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
-        logger.debug("NSR " + nsr.toString());
-        mediaServerGroup.setNsrID(nsr.getId());
-        logger.debug("Result " + mediaServerGroup.toString());
-        return mediaServerGroup;
-    }
-
-    public void updateMediaServerGroup(Application application) throws Exception {
-        NetworkServiceRecord nsr = null;
-        try {
-            nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(application.getMediaServerGroup().getNsrID());
-        } catch (SDKException | ClassNotFoundException e) {
-            String message = "no NSR found, the media server group cannot be updated";
-            logger.debug(message);
-            throw new Exception(message);
-        }
-        for (VirtualNetworkFunctionRecord record : nsr.getVnfr()) {
-
-            if (record.getEndpoint().equals("media-server")) {
-                logger.debug("found record media-server");
-                application.getMediaServerGroup().setFloatingIPs(NSRUtil.getFloatingIPs(record));
-                application.getMediaServerGroup().setHostnames(NSRUtil.getHostnames(record));
-            }
-        }
-    }
-
-
-    public AppStatus getStatus(String nsrID) {
-        NetworkServiceRecord nsr = null;
-        AppStatus res = AppStatus.CREATED;
-        try {
-            nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID);
-        } catch (SDKException | ClassNotFoundException e) {
-            logger.debug("no NSR found");
-            res = AppStatus.FAILED;
-        }
-
-        if (nsr != null) {
-            if (nsr.getStatus() != null) {
-                switch (nsr.getStatus()) {
-                    case NULL:
-                        res = AppStatus.CREATED;
-                        break;
-                    case INITIALIZED:
-                        res = AppStatus.INITIALIZING;
-                        break;
-                    case ERROR:
-                        res = AppStatus.FAILED;
-                        break;
-                    case ACTIVE:
-                        res = AppStatus.INITIALISED;
-                        break;
-                }
+    this.logger = LoggerFactory.getLogger(this.getClass());
+    this.nfvoRequestor =
+        new NFVORequestor(
+            nfvoProperties.getUsername(),
+            nfvoProperties.getPassword(),
+            nfvoProperties.getIp(),
+            nfvoProperties.getPort(),
+            "1");
+    this.apiPath = "/api/v1/nubomedia/paas";
+    this.logger.info("Starting the Open Baton Manager Bean");
+    try {
+      this.logger.debug("Trying to create the VIM Instance " + vimInstance.getName());
+      vimInstance = this.nfvoRequestor.getVimInstanceAgent().create(vimInstance);
+    } catch (SDKException e) {
+      try {
+        this.logger.warn(
+            "The VIM Instance " + vimInstance.getName() + " already exists, updating it");
+        List<VimInstance> instances = nfvoRequestor.getVimInstanceAgent().findAll();
+        for (VimInstance instance : instances) {
+          if (vimInstance.getName().equals(instance.getName())) {
+            if (!vimInstance.getAuthUrl().equals(instance.getAuthUrl())
+                && !vimInstance.getUsername().equals(instance.getUsername())
+                && !vimInstance.getPassword().equals(instance.getPassword())) {
+              nfvoRequestor.getVimInstanceAgent().update(vimInstance, instance.getId());
             } else {
-                res = AppStatus.FAILED;
+              vimInstance = instance;
             }
-        } else {
+          }
+        }
+      } catch (SDKException | ClassNotFoundException e1) {
+        e1.printStackTrace();
+      }
+    }
+    logger.debug("VIM instance created");
+  }
+
+  public MediaServerGroup createMediaServerGroup(
+      String appName,
+      Flavor flavorID,
+      String callbackUrl,
+      boolean cloudRepositorySet,
+      boolean cdnConnectorSet,
+      QoS qos,
+      boolean turnServerActivate,
+      String serverTurnIp,
+      String serverTurnUsername,
+      String serverTurnPassword,
+      boolean stunServerActivate,
+      String stunServerIp,
+      String stunServerPort,
+      int scaleInOut,
+      double scale_out_threshold)
+      throws SDKException, turnServerException, StunServerException {
+    logger.debug(
+        "Creating Media Server Group with name: "
+            + appName
+            + " with: FlavorID "
+            + flavorID
+            + " callbackURL "
+            + callbackUrl
+            + " isCloudRepo "
+            + cloudRepositorySet
+            + " QOS "
+            + qos
+            + "turnServerIp "
+            + serverTurnIp
+            + " serverTurnName "
+            + serverTurnUsername
+            + " scaleInOut "
+            + scaleInOut);
+    MediaServerGroup mediaServerGroup = new MediaServerGroup();
+    // building network service descriptor
+    NetworkServiceDescriptor targetNSD =
+        nsdUtil.getNetworkServiceDescriptor(
+            networkServiceDescriptorNubo,
+            flavorID,
+            qos,
+            turnServerActivate,
+            serverTurnIp,
+            serverTurnUsername,
+            serverTurnPassword,
+            stunServerActivate,
+            stunServerIp,
+            stunServerPort,
+            scaleInOut,
+            scale_out_threshold);
+    targetNSD.setName(appName);
+    if (cloudRepositorySet && !cdnConnectorSet) {
+      Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
+      vnfds.add(cloudRepository);
+      logger.debug("VNFDS " + vnfds.toString());
+      targetNSD.setVnfd(vnfds);
+    } else if (cdnConnectorSet) {
+      Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
+      VirtualNetworkFunctionDescriptor cdnConnectorVnfd = cloudRepository;
+      Set<LifecycleEvent> lifecycleEvents = new HashSet<>();
+      for (LifecycleEvent lce : cdnConnectorVnfd.getLifecycle_event()) {
+        if (lce.getEvent().name().equals("START")) {
+          List<String> lces = lce.getLifecycle_events();
+          lces.add("start-cdn.sh");
+        }
+        lifecycleEvents.add(lce);
+      }
+      cdnConnectorVnfd.setLifecycle_event(lifecycleEvents);
+
+      vnfds.add(cdnConnectorVnfd);
+      targetNSD.setVnfd(vnfds);
+    }
+
+    targetNSD = nfvoRequestor.getNetworkServiceDescriptorAgent().create(targetNSD);
+    mediaServerGroup.setNsdID(targetNSD.getId());
+    NetworkServiceRecord nsr =
+        nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
+    logger.debug("NSR " + nsr.toString());
+    mediaServerGroup.setNsrID(nsr.getId());
+    logger.debug("Result " + mediaServerGroup.toString());
+    return mediaServerGroup;
+  }
+
+  public void updateMediaServerGroup(Application application) throws Exception {
+    NetworkServiceRecord nsr = null;
+    try {
+      nsr =
+          nfvoRequestor
+              .getNetworkServiceRecordAgent()
+              .findById(application.getMediaServerGroup().getNsrID());
+    } catch (SDKException | ClassNotFoundException e) {
+      String message = "no NSR found, the media server group cannot be updated";
+      logger.debug(message);
+      throw new Exception(message);
+    }
+    for (VirtualNetworkFunctionRecord record : nsr.getVnfr()) {
+
+      if (record.getEndpoint().equals("media-server")) {
+        logger.debug("found record media-server");
+        application.getMediaServerGroup().setFloatingIPs(NSRUtil.getFloatingIPs(record));
+        application.getMediaServerGroup().setHostnames(NSRUtil.getHostnames(record));
+      }
+    }
+  }
+
+  public AppStatus getStatus(String nsrID) {
+    NetworkServiceRecord nsr = null;
+    AppStatus res = AppStatus.CREATED;
+    try {
+      nsr = nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID);
+    } catch (SDKException | ClassNotFoundException e) {
+      logger.debug("no NSR found");
+      res = AppStatus.FAILED;
+    }
+
+    if (nsr != null) {
+      if (nsr.getStatus() != null) {
+        switch (nsr.getStatus()) {
+          case NULL:
+            res = AppStatus.CREATED;
+            break;
+          case INITIALIZED:
+            res = AppStatus.INITIALIZING;
+            break;
+          case ERROR:
             res = AppStatus.FAILED;
+            break;
+          case ACTIVE:
+            res = AppStatus.INITIALISED;
+            break;
         }
-
-
-        return res;
+      } else {
+        res = AppStatus.FAILED;
+      }
+    } else {
+      res = AppStatus.FAILED;
     }
 
-    public boolean existRecord(String nsrID) {
+    return res;
+  }
 
-        try {
-            return nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID) != null;
+  public boolean existRecord(String nsrID) {
 
-        } catch (SDKException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
+    try {
+      return nfvoRequestor.getNetworkServiceRecordAgent().findById(nsrID) != null;
+
+    } catch (SDKException | ClassNotFoundException e) {
+      e.printStackTrace();
+      return false;
     }
+  }
 
-    public void deleteRecord(String nsrID) {
-        try {
-            nfvoRequestor.getNetworkServiceRecordAgent().delete(nsrID);
-        } catch (SDKException e) {
-            e.printStackTrace();
-        }
+  public void deleteRecord(String nsrID) {
+    try {
+      nfvoRequestor.getNetworkServiceRecordAgent().delete(nsrID);
+    } catch (SDKException e) {
+      e.printStackTrace();
     }
+  }
 
-
-    public void deleteDescriptor(String nsdID) {
-        try {
-            this.nfvoRequestor.getNetworkServiceDescriptorAgent().delete(nsdID);
-        } catch (SDKException e) {
-            e.printStackTrace();
-        }
+  public void deleteDescriptor(String nsdID) {
+    try {
+      this.nfvoRequestor.getNetworkServiceDescriptorAgent().delete(nsdID);
+    } catch (SDKException e) {
+      e.printStackTrace();
     }
-
+  }
 }

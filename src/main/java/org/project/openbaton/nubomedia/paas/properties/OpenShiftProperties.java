@@ -23,52 +23,52 @@ import org.springframework.stereotype.Service;
  * Created by maa on 20.01.16.
  */
 @Service
-@ConfigurationProperties (prefix="openshift")
+@ConfigurationProperties(prefix = "openshift")
 public class OpenShiftProperties {
 
-    private String baseURL;
-    private String domainName;
-    private String token;
-    private String project;
-    private String keystore;
+  private String baseURL;
+  private String domainName;
+  private String token;
+  private String project;
+  private String keystore;
 
-    public String getKeystore() {
-        return keystore;
-    }
+  public String getKeystore() {
+    return keystore;
+  }
 
-    public void setKeystore(String keystore) {
-        this.keystore = keystore;
-    }
+  public void setKeystore(String keystore) {
+    this.keystore = keystore;
+  }
 
-    public String getProject() {
-        return project;
-    }
+  public String getProject() {
+    return project;
+  }
 
-    public void setProject(String project) {
-        this.project = project;
-    }
+  public void setProject(String project) {
+    this.project = project;
+  }
 
-    public String getBaseURL() {
-        return baseURL;
-    }
+  public String getBaseURL() {
+    return baseURL;
+  }
 
-    public void setBaseURL(String baseURL) {
-        this.baseURL = baseURL;
-    }
+  public void setBaseURL(String baseURL) {
+    this.baseURL = baseURL;
+  }
 
-    public String getDomainName() {
-        return domainName;
-    }
+  public String getDomainName() {
+    return domainName;
+  }
 
-    public void setDomainName(String domainName) {
-        this.domainName = domainName;
-    }
+  public void setDomainName(String domainName) {
+    this.domainName = domainName;
+  }
 
-    public String getToken() {
-        return token;
-    }
+  public String getToken() {
+    return token;
+  }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+  public void setToken(String token) {
+    this.token = token;
+  }
 }

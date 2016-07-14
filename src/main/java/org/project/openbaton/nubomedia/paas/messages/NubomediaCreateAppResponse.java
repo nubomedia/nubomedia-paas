@@ -23,30 +23,29 @@ import org.project.openbaton.nubomedia.paas.model.persistence.Application;
  */
 public class NubomediaCreateAppResponse {
 
-    private Application app;
-    private int code;
+  private Application app;
+  private int code;
 
-    public NubomediaCreateAppResponse() {
-    }
+  public NubomediaCreateAppResponse() {}
 
-    public NubomediaCreateAppResponse(Application app, int code) {
-        this.app = app;
-        this.code = code;
-    }
+  public NubomediaCreateAppResponse(Application app, int code) {
+    this.app = app;
+    this.code = code;
+  }
 
-    public Application getApp() {
-        return app;
-    }
+  public Application getApp() {
+    return app;
+  }
 
-    public void setApp(Application app) {
-        this.app = app;
-    }
+  public void setApp(Application app) {
+    this.app = app;
+  }
 
-    public int getCode() {
-        return code;
-    }
+  public int getCode() {
+    return code;
+  }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
+  public void setCode(int code) {
+    this.code = code;
+  }
 }

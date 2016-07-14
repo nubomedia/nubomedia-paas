@@ -21,20 +21,19 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class Selector {
 
-    private String name;
+  private String name;
 
-    public Selector(String name) {
-        this.name = name;
-    }
+  public Selector(String name) {
+    this.name = name;
+  }
 
-    public Selector() {
-    }
+  public Selector() {}
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 }

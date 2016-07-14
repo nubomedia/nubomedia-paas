@@ -23,6 +23,4 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * Created by gca on 10/06/16.
  */
-public interface MSGroupRepository extends CrudRepository<MediaServerGroup, String> {
-
-}
+public interface MSGroupRepository extends CrudRepository<MediaServerGroup, String> {}

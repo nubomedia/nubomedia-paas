@@ -32,218 +32,256 @@ import java.util.List;
 @Entity
 public class Application {
 
-    @Id
-    private String id;
-    private String name;
-    private String projectName;
-    private String projectId;
-    private String route;
-    private String gitURL;
-    private int replicasNumber;
-    private String secretName;
-    private Flavor flavor;
-    private AppStatus status;
+  @Id private String id;
+  private String name;
+  private String projectName;
+  private String projectId;
+  private String route;
+  private String gitURL;
+  private int replicasNumber;
+  private String secretName;
+  private Flavor flavor;
+  private AppStatus status;
 
-    private Date createdAt;
+  private Date createdAt;
 
-    @JsonIgnore
-    private boolean resourceOK;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<Integer> targetPorts;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<Integer> ports;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> protocols;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> podList;
+  @JsonIgnore private boolean resourceOK;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private MediaServerGroup mediaServerGroup;
+  @ElementCollection(fetch = FetchType.EAGER)
+  private List<Integer> targetPorts;
 
+  @ElementCollection(fetch = FetchType.EAGER)
+  private List<Integer> ports;
 
-    public Application(Flavor flavor, String name, String projectName, String projectId, String route, String nsrID, String gitURL, List<Integer> targetPorts, List<Integer> ports, List<String> protocols, List<String> podList, int replicasNumber, String secretName, boolean resourceOK) {
-        this.flavor = flavor;
-        this.name = name;
-        this.projectName = projectName;
-        this.projectId = projectId;
-        this.route = route;
-        this.gitURL = gitURL;
-        this.targetPorts = targetPorts;
+  @ElementCollection(fetch = FetchType.EAGER)
+  private List<String> protocols;
 
-        if (ports == null) {
-            this.ports = targetPorts;
-        } else {
-            this.ports = ports;
-        }
+  @ElementCollection(fetch = FetchType.EAGER)
+  private List<String> podList;
 
-        this.podList = podList;
-        this.protocols = protocols;
-        this.replicasNumber = replicasNumber;
-        this.secretName = secretName;
-        this.status = AppStatus.CREATED;
-        this.resourceOK = resourceOK;
+  @OneToOne(cascade = CascadeType.ALL)
+  private MediaServerGroup mediaServerGroup;
+
+  public Application(
+      Flavor flavor,
+      String name,
+      String projectName,
+      String projectId,
+      String route,
+      String nsrID,
+      String gitURL,
+      List<Integer> targetPorts,
+      List<Integer> ports,
+      List<String> protocols,
+      List<String> podList,
+      int replicasNumber,
+      String secretName,
+      boolean resourceOK) {
+    this.flavor = flavor;
+    this.name = name;
+    this.projectName = projectName;
+    this.projectId = projectId;
+    this.route = route;
+    this.gitURL = gitURL;
+    this.targetPorts = targetPorts;
+
+    if (ports == null) {
+      this.ports = targetPorts;
+    } else {
+      this.ports = ports;
     }
 
-    public Application() {
-    }
+    this.podList = podList;
+    this.protocols = protocols;
+    this.replicasNumber = replicasNumber;
+    this.secretName = secretName;
+    this.status = AppStatus.CREATED;
+    this.resourceOK = resourceOK;
+  }
 
-    @PrePersist
-    public void ensureId() {
-        id = IdGenerator.createUUID();
-    }
+  public Application() {}
 
-    public String getId() {
-        return id;
-    }
+  @PrePersist
+  public void ensureId() {
+    id = IdGenerator.createUUID();
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getProjectName() {
-        return projectName;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
+  public String getProjectName() {
+    return projectName;
+  }
 
-    public String getRoute() {
-        return route;
-    }
+  public void setProjectName(String projectName) {
+    this.projectName = projectName;
+  }
 
-    public void setRoute(String route) {
-        this.route = route;
-    }
+  public String getRoute() {
+    return route;
+  }
 
-    public MediaServerGroup getMediaServerGroup() {
-        return mediaServerGroup;
-    }
+  public void setRoute(String route) {
+    this.route = route;
+  }
 
-    public void setMediaServerGroup(MediaServerGroup mediaServerGroup) {
-        this.mediaServerGroup = mediaServerGroup;
-    }
+  public MediaServerGroup getMediaServerGroup() {
+    return mediaServerGroup;
+  }
 
-    public String getGitURL() {
-        return gitURL;
-    }
+  public void setMediaServerGroup(MediaServerGroup mediaServerGroup) {
+    this.mediaServerGroup = mediaServerGroup;
+  }
 
-    public void setGitURL(String gitURL) {
-        this.gitURL = gitURL;
-    }
+  public String getGitURL() {
+    return gitURL;
+  }
 
-    public int getReplicasNumber() {
-        return replicasNumber;
-    }
+  public void setGitURL(String gitURL) {
+    this.gitURL = gitURL;
+  }
 
-    public void setReplicasNumber(int replicasNumber) {
-        this.replicasNumber = replicasNumber;
-    }
+  public int getReplicasNumber() {
+    return replicasNumber;
+  }
 
-    public String getSecretName() {
-        return secretName;
-    }
+  public void setReplicasNumber(int replicasNumber) {
+    this.replicasNumber = replicasNumber;
+  }
 
-    public void setSecretName(String secretName) {
-        this.secretName = secretName;
-    }
+  public String getSecretName() {
+    return secretName;
+  }
 
-    public Flavor getFlavor() {
-        return flavor;
-    }
+  public void setSecretName(String secretName) {
+    this.secretName = secretName;
+  }
 
-    public void setFlavor(Flavor flavor) {
-        this.flavor = flavor;
-    }
+  public Flavor getFlavor() {
+    return flavor;
+  }
 
-    public AppStatus getStatus() {
-        return status;
-    }
+  public void setFlavor(Flavor flavor) {
+    this.flavor = flavor;
+  }
 
-    public void setStatus(AppStatus status) {
-        this.status = status;
-    }
+  public AppStatus getStatus() {
+    return status;
+  }
 
-    public boolean isResourceOK() {
-        return resourceOK;
-    }
+  public void setStatus(AppStatus status) {
+    this.status = status;
+  }
 
-    public void setResourceOK(boolean resourceOK) {
-        this.resourceOK = resourceOK;
-    }
+  public boolean isResourceOK() {
+    return resourceOK;
+  }
 
-    public List<Integer> getTargetPorts() {
-        return targetPorts;
-    }
+  public void setResourceOK(boolean resourceOK) {
+    this.resourceOK = resourceOK;
+  }
 
-    public void setTargetPorts(List<Integer> targetPorts) {
-        this.targetPorts = targetPorts;
-    }
+  public List<Integer> getTargetPorts() {
+    return targetPorts;
+  }
 
-    public List<Integer> getPorts() {
-        return ports;
-    }
+  public void setTargetPorts(List<Integer> targetPorts) {
+    this.targetPorts = targetPorts;
+  }
 
-    public void setPorts(List<Integer> ports) {
-        this.ports = ports;
-    }
+  public List<Integer> getPorts() {
+    return ports;
+  }
 
-    public List<String> getProtocols() {
-        return protocols;
-    }
+  public void setPorts(List<Integer> ports) {
+    this.ports = ports;
+  }
 
-    public void setProtocols(List<String> protocols) {
-        this.protocols = protocols;
-    }
+  public List<String> getProtocols() {
+    return protocols;
+  }
 
-    public List<String> getPodList() {
-        return podList;
-    }
+  public void setProtocols(List<String> protocols) {
+    this.protocols = protocols;
+  }
 
-    public void setPodList(List<String> podList) {
-        this.podList = podList;
-    }
+  public List<String> getPodList() {
+    return podList;
+  }
 
-    public String getProjectId() {
-        return projectId;
-    }
+  public void setPodList(List<String> podList) {
+    this.podList = podList;
+  }
 
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
+  public String getProjectId() {
+    return projectId;
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  public void setProjectId(String projectId) {
+    this.projectId = projectId;
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
 
-    @Override
-    public String toString() {
-        return "Application{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", projectName='" + projectName + '\'' +
-                ", projectId='" + projectId + '\'' +
-                ", route='" + route + '\'' +
-                ", gitURL='" + gitURL + '\'' +
-                ", replicasNumber=" + replicasNumber +
-                ", secretName='" + secretName + '\'' +
-                ", flavor=" + flavor +
-                ", status=" + status +
-                ", createdAt=" + createdAt +
-                ", resourceOK=" + resourceOK +
-                ", targetPorts=" + targetPorts +
-                ", ports=" + ports +
-                ", protocols=" + protocols +
-                ", podList=" + podList +
-                ", mediaServerGroup=" + mediaServerGroup +
-                '}';
-    }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  @Override
+  public String toString() {
+    return "Application{"
+        + "id='"
+        + id
+        + '\''
+        + ", name='"
+        + name
+        + '\''
+        + ", projectName='"
+        + projectName
+        + '\''
+        + ", projectId='"
+        + projectId
+        + '\''
+        + ", route='"
+        + route
+        + '\''
+        + ", gitURL='"
+        + gitURL
+        + '\''
+        + ", replicasNumber="
+        + replicasNumber
+        + ", secretName='"
+        + secretName
+        + '\''
+        + ", flavor="
+        + flavor
+        + ", status="
+        + status
+        + ", createdAt="
+        + createdAt
+        + ", resourceOK="
+        + resourceOK
+        + ", targetPorts="
+        + targetPorts
+        + ", ports="
+        + ports
+        + ", protocols="
+        + protocols
+        + ", podList="
+        + podList
+        + ", mediaServerGroup="
+        + mediaServerGroup
+        + '}';
+  }
 }

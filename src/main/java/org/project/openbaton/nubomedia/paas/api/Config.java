@@ -28,21 +28,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/nubomedia/config")
 public class Config {
 
+  @Value("${marketplace.ip}")
+  private String marketplaceIp;
 
-    @Value("${marketplace.ip}")
-    private String marketplaceIp;
+  @Value("${marketplace.port}")
+  private String marketplacePort;
 
-    @Value("${marketplace.port}")
-    private String marketplacePort;
-
-    /**
-     * Returns the list of the Configurations available
-     *
-     * @return List<Configuration>: The list of Configurations available
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    public String getMarketplaceUrl() {
-        return marketplaceIp + ":" + marketplacePort ;
-    }
-
+  /**
+   * Returns the list of the Configurations available
+   *
+   * @return List<Configuration>: The list of Configurations available
+   */
+  @RequestMapping(method = RequestMethod.GET)
+  public String getMarketplaceUrl() {
+    return marketplaceIp + ":" + marketplacePort;
+  }
 }

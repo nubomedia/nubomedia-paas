@@ -36,52 +36,65 @@ import javax.annotation.PostConstruct;
 @Service
 public class ServiceManager {
 
-    @Autowired private RestTemplate template;
-    @Autowired private Gson mapper;
-    private Logger logger;
-    private String suffix;
+  @Autowired private RestTemplate template;
+  @Autowired private Gson mapper;
+  private Logger logger;
+  private String suffix;
 
-    @PostConstruct
-    private void init(){
-        this.logger = LoggerFactory.getLogger(this.getClass());
-        this.suffix = "/services/";
+  @PostConstruct
+  private void init() {
+    this.logger = LoggerFactory.getLogger(this.getClass());
+    this.suffix = "/services/";
+  }
+
+  public ResponseEntity<String> makeService(
+      String kubernetesBaseURL,
+      String appName,
+      String namespace,
+      int[] ports,
+      int[] targetPorts,
+      String[] protocols,
+      HttpHeaders authHeader)
+      throws DuplicatedException, UnauthorizedException {
+    ServiceConfig message =
+        MessageBuilderFactory.getServiceMessage(appName, ports, targetPorts, protocols);
+
+    logger.debug("Writing service creation " + mapper.toJson(message, ServiceConfig.class));
+
+    String URL = kubernetesBaseURL + namespace + suffix;
+    HttpEntity<String> serviceEntity =
+        new HttpEntity<>(mapper.toJson(message, ServiceConfig.class), authHeader);
+    ResponseEntity response = template.exchange(URL, HttpMethod.POST, serviceEntity, String.class);
+
+    if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
+      throw new DuplicatedException("Application with " + appName + " is already present");
     }
 
+    if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 
-    public ResponseEntity<String> makeService(String kubernetesBaseURL, String appName,String namespace,int[] ports,int[] targetPorts,String[] protocols,HttpHeaders authHeader) throws DuplicatedException, UnauthorizedException {
-        ServiceConfig message = MessageBuilderFactory.getServiceMessage(appName, ports, targetPorts, protocols);
-
-        logger.debug("Writing service creation " + mapper.toJson(message,ServiceConfig.class));
-
-        String URL = kubernetesBaseURL + namespace + suffix;
-        HttpEntity<String> serviceEntity = new HttpEntity<>(mapper.toJson(message, ServiceConfig.class), authHeader);
-        ResponseEntity response = template.exchange(URL, HttpMethod.POST,serviceEntity,String.class);
-
-        if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
-            throw new DuplicatedException("Application with " + appName + " is already present");
-        }
-
-        if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
-            throw new UnauthorizedException("Invalid or expired token");
-        }
-
-        return response;
+      throw new UnauthorizedException("Invalid or expired token");
     }
 
-    public HttpStatus deleteService(String kubernetesBaseURL, String appName, String namespace,HttpHeaders authHeader) throws UnauthorizedException {
-        String URL = kubernetesBaseURL + namespace + suffix + appName + "-svc";
-        HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
-        ResponseEntity<String> deleteResponse = template.exchange(URL,HttpMethod.DELETE,deleteEntity,String.class);
+    return response;
+  }
 
-        if(deleteResponse.getStatusCode() != HttpStatus.OK) logger.debug("Error deleting service " + appName + "-svc response " + deleteResponse.toString());
+  public HttpStatus deleteService(
+      String kubernetesBaseURL, String appName, String namespace, HttpHeaders authHeader)
+      throws UnauthorizedException {
+    String URL = kubernetesBaseURL + namespace + suffix + appName + "-svc";
+    HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
+    ResponseEntity<String> deleteResponse =
+        template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
 
-        if(deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    if (deleteResponse.getStatusCode() != HttpStatus.OK)
+      logger.debug(
+          "Error deleting service " + appName + "-svc response " + deleteResponse.toString());
 
-            throw new UnauthorizedException("Invalid or expired token");
-        }
+    if (deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 
-        return deleteResponse.getStatusCode();
+      throw new UnauthorizedException("Invalid or expired token");
     }
 
+    return deleteResponse.getStatusCode();
+  }
 }

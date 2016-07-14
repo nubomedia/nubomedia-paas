@@ -21,30 +21,29 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class Output {
 
-    private BuildElements to;
-    private SecretID pushSecret;
+  private BuildElements to;
+  private SecretID pushSecret;
 
-    public Output(BuildElements to, SecretID pushSecret) {
-        this.to = to;
-        this.pushSecret = pushSecret;
-    }
+  public Output(BuildElements to, SecretID pushSecret) {
+    this.to = to;
+    this.pushSecret = pushSecret;
+  }
 
-    public Output() {
-    }
+  public Output() {}
 
-    public BuildElements getTo() {
-        return to;
-    }
+  public BuildElements getTo() {
+    return to;
+  }
 
-    public void setTo(BuildElements to) {
-        this.to = to;
-    }
+  public void setTo(BuildElements to) {
+    this.to = to;
+  }
 
-    public SecretID getPushSecret() {
-        return pushSecret;
-    }
+  public SecretID getPushSecret() {
+    return pushSecret;
+  }
 
-    public void setPushSecret(SecretID pushSecret) {
-        this.pushSecret = pushSecret;
-    }
+  public void setPushSecret(SecretID pushSecret) {
+    this.pushSecret = pushSecret;
+  }
 }

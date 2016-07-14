@@ -27,67 +27,75 @@ import java.util.List;
 @Entity
 public class MediaServerGroup {
 
-    @Id
-    private String id;
-    private String nsdID;
-    private String nsrID;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> floatingIPs;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> hostnames;
+  @Id private String id;
+  private String nsdID;
+  private String nsrID;
 
-    public MediaServerGroup() {
-    }
+  @ElementCollection(fetch = FetchType.EAGER)
+  private List<String> floatingIPs;
 
-    @PrePersist
-    public void ensureId(){
-        id = IdGenerator.createUUID();
-    }
+  @ElementCollection(fetch = FetchType.EAGER)
+  private List<String> hostnames;
 
-    public String getId() {
-        return id;
-    }
+  public MediaServerGroup() {}
 
-    public String getNsdID() {
-        return nsdID;
-    }
+  @PrePersist
+  public void ensureId() {
+    id = IdGenerator.createUUID();
+  }
 
-    public void setNsdID(String nsdID) {
-        this.nsdID = nsdID;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public String getNsrID() {
-        return nsrID;
-    }
+  public String getNsdID() {
+    return nsdID;
+  }
 
-    public void setNsrID(String nsrID) {
-        this.nsrID = nsrID;
-    }
+  public void setNsdID(String nsdID) {
+    this.nsdID = nsdID;
+  }
 
-    public List<String> getFloatingIPs() {
-        return floatingIPs;
-    }
+  public String getNsrID() {
+    return nsrID;
+  }
 
-    public void setFloatingIPs(List<String> floatingIPs) {
-        this.floatingIPs = floatingIPs;
-    }
+  public void setNsrID(String nsrID) {
+    this.nsrID = nsrID;
+  }
 
-    public List<String> getHostnames() {
-        return hostnames;
-    }
+  public List<String> getFloatingIPs() {
+    return floatingIPs;
+  }
 
-    public void setHostnames(List<String> hostnames) {
-        this.hostnames = hostnames;
-    }
+  public void setFloatingIPs(List<String> floatingIPs) {
+    this.floatingIPs = floatingIPs;
+  }
 
-    @Override
-    public String toString() {
-        return "MediaServerGroup{" +
-                "id='" + id + '\'' +
-                ", nsdID='" + nsdID + '\'' +
-                ", nsrID='" + nsrID + '\'' +
-                ", floatingIPs=" + floatingIPs +
-                ", hostnames=" + hostnames +
-                '}';
-    }
+  public List<String> getHostnames() {
+    return hostnames;
+  }
+
+  public void setHostnames(List<String> hostnames) {
+    this.hostnames = hostnames;
+  }
+
+  @Override
+  public String toString() {
+    return "MediaServerGroup{"
+        + "id='"
+        + id
+        + '\''
+        + ", nsdID='"
+        + nsdID
+        + '\''
+        + ", nsrID='"
+        + nsrID
+        + '\''
+        + ", floatingIPs="
+        + floatingIPs
+        + ", hostnames="
+        + hostnames
+        + '}';
+  }
 }

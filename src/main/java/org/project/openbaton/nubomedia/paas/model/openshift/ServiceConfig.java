@@ -21,42 +21,41 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class ServiceConfig {
 
-    private final String kind = "Service";
-    private final String apiVersion = "v1";
+  private final String kind = "Service";
+  private final String apiVersion = "v1";
 
-    private Metadata metadata;
+  private Metadata metadata;
 
-    private ServiceSpec spec;
+  private ServiceSpec spec;
 
-    public ServiceConfig(Metadata metadata, ServiceSpec spec) {
-        this.metadata = metadata;
-        this.spec = spec;
-    }
+  public ServiceConfig(Metadata metadata, ServiceSpec spec) {
+    this.metadata = metadata;
+    this.spec = spec;
+  }
 
-    public ServiceConfig() {
-    }
+  public ServiceConfig() {}
 
-    public String getKind() {
-        return kind;
-    }
+  public String getKind() {
+    return kind;
+  }
 
-    public String getApiVersion() {
-        return apiVersion;
-    }
+  public String getApiVersion() {
+    return apiVersion;
+  }
 
-    public Metadata getMetadata() {
-        return metadata;
-    }
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
 
-    public ServiceSpec getSpec() {
-        return spec;
-    }
+  public ServiceSpec getSpec() {
+    return spec;
+  }
 
-    public void setSpec(ServiceSpec spec) {
-        this.spec = spec;
-    }
+  public void setSpec(ServiceSpec spec) {
+    this.spec = spec;
+  }
 }

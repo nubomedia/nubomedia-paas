@@ -21,20 +21,19 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class SecretID {
 
-    private String name;
+  private String name;
 
-    public SecretID(String name) {
-        this.name = name;
-    }
+  public SecretID(String name) {
+    this.name = name;
+  }
 
-    public SecretID() {
-    }
+  public SecretID() {}
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 }

@@ -21,30 +21,29 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class EnviromentVariable {
 
-    private String name;
-    private String value;
+  private String name;
+  private String value;
 
-    public EnviromentVariable(String name, String value) {
-        this.name = name;
-        this.value = value;
-    }
+  public EnviromentVariable(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
 
-    public EnviromentVariable() {
-    }
+  public EnviromentVariable() {}
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 }

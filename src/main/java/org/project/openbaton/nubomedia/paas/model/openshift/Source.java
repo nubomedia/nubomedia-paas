@@ -17,80 +17,77 @@
 package org.project.openbaton.nubomedia.paas.model.openshift;
 
 /**
- * Created by maa on 25/09/2015.
- * S2i JSon message
+ * Created by maa on 25/09/2015. S2i JSon message
  */
-public class Source{
+public class Source {
 
-    private String type;
-    private Git git; //TODO add other sources and not only GIT Repositories (if is possible)
-    private SourceSecret sourceSecret;
+  private String type;
+  private Git git; //TODO add other sources and not only GIT Repositories (if is possible)
+  private SourceSecret sourceSecret;
 
-    public static class SourceSecret{
-        String name;
+  public static class SourceSecret {
+    String name;
 
-        public SourceSecret(String name){
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
+    public SourceSecret(String name) {
+      this.name = name;
     }
 
-    public static class Git{
-        String uri;
-
-        public Git(String URI) {
-            this.uri = URI;
-        }
-
-        public Git() {
-        }
-
-        public String getURI() {
-            return uri;
-        }
-
-        public void setURI(String URI) {
-            this.uri = URI;
-        }
+    public String getName() {
+      return name;
     }
 
-    public Source(String type, Git git, SourceSecret sourceSecret) {
-        this.type = type;
-        this.git = git;
-        this.sourceSecret = sourceSecret;
+    public void setName(String name) {
+      this.name = name;
+    }
+  }
+
+  public static class Git {
+    String uri;
+
+    public Git(String URI) {
+      this.uri = URI;
     }
 
-    public Source() {
+    public Git() {}
+
+    public String getURI() {
+      return uri;
     }
 
-    public String getType() {
-        return type;
+    public void setURI(String URI) {
+      this.uri = URI;
     }
+  }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+  public Source(String type, Git git, SourceSecret sourceSecret) {
+    this.type = type;
+    this.git = git;
+    this.sourceSecret = sourceSecret;
+  }
 
-    public Git getGit() {
-        return git;
-    }
+  public Source() {}
 
-    public void setGit(Git git) {
-        this.git = git;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public SourceSecret getSourceSecret() {
-        return sourceSecret;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    public void setSourceSecret(SourceSecret sourceSecret) {
-        this.sourceSecret = sourceSecret;
-    }
+  public Git getGit() {
+    return git;
+  }
+
+  public void setGit(Git git) {
+    this.git = git;
+  }
+
+  public SourceSecret getSourceSecret() {
+    return sourceSecret;
+  }
+
+  public void setSourceSecret(SourceSecret sourceSecret) {
+    this.sourceSecret = sourceSecret;
+  }
 }

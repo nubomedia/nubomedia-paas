@@ -21,40 +21,39 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class ConfigBuild {
 
-    private String kind;
-    private String namespace;
-    private String name;
+  private String kind;
+  private String namespace;
+  private String name;
 
-    public ConfigBuild(String kind, String namespace, String name) {
-        this.kind = kind;
-        this.namespace = namespace;
-        this.name = name;
-    }
+  public ConfigBuild(String kind, String namespace, String name) {
+    this.kind = kind;
+    this.namespace = namespace;
+    this.name = name;
+  }
 
-    public ConfigBuild() {
-    }
+  public ConfigBuild() {}
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getKind() {
-        return kind;
-    }
+  public String getKind() {
+    return kind;
+  }
 
-    public void setKind(String kind) {
-        this.kind = kind;
-    }
+  public void setKind(String kind) {
+    this.kind = kind;
+  }
 
-    public String getNamespace() {
-        return namespace;
-    }
+  public String getNamespace() {
+    return namespace;
+  }
 
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
-    }
+  public void setNamespace(String namespace) {
+    this.namespace = namespace;
+  }
 }

@@ -21,12 +21,19 @@ package org.project.openbaton.nubomedia.paas.exceptions.openbaton;
  */
 public class StunServerException extends Exception {
 
-    public StunServerException(){super();}
+  public StunServerException() {
+    super();
+  }
 
-    public StunServerException(Throwable throwable){ super(throwable);}
+  public StunServerException(Throwable throwable) {
+    super(throwable);
+  }
 
-    public StunServerException(String message){ super(message);}
+  public StunServerException(String message) {
+    super(message);
+  }
 
-    public StunServerException(String message, Throwable throwable){ super(message,throwable); }
-
+  public StunServerException(String message, Throwable throwable) {
+    super(message, throwable);
+  }
 }

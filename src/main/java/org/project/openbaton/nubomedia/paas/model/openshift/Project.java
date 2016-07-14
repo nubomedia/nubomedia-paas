@@ -21,90 +21,87 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class Project {
 
-    public static class ProjectSpec{
+  public static class ProjectSpec {
 
-        private String[] finalizers;
+    private String[] finalizers;
 
-        public ProjectSpec(String[] finalizers) {
-            this.finalizers = finalizers;
-        }
-
-        public ProjectSpec() {
-        }
-
-        public String[] getFinalizers() {
-            return finalizers;
-        }
-
-        public void setFinalizers(String[] finalizers) {
-            this.finalizers = finalizers;
-        }
+    public ProjectSpec(String[] finalizers) {
+      this.finalizers = finalizers;
     }
 
-    public static class ProjectStatus{
+    public ProjectSpec() {}
 
-        private String phase;
-
-        public ProjectStatus(String phase) {
-            this.phase = phase;
-        }
-
-        public ProjectStatus() {
-        }
-
-        public String getPhase() {
-            return phase;
-        }
-
-        public void setPhase(String phase) {
-            this.phase = phase;
-        }
+    public String[] getFinalizers() {
+      return finalizers;
     }
 
-    private final String kind = "Project";
-    private final String apiVersion = "v1";
-    private Metadata metadata;
-    private ProjectSpec spec;
-    private ProjectStatus status;
+    public void setFinalizers(String[] finalizers) {
+      this.finalizers = finalizers;
+    }
+  }
 
-    public Project(Metadata metadata, ProjectSpec spec, ProjectStatus status) {
-        this.metadata = metadata;
-        this.spec = spec;
-        this.status = status;
+  public static class ProjectStatus {
+
+    private String phase;
+
+    public ProjectStatus(String phase) {
+      this.phase = phase;
     }
 
-    public Project() {
+    public ProjectStatus() {}
+
+    public String getPhase() {
+      return phase;
     }
 
-    public String getKind() {
-        return kind;
+    public void setPhase(String phase) {
+      this.phase = phase;
     }
+  }
 
-    public String getApiVersion() {
-        return apiVersion;
-    }
+  private final String kind = "Project";
+  private final String apiVersion = "v1";
+  private Metadata metadata;
+  private ProjectSpec spec;
+  private ProjectStatus status;
 
-    public Metadata getMetadata() {
-        return metadata;
-    }
+  public Project(Metadata metadata, ProjectSpec spec, ProjectStatus status) {
+    this.metadata = metadata;
+    this.spec = spec;
+    this.status = status;
+  }
 
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
+  public Project() {}
 
-    public ProjectSpec getSpec() {
-        return spec;
-    }
+  public String getKind() {
+    return kind;
+  }
 
-    public void setSpec(ProjectSpec spec) {
-        this.spec = spec;
-    }
+  public String getApiVersion() {
+    return apiVersion;
+  }
 
-    public ProjectStatus getStatus() {
-        return status;
-    }
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-    public void setStatus(ProjectStatus status) {
-        this.status = status;
-    }
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
+
+  public ProjectSpec getSpec() {
+    return spec;
+  }
+
+  public void setSpec(ProjectSpec spec) {
+    this.spec = spec;
+  }
+
+  public ProjectStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(ProjectStatus status) {
+    this.status = status;
+  }
 }

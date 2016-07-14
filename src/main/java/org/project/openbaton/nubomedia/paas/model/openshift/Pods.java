@@ -23,27 +23,24 @@ import java.util.List;
  */
 public class Pods {
 
-    private List<String> podNames;
+  private List<String> podNames;
 
-    public Pods(List<String> podNames) {
-        this.podNames = podNames;
-    }
+  public Pods(List<String> podNames) {
+    this.podNames = podNames;
+  }
 
-    public Pods() {
-    }
+  public Pods() {}
 
-    public List<String> getPodNames() {
-        return podNames;
-    }
+  public List<String> getPodNames() {
+    return podNames;
+  }
 
-    public void setPodNames(List<String> podNames) {
-        this.podNames = podNames;
-    }
+  public void setPodNames(List<String> podNames) {
+    this.podNames = podNames;
+  }
 
-    @Override
-    public String toString() {
-        return "Pods{" +
-                "podNames=" + podNames +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "Pods{" + "podNames=" + podNames + '}';
+  }
 }

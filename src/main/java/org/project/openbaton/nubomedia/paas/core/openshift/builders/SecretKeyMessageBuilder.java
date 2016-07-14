@@ -27,19 +27,19 @@ import java.util.UUID;
  */
 public class SecretKeyMessageBuilder {
 
-    private String name;
-    private String sshPrivateKey;
+  private String name;
+  private String sshPrivateKey;
 
-    public SecretKeyMessageBuilder(String name, String sshPrivateKey) {
-        this.name = name;
-        this.sshPrivateKey = sshPrivateKey;
-    }
+  public SecretKeyMessageBuilder(String name, String sshPrivateKey) {
+    this.name = name;
+    this.sshPrivateKey = sshPrivateKey;
+  }
 
-    public SecretConfig buildMessage(){
-        UUID uuid = UUID.randomUUID();
-        Metadata secretMeta = new Metadata(name + Long.toString(uuid.getLeastSignificantBits(),64) +"-secret","","");
-        SshGitKeySecret secret = new SshGitKeySecret(sshPrivateKey);
-        return new SecretConfig(secretMeta,secret);
-    }
-
+  public SecretConfig buildMessage() {
+    UUID uuid = UUID.randomUUID();
+    Metadata secretMeta =
+        new Metadata(name + Long.toString(uuid.getLeastSignificantBits(), 64) + "-secret", "", "");
+    SshGitKeySecret secret = new SshGitKeySecret(sshPrivateKey);
+    return new SecretConfig(secretMeta, secret);
+  }
 }

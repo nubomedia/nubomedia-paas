@@ -23,22 +23,18 @@ import org.springframework.stereotype.Service;
  * Created by maa on 22.01.16.
  */
 @Service
-@ConfigurationProperties(prefix="paas")
+@ConfigurationProperties(prefix = "paas")
 public class PaaSProperties {
 
-    private String port;
+  private String port;
 
-    public PaaSProperties() {
-    }
+  public PaaSProperties() {}
 
-    public String getPort() {
-        return port;
-    }
+  public String getPort() {
+    return port;
+  }
 
-    public void setPort(String port) {
-        this.port = port;
-    }
-
-
-
+  public void setPort(String port) {
+    this.port = port;
+  }
 }

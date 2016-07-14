@@ -33,57 +33,68 @@ import javax.annotation.PostConstruct;
 /**
  * Created by maa on 08.10.15.
  */
-
 @Service
 public class ImageStreamManager {
 
-    @Autowired private RestTemplate template;
-    @Autowired private Gson mapper;
-    private Logger logger;
-    private String suffix;
+  @Autowired private RestTemplate template;
+  @Autowired private Gson mapper;
+  private Logger logger;
+  private String suffix;
 
-    @PostConstruct
-    private void init(){
-        this.logger = LoggerFactory.getLogger(this.getClass());
-        this.suffix = "/imagestreams/";
+  @PostConstruct
+  private void init() {
+    this.logger = LoggerFactory.getLogger(this.getClass());
+    this.suffix = "/imagestreams/";
+  }
+
+  public ResponseEntity<String> makeImageStream(
+      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      throws DuplicatedException, UnauthorizedException {
+    ImageStreamConfig message = MessageBuilderFactory.getImageStreamMessage(appName);
+    logger.debug("Sending message " + mapper.toJson(message, ImageStreamConfig.class));
+    String URL = baseURL + namespace + suffix;
+    HttpEntity<String> imageStreamEntity =
+        new HttpEntity<>(mapper.toJson(message, ImageStreamConfig.class), authHeader);
+
+    ResponseEntity<String> response =
+        template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
+    logger.debug("response " + response.getBody());
+
+    if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
+      throw new DuplicatedException("Application with " + appName + " is already present");
     }
 
-    public ResponseEntity<String> makeImageStream(String baseURL, String appName,String namespace,HttpHeaders authHeader) throws DuplicatedException, UnauthorizedException {
-        ImageStreamConfig message = MessageBuilderFactory.getImageStreamMessage(appName);
-        logger.debug("Sending message " + mapper.toJson(message,ImageStreamConfig.class));
-        String URL = baseURL + namespace + suffix;
-        HttpEntity<String> imageStreamEntity = new HttpEntity<>(mapper.toJson(message, ImageStreamConfig.class), authHeader);
+    if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 
-        ResponseEntity<String> response = template.exchange(URL, HttpMethod.POST, imageStreamEntity, String.class);
-        logger.debug("response " + response.getBody());
-
-
-        if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
-            throw new DuplicatedException("Application with " + appName + " is already present");
-        }
-
-        if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
-            throw new UnauthorizedException("Invalid or expired token");
-        }
-
-        return response;
+      throw new UnauthorizedException("Invalid or expired token");
     }
 
-    public HttpStatus deleteImageStream (String baseURL, String appName, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
+    return response;
+  }
 
-        String URL = baseURL + namespace + suffix + appName;
-        HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
-        ResponseEntity<String> deleteResponse = template.exchange(URL,HttpMethod.DELETE,deleteEntity,String.class);
+  public HttpStatus deleteImageStream(
+      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      throws UnauthorizedException {
 
-        if(deleteResponse.getStatusCode() != HttpStatus.OK) logger.debug("Error deleting imagestream for " + appName + " in project " + namespace + " response " + deleteEntity.toString());
+    String URL = baseURL + namespace + suffix + appName;
+    HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
+    ResponseEntity<String> deleteResponse =
+        template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
 
-        if(deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    if (deleteResponse.getStatusCode() != HttpStatus.OK)
+      logger.debug(
+          "Error deleting imagestream for "
+              + appName
+              + " in project "
+              + namespace
+              + " response "
+              + deleteEntity.toString());
 
-            throw new UnauthorizedException("Invalid or expired token");
-        }
+    if (deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 
-        return deleteResponse.getStatusCode();
+      throw new UnauthorizedException("Invalid or expired token");
     }
 
+    return deleteResponse.getStatusCode();
+  }
 }

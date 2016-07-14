@@ -27,37 +27,36 @@ import java.io.IOException;
  */
 public class EnvironmentVariableSerializer extends TypeAdapter<EnviromentVariable> {
 
-    @Override
-    public void write(JsonWriter out, EnviromentVariable value) throws IOException {
-        if (value.getValue() == null){
-            return;
-        }
-        else{
-            out.beginObject();
-            out.name("name");
-            out.value(value.getName());
-            out.name("value");
-            out.value(value.getValue());
-            out.endObject();
-        }
+  @Override
+  public void write(JsonWriter out, EnviromentVariable value) throws IOException {
+    if (value.getValue() == null) {
+      return;
+    } else {
+      out.beginObject();
+      out.name("name");
+      out.value(value.getName());
+      out.name("value");
+      out.value(value.getValue());
+      out.endObject();
     }
+  }
 
-    @Override
-    public EnviromentVariable read(JsonReader in) throws IOException {
+  @Override
+  public EnviromentVariable read(JsonReader in) throws IOException {
 
-        EnviromentVariable env = new EnviromentVariable();
+    EnviromentVariable env = new EnviromentVariable();
 
-        in.beginObject();
-        while (in.hasNext()){
-            if (in.nextName().equals("name")){
-                env.setName(in.nextString());
-            }
-            if (in.nextName().equals("value")){
-                env.setValue(in.nextString());
-            }
-        }
-        in.endObject();
-
-        return env;
+    in.beginObject();
+    while (in.hasNext()) {
+      if (in.nextName().equals("name")) {
+        env.setName(in.nextString());
+      }
+      if (in.nextName().equals("value")) {
+        env.setValue(in.nextString());
+      }
     }
+    in.endObject();
+
+    return env;
+  }
 }
