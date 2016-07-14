@@ -57,8 +57,32 @@ function createNubomediaBase {
 
 function compileProperties {
 
+    export adminPassword
+    read -p "Enter the admin password of the PaaS Manager [nub0m3d14]: " adminPassword
+    if [[ "$adminPassword" != "" ]]; then
+        $_ex 'sed -i "s|paas.security.admin.password=nub0m3d14|paas.security.admin.password=$adminPassword|g" /etc/nubomedia/paas.properties'
+    fi
+
+    export paasPort
+    read -p "Enter the port of the PaaS Manager [8081]: " paasPort
+    if [[ "$paasPort" != "" ]]; then
+        $_ex 'sed -i "s|paas.port=8081|paas.port=$paasPort|g" /etc/nubomedia/paas.properties'
+    fi
+
+    export mysqlUsername
+    read -p "Enter the username used to authorize against the database [admin]: " mysqlUsername
+    if [[ "$mysqlUsername" != "" ]]; then
+        $_ex 'sed -i "s|spring.datasource.username=admin|spring.datasource.username=$mysqlUsername|g" /etc/nubomedia/paas.properties'
+    fi
+
+    export mysqlPassword
+    read -p "Enter the password used to authorize against the database [changeme]: " mysqlPassword
+    if [[ "$mysqlPassword" != "" ]]; then
+        $_ex 'sed -i "s|spring.datasource.password=changeme|spring.datasource.password=$mysqlPassword|g" /etc/nubomedia/paas.properties'
+    fi
+
     export baseUrl
-    read -p "Enter the PaaS ip [https://localhost:8443]: " baseUrl
+    read -p "Enter the OpenShift url [https://localhost:8443]: " baseUrl
     if [[ "$baseUrl" != "" ]]; then
         $_ex 'sed -i "s|openshift.baseURL=https://localhost:8443|openshift.baseURL=$baseUrl|g" /etc/nubomedia/paas.properties'
     fi
@@ -69,76 +93,118 @@ function compileProperties {
         $_ex 'sed -i "s|openshift.domainName=example.com|openshift.domainName=$domainName|g" /etc/nubomedia/paas.properties'
     fi
 
-    export paasIp
-    read -p "Enter the PaaS API ip [http://localhost:8081]: " paasIp
-    if [[ "$paasIp" != "" ]]; then
-        $_ex 'sed -i "s|paas.internalURL=http://localhost:8081|paas.internalURL=$paasIp|g" /etc/nubomedia/paas.properties'
+    export project
+    read -p "Enter the project name to be used in OpenShift [nubomedia]: " project
+    if [[ "$project" != "" ]]; then
+        $_ex 'sed -i "s|openshift.project=nubomedia|openshift.project=$project|g" /etc/nubomedia/paas.properties'
     fi
 
-    export vnfmIp
-    read -p "Enter the Vnfm ip [localhost]: " vnfmIp
-    if [[ $vnfmIp != "" ]]; then
-        $_ex 'sed -i "s/paas.vnfmIP=localhost/paas.vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
+    export token
+    read -p "Enter the token to be used to authorize against OpenShift: " token
+    if [[ "$token" != "" ]]; then
+        $_ex 'sed -i "s|openshift.token=token|openshift.token=$token|g" /etc/nubomedia/paas.properties'
+    fi
+
+    export kmsImage
+    read -p "Enter the name of the image to be used for the KMS instances [kurento-media-server]: " kmsImage
+    if [[ "$kmsImage" != "" ]]; then
+        $_ex 'sed -i "s|kms.image=kurento-media-server|kms.image=$kmsImage|g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoIp
     read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
     if [[ $nfvoIp != "" ]]; then
-         $_ex 'sed -i "s/nfvo.openbatonIP=localhost/nfvo.openbatonIP=$nfvoIp/g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s/nfvo.ip=localhost/nfvo.ip=$nfvoIp/g" /etc/nubomedia/paas.properties'
+    fi
+
+    export nfvoPort
+    read -p "Enter the Orchestrator port [8080]: " nfvoPort
+    if [[ $nfvoPort != "" ]]; then
+         $_ex 'sed -i "s/nfvo.port=8080/nfvo.port=$nfvoPort/g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoUsername
     read -p "Enter the Orchestrator username [admin]: " nfvoUsername
     if [[ $nfvoUsername != "" ]]; then
-         $_ex 'sed -i "s/nfvo.openbatonUsername=admin/nfvo.openbatonUsername=$nfvoUsername/g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s/nfvo.username=admin/nfvo.username=$nfvoUsername/g" /etc/nubomedia/paas.properties'
     fi
 
     export nfvoPassword
-    read -p "Enter the Orchestrator password [openbaton]: " nfvoPassword
+    read -p "Enter the password to authorize against the Orchestrator [openbaton]: " nfvoPassword
     if [[ $nfvoPassword != "" ]]; then
-         $_ex 'sed -i "s/nfvo.openbatonPasswd=openbaton/nfvo.openbatonPasswd=$nfvoPassword/g" /etc/nubomedia/paas.properties'
+         $_ex 'sed -i "s/nfvo.password=openbaton/nfvo.password=$nfvoPassword/g" /etc/nubomedia/paas.properties'
     fi
 
-    export nfvoImage
-    read -p "Enter the kurento media server Openstack image name [kurento-media-server]: " nfvoImage
-    if [[ $nfvoImage != "" ]]; then
-         $_ex 'sed -i "s|nfvo.imageName=kurento-media-server|nfvo.imageName=$nfvoImage|g" /etc/nubomedia/paas.properties'
+    export vnfmIp
+    read -p "Enter the IP of the VNFM [localhost]: " vnfmIp
+    if [[ $vnfmIp != "" ]]; then
+        $_ex 'sed -i "s/paas.vnfmIP=localhost/paas.vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
     fi
 
-    export keystorePath
-    read -p "Enter the Openshift Keystore location (including the filename): " keystorePath
-    if [[ ! -z "$keystorePath" ]]; then
-   	    $_ex 'cp '"${keystorePath} ${_nubomedia_paas}/resource/openshift-keystore"
+    export vnfmPort
+    read -p "Enter the port of the VNFM [9000]: " vnfmPort
+    if [[ $vnfmPort != "" ]]; then
+        $_ex 'sed -i "s/vnfm.port=9000/vnfm.port=$vnfmPort/g" /etc/nubomedia/paas.properties'
+    fi
+
+    export marketplaceIp
+    read -p "Enter the IP of the marketplace [localhost]: " marketplaceIp
+    if [[ $marketplaceIp != "" ]]; then
+         $_ex 'sed -i "s|marketplace.ip=localhost|marketplace.ip=$marketplaceIp|g" /etc/nubomedia/paas.properties'
+    fi
+
+    export marketplacePort
+    read -p "Enter the port of the marketplace [8082]: " marketplacePort
+    if [[ $marketplacePort != "" ]]; then
+         $_ex 'sed -i "s|marketplace.port=8082|marketplace.ip=$marketplacePort|g" /etc/nubomedia/paas.properties'
     fi
 
     export authURL
-    read -p "Enter the Vim Auth URL (http://localhost:5000/v2.0): " authURL
+    read -p "Enter the Auth URL of the cloud infrastructure [http://localhost:5000/v2.0]: " authURL
     if [[ "$authURL" != "" ]]; then
-        $_ex 'sed -i "s|vim.authURL=http://localhost:5000/v2.0|vim.authURL:$authURL|g" /etc/nubomedia/paas.properties'
+        $_ex 'sed -i "s|vim.authURL=http://localhost:5000/v2.0|vim.authURL=$authURL|g" /etc/nubomedia/paas.properties'
     fi
 
     export tenantName
-    read -p "Enter the tenant name (nubomedia): " tenantName
+    read -p "Enter the tenant name to be used in your cloud infrastructure [nubomedia]: " tenantName
     if [[ $tenantName != "" ]]; then
         $_ex 'sed -i "s/vim.tenant=nubomedia/vim.tenant=$tenantName/g" /etc/nubomedia/paas.properties'
     fi
 
     export username
-    read -p "Enter the vim username (nubomedia): " username
+    read -p "Enter the username to be used to authorize against your cloud infrastructure (VIM) [nubomedia]: " username
     if [[ $username != "" ]]; then
         $_ex 'sed -i "s/vim.username=nubomedia/vim.username=$username/g" /etc/nubomedia/paas.properties'
     fi
 
     export password
-    read -p "Enter the vim password (changeme): " password
+    read -p "Enter the password to be used to authorize against your cloud infrastructure (VIM) [changeme]: " password
     if [[ $password != "" ]]; then
         $_ex 'sed -i "s/vim.password=changeme/vim.password=$password/g" /etc/nubomedia/paas.properties'
     fi
 
     export keyPair
-    read -p "Enter the vim keyPair (nubomedia): " keyPair
+    read -p "Enter the Key file to be used to login to the VMs via ssh [nubomedia]: " keyPair
     if [[ $keyPair != "" ]]; then
         $_ex 'sed -i "s/vim.keypair=nubomedia/vim.keypair=$keyPair/g" /etc/nubomedia/paas.properties'
+    fi
+
+    export rabbitMqHost
+    read -p "Enter the host address where the RabbitMQ server is running [localhost]: " rabbitMqHost
+    if [[ $rabbitMqHost != "" ]]; then
+        $_ex 'sed -i "s/rabbitmq.host=localhost/rabbitmq.host=$rabbitMqHost/g" /etc/nubomedia/paas.properties'
+    fi
+
+    export rabbitMqUsername
+    read -p "Enter the username used to authorize against the RabbitMQ server [admin]: " rabbitMqUsername
+    if [[ $rabbitMqUsername != "" ]]; then
+        $_ex 'sed -i "s/rabbitmq.username=admin/rabbitmq.username=$rabbitMqUsername/g" /etc/nubomedia/paas.properties'
+    fi
+
+    export rabbitMqPassword
+    read -p "Enter the password used to authorize against the RabbitMQ server [openbaton]: " rabbitMqPassword
+    if [[ $rabbitMqPassword != "" ]]; then
+        $_ex 'sed -i "s/rabbitmq.password=openbaton/rabbitmq.password=$rabbitMqPassword/g" /etc/nubomedia/paas.properties'
     fi
 }
 
