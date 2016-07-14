@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 buildscript {
     repositories{
         mavenCentral()
@@ -21,11 +22,15 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
     }
 }
+plugins {
+    id 'com.github.sherter.google-java-format' version '0.3.2'
+}
 apply plugin: 'spring-boot'
 
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
+
 
 /**
  * Project settings
