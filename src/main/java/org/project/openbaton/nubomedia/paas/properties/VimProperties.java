@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.utils;
+package org.project.openbaton.nubomedia.paas.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;

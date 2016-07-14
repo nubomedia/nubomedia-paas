@@ -53,13 +53,13 @@ public class CustomUserDetailsService implements UserDetailsService, CommandLine
     private UserDetailsManager inMemManager;
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${nfvo.security.admin.password:openbaton}")
+    @Value("${paas.security.admin.password:nub0m3d14}")
     private String adminPwd;
-    @Value("${nfvo.security.guest.password:guest}")
-    private String guestPwd;
+    //@Value("${paas.security.guest.password:guest}")
+    //private String guestPwd;
     @Autowired
     private ProjectManagement projectManagement;
-    @Value("${nfvo.security.project.name:default}")
+    @Value("${paas.security.project.name:default}")
     private String projectDefaultName;
 
     @Override
@@ -92,7 +92,7 @@ public class CustomUserDetailsService implements UserDetailsService, CommandLine
             log.debug("Admin" + inMemManager.loadUserByUsername("admin"));
         }
 
-        if (userRepository.findFirstByUsername("guest") == null) {
+        /*if (userRepository.findFirstByUsername("guest") == null) {
             User ob_guest = new User();
             ob_guest.setUsername("guest");
             ob_guest.setPassword(BCrypt.hashpw(guestPwd, BCrypt.gensalt(12)));
@@ -108,7 +108,7 @@ public class CustomUserDetailsService implements UserDetailsService, CommandLine
         if (!inMemManager.userExists("guest")) {
             UserDetails guest = new org.springframework.security.core.userdetails.User("guest", BCrypt.hashpw(guestPwd, BCrypt.gensalt(12)), true, true, true, true, AuthorityUtils.createAuthorityList("GUEST:*"));
             inMemManager.createUser(guest);
-        }
+        }*/
 
         log.debug("User in the DB: ");
         for (User user : userRepository.findAll()) {
@@ -128,7 +128,7 @@ public class CustomUserDetailsService implements UserDetailsService, CommandLine
 
         log.debug("Users in UserDetailManager: ");
         log.info("ADMIN: " + inMemManager.loadUserByUsername("admin"));
-        log.debug("GUEST: " + inMemManager.loadUserByUsername("guest"));
+        //log.debug("GUEST: " + inMemManager.loadUserByUsername("guest"));
 
         log.debug("Creating initial Project...");
 

@@ -23,7 +23,7 @@ import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.nfvo.Location;
 import org.openbaton.catalogue.nfvo.VimInstance;
-import org.project.openbaton.nubomedia.paas.utils.VimProperties;
+import org.project.openbaton.nubomedia.paas.properties.VimProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

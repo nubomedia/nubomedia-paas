@@ -63,15 +63,15 @@ public class RestAPI {
     @Value("${openshift.token}")
     private String token;
 
-    @Value("${paas.keystore}")
-    private String paasKeystore;
-
-    @Value("${paas.vnfmIP}")
+    @Value("${vnfm.ip}")
     private String vnfmIP;
+
+    @Value("${openshift.keystore}")
+    private String openshiftKeystore;
 
     @PostConstruct
     private void init() {
-        System.setProperty("javax.net.ssl.trustStore", paasKeystore);
+        System.setProperty("javax.net.ssl.trustStore", openshiftKeystore);
     }
 
     /**
