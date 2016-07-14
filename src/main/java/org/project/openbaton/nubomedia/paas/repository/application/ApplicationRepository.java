@@ -24,9 +24,12 @@ import java.util.List;
 /**
  * Created by maa on 21.10.15.
  */
-public interface ApplicationRepository extends CrudRepository<Application, String>, ApplicationRepositoryCustom{
+public interface ApplicationRepository
+    extends CrudRepository<Application, String>, ApplicationRepositoryCustom {
 
-    List<Application> findByName(String name);
-    List<Application> findByProjectId(String projectId);
-    Application findFirstById(String id);
+  List<Application> findByName(String name);
+
+  List<Application> findByProjectId(String projectId);
+
+  Application findFirstById(String id);
 }

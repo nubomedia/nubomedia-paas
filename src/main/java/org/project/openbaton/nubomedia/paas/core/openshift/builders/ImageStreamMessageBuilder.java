@@ -24,16 +24,16 @@ import org.project.openbaton.nubomedia.paas.model.openshift.Metadata;
  */
 public class ImageStreamMessageBuilder {
 
-    private String name;
+  private String name;
 
-    public ImageStreamMessageBuilder(String name){
-        this.name = name;
-    }
+  public ImageStreamMessageBuilder(String name) {
+    this.name = name;
+  }
 
-    public ImageStreamConfig buildMessage(){
-        ImageStreamConfig.ImageStreamStatus status = new ImageStreamConfig.ImageStreamStatus("");
-        Metadata metadata = new Metadata(name,"","");
-        return new ImageStreamConfig(metadata,new ImageStreamConfig.ImageStreamSpecification(),status);
-    }
-
+  public ImageStreamConfig buildMessage() {
+    ImageStreamConfig.ImageStreamStatus status = new ImageStreamConfig.ImageStreamStatus("");
+    Metadata metadata = new Metadata(name, "", "");
+    return new ImageStreamConfig(
+        metadata, new ImageStreamConfig.ImageStreamSpecification(), status);
+  }
 }

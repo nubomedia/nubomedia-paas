@@ -23,51 +23,50 @@ import java.util.List;
  */
 public class ServiceAccount {
 
-    private final String kind = "ServiceAccount";
-    private final String apiVersion = "v1";
-    private Metadata metadata;
-    private List<SecretID> secrets;
-    private List<SecretID> imagePullSecrets;
+  private final String kind = "ServiceAccount";
+  private final String apiVersion = "v1";
+  private Metadata metadata;
+  private List<SecretID> secrets;
+  private List<SecretID> imagePullSecrets;
 
-    public ServiceAccount() {
-    }
+  public ServiceAccount() {}
 
-    public ServiceAccount(Metadata metadata, List<SecretID> secrets, List<SecretID> imagePullSecrets) {
-        this.metadata = metadata;
-        this.secrets = secrets;
-        this.imagePullSecrets = imagePullSecrets;
-    }
+  public ServiceAccount(
+      Metadata metadata, List<SecretID> secrets, List<SecretID> imagePullSecrets) {
+    this.metadata = metadata;
+    this.secrets = secrets;
+    this.imagePullSecrets = imagePullSecrets;
+  }
 
-    public String getKind() {
-        return kind;
-    }
+  public String getKind() {
+    return kind;
+  }
 
-    public String getApiVersion() {
-        return apiVersion;
-    }
+  public String getApiVersion() {
+    return apiVersion;
+  }
 
-    public List<SecretID> getSecrets() {
-        return secrets;
-    }
+  public List<SecretID> getSecrets() {
+    return secrets;
+  }
 
-    public void setSecrets(List<SecretID> secrets) {
-        this.secrets = secrets;
-    }
+  public void setSecrets(List<SecretID> secrets) {
+    this.secrets = secrets;
+  }
 
-    public Metadata getMetadata() {
-        return metadata;
-    }
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
 
-    public List<SecretID> getImagePullSecrets() {
-        return imagePullSecrets;
-    }
+  public List<SecretID> getImagePullSecrets() {
+    return imagePullSecrets;
+  }
 
-    public void setImagePullSecrets(List<SecretID> imagePullSecrets) {
-        this.imagePullSecrets = imagePullSecrets;
-    }
-
+  public void setImagePullSecrets(List<SecretID> imagePullSecrets) {
+    this.imagePullSecrets = imagePullSecrets;
+  }
 }

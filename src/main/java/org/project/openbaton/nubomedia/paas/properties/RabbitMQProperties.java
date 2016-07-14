@@ -23,38 +23,36 @@ import org.springframework.stereotype.Service;
  * Created by maa on 22.01.16.
  */
 @Service
-@ConfigurationProperties(prefix="rabbitmq")
+@ConfigurationProperties(prefix = "rabbitmq")
 public class RabbitMQProperties {
 
-    private String host;
-    private String username;
-    private String password;
+  private String host;
+  private String username;
+  private String password;
 
-    public RabbitMQProperties() {
-    }
+  public RabbitMQProperties() {}
 
-    public String getHost() {
-        return host;
-    }
+  public String getHost() {
+    return host;
+  }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
+  public void setHost(String host) {
+    this.host = host;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 }
-

@@ -21,78 +21,76 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class ImageStreamConfig {
 
-    private final String kind = "ImageStream";
-    private final String apiVersion = "v1";
+  private final String kind = "ImageStream";
+  private final String apiVersion = "v1";
 
-    private Metadata metadata;
+  private Metadata metadata;
 
-    private ImageStreamSpecification spec;
-    private ImageStreamStatus status;
+  private ImageStreamSpecification spec;
+  private ImageStreamStatus status;
 
-    public static class ImageStreamSpecification{
-        //TODO: add imagestream spec
+  public static class ImageStreamSpecification {
+    //TODO: add imagestream spec
 
-        public ImageStreamSpecification() {
-        }
+    public ImageStreamSpecification() {}
+  }
+
+  public static class ImageStreamStatus {
+    String dockerImageRepository;
+
+    public ImageStreamStatus(String dockerImageRepository) {
+      this.dockerImageRepository = dockerImageRepository;
     }
 
-    public static class ImageStreamStatus{
-        String dockerImageRepository;
+    public ImageStreamStatus() {}
 
-        public ImageStreamStatus(String dockerImageRepository) {
-            this.dockerImageRepository = dockerImageRepository;
-        }
-
-        public ImageStreamStatus() {
-        }
-
-        public String getDockerImageRepository() {
-            return dockerImageRepository;
-        }
-
-        public void setDockerImageRepository(String dockerImageRepository) {
-            this.dockerImageRepository = dockerImageRepository;
-        }
+    public String getDockerImageRepository() {
+      return dockerImageRepository;
     }
 
-    public ImageStreamConfig(Metadata metadata, ImageStreamSpecification spec, ImageStreamStatus status) {
-        this.metadata = metadata;
-        this.spec = spec;
-        this.status = status;
+    public void setDockerImageRepository(String dockerImageRepository) {
+      this.dockerImageRepository = dockerImageRepository;
     }
+  }
 
-    public ImageStreamConfig() {
-    }
+  public ImageStreamConfig(
+      Metadata metadata, ImageStreamSpecification spec, ImageStreamStatus status) {
+    this.metadata = metadata;
+    this.spec = spec;
+    this.status = status;
+  }
 
-    public String getKind() {
-        return kind;
-    }
+  public ImageStreamConfig() {}
 
-    public String getApiVersion() {
-        return apiVersion;
-    }
+  public String getKind() {
+    return kind;
+  }
 
-    public Metadata getMetadata() {
-        return metadata;
-    }
+  public String getApiVersion() {
+    return apiVersion;
+  }
 
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-    public ImageStreamSpecification getSpec() {
-        return spec;
-    }
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
 
-    public void setSpec(ImageStreamSpecification spec) {
-        this.spec = spec;
-    }
+  public ImageStreamSpecification getSpec() {
+    return spec;
+  }
 
-    public ImageStreamStatus getStatus() {
-        return status;
-    }
+  public void setSpec(ImageStreamSpecification spec) {
+    this.spec = spec;
+  }
 
-    public void setStatus(ImageStreamStatus status) {
-        this.status = status;
-    }
+  public ImageStreamStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(ImageStreamStatus status) {
+    this.status = status;
+  }
 }

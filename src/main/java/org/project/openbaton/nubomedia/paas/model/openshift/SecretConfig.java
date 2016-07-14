@@ -23,40 +23,41 @@ import com.google.gson.annotations.SerializedName;
  */
 public class SecretConfig {
 
-    private final String kind = "Secret";
-    private final String apiVersion = "v1";
-    private Metadata metadata;
-    @SerializedName(value = "data")private SecretType secretType;
+  private final String kind = "Secret";
+  private final String apiVersion = "v1";
+  private Metadata metadata;
 
-    public SecretConfig(Metadata metadata, SecretType secretType) {
-        this.metadata = metadata;
-        this.secretType = secretType;
-    }
+  @SerializedName(value = "data")
+  private SecretType secretType;
 
-    public SecretConfig() {
-    }
+  public SecretConfig(Metadata metadata, SecretType secretType) {
+    this.metadata = metadata;
+    this.secretType = secretType;
+  }
 
-    public String getKind() {
-        return kind;
-    }
+  public SecretConfig() {}
 
-    public String getApiVersion() {
-        return apiVersion;
-    }
+  public String getKind() {
+    return kind;
+  }
 
-    public Metadata getMetadata() {
-        return metadata;
-    }
+  public String getApiVersion() {
+    return apiVersion;
+  }
 
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-    public SecretType getSecretType() {
-        return secretType;
-    }
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
 
-    public void setSecretType(SecretType secretType) {
-        this.secretType = secretType;
-    }
+  public SecretType getSecretType() {
+    return secretType;
+  }
+
+  public void setSecretType(SecretType secretType) {
+    this.secretType = secretType;
+  }
 }

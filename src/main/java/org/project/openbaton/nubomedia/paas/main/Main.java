@@ -32,12 +32,19 @@ import org.springframework.test.context.ContextConfiguration;
  * Created by lto on 24/09/15.
  */
 @SpringBootApplication
-@ContextConfiguration(classes = {OpenshiftConfiguration.class, OpenbatonConfiguration.class, BeanSchedulerConfiguration.class, ConfigurationBeans.class, })
+@ContextConfiguration(
+  classes = {
+    OpenshiftConfiguration.class,
+    OpenbatonConfiguration.class,
+    BeanSchedulerConfiguration.class,
+    ConfigurationBeans.class,
+  }
+)
 @EnableJpaRepositories("org.project.openbaton.nubomedia.paas")
 @EntityScan(basePackages = "org.project.openbaton")
 @ComponentScan(basePackages = "org.project.openbaton")
 public class Main {
-    public static void main(String[] args) {
-        ApplicationContext context = SpringApplication.run(Main.class, args);
-    }
+  public static void main(String[] args) {
+    ApplicationContext context = SpringApplication.run(Main.class, args);
+  }
 }

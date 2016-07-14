@@ -23,40 +23,39 @@ import java.util.List;
  */
 public class ServiceAccountList {
 
-    private final String kind = "ServiceAccountList";
-    private final String apiVersion = "v1";
-    private Metadata metadata;
-    private List<ServiceAccount> items;
+  private final String kind = "ServiceAccountList";
+  private final String apiVersion = "v1";
+  private Metadata metadata;
+  private List<ServiceAccount> items;
 
-    public ServiceAccountList() {
-    }
+  public ServiceAccountList() {}
 
-    public ServiceAccountList(Metadata metadata, List<ServiceAccount> items) {
-        this.metadata = metadata;
-        this.items = items;
-    }
+  public ServiceAccountList(Metadata metadata, List<ServiceAccount> items) {
+    this.metadata = metadata;
+    this.items = items;
+  }
 
-    public String getKind() {
-        return kind;
-    }
+  public String getKind() {
+    return kind;
+  }
 
-    public String getApiVersion() {
-        return apiVersion;
-    }
+  public String getApiVersion() {
+    return apiVersion;
+  }
 
-    public List<ServiceAccount> getItems() {
-        return items;
-    }
+  public List<ServiceAccount> getItems() {
+    return items;
+  }
 
-    public void setItems(List<ServiceAccount> items) {
-        this.items = items;
-    }
+  public void setItems(List<ServiceAccount> items) {
+    this.items = items;
+  }
 
-    public Metadata getMetadata() {
-        return metadata;
-    }
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
 }

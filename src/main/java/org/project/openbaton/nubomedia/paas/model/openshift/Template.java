@@ -21,30 +21,29 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class Template {
 
-    private MetadataDeploy metadata;
-    private SpecDeploy spec;
+  private MetadataDeploy metadata;
+  private SpecDeploy spec;
 
-    public Template(MetadataDeploy metadata, SpecDeploy spec) {
-        this.metadata = metadata;
-        this.spec = spec;
-    }
+  public Template(MetadataDeploy metadata, SpecDeploy spec) {
+    this.metadata = metadata;
+    this.spec = spec;
+  }
 
-    public Template() {
-    }
+  public Template() {}
 
-    public MetadataDeploy getMetadata() {
-        return metadata;
-    }
+  public MetadataDeploy getMetadata() {
+    return metadata;
+  }
 
-    public void setMetadata(MetadataDeploy metadata) {
-        this.metadata = metadata;
-    }
+  public void setMetadata(MetadataDeploy metadata) {
+    this.metadata = metadata;
+  }
 
-    public SpecDeploy getSpec() {
-        return spec;
-    }
+  public SpecDeploy getSpec() {
+    return spec;
+  }
 
-    public void setSpec(SpecDeploy spec) {
-        this.spec = spec;
-    }
+  public void setSpec(SpecDeploy spec) {
+    this.spec = spec;
+  }
 }

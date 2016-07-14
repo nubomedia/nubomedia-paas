@@ -35,55 +35,67 @@ import javax.annotation.PostConstruct;
 @Service
 public class RouteManager {
 
-    @Autowired private RestTemplate template;
-    @Autowired private Gson mapper;
-    private Logger logger;
-    private String suffix;
+  @Autowired private RestTemplate template;
+  @Autowired private Gson mapper;
+  private Logger logger;
+  private String suffix;
 
-    @PostConstruct
-    private void init(){
-        this.logger = LoggerFactory.getLogger(this.getClass());
-        this.suffix = "/routes/";
+  @PostConstruct
+  private void init() {
+    this.logger = LoggerFactory.getLogger(this.getClass());
+    this.suffix = "/routes/";
+  }
+
+  public ResponseEntity<String> makeRoute(
+      String baseURL,
+      String id,
+      String name,
+      String namespace,
+      String domainName,
+      HttpHeaders authHeader,
+      RouteConfig routeConfig)
+      throws DuplicatedException, UnauthorizedException {
+    //RouteConfig message = MessageBuilderFactory.getRouteMessage(name, appID, domainName);
+
+    //logger.debug("Route message " + mapper.toJson(message,RouteConfig.class));
+    logger.debug("Route message " + mapper.toJson(routeConfig, RouteConfig.class));
+
+    String URL = baseURL + namespace + suffix;
+    //HttpEntity<String> routeEntity = new HttpEntity<String>(mapper.toJson(message, RouteConfig.class), authHeader);
+    HttpEntity<String> routeEntity =
+        new HttpEntity<>(mapper.toJson(routeConfig, RouteConfig.class), authHeader);
+    ResponseEntity response = template.exchange(URL, HttpMethod.POST, routeEntity, String.class);
+
+    if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
+      throw new DuplicatedException("Application with " + name + " is already present");
     }
 
-    public ResponseEntity<String> makeRoute(String baseURL, String id, String name, String namespace, String domainName, HttpHeaders authHeader, RouteConfig routeConfig) throws DuplicatedException, UnauthorizedException {
-        //RouteConfig message = MessageBuilderFactory.getRouteMessage(name, appID, domainName);
+    if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 
-        //logger.debug("Route message " + mapper.toJson(message,RouteConfig.class));
-        logger.debug("Route message " + mapper.toJson(routeConfig,RouteConfig.class));
-
-        String URL = baseURL + namespace + suffix;
-        //HttpEntity<String> routeEntity = new HttpEntity<String>(mapper.toJson(message, RouteConfig.class), authHeader);
-        HttpEntity<String> routeEntity = new HttpEntity<>(mapper.toJson(routeConfig, RouteConfig.class), authHeader);
-        ResponseEntity response = template.exchange(URL, HttpMethod.POST, routeEntity, String.class);
-
-        if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
-            throw new DuplicatedException("Application with " + name + " is already present");
-        }
-
-        if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
-            throw new UnauthorizedException("Invalid or expired token");
-        }
-
-        logger.debug("ROUTE BODY IS " + response.getBody());
-
-        return response;
+      throw new UnauthorizedException("Invalid or expired token");
     }
 
-    public HttpStatus deleteRoute(String baseURL, String name, String namespace, HttpHeaders authHeader) throws UnauthorizedException {
-        String URL = baseURL + namespace + suffix + name + "-route";
-        HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
-        ResponseEntity<String> deleteResponse = template.exchange(URL,HttpMethod.DELETE,deleteEntity,String.class);
+    logger.debug("ROUTE BODY IS " + response.getBody());
 
-        if(deleteResponse.getStatusCode() != HttpStatus.OK) logger.debug("Error deleting route " + name + "-route response " + deleteResponse.toString());
+    return response;
+  }
 
-        if(deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+  public HttpStatus deleteRoute(
+      String baseURL, String name, String namespace, HttpHeaders authHeader)
+      throws UnauthorizedException {
+    String URL = baseURL + namespace + suffix + name + "-route";
+    HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
+    ResponseEntity<String> deleteResponse =
+        template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
 
-            throw new UnauthorizedException("Invalid or expired token");
-        }
+    if (deleteResponse.getStatusCode() != HttpStatus.OK)
+      logger.debug("Error deleting route " + name + "-route response " + deleteResponse.toString());
 
-        return deleteResponse.getStatusCode();
+    if (deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+      throw new UnauthorizedException("Invalid or expired token");
     }
 
+    return deleteResponse.getStatusCode();
+  }
 }

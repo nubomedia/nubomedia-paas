@@ -12,14 +12,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 //@EnableWebMvc
 public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
 
-    @Autowired
-    private AuthorizeInterceptor interceptor;
+  @Autowired private AuthorizeInterceptor interceptor;
 
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry){
-
-        registry.addInterceptor(interceptor).addPathPatterns("/**").excludePathPatterns("/oauth/token");
-    }
-
+    registry.addInterceptor(interceptor).addPathPatterns("/**").excludePathPatterns("/oauth/token");
+  }
 }

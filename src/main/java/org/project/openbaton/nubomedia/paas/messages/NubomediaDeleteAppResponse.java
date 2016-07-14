@@ -16,56 +16,54 @@
 
 package org.project.openbaton.nubomedia.paas.messages;
 
-
 /**
  * Created by maa on 09.10.15.
  */
 public class NubomediaDeleteAppResponse {
 
-    private String id;
-    private String name;
-    private String nameSpace;
-    private int code;
+  private String id;
+  private String name;
+  private String nameSpace;
+  private int code;
 
-    public NubomediaDeleteAppResponse() {
-    }
+  public NubomediaDeleteAppResponse() {}
 
-    public NubomediaDeleteAppResponse(String id, String name, String nameSpace, int deleteStatus) {
-        this.id = id;
-        this.name = name;
-        this.nameSpace = nameSpace;
-        this.code = deleteStatus;
-    }
+  public NubomediaDeleteAppResponse(String id, String name, String nameSpace, int deleteStatus) {
+    this.id = id;
+    this.name = name;
+    this.nameSpace = nameSpace;
+    this.code = deleteStatus;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getNameSpace() {
-        return nameSpace;
-    }
+  public String getNameSpace() {
+    return nameSpace;
+  }
 
-    public void setNameSpace(String nameSpace) {
-        this.nameSpace = nameSpace;
-    }
+  public void setNameSpace(String nameSpace) {
+    this.nameSpace = nameSpace;
+  }
 
-    public int getCode() {
-        return code;
-    }
+  public int getCode() {
+    return code;
+  }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
+  public void setCode(int code) {
+    this.code = code;
+  }
 }

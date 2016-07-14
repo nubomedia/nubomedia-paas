@@ -21,20 +21,19 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class SpecDeploy {
 
-    private Container[] containers;
+  private Container[] containers;
 
-    public SpecDeploy(Container[] containers) {
-        this.containers = containers;
-    }
+  public SpecDeploy(Container[] containers) {
+    this.containers = containers;
+  }
 
-    public SpecDeploy() {
-    }
+  public SpecDeploy() {}
 
-    public Container[] getContainers() {
-        return containers;
-    }
+  public Container[] getContainers() {
+    return containers;
+  }
 
-    public void setContainers(Container[] containers) {
-        this.containers = containers;
-    }
+  public void setContainers(Container[] containers) {
+    this.containers = containers;
+  }
 }

@@ -16,7 +16,6 @@
 
 package org.project.openbaton.nubomedia.paas.main.utils;
 
-
 import org.project.openbaton.nubomedia.paas.core.scheduler.AppStatusManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,8 +28,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class BeanSchedulerConfiguration {
 
-    @Bean
-    public AppStatusManager appStatusManager() {
-        return new AppStatusManager();
-    }
+  @Bean
+  public AppStatusManager appStatusManager() {
+    return new AppStatusManager();
+  }
 }

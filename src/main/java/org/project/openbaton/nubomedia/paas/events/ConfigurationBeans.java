@@ -42,90 +42,91 @@ import javax.annotation.PostConstruct;
 @Configuration
 @ComponentScan("org.project.openbaton.nubomedia.paas")
 public class ConfigurationBeans {
-    public static final String queueName_eventInstatiateFinish = "nfvo.paas.nsr.create";
-    public static final String queueName_error = "nfvo.paas.nsr.error";
-    private Logger logger;
+  public static final String queueName_eventInstatiateFinish = "nfvo.paas.nsr.create";
+  public static final String queueName_error = "nfvo.paas.nsr.error";
+  private Logger logger;
 
-    @Autowired
-    private RabbitMQProperties rabbitMQProperties;
+  @Autowired private RabbitMQProperties rabbitMQProperties;
 
-    @PostConstruct
-    private void init(){
-        this.logger = LoggerFactory.getLogger(this.getClass());
-    }
+  @PostConstruct
+  private void init() {
+    this.logger = LoggerFactory.getLogger(this.getClass());
+  }
 
-    @Bean
-    public ConnectionFactory getConnectionFactory(Environment env){
-        logger.debug("Created ConnectionFactory");
-        CachingConnectionFactory factory = new CachingConnectionFactory(rabbitMQProperties.getHost());
-        factory.setPassword(rabbitMQProperties.getPassword());
-        factory.setUsername(rabbitMQProperties.getUsername());
-        return factory;
-    }
+  @Bean
+  public ConnectionFactory getConnectionFactory(Environment env) {
+    logger.debug("Created ConnectionFactory");
+    CachingConnectionFactory factory = new CachingConnectionFactory(rabbitMQProperties.getHost());
+    factory.setPassword(rabbitMQProperties.getPassword());
+    factory.setUsername(rabbitMQProperties.getUsername());
+    return factory;
+  }
 
-    @Bean
-    public TopicExchange getTopic(){
-        logger.debug("Created Topic Exchange");
-        return new TopicExchange("openbaton-exchange");
-    }
+  @Bean
+  public TopicExchange getTopic() {
+    logger.debug("Created Topic Exchange");
+    return new TopicExchange("openbaton-exchange");
+  }
 
-    @Bean
-    public Queue getCreationQueue(){
-        logger.debug("Created Queue for NSR Create event");
-        return new Queue(queueName_eventInstatiateFinish,false,false,true);
-    }
+  @Bean
+  public Queue getCreationQueue() {
+    logger.debug("Created Queue for NSR Create event");
+    return new Queue(queueName_eventInstatiateFinish, false, false, true);
+  }
 
-    @Bean
-    public Queue getErrorQueue(){
-        logger.debug("Created Queue for NSR error event");
-        return new Queue(queueName_error,false,false,true);
-    }
+  @Bean
+  public Queue getErrorQueue() {
+    logger.debug("Created Queue for NSR error event");
+    return new Queue(queueName_error, false, false, true);
+  }
 
-    @Bean
-    public Binding setCreationBinding(@Qualifier("getCreationQueue") Queue queue, TopicExchange topicExchange){
-        logger.debug("Created Binding for NSR Creation event");
-        return BindingBuilder.bind(queue).to(topicExchange).with("ns-creation");
-    }
+  @Bean
+  public Binding setCreationBinding(
+      @Qualifier("getCreationQueue") Queue queue, TopicExchange topicExchange) {
+    logger.debug("Created Binding for NSR Creation event");
+    return BindingBuilder.bind(queue).to(topicExchange).with("ns-creation");
+  }
 
-    @Bean
-    public Binding setErrorBinding(@Qualifier("getErrorQueue") Queue queue, TopicExchange topicExchange){
-        logger.debug("Created Binding for NSR error event");
-        return BindingBuilder.bind(queue).to(topicExchange).with("ns-error");
-    }
+  @Bean
+  public Binding setErrorBinding(
+      @Qualifier("getErrorQueue") Queue queue, TopicExchange topicExchange) {
+    logger.debug("Created Binding for NSR error event");
+    return BindingBuilder.bind(queue).to(topicExchange).with("ns-error");
+  }
 
+  @Bean
+  public MessageListenerAdapter setCreationMessageListenerAdapter(OpenbatonEventReceiver receiver) {
+    return new MessageListenerAdapter(receiver, "receiveNewNsr");
+  }
 
-    @Bean
-    public MessageListenerAdapter setCreationMessageListenerAdapter(OpenbatonEventReceiver receiver){
-        return new MessageListenerAdapter(receiver,"receiveNewNsr");
-    }
+  @Bean
+  public MessageListenerAdapter setErrorMessageListenerAdapter(OpenbatonEventReceiver receiver) {
+    return new MessageListenerAdapter(receiver, "errorNsr");
+  }
 
+  @Bean
+  public SimpleMessageListenerContainer setCreationMessageContainer(
+      ConnectionFactory connectionFactory,
+      @Qualifier("getCreationQueue") Queue queue,
+      @Qualifier("setCreationMessageListenerAdapter") MessageListenerAdapter adapter) {
+    logger.debug("Created MessageContainer for NSR Creation event");
+    SimpleMessageListenerContainer res = new SimpleMessageListenerContainer();
+    res.setConnectionFactory(connectionFactory);
+    res.setQueues(queue);
+    res.setMessageListener(adapter);
+    return res;
+  }
 
-    @Bean
-    public MessageListenerAdapter setErrorMessageListenerAdapter(OpenbatonEventReceiver receiver){
-        return new MessageListenerAdapter(receiver,"errorNsr");
-    }
-
-
-    @Bean
-    public SimpleMessageListenerContainer setCreationMessageContainer(ConnectionFactory connectionFactory, @Qualifier("getCreationQueue") Queue queue, @Qualifier("setCreationMessageListenerAdapter") MessageListenerAdapter adapter){
-        logger.debug("Created MessageContainer for NSR Creation event");
-        SimpleMessageListenerContainer res = new SimpleMessageListenerContainer();
-        res.setConnectionFactory(connectionFactory);
-        res.setQueues(queue);
-        res.setMessageListener(adapter);
-        return res;
-    }
-
-
-    @Bean
-    public SimpleMessageListenerContainer setErrorMessageContainer(ConnectionFactory connectionFactory, @Qualifier("getErrorQueue") Queue queue, @Qualifier("setErrorMessageListenerAdapter") MessageListenerAdapter adapter){
-        logger.debug("Created MessageContainer for NSR error event");
-        SimpleMessageListenerContainer res = new SimpleMessageListenerContainer();
-        res.setConnectionFactory(connectionFactory);
-        res.setQueues(queue);
-        res.setMessageListener(adapter);
-        return res;
-    }
-
-
+  @Bean
+  public SimpleMessageListenerContainer setErrorMessageContainer(
+      ConnectionFactory connectionFactory,
+      @Qualifier("getErrorQueue") Queue queue,
+      @Qualifier("setErrorMessageListenerAdapter") MessageListenerAdapter adapter) {
+    logger.debug("Created MessageContainer for NSR error event");
+    SimpleMessageListenerContainer res = new SimpleMessageListenerContainer();
+    res.setConnectionFactory(connectionFactory);
+    res.setQueues(queue);
+    res.setMessageListener(adapter);
+    return res;
+  }
 }

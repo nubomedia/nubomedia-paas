@@ -21,6 +21,5 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class Resources {
 
-    public Resources(){}
-
+  public Resources() {}
 }

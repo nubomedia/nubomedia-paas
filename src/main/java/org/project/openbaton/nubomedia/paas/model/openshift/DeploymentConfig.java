@@ -21,41 +21,41 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class DeploymentConfig {
 
-    private final String kind = "DeploymentConfig";
-    private final String apiVersion = "v1";
+  private final String kind = "DeploymentConfig";
+  private final String apiVersion = "v1";
 
-    private Metadata metadata;
+  private Metadata metadata;
 
-    private DeploymentConfigSpec spec;
+  private DeploymentConfigSpec spec;
 
-    public DeploymentConfig(){}
+  public DeploymentConfig() {}
 
-    public DeploymentConfig(Metadata metadata, DeploymentConfigSpec spec) {
-        this.metadata = metadata;
-        this.spec = spec;
-    }
+  public DeploymentConfig(Metadata metadata, DeploymentConfigSpec spec) {
+    this.metadata = metadata;
+    this.spec = spec;
+  }
 
-    public String getKind() {
-        return kind;
-    }
+  public String getKind() {
+    return kind;
+  }
 
-    public String getApiVersion() {
-        return apiVersion;
-    }
+  public String getApiVersion() {
+    return apiVersion;
+  }
 
-    public Metadata getMetadata() {
-        return metadata;
-    }
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
 
-    public DeploymentConfigSpec getSpec() {
-        return spec;
-    }
+  public DeploymentConfigSpec getSpec() {
+    return spec;
+  }
 
-    public void setSpec(DeploymentConfigSpec spec) {
-        this.spec = spec;
-    }
+  public void setSpec(DeploymentConfigSpec spec) {
+    this.spec = spec;
+  }
 }

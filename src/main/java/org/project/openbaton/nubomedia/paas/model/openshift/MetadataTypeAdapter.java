@@ -27,53 +27,51 @@ import java.io.IOException;
  */
 public class MetadataTypeAdapter extends TypeAdapter<Metadata> {
 
+  @Override
+  public void write(JsonWriter out, Metadata value) throws IOException {
+    out.beginObject();
+    if (!value.getName().isEmpty() || value.getName() != null) {
+      out.name("name");
+      out.value(value.getName());
+    }
+    if (!value.getSelfLink().isEmpty() || value.getName() != null) {
+      out.name("selfLink");
+      out.value(value.getSelfLink());
+    }
+    if (!value.getResourceVersion().isEmpty() || value.getResourceVersion() != null) {
+      out.name("resourceVersion");
+      out.value(value.getResourceVersion());
+    }
+    out.endObject();
+  }
 
-    @Override
-    public void write(JsonWriter out, Metadata value) throws IOException {
-        out.beginObject();
-        if(!value.getName().isEmpty() || value.getName() != null) {
-            out.name("name");
-            out.value(value.getName());
-        }
-        if(!value.getSelfLink().isEmpty() || value.getName() != null) {
-            out.name("selfLink");
-            out.value(value.getSelfLink());
-        }
-        if(!value.getResourceVersion().isEmpty() || value.getResourceVersion() != null){
-            out.name("resourceVersion");
-            out.value(value.getResourceVersion());
-        }
-        out.endObject();
+  @Override
+  public Metadata read(JsonReader in) throws IOException {
+
+    String name = "", selfLink = "", resourceVersion = "";
+    in.beginObject();
+
+    while (in.hasNext()) {
+      String nameObj = in.nextName();
+
+      switch (nameObj) {
+        case "name":
+          name = in.nextString();
+          break;
+        case "selfLink":
+          selfLink = in.nextString();
+          break;
+        case "resourceVersion":
+          resourceVersion = in.nextString();
+          break;
+        default:
+          in.skipValue();
+          break;
+      }
     }
 
-    @Override
-    public Metadata read(JsonReader in) throws IOException {
+    in.endObject();
 
-        String name = "",selfLink = "", resourceVersion = "";
-        in.beginObject();
-
-        while(in.hasNext()){
-            String nameObj = in.nextName();
-
-            switch (nameObj) {
-                case "name":
-                    name = in.nextString();
-                    break;
-                case "selfLink":
-                    selfLink = in.nextString();
-                    break;
-                case "resourceVersion":
-                    resourceVersion = in.nextString();
-                    break;
-                default:
-                    in.skipValue();
-                    break;
-            }
-
-        }
-
-        in.endObject();
-
-        return new Metadata(name,selfLink,resourceVersion);
-    }
+    return new Metadata(name, selfLink, resourceVersion);
+  }
 }

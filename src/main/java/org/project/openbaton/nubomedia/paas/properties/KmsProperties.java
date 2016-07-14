@@ -23,17 +23,16 @@ import org.springframework.stereotype.Service;
  * Created by maa on 22.01.16.
  */
 @Service
-@ConfigurationProperties(prefix="kms")
+@ConfigurationProperties(prefix = "kms")
 public class KmsProperties {
 
-    private String image;
+  private String image;
 
-    public String getImage() {
-        return image;
-    }
+  public String getImage() {
+    return image;
+  }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
+  public void setImage(String image) {
+    this.image = image;
+  }
 }
-

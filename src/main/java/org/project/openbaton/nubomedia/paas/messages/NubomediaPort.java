@@ -21,43 +21,46 @@ package org.project.openbaton.nubomedia.paas.messages;
  */
 public class NubomediaPort {
 
-    private int targetPort;
-    private String protocol;
-    private int port;
+  private int targetPort;
+  private String protocol;
+  private int port;
 
-    public NubomediaPort() {
-    }
+  public NubomediaPort() {}
 
-    public int getTargetPort() {
-        return targetPort;
-    }
+  public int getTargetPort() {
+    return targetPort;
+  }
 
-    public void setTargetPort(int targetPort) {
-        this.targetPort = targetPort;
-    }
+  public void setTargetPort(int targetPort) {
+    this.targetPort = targetPort;
+  }
 
-    public String getProtocol() {
-        return protocol;
-    }
+  public String getProtocol() {
+    return protocol;
+  }
 
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
+  public void setProtocol(String protocol) {
+    this.protocol = protocol;
+  }
 
-    public int getPort() {
-        return port;
-    }
+  public int getPort() {
+    return port;
+  }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
+  public void setPort(int port) {
+    this.port = port;
+  }
 
-    @Override
-    public String toString() {
-        return "NubomediaPort{" +
-                "targetPort=" + targetPort +
-                ", protocol='" + protocol + '\'' +
-                ", port=" + port +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "NubomediaPort{"
+        + "targetPort="
+        + targetPort
+        + ", protocol='"
+        + protocol
+        + '\''
+        + ", port="
+        + port
+        + '}';
+  }
 }

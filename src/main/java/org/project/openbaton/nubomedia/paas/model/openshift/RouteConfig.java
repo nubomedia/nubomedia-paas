@@ -21,42 +21,41 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class RouteConfig {
 
-    private final String kind = "Route";
-    private final String  apiVersion = "v1";
+  private final String kind = "Route";
+  private final String apiVersion = "v1";
 
-    private Metadata metadata;
+  private Metadata metadata;
 
-    private RouteSpec spec;
+  private RouteSpec spec;
 
-    public RouteConfig(Metadata metadata, RouteSpec spec) {
-        this.metadata = metadata;
-        this.spec = spec;
-    }
+  public RouteConfig(Metadata metadata, RouteSpec spec) {
+    this.metadata = metadata;
+    this.spec = spec;
+  }
 
-    public RouteConfig() {
-    }
+  public RouteConfig() {}
 
-    public String getKind() {
-        return kind;
-    }
+  public String getKind() {
+    return kind;
+  }
 
-    public String getApiVersion() {
-        return apiVersion;
-    }
+  public String getApiVersion() {
+    return apiVersion;
+  }
 
-    public Metadata getMetadata() {
-        return metadata;
-    }
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
 
-    public RouteSpec getSpec() {
-        return spec;
-    }
+  public RouteSpec getSpec() {
+    return spec;
+  }
 
-    public void setSpec(RouteSpec spec) {
-        this.spec = spec;
-    }
+  public void setSpec(RouteSpec spec) {
+    this.spec = spec;
+  }
 }

@@ -21,40 +21,39 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class Metadata {
 
-    private String name;
-    private String selfLink;
-    private String resourceVersion;
+  private String name;
+  private String selfLink;
+  private String resourceVersion;
 
-    public Metadata(String name, String selfLink, String resourceVersion) {
-        this.name = name;
-        this.selfLink = selfLink;
-        this.resourceVersion = resourceVersion;
-    }
+  public Metadata(String name, String selfLink, String resourceVersion) {
+    this.name = name;
+    this.selfLink = selfLink;
+    this.resourceVersion = resourceVersion;
+  }
 
-    public Metadata() {
-    }
+  public Metadata() {}
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getSelfLink() {
-        return selfLink;
-    }
+  public String getSelfLink() {
+    return selfLink;
+  }
 
-    public void setSelfLink(String selfLink) {
-        this.selfLink = selfLink;
-    }
+  public void setSelfLink(String selfLink) {
+    this.selfLink = selfLink;
+  }
 
-    public String getResourceVersion() {
-        return resourceVersion;
-    }
+  public String getResourceVersion() {
+    return resourceVersion;
+  }
 
-    public void setResourceVersion(String resourceVersion) {
-        this.resourceVersion = resourceVersion;
-    }
+  public void setResourceVersion(String resourceVersion) {
+    this.resourceVersion = resourceVersion;
+  }
 }

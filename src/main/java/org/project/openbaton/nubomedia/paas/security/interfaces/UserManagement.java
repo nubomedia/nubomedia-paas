@@ -21,41 +21,39 @@ import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
 /**
  * Created by mpa on 30/04/15.
  */
-
 public interface UserManagement {
 
-    User getCurrentUser();
+  User getCurrentUser();
 
-    /**
-     *
-     * @param user
-     */
-    User add(User user);
+  /**
+   *
+   * @param user
+   */
+  User add(User user);
 
-    /**
-     *
-     * @param user
-     */
-    void delete(User user);
+  /**
+   *
+   * @param user
+   */
+  void delete(User user);
 
-    /**
-     *
-     * @param new_user
-     */
-    User update(User new_user);
+  /**
+   *
+   * @param new_user
+   */
+  User update(User new_user);
 
-    /**
-     *
-     * @return
-     */
-    Iterable<User> query();
+  /**
+   *
+   * @return
+   */
+  Iterable<User> query();
 
-    /**
-     *
-     * @param username
-     */
-    User query(String username);
+  /**
+   *
+   * @param username
+   */
+  User query(String username);
 
-
-    User queryDB(String currentUserName);
+  User queryDB(String currentUserName);
 }

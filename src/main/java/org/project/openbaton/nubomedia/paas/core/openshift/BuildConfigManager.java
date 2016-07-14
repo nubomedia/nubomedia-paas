@@ -37,49 +37,79 @@ import javax.annotation.PostConstruct;
 @Service
 public class BuildConfigManager {
 
-    @Autowired private RestTemplate template;
-    @Autowired private Gson mapper;
-    private Logger logger;
-    private String suffix;
+  @Autowired private RestTemplate template;
+  @Autowired private Gson mapper;
+  private Logger logger;
+  private String suffix;
 
-    @PostConstruct
-    public void init(){
-        this.logger = LoggerFactory.getLogger(this.getClass());
-        this.suffix = "/buildconfigs/";
+  @PostConstruct
+  public void init() {
+    this.logger = LoggerFactory.getLogger(this.getClass());
+    this.suffix = "/buildconfigs/";
+  }
+
+  public ResponseEntity<String> createBuildConfig(
+      String baseURL,
+      String appName,
+      String namespace,
+      String dockerRepo,
+      String gitURL,
+      HttpHeaders authHeader,
+      String secretName,
+      String mediaServerGID,
+      String mediaServerIP,
+      String mediaServerPort,
+      String cloudRepositoryIp,
+      String cloudRepoPort,
+      String cdnServerIp,
+      RouteConfig routeConfig)
+      throws DuplicatedException, UnauthorizedException {
+
+    BuildConfig message =
+        MessageBuilderFactory.getBuilderMessage(
+            appName,
+            dockerRepo,
+            gitURL,
+            secretName,
+            mediaServerGID,
+            mediaServerIP,
+            mediaServerPort,
+            cloudRepositoryIp,
+            cloudRepoPort,
+            cdnServerIp,
+            routeConfig);
+    logger.debug("writing message " + mapper.toJson(message, BuildConfig.class));
+    String URL = baseURL + namespace + suffix;
+    HttpEntity<String> buildEntity =
+        new HttpEntity<>(mapper.toJson(message, BuildConfig.class), authHeader);
+    ResponseEntity response = template.exchange(URL, HttpMethod.POST, buildEntity, String.class);
+    logger.debug("Build response: " + response.toString());
+
+    if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
+      throw new DuplicatedException("Application with " + appName + " is already present");
+    }
+    if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+      throw new UnauthorizedException("Invalid or expired token");
     }
 
-    public ResponseEntity<String> createBuildConfig(String baseURL, String appName, String namespace, String dockerRepo, String gitURL, HttpHeaders authHeader, String secretName, String mediaServerGID, String mediaServerIP, String mediaServerPort, String cloudRepositoryIp, String cloudRepoPort, String cdnServerIp, RouteConfig routeConfig) throws DuplicatedException, UnauthorizedException {
+    return response;
+  }
 
-        BuildConfig message = MessageBuilderFactory.getBuilderMessage(appName, dockerRepo, gitURL, secretName,mediaServerGID, mediaServerIP, mediaServerPort, cloudRepositoryIp, cloudRepoPort, cdnServerIp, routeConfig);
-        logger.debug("writing message " + mapper.toJson(message,BuildConfig.class));
-        String URL = baseURL + namespace + suffix;
-        HttpEntity<String> buildEntity = new HttpEntity<>(mapper.toJson(message, BuildConfig.class), authHeader);
-        ResponseEntity response = template.exchange(URL, HttpMethod.POST,buildEntity,String.class);
-        logger.debug("Build response: " + response.toString());
+  public HttpStatus deleteBuildConfig(
+      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      throws UnauthorizedException {
 
-        if(response.getStatusCode().equals(HttpStatus.CONFLICT)){
-            throw new DuplicatedException("Application with " + appName + " is already present");
-        }
-        if(response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    String URL = baseURL + namespace + suffix + appName + "-bc";
+    HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
+    ResponseEntity<String> responseEntity =
+        template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
 
-            throw new UnauthorizedException("Invalid or expired token");
-        }
+    if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 
-        return response;
+      throw new UnauthorizedException("Invalid or expired token");
     }
 
-    public HttpStatus deleteBuildConfig(String baseURL, String appName,String namespace, HttpHeaders authHeader) throws UnauthorizedException {
-
-        String URL = baseURL + namespace + suffix + appName + "-bc";
-        HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
-        ResponseEntity<String> responseEntity = template.exchange(URL,HttpMethod.DELETE,deleteEntity,String.class);
-
-        if(responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
-            throw new UnauthorizedException("Invalid or expired token");
-        }
-
-        return responseEntity.getStatusCode();
-    }
-
+    return responseEntity.getStatusCode();
+  }
 }

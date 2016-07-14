@@ -29,27 +29,28 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class OpenshiftConfiguration {
 
-    @Bean
-    public RestTemplate getRestTemplate(){
-        return new RestTemplate();
-    }
+  @Bean
+  public RestTemplate getRestTemplate() {
+    return new RestTemplate();
+  }
 
-    @Bean
-    public Gson getMapper(){
-        return new GsonBuilder().registerTypeAdapter(Metadata.class, new MetadataTypeAdapter())
-                .registerTypeAdapter(Output.class,new OutputTypeAdapter())
-                .registerTypeAdapter(SecretConfig.class,new SecretDeserializer())
-                .registerTypeAdapter(Source.class,new SourceDeserializer())
-                .registerTypeAdapter(Status.class,new StatusDeserializer())
-                .registerTypeAdapter(Pod.class,new PodDeserializer())
-                .registerTypeAdapter(Pods.class, new PodsDeserializer())
-                .registerTypeAdapter(EnviromentVariable.class,new EnvironmentVariableSerializer())
-                .disableHtmlEscaping().create();
-    }
+  @Bean
+  public Gson getMapper() {
+    return new GsonBuilder()
+        .registerTypeAdapter(Metadata.class, new MetadataTypeAdapter())
+        .registerTypeAdapter(Output.class, new OutputTypeAdapter())
+        .registerTypeAdapter(SecretConfig.class, new SecretDeserializer())
+        .registerTypeAdapter(Source.class, new SourceDeserializer())
+        .registerTypeAdapter(Status.class, new StatusDeserializer())
+        .registerTypeAdapter(Pod.class, new PodDeserializer())
+        .registerTypeAdapter(Pods.class, new PodsDeserializer())
+        .registerTypeAdapter(EnviromentVariable.class, new EnvironmentVariableSerializer())
+        .disableHtmlEscaping()
+        .create();
+  }
 
-    @Bean
-    public AuthenticationManager getAuthenticationManager() {
-        return new AuthenticationManager();
-    }
-
+  @Bean
+  public AuthenticationManager getAuthenticationManager() {
+    return new AuthenticationManager();
+  }
 }

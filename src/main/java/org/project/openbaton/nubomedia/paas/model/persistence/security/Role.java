@@ -9,54 +9,50 @@ import javax.persistence.*;
  */
 @Entity
 public class Role {
-    @Id
-    private String id;
-    @Enumerated(EnumType.STRING)
-    private RoleEnum role;
-    private String project;
+  @Id private String id;
 
-    public String getId() {
-        return id;
-    }
+  @Enumerated(EnumType.STRING)
+  private RoleEnum role;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  private String project;
 
-    public String getProject() {
-        return project;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setProject(String project) {
-        this.project = project;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    @Override
-    public String toString() {
-        return "Role{" +
-                "role=" + role +
-                ", project=" + project +
-                '}';
-    }
+  public String getProject() {
+    return project;
+  }
 
-    public RoleEnum getRole() {
-        return role;
-    }
+  public void setProject(String project) {
+    this.project = project;
+  }
 
-    public void setRole(RoleEnum role) {
-        this.role = role;
-    }
+  @Override
+  public String toString() {
+    return "Role{" + "role=" + role + ", project=" + project + '}';
+  }
 
-    @PrePersist
-    public void ensureId() {
-        id = IdGenerator.createUUID();
-    }
+  public RoleEnum getRole() {
+    return role;
+  }
 
-    public enum RoleEnum {
-        GUEST,
-        ADMIN,
-        NUBOMEDIA_ADMIN,
-    }
+  public void setRole(RoleEnum role) {
+    this.role = role;
+  }
+
+  @PrePersist
+  public void ensureId() {
+    id = IdGenerator.createUUID();
+  }
+
+  public enum RoleEnum {
+    GUEST,
+    ADMIN,
+    NUBOMEDIA_ADMIN,
+  }
 }
-
-

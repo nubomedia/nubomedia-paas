@@ -30,41 +30,38 @@ import java.util.List;
  * Created by gca on 08/06/16.
  */
 public class NSRUtil {
-    private static final Logger logger = LoggerFactory.getLogger(NSRUtil.class);
+  private static final Logger logger = LoggerFactory.getLogger(NSRUtil.class);
 
-    public static List<String> getFloatingIPs(VirtualNetworkFunctionRecord vnfr) {
-        List<String> floatingIPs = new ArrayList<>();
-        for (VirtualDeploymentUnit vdu : vnfr.getVdu()) {
-            for (VNFCInstance instance : vdu.getVnfc_instance()) {
-                logger.debug("found instance "+instance.getHostname()+" getting IPs");
-                floatingIPs.add(instance.getFloatingIps().iterator().next().getIp());
-            }
-        }
-        return floatingIPs;
+  public static List<String> getFloatingIPs(VirtualNetworkFunctionRecord vnfr) {
+    List<String> floatingIPs = new ArrayList<>();
+    for (VirtualDeploymentUnit vdu : vnfr.getVdu()) {
+      for (VNFCInstance instance : vdu.getVnfc_instance()) {
+        logger.debug("found instance " + instance.getHostname() + " getting IPs");
+        floatingIPs.add(instance.getFloatingIps().iterator().next().getIp());
+      }
     }
+    return floatingIPs;
+  }
 
-    public static List<String> getHostnames(VirtualNetworkFunctionRecord vnfr){
-        List<String> hostnames = new ArrayList<>();
-        for (VirtualDeploymentUnit vdu : vnfr.getVdu()) {
-            for (VNFCInstance instance : vdu.getVnfc_instance()) {
-                logger.debug("found instance "+instance.getHostname());
-                hostnames.add(instance.getHostname());
-            }
-        }
-        return hostnames;
+  public static List<String> getHostnames(VirtualNetworkFunctionRecord vnfr) {
+    List<String> hostnames = new ArrayList<>();
+    for (VirtualDeploymentUnit vdu : vnfr.getVdu()) {
+      for (VNFCInstance instance : vdu.getVnfc_instance()) {
+        logger.debug("found instance " + instance.getHostname());
+        hostnames.add(instance.getHostname());
+      }
     }
+    return hostnames;
+  }
 
-    public static String getIP(VirtualNetworkFunctionRecord record) throws Exception {
-        for (VirtualDeploymentUnit vdu : record.getVdu()) {
-            for (VNFCInstance instance : vdu.getVnfc_instance()) {
-                for (Ip ip : instance.getFloatingIps()) {
-                    if (ip != null)
-                        return ip.getIp();
-                }
-            }
+  public static String getIP(VirtualNetworkFunctionRecord record) throws Exception {
+    for (VirtualDeploymentUnit vdu : record.getVdu()) {
+      for (VNFCInstance instance : vdu.getVnfc_instance()) {
+        for (Ip ip : instance.getFloatingIps()) {
+          if (ip != null) return ip.getIp();
         }
-        throw new Exception("IP was not found");
+      }
     }
-
-
+    throw new Exception("IP was not found");
+  }
 }

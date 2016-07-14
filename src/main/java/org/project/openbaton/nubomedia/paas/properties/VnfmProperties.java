@@ -23,26 +23,25 @@ import org.springframework.stereotype.Service;
  * Created by maa on 22.01.16.
  */
 @Service
-@ConfigurationProperties(prefix="vnfm")
+@ConfigurationProperties(prefix = "vnfm")
 public class VnfmProperties {
 
-    private String ip;
-    private String port;
+  private String ip;
+  private String port;
 
-    public String getIp() {
-        return ip;
-    }
+  public String getIp() {
+    return ip;
+  }
 
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
+  public void setIp(String ip) {
+    this.ip = ip;
+  }
 
-    public String getPort() {
-        return port;
-    }
+  public String getPort() {
+    return port;
+  }
 
-    public void setPort(String port) {
-        this.port = port;
-    }
+  public void setPort(String port) {
+    this.port = port;
+  }
 }
-

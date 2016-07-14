@@ -21,30 +21,29 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
  */
 public class BuildElements {
 
-    private String kind;
-    private String name;
+  private String kind;
+  private String name;
 
-    public BuildElements() {
-    }
+  public BuildElements() {}
 
-    public BuildElements(String kind, String name) {
-        this.kind = kind;
-        this.name = name;
-    }
+  public BuildElements(String kind, String name) {
+    this.kind = kind;
+    this.name = name;
+  }
 
-    public String getKind() {
-        return kind;
-    }
+  public String getKind() {
+    return kind;
+  }
 
-    public void setKind(String kind) {
-        this.kind = kind;
-    }
+  public void setKind(String kind) {
+    this.kind = kind;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 }

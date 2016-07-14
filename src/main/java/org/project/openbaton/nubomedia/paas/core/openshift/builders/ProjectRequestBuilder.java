@@ -24,17 +24,17 @@ import org.project.openbaton.nubomedia.paas.model.openshift.ProjectRequest;
  */
 public class ProjectRequestBuilder {
 
-    private String name;
-    private String description;
+  private String name;
+  private String description;
 
-    public ProjectRequestBuilder(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
+  public ProjectRequestBuilder(String name, String description) {
+    this.name = name;
+    this.description = description;
+  }
 
-    public ProjectRequest buildMessage(){
-        Metadata metadata = new Metadata();
-        metadata.setName(name);
-        return new ProjectRequest(metadata, name+"-project", description);
-    }
+  public ProjectRequest buildMessage() {
+    Metadata metadata = new Metadata();
+    metadata.setName(name);
+    return new ProjectRequest(metadata, name + "-project", description);
+  }
 }

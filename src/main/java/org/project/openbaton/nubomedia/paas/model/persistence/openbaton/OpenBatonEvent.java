@@ -26,25 +26,24 @@ import java.io.Serializable;
  */
 public class OpenBatonEvent implements Serializable {
 
-    private Action action;
-    private NetworkServiceRecord payload;
+  private Action action;
+  private NetworkServiceRecord payload;
 
-    public OpenBatonEvent() {
-    }
+  public OpenBatonEvent() {}
 
-    public Action getAction() {
-        return action;
-    }
+  public Action getAction() {
+    return action;
+  }
 
-    public void setAction(Action action) {
-        this.action = action;
-    }
+  public void setAction(Action action) {
+    this.action = action;
+  }
 
-    public NetworkServiceRecord getPayload() {
-        return payload;
-    }
+  public NetworkServiceRecord getPayload() {
+    return payload;
+  }
 
-    public void setPayload(NetworkServiceRecord payload) {
-        this.payload = payload;
-    }
+  public void setPayload(NetworkServiceRecord payload) {
+    this.payload = payload;
+  }
 }

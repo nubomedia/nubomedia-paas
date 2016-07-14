@@ -36,34 +36,36 @@ import javax.annotation.PostConstruct;
 @Service
 public class ProjectManager {
 
-    @Autowired private RestTemplate template;
-    @Autowired private Gson mapper;
-    private Logger logger;
-    private String suffix;
+  @Autowired private RestTemplate template;
+  @Autowired private Gson mapper;
+  private Logger logger;
+  private String suffix;
 
-    @PostConstruct
-    private void init(){
-        this.logger = LoggerFactory.getLogger(this.getClass());
-        this.suffix = "/projectrequest";
+  @PostConstruct
+  private void init() {
+    this.logger = LoggerFactory.getLogger(this.getClass());
+    this.suffix = "/projectrequest";
+  }
+
+  public Project createProject(String authToken, String baseURL, String name)
+      throws UnauthorizedException {
+    logger.debug("Creating ProjectRequest for user " + name);
+    String url = baseURL + suffix;
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("Authorization", "Bearer " + authToken);
+    ProjectRequest message = MessageBuilderFactory.getProjectRequest(name);
+    logger.debug("This is the message " + mapper.toJson(message, ProjectRequest.class));
+    HttpEntity<String> projectEntity =
+        new HttpEntity<>(mapper.toJson(message, ProjectRequest.class), headers);
+    ResponseEntity<String> projectResponse =
+        template.exchange(url, HttpMethod.POST, projectEntity, String.class);
+
+    if (projectResponse.getStatusCode() != HttpStatus.OK) {
+      logger.debug("Received not success response " + projectResponse.getBody());
     }
-
-    public Project createProject(String authToken, String baseURL, String name) throws UnauthorizedException {
-        logger.debug("Creating ProjectRequest for user " + name);
-        String url = baseURL + suffix;
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization","Bearer " + authToken);
-        ProjectRequest message = MessageBuilderFactory.getProjectRequest(name);
-        logger.debug("This is the message " + mapper.toJson(message,ProjectRequest.class));
-        HttpEntity<String> projectEntity = new HttpEntity<>(mapper.toJson(message,ProjectRequest.class),headers);
-        ResponseEntity<String> projectResponse = template.exchange(url, HttpMethod.POST,projectEntity,String.class);
-
-        if (projectResponse.getStatusCode() != HttpStatus.OK){
-            logger.debug("Received not success response " + projectResponse.getBody());
-        }
-        if(projectResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)){
-            throw new UnauthorizedException("Get 401 response from ProjectRequest");
-        }
-        return mapper.fromJson(projectResponse.getBody(),Project.class);
+    if (projectResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+      throw new UnauthorizedException("Get 401 response from ProjectRequest");
     }
-
+    return mapper.fromJson(projectResponse.getBody(), Project.class);
+  }
 }
