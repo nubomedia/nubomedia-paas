@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.utils;
+package org.project.openbaton.nubomedia.paas.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
@@ -23,38 +23,17 @@ import org.springframework.stereotype.Service;
  * Created by maa on 22.01.16.
  */
 @Service
-@ConfigurationProperties(prefix="rabbitmq")
-public class RabbitMQProperties {
+@ConfigurationProperties(prefix="kms")
+public class KmsProperties {
 
-    private String host;
-    private String username;
-    private String password;
+    private String image;
 
-    public RabbitMQProperties() {
+    public String getImage() {
+        return image;
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setImage(String image) {
+        this.image = image;
     }
 }
 

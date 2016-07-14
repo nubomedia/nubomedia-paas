@@ -25,7 +25,7 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedExc
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.openshift.ImageStreamConfig;
 import org.project.openbaton.nubomedia.paas.model.openshift.RouteConfig;
-import org.project.openbaton.nubomedia.paas.utils.OpenShiftProperties;
+import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

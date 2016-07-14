@@ -29,8 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class Config {
 
 
-    @Value("${paas.marketplace}")
-    private String marketplace;
+    @Value("${marketplace.ip}")
+    private String marketplaceIp;
+
+    @Value("${marketplace.port}")
+    private String marketplacePort;
 
     /**
      * Returns the list of the Configurations available
@@ -39,7 +42,7 @@ public class Config {
      */
     @RequestMapping(method = RequestMethod.GET)
     public String getMarketplaceUrl() {
-        return marketplace;
+        return marketplaceIp + ":" + marketplacePort ;
     }
 
 }

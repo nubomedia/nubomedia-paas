@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.project.openbaton.nubomedia.paas.utils;
+package org.project.openbaton.nubomedia.paas.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
@@ -28,8 +28,25 @@ public class OpenShiftProperties {
 
     private String baseURL;
     private String domainName;
-    private String project;
     private String token;
+    private String project;
+    private String keystore;
+
+    public String getKeystore() {
+        return keystore;
+    }
+
+    public void setKeystore(String keystore) {
+        this.keystore = keystore;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
+    }
 
     public String getBaseURL() {
         return baseURL;
@@ -45,13 +62,6 @@ public class OpenShiftProperties {
 
     public void setDomainName(String domainName) {
         this.domainName = domainName;
-    }
-    public String getProject() {
-        return project;
-    }
-
-    public void setProject(String project) {
-        this.project = project;
     }
 
     public String getToken() {

@@ -26,7 +26,7 @@ import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
-import org.project.openbaton.nubomedia.paas.utils.NfvoProperties;
+import org.project.openbaton.nubomedia.paas.properties.NfvoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,7 +140,7 @@ public class OpenbatonEventReceiver implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
         logger.debug("Creating queues");
-        this.nfvoRequestor = new NFVORequestor(nfvoProperties.getOpenbatonUsername(), nfvoProperties.getOpenbatonPasswd(), nfvoProperties.getOpenbatonIP(), nfvoProperties.getOpenbatonPort(), "1");
+        this.nfvoRequestor = new NFVORequestor(nfvoProperties.getUsername(), nfvoProperties.getPassword(), nfvoProperties.getIp(), nfvoProperties.getPort(), "1");
         this.createEventCreationEndpoint();
         this.createEventErrorEndpoint();
     }

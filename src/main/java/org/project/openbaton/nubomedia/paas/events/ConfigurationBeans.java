@@ -16,9 +16,7 @@
 
 package org.project.openbaton.nubomedia.paas.events;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.project.openbaton.nubomedia.paas.utils.RabbitMQProperties;
+import org.project.openbaton.nubomedia.paas.properties.RabbitMQProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;

@@ -26,8 +26,10 @@ import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerExcep
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.QoS;
+import org.project.openbaton.nubomedia.paas.properties.KmsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
@@ -38,23 +40,16 @@ import java.util.Set;
  * Created by gca on 27/05/16.
  */
 @Service
-@ConfigurationProperties(prefix="nfvo")
 public class NSDUtil {
+
+    @Autowired
+    private KmsProperties kmsProperties;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private String imageName;
-
-    public String getImageName() {
-        return imageName;
-    }
-
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
-    }
 
     public NetworkServiceDescriptor getNetworkServiceDescriptor(NetworkServiceDescriptor nsd, Flavor flavor, QoS Qos, boolean turnServerActivate, String mediaServerTurnIP, String mediaServerTurnUsername, String mediaServerTurnPassword, boolean stunServerActivate, String stunServerAddress, String stunServerPort, int scaleInOut, double scale_out_threshold) throws turnServerException, StunServerException {
         logger.debug("Start configuring network service descriptor");
-        nsd = this.injectFlavor(flavor.getValue(), this.imageName, nsd);
+        nsd = this.injectFlavor(flavor.getValue(), kmsProperties.getImage(), nsd);
         logger.debug("After flavor the nsd is\n" + nsd.toString() + "\n****************************");
 
         if (Qos != null){

@@ -31,8 +31,9 @@ import org.project.openbaton.nubomedia.paas.messages.*;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
+import org.project.openbaton.nubomedia.paas.properties.VnfmProperties;
 import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
-import org.project.openbaton.nubomedia.paas.utils.PaaSProperties;
+import org.project.openbaton.nubomedia.paas.properties.PaaSProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,9 @@ public class AppManager {
     private OpenbatonManager obmanager;
     @Autowired
     private PaaSProperties paaSProperties;
+
+    @Autowired
+    private VnfmProperties vnfmProperties;
 
     @Value("${openshift.project}")
     private String openshiftProject;
@@ -112,7 +116,7 @@ public class AppManager {
 
         //Openbaton MediaServer Request
         logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
-        MediaServerGroup mediaServerGroup = this.obmanager.createMediaServerGroup(request.getFlavor(), this.paaSProperties.getInternalURL(), request.isCloudRepository(), request.isCdnConnector(), request.getQualityOfService(), request.isTurnServerActivate(), request.getTurnServerUrl(), request.getTurnServerUsername(), request.getTurnServerPassword(), request.isStunServerActivate(), request.getStunServerIp(), request.getStunServerPort(), request.getScaleInOut(), request.getScale_out_threshold());
+        MediaServerGroup mediaServerGroup = this.obmanager.createMediaServerGroup(request.getName(), request.getFlavor(), this.paaSProperties.getPort(), request.isCloudRepository(), request.isCdnConnector(), request.getQualityOfService(), request.isTurnServerActivate(), request.getTurnServerUrl(), request.getTurnServerUsername(), request.getTurnServerPassword(), request.isStunServerActivate(), request.getStunServerIp(), request.getStunServerPort(), request.getScaleInOut(), request.getScale_out_threshold());
 
         // Creating the application
         Application app = new Application();
@@ -213,7 +217,7 @@ public class AppManager {
                 logger.debug("cloudRepositoryPort " + cloudRepositoryPort + " IP " + cloudRepositoryIp);
 
                 try {
-                    route = osmanager.buildApplication(token, app.getId(), app.getName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(), vnfrID, paaSProperties.getVnfmIP(), paaSProperties.getVnfmPort(), cloudRepositoryIp, cloudRepositoryPort, cdnServerIp);
+                    route = osmanager.buildApplication(token, app.getId(), app.getName(), app.getGitURL(), ports, targetPorts, app.getProtocols().toArray(new String[0]), app.getReplicasNumber(), app.getSecretName(), vnfrID, vnfmProperties.getIp(), vnfmProperties.getPort(), cloudRepositoryIp, cloudRepositoryPort, cdnServerIp);
 
                 } catch (ResourceAccessException e) {
                     obmanager.deleteDescriptor(mediaServerGroup.getNsdID());

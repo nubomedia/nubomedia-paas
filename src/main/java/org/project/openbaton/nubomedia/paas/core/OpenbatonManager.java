@@ -33,7 +33,7 @@ import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.QoS;
-import org.project.openbaton.nubomedia.paas.utils.NfvoProperties;
+import org.project.openbaton.nubomedia.paas.properties.NfvoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +75,7 @@ public class OpenbatonManager {
     private void init() throws IOException {
 
         this.logger = LoggerFactory.getLogger(this.getClass());
-        this.nfvoRequestor = new NFVORequestor(nfvoProperties.getOpenbatonUsername(), nfvoProperties.getOpenbatonPasswd(), nfvoProperties.getOpenbatonIP(), nfvoProperties.getOpenbatonPort(), "1");
+        this.nfvoRequestor = new NFVORequestor(nfvoProperties.getUsername(), nfvoProperties.getPassword(), nfvoProperties.getIp(), nfvoProperties.getPort(), "1");
         this.apiPath = "/api/v1/nubomedia/paas";
         this.logger.info("Starting the Open Baton Manager Bean");
         try {
@@ -103,11 +103,12 @@ public class OpenbatonManager {
     }
 
 
-    public MediaServerGroup createMediaServerGroup(Flavor flavorID, String callbackUrl, boolean cloudRepositorySet, boolean cdnConnectorSet, QoS qos, boolean turnServerActivate, String serverTurnIp, String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
-        logger.debug("Creating Media Server Group with: FlavorID " + flavorID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
+    public MediaServerGroup createMediaServerGroup(String appName, Flavor flavorID, String callbackUrl, boolean cloudRepositorySet, boolean cdnConnectorSet, QoS qos, boolean turnServerActivate, String serverTurnIp, String serverTurnUsername, String serverTurnPassword, boolean stunServerActivate, String stunServerIp, String stunServerPort, int scaleInOut, double scale_out_threshold) throws SDKException, turnServerException, StunServerException {
+        logger.debug("Creating Media Server Group with name: " + appName + " with: FlavorID " + flavorID + " callbackURL " + callbackUrl + " isCloudRepo " + cloudRepositorySet + " QOS " + qos + "turnServerIp " + serverTurnIp + " serverTurnName " + serverTurnUsername + " scaleInOut " + scaleInOut);
         MediaServerGroup mediaServerGroup = new MediaServerGroup();
         // building network service descriptor
         NetworkServiceDescriptor targetNSD = nsdUtil.getNetworkServiceDescriptor(networkServiceDescriptorNubo, flavorID, qos, turnServerActivate, serverTurnIp, serverTurnUsername, serverTurnPassword, stunServerActivate, stunServerIp, stunServerPort, scaleInOut, scale_out_threshold);
+        targetNSD.setName(appName);
         if (cloudRepositorySet && !cdnConnectorSet) {
             Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
             vnfds.add(cloudRepository);
