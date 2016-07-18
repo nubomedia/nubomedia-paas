@@ -22,6 +22,14 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
         "project": "*"
     };
 
+    $scope.addRole = function() { 
+      var newRole = {
+          "role": "GUEST",
+           "project": "*"
+      };
+      $scope.userObj.roles.push(newRole);
+    };
+
     $scope.loadCurrentUser = function(){
         http.get(url +'current')
             .success(function (response) {
