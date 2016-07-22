@@ -408,8 +408,8 @@ configureRabbitMq () {
 
 #create the base where the project is cloned to
 createBase () {
-    echo "Creating the ${_PROJECT_NAME} base folder \"${_PROJECT_ROOT_BASE}\""
-    if [ ! -d "${_PROJECT_ROOT_BASE}" ]; then
+    echo "Creating the ${_PROJECT_NAME} root base folder \"${_PROJECT_ROOT_BASE}\""
+    if [ -d "${_PROJECT_ROOT_BASE}" ]; then
         if [ -d "${_PROJECT_BASE}" ]; then
             echo "Base folder \"${_PROJECT_BASE}\" exists already"
             echo "How to proceed?"
