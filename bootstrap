@@ -435,9 +435,9 @@ createLogFolder () {
             *) return 0;;
         esac
     fi
-    $_ex 'mkdir -p '"$_LOG_FOLDER"
+    $_ex 'mkdir -p '"$_PROJECT_LOG_FOLDER"
     log_success_msg "Created log folder \"${_PROJECT_LOG_FOLDER}\"" 
-    $_ex 'chown -R '"$_USER $_LOG_FOLDER" 
+    $_ex 'chown -R '"$_USER $_PROJECT_LOG_FOLDER"
     log_success_msg "Confgiured permissions of log folder \"${_PROJECT_LOG_FOLDER}\"" 
 }
 
@@ -543,8 +543,8 @@ useDebian () {
 }
 
 useSourceCode () {
-    #prereq
-    #checkEnvironment
+    prereq
+    checkEnvironment
     createBase
     createLogFolder
     cloneProject
