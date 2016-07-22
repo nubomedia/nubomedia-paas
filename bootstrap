@@ -6,8 +6,6 @@
 
 . /lib/lsb/init-functions
 
-export DEBIAN_FRONTEND=noninteractive
-
 #general configuration
 _PROJECT_NAME="nubomedia-paas"
 _BASE="/opt"
@@ -165,11 +163,12 @@ getMySqlRootPw () {
     stty -echo
     read -p "Please, provide the password of the root user of mysql: " rootpasswd; echo
     stty echo
-    if [ -z "${rootpasswd}" ]; then
-        log_failure_msg "You have to provide the root password of MySQL..."
-        getMySqlRootPw
-        return 0
-    fi
+    #for empty passwords it is also allowed
+    #if [ -z "${rootpasswd}" ]; then
+    #    log_failure_msg "You have to provide the root password of MySQL..."
+    #    getMySqlRootPw
+    #    return 0
+    #fi
     #check if root password is correct
     mysql -uroot -p${rootpasswd} -e exit
     if [ $? -eq 0 ]; then
