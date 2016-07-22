@@ -410,23 +410,26 @@ configureRabbitMq () {
 createBase () {
     echo "Creating the ${_PROJECT_NAME} base folder"
     # removing it if exists
-    if [ -d "${_PROJECT_BASE}" ]; then
-        echo "Base folder \"${_PROJECT_BASE}\" exists already"
-        echo "How to proceed?"
-        echo "1) Keep it"
-        echo "2) Remove it (default)"
-        read -p "Your choice: " choice
-        case $choice in
-            1) return 0;;
-            2) $_ex 'rm -rf '"$_PROJECT_BASE"
-            log_success_msg "Removed old base folder";;
-            *) return 0;;
-        esac
+    if [ ! -d "${_PROJECT_ROOT_BASE}" ]; then
+        if [ -d "${_PROJECT_BASE}" ]; then
+            echo "Base folder \"${_PROJECT_BASE}\" exists already"
+            echo "How to proceed?"
+            echo "1) Keep it"
+            echo "2) Remove it (default)"
+            read -p "Your choice: " choice
+            case $choice in
+                1) return 0;;
+                2) $_ex 'rm -rf '"$_PROJECT_BASE"
+                log_success_msg "Removed old base folder";;
+                *) return 0;;
+            esac
+        fi
+    else
+       $_ex 'mkdir -p '"$_PROJECT_ROOT_BASE"
+       log_success_msg "Created root base folder \"${_PROJECT_ROOT_BASE}\""
     fi
-    $_ex 'mkdir -p '"$_PROJECT_BASE"
-    log_success_msg "Created base folder \"${_PROJECT_BASE}\"" 
     $_ex 'chown -R '"$_USER $_PROJECT_BASE"
-    log_success_msg "Confgiured permissions of base folder \"${_PROJECT_BASE}\"" 
+    log_success_msg "Configured permissions of root base folder \"${_PROJECT_BASE}\""
 }
 
 createLogFolder () {
