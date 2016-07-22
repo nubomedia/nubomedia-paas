@@ -1,4 +1,6 @@
-#!/bin/sh -e
+#!/bin/sh
+
+set -e
 
 . /lib/lsb/init-functions
 
@@ -9,8 +11,19 @@ _PID_FILE=/var/run/nubomedia-paas.pid
 _DAEMON_USER=root
 _OSTYPE=$(uname)
 
+_USER="$(id -un 2>/dev/null || true)"
+
+_ex='sh -c'
+if [ "$_USER" != 'root' ]; then
+    if checkBinary sudo; then
+        _ex='sudo -E sh -c'
+    elif checkBinary su; then
+        _ex='su -c'
+    fi
+fi
+
 ####################
-#### PaaS-Manager ####
+#### PaaS-Manager ##
 ####################
 
 check_already_running () {
@@ -37,13 +50,13 @@ configure () {
 start () {
     configure
     echo "Starting $_PROJECT_NAME ..."
-    start-stop-daemon --start --background --pidfile ${_PID_FILE} --make-pidfile --user ${_DAEMON_USER} --chuid ${_DAEMON_USER} --exec /usr/bin/java -- -jar ${_INSTALL_DIR}/${PROJECT_JAR} --spring.config.location=file:${_PROJECT_CONFIG_FILE}
+    $_ex 'start-stop-daemon --start --background --pidfile '"${_PID_FILE}"' --make-pidfile --user '"${_DAEMON_USER}"' --chuid '"${_DAEMON_USER}"' --exec /usr/bin/java -- -jar '"${_INSTALL_DIR}"'/'"${PROJECT_JAR}"' --spring.config.location=file:'"${_PROJECT_CONFIG_FILE}"
     log_success_msg "Started $_PROJECT_NAME"
 }
 
 stop () {
     echo "Stopping $_PROJECT_NAME ..."
-    start-stop-daemon --stop --pidfile $PID_FILE
+    $_ex 'start-stop-daemon --stop --pidfile '"$_PID_FILE"
     log_success_msg "Stopped $_PROJECT_NAME"
 }
 

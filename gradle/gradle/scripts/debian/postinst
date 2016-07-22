@@ -62,8 +62,8 @@ configureRabbitMQ () {
     fi
     $_ex 'rabbitmqctl set_user_tags '"$_PROJECT_NAME"' administrator'
     $_ex 'rabbitmqctl set_permissions -p / '"$_PROJECT_NAME"' ".*" ".*" ".*"'
-    $_ex 'sed -i "s/^rabbitmq.username=.*/rabbitmq.username='"$_PROJECT_NAME"'/g" '"$_PROJECT_PROPERTIES_FILE"
-    $_ex 'sed -i "s/^rabbitmq.password=.*/rabbitmq.password='"$rabbitMqPassword"'/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^rabbitmq.username=.*/rabbitmq.username='"$_PROJECT_NAME"'/g" '"$_CONFIG_FILE"
+    $_ex 'sed -i "s/^rabbitmq.password=.*/rabbitmq.password='"$rabbitMqPassword"'/g" '"$_CONFIG_FILE"
     #### Workaround to enable rabbitmq management plugin ####
     #$_ex 'rabbitmq-plugins enable rabbitmq_management'
     if [ -f /etc/rabbitmq/enabled_plugins ]; then

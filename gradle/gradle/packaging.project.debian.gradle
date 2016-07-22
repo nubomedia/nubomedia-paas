@@ -41,7 +41,7 @@ task makedeb(type: Deb, dependsOn: [jar, build]) {
     requires('rabbitmq-server')
 
     // Copy files from "from path" to "into path"
-    from('resources/application.properties')     			   { into '/etc/nubomedia/paas.properties' }  // properties file             { into '/etc/nubomedia/' }                 // keystore file
+    from('etc/paas.properties')                  			   { into '/etc/nubomedia/' }  // properties file             { into '/etc/nubomedia/' }                 // keystore file
     from('etc/cloudrepo-vnfd.json')     			           { into '/etc/nubomedia/' }                 // cloudrepo vnfd file
     from('etc/nubomedia-nsd.json')     			               { into '/etc/nubomedia/' }                 // nubomedia nsd file
     from(jar.outputs.files) 				                   { into '/usr/lib/nubomedia/' }             // jar file
