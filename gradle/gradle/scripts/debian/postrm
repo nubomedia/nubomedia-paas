@@ -1,0 +1,68 @@
+#!/bin/sh -e
+
+. /lib/lsb/init-functions
+
+_PROJECT_BASE=/usr
+_PROJECT_LOGS_FOLDER=/var/log/nubomedia
+
+
+USER="$(id -un 2>/dev/null || true)"
+
+checkBinary () {
+    if command -v $1 >/dev/null 2>&1 ; then
+        log_success_msg "Checking for '$1'"
+        return 0
+    else
+        log_failure_msg "Checking for '$1'"
+        return 1
+    fi
+}
+
+_ex='sh -c'
+if [ "${USER}" != 'root' ]; then
+    if checkBinary sudo; then
+        _ex='sudo -E sh -c'
+    elif checkBinary su; then
+        _ex='su -c'
+    fi
+fi
+
+##############
+#### Logs ####
+##############
+
+cleanLogs () {
+    export _PROJECT_LOGS_FOLDER="${_PROJECT_LOGS_FOLDER}"
+    if [ -d ${_PROJECT_LOGS_FOLDER} ]; then
+    	$_ex 'rm -r ${_PROJECT_LOGS_FOLDER}'
+        log_success_msg "Cleaning the environment: deleted logs"
+    fi
+}
+
+
+####################################
+#### Clean Project installation ####
+####################################
+
+clean () {
+    cleanLogs
+}
+
+
+case "${1}" in
+  purge)
+    clean
+  ;;
+
+  remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+  ;;
+
+  *)
+    log_failure_msg "postrm called with unknown argument ${1}"
+    exit 1
+  ;;
+
+esac
+
+exit 0
+
