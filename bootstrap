@@ -193,7 +193,7 @@ createMySqlUser () {
     fi
 }
 
-#CHecks if the database exists already
+#Checks if the database exists already
 #if not, it is created a new
 #if yes, it can be decided to keep the database or drop it and create a new one
 createMySqlDatabase () {
@@ -439,15 +439,15 @@ createLogFolder () {
         read -p "Your choice: " choice
         case $choice in
             1) return 0;;
-            2) $_ex 'rm -rf '"$_PROJECT_BASE"
-            log_success_msg "Removed log folder \"${_LOG_FOLDER}\"";;
+            2) $_ex 'rm -rf '"$_PROJECT_LOG_FOLDER"
+            log_success_msg "Removed log folder \"${_PROJECT_LOG_FOLDER}\"";;
             *) return 0;;
         esac
     fi
     $_ex 'mkdir -p '"$_PROJECT_LOG_FOLDER"
     log_success_msg "Created log folder \"${_PROJECT_LOG_FOLDER}\"" 
     $_ex 'chown -R '"$_USER $_PROJECT_LOG_FOLDER"
-    log_success_msg "Confgiured permissions of log folder \"${_PROJECT_LOG_FOLDER}\"" 
+    log_success_msg "Configured permissions of log folder \"${_PROJECT_LOG_FOLDER}\""
 }
 
 setPassword () {
