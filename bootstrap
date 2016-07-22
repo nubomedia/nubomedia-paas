@@ -420,14 +420,15 @@ createBase () {
                 1) return 0;;
                 2) $_ex 'rm -rf '"$_PROJECT_BASE"
                 log_success_msg "Removed old base folder";;
-                *) return 0;;
+                *) $_ex 'rm -rf '"$_PROJECT_BASE"
+                log_success_msg "Removed old base folder";;
             esac
         fi
     else
        $_ex 'mkdir -p '"$_PROJECT_ROOT_BASE"
        log_success_msg "Created root base folder \"${_PROJECT_ROOT_BASE}\""
     fi
-    $_ex 'chown -R '"$_USER $_PROJECT_BASE"
+    $_ex 'chown -R '"$_USER $_PROJECT_ROOT_BASE"
     log_success_msg "Configured permissions of root base folder \"${_PROJECT_ROOT_BASE}\""
 }
 
