@@ -40,7 +40,7 @@ public class UserManagement
   @Override
   public User add(User user) {
 
-    checkCurrentUserObAdmin(getCurrentUser());
+    checkCurrentUserNubomediaAdmin(getCurrentUser());
 
     String[] roles = new String[user.getRoles().size()];
 
@@ -63,7 +63,7 @@ public class UserManagement
     return userRepository.save(user);
   }
 
-  private void checkCurrentUserObAdmin(User currentUser) {
+  private void checkCurrentUserNubomediaAdmin(User currentUser) {
     if (currentUser.getRoles().iterator().next().getRole().ordinal()
         != Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal())
       throw new UnauthorizedUserException(
@@ -72,7 +72,12 @@ public class UserManagement
 
   @Override
   public void delete(User user) {
-    checkCurrentUserObAdmin(getCurrentUser());
+    checkCurrentUserNubomediaAdmin(getCurrentUser());
+    for (Role role : user.getRoles()) {
+      if (role.getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) {
+        throw new UnsupportedOperationException("You can't delete the NUBOMEDIA_ADMIN");
+      }
+    }
     userDetailsManager.deleteUser(user.getUsername());
     userRepository.delete(user);
   }
@@ -80,7 +85,7 @@ public class UserManagement
   @Override
   public User update(User new_user) {
 
-    checkCurrentUserObAdmin(getCurrentUser());
+    checkCurrentUserNubomediaAdmin(getCurrentUser());
     String[] roles = new String[new_user.getRoles().size()];
 
     Role[] objects = new_user.getRoles().toArray(new Role[0]);
@@ -103,13 +108,13 @@ public class UserManagement
 
   @Override
   public Iterable<User> query() {
-    checkCurrentUserObAdmin(getCurrentUser());
+    checkCurrentUserNubomediaAdmin(getCurrentUser());
     return userRepository.findAll();
   }
 
   @Override
   public User query(String username) {
-    checkCurrentUserObAdmin(getCurrentUser());
+    checkCurrentUserNubomediaAdmin(getCurrentUser());
     log.trace("Looking for user: " + username);
     return userRepository.findFirstByUsername(username);
   }
