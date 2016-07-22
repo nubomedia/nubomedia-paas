@@ -408,8 +408,7 @@ configureRabbitMq () {
 
 #create the base where the project is cloned to
 createBase () {
-    echo "Creating the ${_PROJECT_NAME} base folder"
-    # removing it if exists
+    echo "Creating the ${_PROJECT_NAME} base folder \"${_PROJECT_ROOT_BASE}\""
     if [ ! -d "${_PROJECT_ROOT_BASE}" ]; then
         if [ -d "${_PROJECT_BASE}" ]; then
             echo "Base folder \"${_PROJECT_BASE}\" exists already"
@@ -429,7 +428,7 @@ createBase () {
        log_success_msg "Created root base folder \"${_PROJECT_ROOT_BASE}\""
     fi
     $_ex 'chown -R '"$_USER $_PROJECT_BASE"
-    log_success_msg "Configured permissions of root base folder \"${_PROJECT_BASE}\""
+    log_success_msg "Configured permissions of root base folder \"${_PROJECT_ROOT_BASE}\""
 }
 
 createLogFolder () {
@@ -446,9 +445,10 @@ createLogFolder () {
             log_success_msg "Removed log folder \"${_PROJECT_LOG_FOLDER}\"";;
             *) return 0;;
         esac
+    else
+        $_ex 'mkdir -p '"$_PROJECT_LOG_FOLDER"
+        log_success_msg "Created log folder \"${_PROJECT_LOG_FOLDER}\""
     fi
-    $_ex 'mkdir -p '"$_PROJECT_LOG_FOLDER"
-    log_success_msg "Created log folder \"${_PROJECT_LOG_FOLDER}\"" 
     $_ex 'chown -R '"$_USER $_PROJECT_LOG_FOLDER"
     log_success_msg "Configured permissions of log folder \"${_PROJECT_LOG_FOLDER}\""
 }
