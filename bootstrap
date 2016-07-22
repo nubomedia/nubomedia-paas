@@ -1,40 +1,50 @@
-#!/usr/bin/env bash
-set -e
+#!/bin/sh
 #
 # This script allows you to install Nubomedia PaaS API. To execute it:
 #
 # 'curl -fsSkL https://raw.githubusercontent.com/fhg-fokus-nubomedia/bootstrap/master/bootstrap | bash'
 
+. /lib/lsb/init-functions
 
 export DEBIAN_FRONTEND=noninteractive
-_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-_nubomedia_paas_base_repo="https://github.com/fhg-fokus-nubomedia/nubomedia-paas.git"
-_tag="develop"
-#_tag="tags/1.1"
+#general configuration
+_PROJECT_NAME="nubomedia-paas"
+_BASE="/opt"
+_PROJECT_ROOT_BASE="${_BASE}/nubomedia"
+_PROJECT_BASE="${_PROJECT_ROOT_BASE}/${_PROJECT_NAME}"
+_PROJECT_PROPERTIES_FOLDER="/etc/nubomedia"
+_DEFAULT_PROPERTIES_FILE="${_PROJECT_BASE}/src/main/resources/application.properties"
+_PROJECT_PROPERTIES_FILE="${_PROJECT_PROPERTIES_FOLDER}/paas.properties"
+_PROJECT_LOG_FOLDER="/var/log/nubomedia"
 
+_DATABASE_NAME="nubomediapaas"
 
-_base=/opt
-_nubomedia_base="${_base}/nubomedia"
-_nubomedia_paas="${_nubomedia_base}/nubomedia-paas"
-_nubomedia_paas_properties="${_nubomedia_paas}/src/main/resources/application.properties"
-_log_folder=/var/log/nubomedia
+#debian configuration
+_APT_KEY_SERVER="keyserver.ubuntu.com"
+_APT_KEY_SERVER_KEY="F04B5A6F"
+_APT_REPOSITORY="deb http://repository.nubomedia.eu/ trusty main"
 
-_user="$(id -un 2>/dev/null || true)"
+#git configuration
+_PROJECT_REPO="https://github.com/fhg-fokus-nubomedia/nubomedia-paas.git"
+_SCRIPT_NAME="nubomedia-paas.sh"
+_TAG="develop"
+#_TAG="tags/1.1"
 
-function checkBinary {
-  echo -n " * Checking for '$1'..."
-  if command -v $1 >/dev/null 2>&1; then
-     echo "OK"
-     return 0
-   else
-     echo >&2 "FAILED."
-     return 1
-   fi
+_USER="$(id -un 2>/dev/null || true)"
+
+checkBinary () {
+  if command -v $1 >/dev/null 2>&1 ; then
+      log_success_msg "Checking for '$1'"
+      return 0
+  else
+      log_failure_msg "Checking for '$1'"
+      return 1
+  fi
 }
 
 _ex='sh -c'
-if [ "$_user" != 'root' ]; then
+if [ "$_USER" != 'root' ]; then
     if checkBinary sudo; then
         _ex='sudo -E sh -c'
     elif checkBinary su; then
@@ -42,218 +52,523 @@ if [ "$_user" != 'root' ]; then
     fi
 fi
 
-function createNubomediaBase {
-    echo "Creating the Nubomedia base folder"
-    # removing it if exists
-    #$_ex 'rm -rf '$_nubomedia_base
-    $_ex 'mkdir -p '$_nubomedia_paas
-    $_ex 'chown -R '"$_user $_nubomedia_base"
-
-    # create log folder and give permission
-    #$_ex 'rm -rf '$_log_folder
-    $_ex 'mkdir -p '$_log_folder
-    $_ex 'chown -R '"$_user $_log_folder"
-}
-
-function compileProperties {
-
-    export adminPassword
-    read -p "Enter the admin password of the PaaS Manager [nub0m3d14]: " adminPassword
-    if [[ "$adminPassword" != "" ]]; then
-        $_ex 'sed -i "s|paas.security.admin.password=nub0m3d14|paas.security.admin.password=$adminPassword|g" /etc/nubomedia/paas.properties'
+# Checks if the function call of setting properties got the expected values
+# $1: description shown for entering value (mandatory)
+# $2: configuration property (mandatory)
+# $3: default configuration value (optional)
+checkPropertyConfiguration () {
+    # Checking if the description is given
+    if [ -z "$1" ]; then
+      echo "-Parameter #1 is not set. Please provide the description of this configration parameter."
+      return 1
+    # Checking if the configuration parameter is given
+    elif [ -z "$2" ]; then
+      echo "-Parameter #2 is not set. Please provide the configration parameter."
+      return 1
     fi
-
-    export paasPort
-    read -p "Enter the port of the PaaS Manager [8081]: " paasPort
-    if [[ "$paasPort" != "" ]]; then
-        $_ex 'sed -i "s|paas.port=8081|paas.port=$paasPort|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export mysqlUsername
-    read -p "Enter the username used to authorize against the database [admin]: " mysqlUsername
-    if [[ "$mysqlUsername" != "" ]]; then
-        $_ex 'sed -i "s|spring.datasource.username=admin|spring.datasource.username=$mysqlUsername|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export mysqlPassword
-    read -p "Enter the password used to authorize against the database [changeme]: " mysqlPassword
-    if [[ "$mysqlPassword" != "" ]]; then
-        $_ex 'sed -i "s|spring.datasource.password=changeme|spring.datasource.password=$mysqlPassword|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export baseUrl
-    read -p "Enter the OpenShift url [https://localhost:8443]: " baseUrl
-    if [[ "$baseUrl" != "" ]]; then
-        $_ex 'sed -i "s|openshift.baseURL=https://localhost:8443|openshift.baseURL=$baseUrl|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export domainName
-    read -p "Enter the domain name for the applications [example.com]: " domainName
-    if [[ "$domainName" != "" ]]; then
-        $_ex 'sed -i "s|openshift.domainName=example.com|openshift.domainName=$domainName|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export project
-    read -p "Enter the project name to be used in OpenShift [nubomedia]: " project
-    if [[ "$project" != "" ]]; then
-        $_ex 'sed -i "s|openshift.project=nubomedia|openshift.project=$project|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export token
-    read -p "Enter the token to be used to authorize against OpenShift: " token
-    if [[ "$token" != "" ]]; then
-        $_ex 'sed -i "s|openshift.token=token|openshift.token=$token|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export kmsImage
-    read -p "Enter the name of the image to be used for the KMS instances [kurento-media-server]: " kmsImage
-    if [[ "$kmsImage" != "" ]]; then
-        $_ex 'sed -i "s|kms.image=kurento-media-server|kms.image=$kmsImage|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export nfvoIp
-    read -p "Enter the Orchestrator ip [localhost]: " nfvoIp
-    if [[ $nfvoIp != "" ]]; then
-         $_ex 'sed -i "s/nfvo.ip=localhost/nfvo.ip=$nfvoIp/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export nfvoPort
-    read -p "Enter the Orchestrator port [8080]: " nfvoPort
-    if [[ $nfvoPort != "" ]]; then
-         $_ex 'sed -i "s/nfvo.port=8080/nfvo.port=$nfvoPort/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export nfvoUsername
-    read -p "Enter the Orchestrator username [admin]: " nfvoUsername
-    if [[ $nfvoUsername != "" ]]; then
-         $_ex 'sed -i "s/nfvo.username=admin/nfvo.username=$nfvoUsername/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export nfvoPassword
-    read -p "Enter the password to authorize against the Orchestrator [openbaton]: " nfvoPassword
-    if [[ $nfvoPassword != "" ]]; then
-         $_ex 'sed -i "s/nfvo.password=openbaton/nfvo.password=$nfvoPassword/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export vnfmIp
-    read -p "Enter the IP of the VNFM [localhost]: " vnfmIp
-    if [[ $vnfmIp != "" ]]; then
-        $_ex 'sed -i "s/paas.vnfmIP=localhost/paas.vnfmIP=$vnfmIp/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export vnfmPort
-    read -p "Enter the port of the VNFM [9000]: " vnfmPort
-    if [[ $vnfmPort != "" ]]; then
-        $_ex 'sed -i "s/vnfm.port=9000/vnfm.port=$vnfmPort/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export marketplaceIp
-    read -p "Enter the IP of the marketplace [localhost]: " marketplaceIp
-    if [[ $marketplaceIp != "" ]]; then
-         $_ex 'sed -i "s|marketplace.ip=localhost|marketplace.ip=$marketplaceIp|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export marketplacePort
-    read -p "Enter the port of the marketplace [8082]: " marketplacePort
-    if [[ $marketplacePort != "" ]]; then
-         $_ex 'sed -i "s|marketplace.port=8082|marketplace.ip=$marketplacePort|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export authURL
-    read -p "Enter the Auth URL of the cloud infrastructure [http://localhost:5000/v2.0]: " authURL
-    if [[ "$authURL" != "" ]]; then
-        $_ex 'sed -i "s|vim.authURL=http://localhost:5000/v2.0|vim.authURL=$authURL|g" /etc/nubomedia/paas.properties'
-    fi
-
-    export tenantName
-    read -p "Enter the tenant name to be used in your cloud infrastructure [nubomedia]: " tenantName
-    if [[ $tenantName != "" ]]; then
-        $_ex 'sed -i "s/vim.tenant=nubomedia/vim.tenant=$tenantName/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export username
-    read -p "Enter the username to be used to authorize against your cloud infrastructure (VIM) [nubomedia]: " username
-    if [[ $username != "" ]]; then
-        $_ex 'sed -i "s/vim.username=nubomedia/vim.username=$username/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export password
-    read -p "Enter the password to be used to authorize against your cloud infrastructure (VIM) [changeme]: " password
-    if [[ $password != "" ]]; then
-        $_ex 'sed -i "s/vim.password=changeme/vim.password=$password/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export keyPair
-    read -p "Enter the Key file to be used to login to the VMs via ssh [nubomedia]: " keyPair
-    if [[ $keyPair != "" ]]; then
-        $_ex 'sed -i "s/vim.keypair=nubomedia/vim.keypair=$keyPair/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export rabbitMqHost
-    read -p "Enter the host address where the RabbitMQ server is running [localhost]: " rabbitMqHost
-    if [[ $rabbitMqHost != "" ]]; then
-        $_ex 'sed -i "s/rabbitmq.host=localhost/rabbitmq.host=$rabbitMqHost/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export rabbitMqUsername
-    read -p "Enter the username used to authorize against the RabbitMQ server [admin]: " rabbitMqUsername
-    if [[ $rabbitMqUsername != "" ]]; then
-        $_ex 'sed -i "s/rabbitmq.username=admin/rabbitmq.username=$rabbitMqUsername/g" /etc/nubomedia/paas.properties'
-    fi
-
-    export rabbitMqPassword
-    read -p "Enter the password used to authorize against the RabbitMQ server [openbaton]: " rabbitMqPassword
-    if [[ $rabbitMqPassword != "" ]]; then
-        $_ex 'sed -i "s/rabbitmq.password=openbaton/rabbitmq.password=$rabbitMqPassword/g" /etc/nubomedia/paas.properties'
+    # Reading the value from the user
+    export _VALUE
+    read -p "$1 [$3]:" _VALUE
+    # Checking if at least one of both values is defined (either default or defined)
+    if [ -z "${_VALUE}" ] && [ -z "${3}" ]; then
+        log_failure_msg "You have to provide a value for \"$2\" since there is no default"
+        checkPropertyConfiguration "$1" "$2" "$3"
+    elif [ ! -z "${_VALUE}" ]; then
+        setProperty $2 $_VALUE
+        log_success_msg "Set parameter \"$2\" to value \"$_VALUE\""
+    elif [ ! -z "${3}" ]; then
+        setProperty $2 $3
+        log_success_msg "Kept parameter \"$2\" as the default value \"$3\""
     fi
 }
 
-function checkoutNubomediaPaaS {
-    echo "Getting Nubomedia PaaS API..."
-    createNubomediaBase
-    git clone --recursive "${_nubomedia_paas_base_repo}" "${_nubomedia_paas}"
-    pushd "${_nubomedia_paas}"
-    git checkout ${_tag}
-    popd
-    $_ex 'mkdir -p "/etc/nubomedia"'
-    echo "created properties folder"
-    $_ex 'cp '"${_nubomedia_paas_properties} /etc/nubomedia/paas.properties"
-    $_ex 'cp '"${_nubomedia_paas}/resource/cloudrepo-vnfd.json /etc/nubomedia/cloudrepo-vnfd.json"
-    $_ex 'cp '"${_nubomedia_paas}/resource/nubomedia-nsd.json /etc/nubomedia/nubomedia-nsd.json"
-    echo "copied properties file, now modifing..."
+# Set the properties in the configuration file (no further checks)
+# $1: configuration property (mandatory)
+# $2: configuration property value (mandatory)
+setProperty () {
+    $_ex 'sed -i "s/^'"$1"'=.*/'"$1"'="'$2'"/g" '"$_PROJECT_PROPERTIES_FILE"
 }
 
-function compileNubomediaPaaS {
-    echo "compiling the Nubomedia PaaS API"
-    pushd "${_nubomedia_paas}"
-    ./nubomedia-paas.sh compile
-    if [ $? -ne 0 ]; then
-        echo "ERROR: The compilation of the Nubomedia PaaS API failed"
+
+#property configuration
+configureProperties () {
+    echo "The properties file to change is: $_PROJECT_PROPERTIES_FILE"
+
+    echo "NUBOMEDIA PaaS-Manager configuration"
+    checkPropertyConfiguration "Enter the port of the PaaS Manager" "paas.port" "8081"
+    echo
+    echo "OpenShift configuration"
+    checkPropertyConfiguration "Enter the OpenShift url" "openshift.baseURL" ""
+    checkPropertyConfiguration "Enter the domain name for the applications" "openshift.domainName" ""
+    checkPropertyConfiguration "Enter the project name to be used in OpenShift" "openshift.project" ""
+    checkPropertyConfiguration "Enter the token to be used to authorize against OpenShift" "openshift.token" ""
+    checkPropertyConfiguration "Enter the keystore to be used to authenticate against OpenShift" "openshift.keystore" ""
+    echo
+    echo "KMS image configuration"
+    checkPropertyConfiguration "Enter the name of the image to be used for the KMS instances" "kms.image" "kurento-media-server"
+    checkPropertyConfiguration "Enter the IP of the NFVO" "nfvo.ip" "localhost"
+    checkPropertyConfiguration "Enter the port of the NFVO" "nfvo.port" "8080"
+    echo
+    echo "NFVO configuration"
+    checkPropertyConfiguration "Enter the username to authorize against the Orchestrator" "nfvo.username" "admin"
+    checkPropertyConfiguration "Enter the password to authorize against the Orchestrator" "nfvo.password" ""
+    echo
+    echo "Media Server VNF Manager configuration"
+    checkPropertyConfiguration "Enter the IP of the VNFM" "vnfm.ip" "localhost"
+    checkPropertyConfiguration "Enter the port of the VNFM" "vnfm.port" "9000"
+    echo
+    echo "Marketplace configuration"
+    checkPropertyConfiguration "Enter the IP of the marketplace" "marketplace.ip" "localhost"
+    checkPropertyConfiguration "Enter the port of the marketplace" "marketplace.port" "8082"
+    echo
+    echo "VIM configuration"
+    checkPropertyConfiguration "Enter the Auth URL of the cloud infrastructure" "vim.authURL" ""
+    checkPropertyConfiguration "Enter the tenant name to be used in your cloud infrastructure" "vim.tenant" ""
+    checkPropertyConfiguration "Enter the username to be used to authorize against your cloud infrastructure (VIM)" "vim.username" ""
+    checkPropertyConfiguration "Enter the password to be used to authorize against your cloud infrastructure (VIM)" "vim.password" ""
+    checkPropertyConfiguration "Enter the Key file to be used to login to the VMs via ssh" "vim.keypair" ""
+}
+
+##################
+#### database ####
+##################
+
+configureDatabase () {
+    echo "Do you wish to use MySQL?"
+    echo "1) Yes"
+    echo "2) No (default)"
+    read -p "Your choice: " choice
+    case $choice in
+        1) configureMySql;;
+        2) return 0;;
+        *) return 0;;
+    esac
+}
+
+###############
+#### MySQL ####
+###############
+
+#requests the MySQL root password
+#additionally, it checks if the root password is valid
+#if not, it is asked again for the right password
+getMySqlRootPw () {
+    stty -echo
+    read -p "Please, provide the password of the root user of mysql: " rootpasswd; echo
+    stty echo
+    if [ -z "${rootpasswd}" ]; then
+        log_failure_msg "You have to provide the root password of MySQL..."
+        getMySqlRootPw
+        return 0
+    fi
+    #check if root password is correct
+    mysql -uroot -p${rootpasswd} -e exit
+    if [ $? -eq 0 ]; then
+        log_success_msg "MySQL root password validated"
+    else
+        log_failure_msg "MySQL root password is wrong ..."
+        getMySqlRootPw
+        return 0
+    fi
+}
+
+#creates a new MySQL user
+#should always work since it is checked before that the user does not exist
+createMySqlUser () {
+    mysql -uroot -p${rootpasswd} -e "CREATE USER ${sqlUser}@localhost IDENTIFIED BY "'"${sqlpassword}"'";"
+    if [ $? -eq 0 ]; then
+        log_success_msg "Created user"
+    else
+        log_failure_msg "Failed to create new MySQL user ${sqlUser}"
         exit 1
     fi
-    popd
 }
 
-function startNubomediaPaaS {
-    echo "starting the Nubomedia PaaS API"
-    pushd ${_nubomedia_paas}
-    ./nubomedia-paas.sh start
-    popd
+#CHecks if the database exists already
+#if not, it is created a new
+#if yes, it can be decided to keep the database or drop it and create a new one
+createMySqlDatabase () {
+    exist=`mysql -uroot -p*4root# -e "show databases;" | grep "\b${_DATABASE_NAME}\b" | wc -l`
+    if [ ${exist} -eq 1 ]; then
+        echo "MySQL database ${_DATABASE_NAME} exists already"
+        echo "How to proceed?"
+        echo "1) Keep it (default)"
+        echo "2) Drop it"
+        read -p "Your choice: " choice
+        case $choice in
+            1) return 0;;
+            2) mysql -uroot -p*4root# -e "drop database ${_DATABASE_NAME};"
+            log_success_msg "Dropped database ${_DATABASE_NAME}"
+            createMySqlDatabase;;
+            *) return 0;;
+        esac
+    else
+        mysql -uroot -p${rootpasswd} -e "CREATE DATABASE ${_DATABASE_NAME} /*\!40100 DEFAULT CHARACTER SET utf8 */;"
+        log_success_msg "Created new database ${_DATABASE_NAME}"
+    fi
 }
 
-function deployNubomediaPaaS {
-    compileNubomediaPaaS
-    startNubomediaPaaS
+#configures the database table for the given user
+assignMySqlDatabaseRights () {
+    mysql -uroot -p${rootpasswd} -e "GRANT ALL ON ${_DATABASE_NAME}.* TO '${sqlUser}'@'localhost';"
+    log_success_msg "Granted rights to user ${sqlUser}"
+    mysql -uroot -p${rootpasswd} -e "FLUSH PRIVILEGES;"
+    log_success_msg "Flushed privileges"
+    mysql -uroot -p${rootpasswd} -e "USE ${_DATABASE_NAME};"
+    log_success_msg "Changed to database ${_DATABASE_NAME}"
 }
 
-function bootstrap {
-    # checkout Nubomedia PaaS API
-    checkoutNubomediaPaaS
-    compileProperties
-    # deploy and compile Nubomedia PaaS API
-    deployNubomediaPaaS
-    echo "Nubomedia PaaS API is up and running now. Check screen -x paas-manager..."
+#checks if the user exists and credentials are valid
+#if the user exist but the password is wrong it goes back to enter the credentials
+#if the user doesn't exist, it is created a new one
+checkIfMySqlUserExist () {
+    echo "Checking if user already exists ..."
+    exist=`mysql -uroot -p${rootpasswd} -e "select * from mysql.user;" | grep "\b${sqlUser}\b" | wc -l`
+    if [ ${exist} -eq 1 ]; then
+        echo "MySQL user ${sqlUser} exists already. Checking password..."
+        mysql -u${sqlUser} -p${sqlPassword} -e exit
+        if [ $? -eq 0 ]; then
+            log_success_msg "MySQL password for user ${sqlUser} validated"
+            return 0
+        else
+            log_failure_msg "MySQL password for user ${sqlUser} is wrong ..."
+            requestMySqlUser
+        fi
+    else
+        echo "Creating a new MySQL user with name ${sqlUser} ..."
+        createMySqlUser
+        return 0
+    fi
 
+}
+
+#reqeusts the user that should be used for MySQL
+#additionally, it will be checked if the user exists and can login
+requestMySqlUser () {
+    read -p "Please, enter the name of the mysql user you would like ${_PROJECT_NAME} to use [admin]: " sqlUser
+    if [ -z "$sqlUser" ]; then
+        sqlUser=admin
+    fi
+    # Turning echo on and off between password reading
+    stty -echo
+    read -p "Please, provide the password for this user [changeme]: " sqlPassword; echo
+    if [ -z "$sqlPassword" ]; then
+        sqlPassword=changeme
+    fi
+    stty echo
+    checkIfMySqlUserExist
+}
+
+#configuring MySQL in the properties file
+#Enabling MySQL, disabling HSQL
+configureMySql () {
+    echo "Configuring MySQL for $_PROJECT_NAME ..."
+    # Request MySQL root password to configure a new user for MySQL
+    getMySqlRootPw
+    # Request MySQL to use for this project
+    requestMySqlUser
+    # Create the Database
+    createMySqlDatabase
+    assignMySqlDatabaseRights
+    $_ex 'sed -i "s/^spring.jpa.hibernate.ddl-auto=create-drop/spring.jpa.hibernate.ddl-auto=update/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^#spring.datasource.validationQuery=SELECT 1/spring.datasource.validationQuery=SELECT 1/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^#spring.datasource.url=.*/spring.datasource.url=jdbc:mysql:\/\/localhost:3306\/'"$_DATABASE_NAME"'/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^#spring.datasource.driver-class-name=com.mysql.jdbc.Driver/spring.datasource.driver-class-name=com.mysql.jdbc.Driver/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^#spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect/spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^spring.datasource.username=.*/spring.datasource.username=${sqlUser}/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^spring.datasource.password=.*/spring.datasource.password=${sqlPassword}/g" '"$_PROJECT_PROPERTIES_FILE"
+    log_success_msg "Enabled MySQL"
+    $_ex 'sed -i "s/^spring.datasource.url=jdbc:hsqldb:file:\(.*\)/#spring.datasource.url=jdbc:hsqldb:file:\1/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^spring.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver/# spring.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^spring.jpa.database-platform=org.hibernate.dialect.HSQLDialect/# spring.jpa.database-platform=org.hibernate.dialect.HSQLDialect/g" '"$_PROJECT_PROPERTIES_FILE"
+    log_success_msg "Disabled HSQL"
+}
+
+##################
+#### RabbitMQ ####
+##################
+
+configureRabbitMQ () {
+    checkPropertyConfiguration "Enter the host address where the RabbitMQ server is running" "rabbitmq.host" "localhost"
+    checkPropertyConfiguration "Enter the username used to authorize against the RabbitMQ server" "rabbitmq.username" ""
+    checkPropertyConfiguration "Enter the password used to authorize against the RabbitMQ server" "rabbitmq.password" ""
+}
+
+######################
+#### Using DEBIAN ####
+######################
+
+#adding apt repository
+#1. add key
+#2. add repo
+#3. update repositories
+addAptRepository () {
+    if [ -z "$_APT_KEY_SERVER_KEY" ] && [ -z "$_APT_KEY_SERVER" ]; then
+        log_warning_msg "Either the key server or key for the key server was not defined. Continue with adding the apt repository"
+    else
+        echo "Adding key server and key..."
+        $_ex 'apt-key adv --keyserver '"$_APT_KEY_SERVER"' --recv-keys '"$_APT_KEY_SERVER_KEY"
+    fi
+    if [ -n "$_APT_REPOSITORY" ]; then
+        echo "Adding apt repository..."
+        $_ex 'add-apt-repository '"\"$_APT_REPOSITORY\""
+    else
+        log_error_msg "apt repository is null. Please provide"
+    fi
+    $_ex 'apt-get update -y'
+}
+
+#isntalls the project
+installProject () {
+    $_ex 'apt-get install -y '"$_PROJECT_NAME"
+}
+
+#debian re-start of the project
+restartProject () {
+    instance=$(ps aux | grep -v grep | grep "$_PROJECT_NAME" | grep jar | wc -l)
+    if [ ${instance} -ne 0 ] ; then
+        echo "restarting $_PROJECT_NAME ..."
+        "$_PROJECT_NAME" restart
+    else
+        echo "starting $_PROJECT_NAME ..."
+        "$_PROJECT_NAME" start
+    fi
+
+}
+
+#########################################
+########## Using source code ############
+#########################################
+
+prereq () {
+  $_ex 'apt-get update; apt-get -y install openjdk-7-jdk screen git rabbitmq-server'
+  log_success_msg "Installed required software"
+}
+
+checkEnvironment () {
+  _error=0
+  echo "Checking environment..."
+  checkBinary java; _error=$(($_error + $?))
+  checkBinary javac; _error=$(($_error + $?))
+  checkBinary curl; _error=$(($_error + $?))
+  checkBinary screen; _error=$(($_error + $?))
+  checkBinary wget; _error=$(($_error + $?))
+  if [ "0" != "$_error" ]; then
+    log_failure_msg "FAILED. Please install the above mentioned binaries."
+    exit 1
+  fi
+}
+
+configureRabbitMq () {
+    # Allow the use of the .deb package to install Open Baton with Docker (because of issues when installing and configuring RabbitMQ during a docker image build)
+    # See documentation for more info
+    echo "Creating RabbitMQ user \"${_PROJECT_NAME}\""
+    result=`$_ex 'rabbitmqctl list_users' | grep '^'"$_PROJECT_NAME" | wc -l`
+    if [ ${result} -eq 0 ]; then
+        rabbitMqPassword=`< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-32};echo;`
+        $_ex 'rabbitmqctl add_user '"$_PROJECT_NAME"' '"$rabbitMqPassword"
+        log_success_msg "Created RabbitMQ user \"${_PROJECT_NAME}\""
+    else
+        log_warning_msg "User \"${_PROJECT_NAME}\" exists already"
+        rabbitMqPassword=`< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-32};echo;`
+        $_ex 'rabbitmqctl change_password '"$_PROJECT_NAME"' '"$rabbitMqPassword"
+        log_success_msg "Changed password of RabbitMQ user \"${_PROJECT_NAME}\""
+    fi
+    $_ex 'rabbitmqctl set_user_tags '"$_PROJECT_NAME"' administrator'
+    $_ex 'rabbitmqctl set_permissions -p / '"$_PROJECT_NAME"' ".*" ".*" ".*"'
+    $_ex 'sed -i "s/^rabbitmq.username=.*/rabbitmq.username='"$_PROJECT_NAME"'/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^rabbitmq.password=.*/rabbitmq.password='"$rabbitMqPassword"'/g" '"$_PROJECT_PROPERTIES_FILE"
+    log_success_msg "Changed RabbitMQ user in ${_PROJECT_PROPERTIES_FILE}"
+    #### Workaround to enable rabbitmq management plugin ####
+    #$_ex 'rabbitmq-plugins enable rabbitmq_management'
+    if [ -f /etc/rabbitmq/enabled_plugins ]; then
+        result=$(grep /etc/rabbitmq/enabled_plugins -e "[rabbitmq_management].")
+        if [ "${result}" != "[rabbitmq_management]." ]; then
+            $_ex 'echo "[rabbitmq_management]." >> /etc/rabbitmq/enabled_plugins'
+        fi
+    else
+        $_ex 'echo "[rabbitmq_management]." > /etc/rabbitmq/enabled_plugins'
+    fi
+    ##########################################################
+    $_ex 'service rabbitmq-server restart'
+    if [ "$?" != "0" ]; then
+        log_failure_msg "rabbitmq is not running properly (check the problem in /var/log/rabbitmq)"
+        exit 1
+    fi
+}
+
+#create the base where the project is cloned to
+createBase () {
+    echo "Creating the ${_PROJECT_NAME} base folder"
+    # removing it if exists
+    if [ -d "${_PROJECT_BASE}" ]; then
+        echo "Base folder \"${_PROJECT_BASE}\" exists already"
+        echo "How to proceed?"
+        echo "1) Keep it"
+        echo "2) Remove it (default)"
+        read -p "Your choice: " choice
+        case $choice in
+            1) return 0;;
+            2) $_ex 'rm -rf '"$_PROJECT_BASE"
+            log_success_msg "Removed old base folder";;
+            *) return 0;;
+        esac
+    fi
+    $_ex 'mkdir -p '"$_PROJECT_BASE"
+    log_success_msg "Created base folder \"${_PROJECT_BASE}\"" 
+    $_ex 'chown -R '"$_USER $_PROJECT_BASE"
+    log_success_msg "Confgiured permissions of base folder \"${_PROJECT_BASE}\"" 
+}
+
+createLogFolder () {
+    # create log folder and give permission
+    if [ -d "${_PROJECT_LOG_FOLDER}" ]; then
+        echo "Log folder \"${_PROJECT_LOG_FOLDER}\" exists already"
+        echo "How to proceed?"
+        echo "1) Keep it (default)"
+        echo "2) Remove it"
+        read -p "Your choice: " choice
+        case $choice in
+            1) return 0;;
+            2) $_ex 'rm -rf '"$_PROJECT_BASE"
+            log_success_msg "Removed log folder \"${_LOG_FOLDER}\"";;
+            *) return 0;;
+        esac
+    fi
+    $_ex 'mkdir -p '"$_LOG_FOLDER"
+    log_success_msg "Created log folder \"${_PROJECT_LOG_FOLDER}\"" 
+    $_ex 'chown -R '"$_USER $_LOG_FOLDER" 
+    log_success_msg "Confgiured permissions of log folder \"${_PROJECT_LOG_FOLDER}\"" 
+}
+
+setPassword () {
+    stty -echo
+    read -p "Provide the new password of admin user of $_PROJECT_NAME: " password ; echo
+    stty echo
+    if [ "${password}" != "" ]; then
+        export password=${password}
+        stty -echo
+        read -p "Repeat the password: " password2 ; echo
+        stty echo
+        export password2=${password2}
+        if [ "${password}" = "${password2}" ]; then
+            $_ex 'sed -i "s/paas.security.admin.password=.*/paas.security.admin.password='"$password"'/g" '"${_PROJECT_PROPERTIES_FILE}"
+            log_success_msg "Set admin password"
+        else
+            log_failure_msg "Passwords didn't match. Try again ..."
+            setPassword
+        fi
+    else
+        log_warning_msg "Admin password must be provided ..."
+        setPassword
+    fi
+}
+
+cloneProject () {
+    echo "Cloning ${_PROJECT_NAME} to ${_PROJECT_BASE} ..."
+    oldpath=`pwd`
+    cd "${_PROJECT_ROOT_BASE}"
+    git clone --recursive "${_PROJECT_REPO}"
+    cd $oldpath
+}
+
+checkoutVersion () {
+    echo "Choose version:"
+    echo "1) ${_TAG} (default)"
+    echo "2) master"
+    echo "3) develop"
+    read -p "Your choice: " choice
+    case $choice in
+        1) version=${_TAG};;
+        2) version=master;;
+        3) version=develop;;
+        *) version=${_TAG};;
+    esac
+    oldpath=`pwd`
+    cd "${_PROJECT_BASE}"
+    git checkout ${version}
+    cd $oldpath
+}
+
+copyConfigFiles () {
+    if [ ! -d "${_PROJECT_PROPERTIES_FOLDER}" ]; then
+        $_ex 'mkdir -p '"${_PROJECT_PROPERTIES_FOLDER}"
+        log_success_msg "created properties folder"
+    else
+        log_warning_msg "Properties folder \"${_PROJECT_PROPERTIES_FOLDER}\" exists already"    
+    fi
+    $_ex 'cp '"${_DEFAULT_PROPERTIES_FILE} ${_PROJECT_PROPERTIES_FILE}"
+    log_success_msg "Copied default configuration file \"${_DEFAULT_PROPERTIES_FILE}\" to \"${_PROJECT_PROPERTIES_FOLDER}\""
+    if [ -d "${_PROJECT_BASE}/etc" ]; then
+        $_ex 'cp '"${_PROJECT_BASE}/etc/* ${_PROJECT_PROPERTIES_FOLDER}"
+        log_success_msg "Copied files from \"${_PROJECT_BASE}/etc\" to \"${_PROJECT_PROPERTIES_FOLDER}\""
+    fi
+}
+
+compileProject () {
+    echo "Compiling ${_PROJECT_NAME}"
+    oldpath=`pwd`
+    cd "${_PROJECT_BASE}"
+    ./${_SCRIPT_NAME} compile
+    if [ $? -ne 0 ]; then
+        echo "ERROR: The compilation of ${_PROJECT_NAME} failed"
+        exit 1
+    fi
+    cd $oldpath
+}
+
+startProject () {
+    echo "Starting ${_PROJECT_NAME}"
+    oldpath=`pwd`
+    cd ${_PROJECT_BASE}
+    ./${_SCRIPT_NAME} start
+    cd $oldpath
+}
+
+#################
+### INSTALLER ###
+#################
+
+useDebian () {
+    #Add apt repository
+    addAptRepository
+    #Install project
+    installProject
+    #ask/configure mysql
+    configureDatabase
+    #configure properties
+    configureProperties
+    #start or restart project
+    restartProject
+}
+
+useSourceCode () {
+    #prereq
+    #checkEnvironment
+    createBase
+    createLogFolder
+    cloneProject
+    checkoutVersion
+    copyConfigFiles
+    setPassword
+    configureRabbitMq
+    configureDatabase
+    configureProperties
+    compileProject
+    startProject            
+}
+
+bootstrap () {
+    echo "How to install ${_PROJECT_NAME}?"
+    echo "1) debian (default)"
+    echo "2) source code via git"
+    read -p "Your choice: " choice
+    case $choice in
+        1) useDebian;;
+        2) useSourceCode;;
+        *) useDebian;;
+    esac
+    echo "$_PROJECT_NAME is up and running now..."
 }
 
 bootstrap
