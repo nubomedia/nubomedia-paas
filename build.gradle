@@ -23,6 +23,7 @@ buildscript {
     }
 }
 plugins {
+    id "nebula.os-package" version "2.2.6"
     id 'com.github.sherter.google-java-format' version '0.3.2'
 }
 apply plugin: 'spring-boot'
@@ -30,7 +31,6 @@ apply plugin: 'spring-boot'
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-
 
 /**
  * Project settings
@@ -47,8 +47,10 @@ project.ext {
     /**
      * Application Related Version
      */
+    applicationDate = new Date()
     applicationVersion = version
     applicationVersionDebian = "1";
+    applicationVersionFull = "${applicationVersion}"
 
     //------------------------------------------------//
     //------------------------------------------------//
@@ -79,22 +81,15 @@ dependencies {
     compile 'org.springframework.data:spring-data-jpa:1.8.2.RELEASE'
     compile 'org.hsqldb:hsqldb:2.3.2'
 
-
-    //SECURITY
-    //    compile project(':repository')
-//    compile project(':catalogue')
-//    compile project(':exception')
     compile 'org.springframework.boot:spring-boot-starter-websocket:' + springBootVersion
     compile 'org.springframework.security:spring-security-core:4.1.0.RELEASE'
-//    compile 'org.springframework.data:spring-data-commons-core:1.4.1.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-security:' + springBootVersion
-//    compile group: 'org.codehaus.spring-security-oauth', name: 'spring-security-oauth', version: '3.19.SS3'
 
     compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.7.RELEASE'
 
     compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.9'
 
-
 }
 
+apply from: 'gradle/gradle/packaging.project.debian.gradle'
 
