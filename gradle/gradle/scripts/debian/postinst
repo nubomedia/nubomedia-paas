@@ -51,13 +51,19 @@ configureRabbitMQ () {
     # See documentation for more info
     result=`$_ex 'rabbitmqctl list_users' | grep '^'"$_PROJECT_NAME" | wc -l`
     if [ ${result} -eq 0 ]; then
-        rabbitMqPassword=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;`
+        rabbitMqPassword=`< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-32};echo;`
         $_ex 'rabbitmqctl add_user '"$_PROJECT_NAME"' '"$rabbitMqPassword"
-        $_ex 'rabbitmqctl set_user_tags '"$_PROJECT_NAME"' administrator'
-        $_ex 'rabbitmqctl set_permissions -p / '"$_PROJECT_NAME"' ".*" ".*" ".*"'
-        $_ex 'sed -i "s/^rabbitmq.username=.*/rabbitmq.username='"$_PROJECT_NAME"'/g" '"$_CONFIG_FILE"
-        $_ex 'sed -i "s/^rabbitmq.password=.*/rabbitmq.password='"$rabbitMqPassword"'/g" '"$_CONFIG_FILE"
+        log_success_msg "Created RabbitMQ user \"${_PROJECT_NAME}\""
+    else
+        log_warning_msg "User \"${_PROJECT_NAME}\" exists already"
+        rabbitMqPassword=`< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-32};echo;`
+        $_ex 'rabbitmqctl change_password '"$_PROJECT_NAME"' '"$rabbitMqPassword"
+        log_success_msg "Changed password of RabbitMQ user \"${_PROJECT_NAME}\""
     fi
+    $_ex 'rabbitmqctl set_user_tags '"$_PROJECT_NAME"' administrator'
+    $_ex 'rabbitmqctl set_permissions -p / '"$_PROJECT_NAME"' ".*" ".*" ".*"'
+    $_ex 'sed -i "s/^rabbitmq.username=.*/rabbitmq.username='"$_PROJECT_NAME"'/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^rabbitmq.password=.*/rabbitmq.password='"$rabbitMqPassword"'/g" '"$_PROJECT_PROPERTIES_FILE"
     #### Workaround to enable rabbitmq management plugin ####
     #$_ex 'rabbitmq-plugins enable rabbitmq_management'
     if [ -f /etc/rabbitmq/enabled_plugins ]; then
