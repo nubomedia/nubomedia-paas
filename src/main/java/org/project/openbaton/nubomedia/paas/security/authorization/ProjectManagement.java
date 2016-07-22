@@ -31,7 +31,9 @@ import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserExc
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by lto on 24/05/16.
@@ -66,6 +68,16 @@ public class ProjectManagement
     if (user.getRoles().iterator().next().getRole().ordinal()
         == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) {
       appManager.deleteApps(project.getId());
+      for (User userTmp : userManagement.query()) {
+        Set<Role> rolesToRemove = new HashSet<>();
+        for (Role roleTmp : userTmp.getRoles()) {
+          if (roleTmp.getProject().equals(project.getName())) {
+            rolesToRemove.add(roleTmp);
+          }
+        }
+        userTmp.getRoles().removeAll(rolesToRemove);
+        userManagement.update(userTmp);
+      }
       projectRepository.delete(projectToDelete);
       return;
     }
@@ -109,7 +121,6 @@ public class ProjectManagement
 
   @Override
   public Iterable<Project> queryForUser() {
-
     List<Project> projects = new ArrayList<>();
     User user = getCurrentUser();
     if (user.getRoles().iterator().next().getRole().ordinal()
