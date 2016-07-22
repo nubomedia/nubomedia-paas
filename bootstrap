@@ -139,7 +139,8 @@ configureDatabase () {
     echo "2) No (default)"
     read -p "Your choice: " choice
     case $choice in
-        1) configureMySql;;
+        1) installMySql
+        configureMySql;;
         2) return 0;;
         *) return 0;;
     esac
@@ -148,6 +149,14 @@ configureDatabase () {
 ###############
 #### MySQL ####
 ###############
+
+installMySql () {
+    checkBinary wget; _error=$(($_error + $?))
+    if [ "0" != "$_error" ]; then
+        log_warning_msg "MySQL is not yet installed. Start installation ..."
+        $_ex 'apt-get -y install mysql-server'
+    fi
+}
 
 #requests the MySQL root password
 #additionally, it checks if the root password is valid
