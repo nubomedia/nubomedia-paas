@@ -77,10 +77,14 @@ restart () {
     start
 }
 
+kill () {
+    $_ex 'kill -9 `cat '"${_PID_FILE}"'`'
+    log_end_msg $?
+}
 
 usage () {
     echo "$_PROJECT_NAME"
-    echo "Usage:\n\t [$_PROJECT_NAME start|stop|restart] | [service $_PROJECT_NAME start|stop|restart] | [start|stop $_PROJECT_NAME]"
+    echo "Usage:\n\t [$_PROJECT_NAME start|stop|restart|kill] | [service $_PROJECT_NAME start|stop|restart|kill] | [start|stop $_PROJECT_NAME]"
 }
 
 
@@ -103,6 +107,8 @@ do
             stop ;;
         "restart" )
             restart ;;
+        "kill" )
+            kill ;;
          *)   
 	        usage;;
     esac
