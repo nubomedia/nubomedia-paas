@@ -12,7 +12,7 @@ _BASE="/opt"
 _PROJECT_ROOT_BASE="${_BASE}/nubomedia"
 _PROJECT_BASE="${_PROJECT_ROOT_BASE}/${_PROJECT_NAME}"
 _PROJECT_PROPERTIES_FOLDER="/etc/nubomedia"
-_DEFAULT_PROPERTIES_FILE="${_PROJECT_BASE}/src/main/resources/application.properties"
+_DEFAULT_PROPERTIES_FILE="${_PROJECT_BASE}/etc/paas.properties"
 _PROJECT_PROPERTIES_FILE="${_PROJECT_PROPERTIES_FOLDER}/paas.properties"
 _PROJECT_LOG_FOLDER="/var/log/nubomedia"
 
@@ -86,7 +86,6 @@ checkPropertyConfiguration () {
 setProperty () {
     $_ex 'sed -i "s/^'"$1"'=.*/'"$1"'="'$2'"/g" '"$_PROJECT_PROPERTIES_FILE"
 }
-
 
 #property configuration
 configureProperties () {
@@ -183,7 +182,7 @@ getMySqlRootPw () {
 #creates a new MySQL user
 #should always work since it is checked before that the user does not exist
 createMySqlUser () {
-    mysql -uroot -p${rootpasswd} -e "CREATE USER ${sqlUser}@localhost IDENTIFIED BY "'"${sqlpassword}"'";"
+    mysql -uroot -p${rootpasswd} -e "CREATE USER ${sqlUser}@localhost IDENTIFIED BY "'"${sqlPassword}"'";"
     if [ $? -eq 0 ]; then
         log_success_msg "Created user"
     else
@@ -279,16 +278,16 @@ configureMySql () {
     createMySqlDatabase
     assignMySqlDatabaseRights
     $_ex 'sed -i "s/^spring.jpa.hibernate.ddl-auto=create-drop/spring.jpa.hibernate.ddl-auto=update/g" '"$_PROJECT_PROPERTIES_FILE"
-    $_ex 'sed -i "s/^#spring.datasource.validationQuery=SELECT 1/spring.datasource.validationQuery=SELECT 1/g" '"$_PROJECT_PROPERTIES_FILE"
-    $_ex 'sed -i "s/^#spring.datasource.url=.*/spring.datasource.url=jdbc:mysql:\/\/localhost:3306\/'"$_DATABASE_NAME"'/g" '"$_PROJECT_PROPERTIES_FILE"
-    $_ex 'sed -i "s/^#spring.datasource.driver-class-name=com.mysql.jdbc.Driver/spring.datasource.driver-class-name=com.mysql.jdbc.Driver/g" '"$_PROJECT_PROPERTIES_FILE"
-    $_ex 'sed -i "s/^#spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect/spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect/g" '"$_PROJECT_PROPERTIES_FILE"
-    $_ex 'sed -i "s/^spring.datasource.username=.*/spring.datasource.username=${sqlUser}/g" '"$_PROJECT_PROPERTIES_FILE"
-    $_ex 'sed -i "s/^spring.datasource.password=.*/spring.datasource.password=${sqlPassword}/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^#.*spring.datasource.validationQuery=SELECT 1/spring.datasource.validationQuery=SELECT 1/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^#.*spring.datasource.url=.*/spring.datasource.url=jdbc:mysql:\/\/localhost:3306\/'"$_DATABASE_NAME"'/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^#.*spring.datasource.driver-class-name=com.mysql.jdbc.Driver/spring.datasource.driver-class-name=com.mysql.jdbc.Driver/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^#.*spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect/spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^s.*pring.datasource.username=.*/spring.datasource.username='"${sqlUser}"'/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^s.*pring.datasource.password=.*/spring.datasource.password='"${sqlPassword}"'/g" '"$_PROJECT_PROPERTIES_FILE"
     log_success_msg "Enabled MySQL"
     $_ex 'sed -i "s/^spring.datasource.url=jdbc:hsqldb:file:\(.*\)/#spring.datasource.url=jdbc:hsqldb:file:\1/g" '"$_PROJECT_PROPERTIES_FILE"
-    $_ex 'sed -i "s/^spring.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver/# spring.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver/g" '"$_PROJECT_PROPERTIES_FILE"
-    $_ex 'sed -i "s/^spring.jpa.database-platform=org.hibernate.dialect.HSQLDialect/# spring.jpa.database-platform=org.hibernate.dialect.HSQLDialect/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^spring.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver/#spring.datasource.driver-class-name=org.hsqldb.jdbc.JDBCDriver/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^spring.jpa.database-platform=org.hibernate.dialect.HSQLDialect/#spring.jpa.database-platform=org.hibernate.dialect.HSQLDialect/g" '"$_PROJECT_PROPERTIES_FILE"
     log_success_msg "Disabled HSQL"
 }
 
@@ -433,7 +432,7 @@ createBase () {
 
 createLogFolder () {
     # create log folder and give permission
-    if [ -d "${_PROJECT_LOG_FOLDER}" ]; then
+    if [ ! -d "${_PROJECT_LOG_FOLDER}" ]; then
         echo "Log folder \"${_PROJECT_LOG_FOLDER}\" exists already"
         echo "How to proceed?"
         echo "1) Keep it (default)"
