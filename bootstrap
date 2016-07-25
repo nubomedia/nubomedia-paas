@@ -182,7 +182,7 @@ getMySqlRootPw () {
 #creates a new MySQL user
 #should always work since it is checked before that the user does not exist
 createMySqlUser () {
-    mysql -uroot -p${rootpasswd} -e "CREATE USER ${sqlUser}@localhost IDENTIFIED BY "'"${sqlPassword}"'";"
+    mysql -uroot -p${rootpasswd} -e "CREATE USER ${sqlUser}@localhost IDENTIFIED BY \"${sqlPassword}\""
     if [ $? -eq 0 ]; then
         log_success_msg "Created user"
     else
@@ -432,7 +432,7 @@ createBase () {
 
 createLogFolder () {
     # create log folder and give permission
-    if [ ! -d "${_PROJECT_LOG_FOLDER}" ]; then
+    if [ -d "${_PROJECT_LOG_FOLDER}" ]; then
         echo "Log folder \"${_PROJECT_LOG_FOLDER}\" exists already"
         echo "How to proceed?"
         echo "1) Keep it (default)"
@@ -446,6 +446,9 @@ createLogFolder () {
             log_success_msg "Created log folder \"${_PROJECT_LOG_FOLDER}\"";;
             *) return 0;;
         esac
+    else
+        $_ex 'mkdir -p '"$_PROJECT_LOG_FOLDER"
+        log_success_msg "Created log folder \"${_PROJECT_LOG_FOLDER}\""
     fi
     $_ex 'chown -R '"$_USER $_PROJECT_LOG_FOLDER"
     log_success_msg "Configured permissions of log folder \"${_PROJECT_LOG_FOLDER}\""
