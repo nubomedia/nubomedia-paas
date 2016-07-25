@@ -482,7 +482,7 @@ cloneProject () {
     echo "Cloning ${_PROJECT_NAME} to ${_PROJECT_BASE} ..."
     oldpath=`pwd`
     cd "${_PROJECT_ROOT_BASE}"
-    git clone --recursive "${_PROJECT_REPO}"
+    git clone --recursive "${_PROJECT_REPO}" "${_PROJECT_NAME}"
     cd $oldpath
 }
 
