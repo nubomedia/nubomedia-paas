@@ -6,6 +6,7 @@ _PROJECT_NAME=nubomedia-paas
 _CONFIG_FILE=/etc/nubomedia/paas.properties
 _DEFAULT_CONFIG_FILE=etc/paas.properties
 _PROJECT_EXE_FOLDER=/usr/bin
+_PROJECT_LOGS_FOLDER=/var/log/nubomedia
 _DATABASE_NAME=paasnubomedia
 
 TMPFOLDER=$(mktemp -d)
@@ -108,6 +109,15 @@ setPassword () {
     fi
 }
 
+createLogsFolder () {
+    if [ ! -d "${_PROJECT_LOGS_FOLDER}" ]; then
+        $_ex 'mkdir -p '"$_PROJECT_LOGS_FOLDER"
+        log_success_msg "Created log folder \"${_PROJECT_LOGS_FOLDER}\""
+    fi
+    $_ex 'chown -R '"$_USER $_PROJECT_LOGS_FOLDER"
+    log_success_msg "Configured permissions of log folder \"${_PROJECT_LOGS_FOLDER}\""
+}
+
 configure () {
     log_success_msg "Configuring $_PROJECT_NAME installation ..."
     configureRabbitMQ
@@ -116,7 +126,9 @@ configure () {
     $_ex "chmod a+x ${_PROJECT_EXE_FOLDER}/nubomedia-paas"
 
     setPassword
-    
+
+    createLogsFolder
+
     log_success_msg "$_PROJECT_NAME installation and configuration completed"
 }
 
