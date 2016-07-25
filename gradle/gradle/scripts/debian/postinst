@@ -11,7 +11,7 @@ _DATABASE_NAME=paasnubomedia
 
 TMPFOLDER=$(mktemp -d)
 
-USER="$(id -un 2>/dev/null || true)"
+_USER="$(id -un 2>/dev/null || true)"
 
 checkBinary () {
     if command -v $1 >/dev/null 2>&1 ; then
@@ -24,7 +24,7 @@ checkBinary () {
 }
 
 _ex='sh -c'
-if [ "${USER}" != 'root' ]; then
+if [ "${_USER}" != 'root' ]; then
     if checkBinary sudo; then
         _ex='sudo -E sh -c'
     elif checkBinary su; then
