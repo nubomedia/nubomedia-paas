@@ -148,7 +148,7 @@ configureDatabase () {
 ###############
 
 installMySql () {
-    checkBinary mysql-server; _error=$(($_error + $?))
+    checkBinary mysql; _error=$(($_error + $?))
     if [ "0" != "$_error" ]; then
         log_warning_msg "MySQL is not yet installed. Start installation ..."
         $_ex 'apt-get -y install mysql-server'
