@@ -278,7 +278,8 @@ configureMySql () {
     createMySqlDatabase
     assignMySqlDatabaseRights
     $_ex 'sed -i "s/^spring.jpa.hibernate.ddl-auto=create-drop/spring.jpa.hibernate.ddl-auto=update/g" '"$_PROJECT_PROPERTIES_FILE"
-    $_ex 'sed -i "s/^#.*spring.datasource.validationQuery=SELECT 1/spring.datasource.validationQuery=SELECT 1/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^#spring.datasource.validationQuery=.*/spring.datasource.validationQuery=SELECT 1/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s/^#spring.datasource.testOnBorrow=.*/spring.datasource.testOnBorrow=true/g" '"$_PROJECT_PROPERTIES_FILE"
     $_ex 'sed -i "s/^#.*spring.datasource.url=.*/spring.datasource.url=jdbc:mysql:\/\/localhost:3306\/'"$_DATABASE_NAME"'/g" '"$_PROJECT_PROPERTIES_FILE"
     $_ex 'sed -i "s/^#.*spring.datasource.driver-class-name=com.mysql.jdbc.Driver/spring.datasource.driver-class-name=com.mysql.jdbc.Driver/g" '"$_PROJECT_PROPERTIES_FILE"
     $_ex 'sed -i "s/^#.*spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect/spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect/g" '"$_PROJECT_PROPERTIES_FILE"
