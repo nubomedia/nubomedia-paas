@@ -69,7 +69,6 @@ stop () {
     echo "Stopping $_PROJECT_NAME ..."
     $_ex 'start-stop-daemon --stop --pidfile '"$_PID_FILE"
     log_end_msg $?
-    $_ex 'rm -rf '"$_PID_FILE"
 }
 
 restart () {
