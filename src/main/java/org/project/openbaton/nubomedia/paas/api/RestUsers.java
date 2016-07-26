@@ -16,6 +16,8 @@
 
 package org.project.openbaton.nubomedia.paas.api;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
 import org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement;
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,6 +38,8 @@ public class RestUsers {
   private Logger log = LoggerFactory.getLogger(this.getClass());
 
   @Autowired private UserManagement userManagement;
+
+  @Autowired private Gson gson;
 
   /**
    * Adds a new User to the Users repository
@@ -132,17 +137,16 @@ public class RestUsers {
   }
 
   @RequestMapping(
-          value = "changepwd",
-          method = RequestMethod.PUT,
-          consumes = MediaType.APPLICATION_JSON_VALUE
+    value = "changepwd",
+    method = RequestMethod.PUT,
+    consumes = MediaType.APPLICATION_JSON_VALUE
   )
   @ResponseStatus(HttpStatus.ACCEPTED)
   public void changePassword(@RequestBody /*@Valid*/ JsonObject newPwd)
-          throws UnauthorizedUserException {
+      throws UnauthorizedUserException {
     log.debug("Changing password");
     JsonObject jsonObject = gson.fromJson(newPwd, JsonObject.class);
     userManagement.changePassword(
-            jsonObject.get("old_pwd").getAsString(), jsonObject.get("new_pwd").getAsString());
+        jsonObject.get("old_pwd").getAsString(), jsonObject.get("new_pwd").getAsString());
   }
-
 }

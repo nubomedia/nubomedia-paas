@@ -123,4 +123,10 @@ public class UserManagement
   public User queryDB(String username) {
     return userRepository.findFirstByUsername(username);
   }
+
+  @Override
+  public void changePassword(String oldPwd, String newPwd) throws UnauthorizedUserException {
+    log.debug("Got old password: " + oldPwd);
+    userDetailsManager.changePassword(oldPwd, newPwd);
+  }
 }
