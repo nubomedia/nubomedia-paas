@@ -84,31 +84,47 @@ public class AuthorizeInterceptor extends HandlerInterceptorAdapter {
 
     log.trace("Current User: " + currentUserName);
     log.trace("projectId: " + project);
-    log.trace("URI: " + request.getRequestURI());
-    if (request.getRequestURI().equals("/api/v1/projects")
-        || request.getRequestURI().equals("/api/v1/projects/")) {
+    log.trace(request.getMethod() + " URI: " + request.getRequestURI());
+
+    if ((request.getRequestURI().equals("/api/v1/projects/")
+            || (request.getRequestURI().equals("/api/v1/projects"))
+            || (request.getRequestURI().contains("/api/v1/users/")
+                || (request.getRequestURI().contains("/api/v1/users"))))
+        && request.getMethod().equalsIgnoreCase("get")) {
       return true;
     }
-    log.trace("URL: " + request.getRequestURL());
+    if ((request.getRequestURI().contains("/api/v1/users/")
+            || (request.getRequestURI().contains("/api/v1/users")))
+        && request.getMethod().equalsIgnoreCase("put")) {
+      return true;
+    }
+    log.trace(request.getMethod() + " URL: " + request.getRequestURL());
     log.trace("UserManagement: " + userManagement);
     User user = userManagement.queryDB(currentUserName);
-    log.trace("User: " + user);
+
     if (project != null) {
       if (!projectManagement.exist(project)) {
         throw new NotFoundException("Project with id " + project + " was not found");
       }
-      for (Role role : user.getRoles()) {
-        if (role.getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) {
+      if (user.getRoles().iterator().next().getRole().ordinal()
+          == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) {
+        log.trace("Return true for admin");
+        return true;
+      }
+
+      if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.GUEST.ordinal()) {
+        if (request.getMethod().equalsIgnoreCase("get")) {
+          log.trace("Return true for guest");
           return true;
+        } else {
+          log.trace("Return false for guest");
+          return false;
         }
       }
 
-      if (user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.GUEST.ordinal())
-        return request.getMethod().equalsIgnoreCase("get");
-
       for (Role role : user.getRoles()) {
         String pjName = projectManagement.query(project).getName();
-        log.debug(role.getProject() + " == " + pjName);
+        log.trace(role.getProject() + " == " + pjName);
         if (role.getProject().equals(pjName)) {
           log.trace("Return true");
           return true;
@@ -118,6 +134,7 @@ public class AuthorizeInterceptor extends HandlerInterceptorAdapter {
       throw new UnauthorizedUserException(
           currentUserName + " user is not unauthorized for executing this request!");
     }
+    log.trace("Return false for project null");
     return false;
   }
 }
