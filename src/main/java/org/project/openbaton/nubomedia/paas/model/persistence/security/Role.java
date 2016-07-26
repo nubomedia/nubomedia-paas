@@ -54,5 +54,6 @@ public class Role {
     GUEST,
     ADMIN,
     NUBOMEDIA_ADMIN,
+    RoleEnum,
   }
 }
