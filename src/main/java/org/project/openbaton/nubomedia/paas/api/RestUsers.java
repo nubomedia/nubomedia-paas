@@ -130,4 +130,19 @@ public class RestUsers {
   public User update(@RequestBody @Valid User new_user) {
     return userManagement.update(new_user);
   }
+
+  @RequestMapping(
+          value = "changepwd",
+          method = RequestMethod.PUT,
+          consumes = MediaType.APPLICATION_JSON_VALUE
+  )
+  @ResponseStatus(HttpStatus.ACCEPTED)
+  public void changePassword(@RequestBody /*@Valid*/ JsonObject newPwd)
+          throws UnauthorizedUserException {
+    log.debug("Changing password");
+    JsonObject jsonObject = gson.fromJson(newPwd, JsonObject.class);
+    userManagement.changePassword(
+            jsonObject.get("old_pwd").getAsString(), jsonObject.get("new_pwd").getAsString());
+  }
+
 }
