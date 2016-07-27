@@ -84,7 +84,7 @@ checkPropertyConfiguration () {
 # $1: configuration property (mandatory)
 # $2: configuration property value (mandatory)
 setProperty () {
-    $_ex 'sed -i "s/^'"$1"'=.*/'"$1"'="'$2'"/g" '"$_PROJECT_PROPERTIES_FILE"
+    $_ex 'sed -i "s|^'"$1"'=.*|'"$1"'="'$2'"|g" '"$_PROJECT_PROPERTIES_FILE"
 }
 
 #property configuration
@@ -111,11 +111,11 @@ configureProperties () {
     checkPropertyConfiguration "Enter the password to authorize against the Orchestrator" "nfvo.password" ""
     echo
     echo "Media Server VNF Manager configuration"
-    checkPropertyConfiguration "Enter the IP of the VNFM" "vnfm.ip" "localhost"
+    checkPropertyConfiguration "Enter the IP of the VNFM" "vnfm.ip" ""
     checkPropertyConfiguration "Enter the port of the VNFM" "vnfm.port" "9000"
     echo
     echo "Marketplace configuration"
-    checkPropertyConfiguration "Enter the IP of the marketplace" "marketplace.ip" "localhost"
+    checkPropertyConfiguration "Enter the IP of the marketplace" "marketplace.ip" ""
     checkPropertyConfiguration "Enter the port of the marketplace" "marketplace.port" "8082"
     echo
     echo "VIM configuration"
