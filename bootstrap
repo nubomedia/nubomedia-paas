@@ -2,7 +2,7 @@
 #
 # This script allows you to install Nubomedia PaaS API. To execute it:
 #
-# 'curl -fsSkL https://raw.githubusercontent.com/fhg-fokus-nubomedia/bootstrap/master/bootstrap | bash'
+# 'curl -fsSkL https://raw.githubusercontent.com/nubomedia/nubomedia-paas/master/bootstrap | bash'
 
 . /lib/lsb/init-functions
 
@@ -24,10 +24,10 @@ _APT_KEY_SERVER_KEY="F04B5A6F"
 _APT_REPOSITORY="deb http://repository.nubomedia.eu/ trusty main"
 
 #git configuration
-_PROJECT_REPO="https://github.com/fhg-fokus-nubomedia/nubomedia-paas.git"
+_PROJECT_REPO="https://github.com/nubomedia/nubomedia-paas.git"
 _SCRIPT_NAME="nubomedia-paas.sh"
-_TAG="develop"
-#_TAG="tags/1.1"
+#_TAG="develop"
+_TAG="tags/1.3.0"
 
 _USER="$(id -un 2>/dev/null || true)"
 

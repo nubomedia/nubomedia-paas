@@ -29,7 +29,7 @@ task makedeb(type: Deb, dependsOn: [jar, build]) {
     maintainer = 'NUBOMEDIA Team'
     vendor = 'Open Source (Implemented by Fraunhofer FOKUS and TUB)'
     license = 'Apache 2.0 License'
-    url = 'https://github.com/fhg-fokus-nubomedia/nubomedia-paas'
+    url = 'https://github.com/nubomedia/nubomedia-paas'
     summary = 'NUBOMEDIA PaaS-Manager'
     packageDescription = 'The NUBOMEDIA PaaS-Manager is one of the most important components of the NUBOMEDIA controller. It provides all the functionalities of the PaaS including an Dashboard'
 
