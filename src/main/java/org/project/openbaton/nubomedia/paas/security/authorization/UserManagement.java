@@ -37,6 +37,8 @@ import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserExc
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Pattern;
+
 /**
  * Created by lto on 25/02/16.
  */
@@ -70,6 +72,16 @@ public class UserManagement
     if (user.getPassword() == null || user.getPassword().equals("")) {
       throw new BadRequestException("Password must be provided");
     }
+
+    if (user.getEmail() == null || user.getEmail().equals("")) {
+      throw new BadRequestException("Email must be provided");
+    }
+
+    String EMAIL_PATTERN =
+        "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+    if (!pattern.matcher(user.getEmail()).matches())
+      throw new BadRequestException("Email is not well formatted");
 
     for (Role role : user.getRoles()) {
       if (role.getProject() == null) {
@@ -115,7 +127,8 @@ public class UserManagement
   public User update(User new_user) throws ForbiddenException {
     log.debug("Updating user:" + new_user);
     User user = query(new_user.getId());
-    if (!user.getUsername().equals(new_user.getUsername())) throw new ForbiddenException("Forbidden to change the username");
+    if (!user.getUsername().equals(new_user.getUsername()))
+      throw new ForbiddenException("Forbidden to change the username");
     new_user.setPassword(user.getPassword());
 
     String[] roles = new String[new_user.getRoles().size()];

@@ -40,6 +40,8 @@ public class User {
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<Role> roles;
 
+  private String email;
+
   public boolean isEnabled() {
     return enabled;
   }
@@ -57,11 +59,16 @@ public class User {
         + ", username='"
         + username
         + '\''
-        + ", password='*********'"
+        + ", password='"
+        + password
+        + '\''
         + ", enabled="
         + enabled
         + ", roles="
         + roles
+        + ", email='"
+        + email
+        + '\''
         + '}';
   }
 
@@ -100,5 +107,13 @@ public class User {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 }
