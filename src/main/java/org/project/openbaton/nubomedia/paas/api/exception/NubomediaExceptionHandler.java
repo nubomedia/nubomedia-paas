@@ -1,22 +1,27 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.project.openbaton.nubomedia.paas.api.exception;
 
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
+import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
+import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
+import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.messages.NubomediaAppNotFoundMessage;
 import org.project.openbaton.nubomedia.paas.messages.NubomediaDupMessage;
 import org.project.openbaton.nubomedia.paas.messages.NubomediaUnauthorizedMessage;
@@ -96,5 +101,25 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
     headers.setContentType(MediaType.APPLICATION_JSON);
     String body = "Turn server requires authentication parameters";
     return handleExceptionInternal(e, body, headers, HttpStatus.PRECONDITION_REQUIRED, request);
+  }
+
+  @ExceptionHandler({ForbiddenException.class})
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  protected ResponseEntity<Object> handleForbiddenException(Exception e, WebRequest request) {
+    logger.info("Handling parameters from" + request.getDescription(true));
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    String body = e.getMessage();
+    return handleExceptionInternal(e, body, headers, HttpStatus.UNAUTHORIZED, request);
+  }
+
+  @ExceptionHandler({BadRequestException.class, NotFoundException.class})
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  protected ResponseEntity<Object> handleBadRequestException(Exception e, WebRequest request) {
+    logger.info("Handling parameters from" + request.getDescription(true));
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    String body = e.getMessage();
+    return handleExceptionInternal(e, body, headers, HttpStatus.BAD_REQUEST, request);
   }
 }

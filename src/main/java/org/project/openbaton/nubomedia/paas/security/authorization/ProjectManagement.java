@@ -1,29 +1,33 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.project.openbaton.nubomedia.paas.security.authorization;
 
 import org.project.openbaton.nubomedia.paas.core.AppManager;
-import org.project.openbaton.nubomedia.paas.exceptions.NotAllowedException;
+import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
 import org.project.openbaton.nubomedia.paas.repository.security.ProjectRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,59 +46,49 @@ import java.util.Set;
 public class ProjectManagement
     implements org.project.openbaton.nubomedia.paas.security.interfaces.ProjectManagement {
 
-  @Autowired
-  private org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement userManagement;
+  @Autowired private UserManagement userManagement;
 
   @Autowired private AppManager appManager;
 
   @Autowired private ProjectRepository projectRepository;
 
+  private Logger log = LoggerFactory.getLogger(this.getClass());
+
   @Override
   public Project add(Project project) {
-    User currentUser = getCurrentUser();
-    if (currentUser != null) {
-      if (currentUser.getRoles().iterator().next().getRole().ordinal()
-          == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) return projectRepository.save(project);
-    } else {
-      return projectRepository.save(project);
-    }
-    throw new UnauthorizedUserException("Sorry only NUBOMEDIA_ADMIN can add project");
+    return projectRepository.save(project);
   }
 
   @Override
-  public void delete(Project project) throws NotAllowedException, UnauthorizedException {
+  public void delete(Project project)
+      throws NotFoundException, UnauthorizedException, ForbiddenException {
     Project projectToDelete = projectRepository.findFirstById(project.getId());
-    User user = getCurrentUser();
-    if (user.getRoles().iterator().next().getRole().ordinal()
-        == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) {
-      appManager.deleteApps(project.getId());
-      for (User userTmp : userManagement.query()) {
-        Set<Role> rolesToRemove = new HashSet<>();
-        for (Role roleTmp : userTmp.getRoles()) {
-          if (roleTmp.getProject().equals(project.getName())) {
-            rolesToRemove.add(roleTmp);
-          }
+    if (project.getName().equals("admin"))
+      throw new ForbiddenException("Forbidden to delete the project admin");
+    appManager.deleteApps(project.getId());
+    for (User userTmp : userManagement.query()) {
+      Set<Role> rolesToRemove = new HashSet<>();
+      for (Role roleTmp : userTmp.getRoles()) {
+        if (roleTmp.getProject().equals(project.getName())) {
+          rolesToRemove.add(roleTmp);
         }
-        userTmp.getRoles().removeAll(rolesToRemove);
-        userManagement.update(userTmp);
       }
-      projectRepository.delete(projectToDelete);
-      return;
+      userTmp.getRoles().removeAll(rolesToRemove);
+      userManagement.update(userTmp);
     }
-    throw new UnauthorizedUserException(
-        "Project not under the project chosen, are you trying to hack us? Just kidding, it's a bug :)");
+    projectRepository.delete(projectToDelete);
   }
 
   @Override
-  public Project update(Project new_project) {
+  public Project update(Project new_project) throws NotFoundException, ForbiddenException {
     Project project = projectRepository.findFirstById(new_project.getId());
-    User user = getCurrentUser();
-    if (user.getRoles().iterator().next().getRole().ordinal()
-        == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) return projectRepository.save(new_project);
-    for (Role role : user.getRoles())
-      if (role.getProject().equals(project.getName())) return projectRepository.save(new_project);
-    throw new UnauthorizedUserException(
-        "Project not under the project chosen, are you trying to hack us? Just kidding, it's a bug :)");
+    if (project.getName().equals("admin") && !project.getName().equals(new_project.getName())) {
+      throw new ForbiddenException("Forbidden to change the name of the project admin");
+    }
+    if (project == null) {
+      throw new NotFoundException("Not found project " + new_project.getId());
+    }
+    return projectRepository.save(new_project);
   }
 
   @Override
@@ -103,15 +97,9 @@ public class ProjectManagement
   }
 
   @Override
-  public Project query(String id) throws NotFoundException {
+  public Project query(String id) {
     Project project = projectRepository.findFirstById(id);
-    User user = getCurrentUser();
-    if (user.getRoles().iterator().next().getRole().ordinal()
-        == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) return project;
-    for (Role role : user.getRoles())
-      if (role.getProject().equals(project.getName())) return project;
-    throw new UnauthorizedUserException(
-        "Project not under the project chosen, are you trying to hack us? Just kidding, it's a bug :)");
+    return project;
   }
 
   @Override
@@ -120,27 +108,14 @@ public class ProjectManagement
   }
 
   @Override
-  public Iterable<Project> queryForUser() {
+  public Iterable<Project> query(User user) {
     List<Project> projects = new ArrayList<>();
-    User user = getCurrentUser();
-    if (user.getRoles().iterator().next().getRole().ordinal()
-            == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()
-        || user.getRoles().iterator().next().getRole().ordinal() == Role.RoleEnum.GUEST.ordinal())
-      return projectRepository.findAll();
     for (Role role : user.getRoles()) projects.add(this.queryByName(role.getProject()));
-
     return projects;
   }
 
   @Override
   public boolean exist(String id) {
     return projectRepository.exists(id);
-  }
-
-  private User getCurrentUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null) return null;
-    String currentUserName = authentication.getName();
-    return userManagement.queryDB(currentUserName);
   }
 }

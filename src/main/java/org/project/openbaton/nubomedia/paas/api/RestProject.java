@@ -1,34 +1,46 @@
 /*
- * Copyright (c) 2016 Fraunhofer FOKUS
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
  *
- *                http://www.apache.org/licenses/LICENSE-2.0
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.project.openbaton.nubomedia.paas.api;
 
-import org.project.openbaton.nubomedia.paas.exceptions.NotAllowedException;
+import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
+import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
 import org.project.openbaton.nubomedia.paas.security.interfaces.ProjectManagement;
+import org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by lto on 25/05/16.
@@ -39,6 +51,8 @@ public class RestProject {
   private static final Logger log = LoggerFactory.getLogger(RestProject.class);
 
   @Autowired private ProjectManagement projectManagement;
+
+  @Autowired private UserManagement userManagement;
 
   /**
    * Adds a new Project to the Projects repository
@@ -52,9 +66,14 @@ public class RestProject {
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   @ResponseStatus(HttpStatus.CREATED)
-  public Project create(@RequestBody @Valid Project project) {
+  public Project create(@RequestBody @Valid Project project)
+      throws ForbiddenException, BadRequestException {
     log.info("Adding Project: " + project.getName());
-    return projectManagement.add(project);
+    if (isAdmin()) {
+      return projectManagement.add(project);
+    } else {
+      throw new ForbiddenException("Forbidden to create project " + project.getName());
+    }
   }
 
   /**
@@ -65,9 +84,13 @@ public class RestProject {
   @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void delete(@PathVariable("id") String id)
-      throws NotAllowedException, NotFoundException, UnauthorizedException {
-    log.debug("removing Project with id " + id);
-    projectManagement.delete(projectManagement.query(id));
+      throws ForbiddenException, NotFoundException, UnauthorizedException {
+    log.info("Removing Project with id " + id);
+    if (isAdmin()) {
+      projectManagement.delete(projectManagement.query(id));
+    } else {
+      throw new ForbiddenException("Forbidden to delete project " + id);
+    }
   }
 
   /**
@@ -82,8 +105,12 @@ public class RestProject {
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void multipleDelete(@RequestBody @Valid List<String> ids)
-      throws NotFoundException, NotAllowedException, UnauthorizedException {
-    for (String id : ids) projectManagement.delete(projectManagement.query(id));
+      throws NotFoundException, ForbiddenException, UnauthorizedException {
+    if (isAdmin()) {
+      for (String id : ids) projectManagement.delete(projectManagement.query(id));
+    } else {
+      throw new ForbiddenException("Forbidden to delete projects " + ids);
+    }
   }
 
   /**
@@ -92,9 +119,16 @@ public class RestProject {
    * @return List<Project>: The list of Projects available
    */
   @RequestMapping(method = RequestMethod.GET)
-  public Iterable<Project> findAll() {
-    log.debug("Find all Projects");
-    return projectManagement.queryForUser();
+  public Iterable<Project> findAll()
+      throws ForbiddenException, UnauthorizedException, NotFoundException {
+    log.debug("Finding all Projects");
+    Set<Project> projects = new HashSet<>();
+    if (isAdmin()) {
+      for (Project project : projectManagement.query()) projects.add(project);
+    } else {
+      for (Project project : projectManagement.query(getCurrentUser())) projects.add(project);
+    }
+    return projects;
   }
 
   /**
@@ -104,11 +138,18 @@ public class RestProject {
    * @return Project: The Project selected
    */
   @RequestMapping(value = "{id}", method = RequestMethod.GET)
-  public Project findById(@PathVariable("id") String id) throws NotFoundException {
-    log.debug("find Project with id " + id);
+  public Project findById(@PathVariable("id") String id)
+      throws NotFoundException, ForbiddenException {
+    log.debug("Finding Project with id " + id);
     Project project = projectManagement.query(id);
+    if (project == null) throw new NotFoundException("Not found project " + id);
     log.trace("Found Project: " + project);
-    return project;
+    for (Role role : getCurrentUser().getRoles()) {
+      if (role.getProject().equals(project.getName())) {
+        return project;
+      }
+    }
+    throw new ForbiddenException("Forbidden to access project " + id);
   }
 
   /**
@@ -124,7 +165,31 @@ public class RestProject {
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   @ResponseStatus(HttpStatus.ACCEPTED)
-  public Project update(@RequestBody @Valid Project new_project) {
-    return projectManagement.update(new_project);
+  public Project update(@RequestBody @Valid Project new_project)
+      throws ForbiddenException, UnauthorizedException, NotFoundException {
+    if (isAdmin()) {
+      return projectManagement.update(new_project);
+    } else {
+      throw new ForbiddenException("Forbidden to update project " + new_project.getName());
+    }
+  }
+
+  private User getCurrentUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null) return null;
+    String currentUserName = authentication.getName();
+    log.trace("Current username is: " + currentUserName);
+    return userManagement.queryByName(currentUserName);
+  }
+
+  public boolean isAdmin() throws ForbiddenException {
+    User currentUser = getCurrentUser();
+    log.trace("Check user if admin: " + currentUser.getUsername());
+    for (Role role : currentUser.getRoles()) {
+      if (role.getRole().ordinal() == Role.RoleEnum.ADMIN.ordinal()) {
+        return true;
+      }
+    }
+    return false;
   }
 }

@@ -1,3 +1,21 @@
+/*
+ *
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *  
+ */
+
 var app = angular.module('app');
 app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $cookieStore, AuthService, $window) {
 
@@ -10,22 +28,22 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
     };
 
     $scope.roles = [
-        'GUEST',
         'ADMIN',
-        'NUBOMEDIA_ADMIN'
+        'USER',
+        'GUEST'
     ];
 
     loadTable();
 
     $scope.roleAdd = {
-        "role": "GUEST",
-        "project": "*"
+        "role": "",
+        "project": ""
     };
 
     $scope.addRole = function() { 
       var newRole = {
-          "role": "GUEST",
-           "project": "*"
+          "role": "",
+           "project": ""
       };
       $scope.userObj.roles.push(newRole);
     };
@@ -45,7 +63,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
         .success(function (response) {
             //console.log(response);
             $scope.projects = response;
-            $scope.projects.push({name: '*'});
+            //$scope.projects.push({name: ''});
         })
         .error(function (response, status) {
             showError(response, status);
@@ -53,14 +71,10 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
 
 
     $scope.userObj = {
-        "username": "guest",
+        "username": "",
         "password": "",
         "enabled": true,
         "roles": [
-            {
-                "role": "GUEST",
-                "project": "*"
-            }
         ]
     };
 
