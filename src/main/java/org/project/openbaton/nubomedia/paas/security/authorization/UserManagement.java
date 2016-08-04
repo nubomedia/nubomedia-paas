@@ -1,5 +1,27 @@
+/*
+ *
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 package org.project.openbaton.nubomedia.paas.security.authorization;
 
+import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
+import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
+import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
+import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.repository.security.UserRepository;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
@@ -24,6 +46,8 @@ public class UserManagement
 
   @Autowired private UserRepository userRepository;
 
+  @Autowired private ProjectManagement projectManagement;
+
   @Autowired
   @Qualifier("customUserDetailsService")
   private UserDetailsManager userDetailsManager;
@@ -34,13 +58,30 @@ public class UserManagement
   public User getCurrentUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String currentUserName = authentication.getName();
-    return queryDB(currentUserName);
+    return query(currentUserName);
   }
 
   @Override
-  public User add(User user) {
+  public User add(User user) throws BadRequestException, NotFoundException {
+    log.debug("Adding new user: " + user);
+    if (user.getUsername() == null || user.getUsername().equals("")) {
+      throw new BadRequestException("Username must be provided");
+    }
+    if (user.getPassword() == null || user.getPassword().equals("")) {
+      throw new BadRequestException("Password must be provided");
+    }
 
-    checkCurrentUserNubomediaAdmin(getCurrentUser());
+    for (Role role : user.getRoles()) {
+      if (role.getProject() == null) {
+        throw new BadRequestException("Project must be provided");
+      }
+      if (projectManagement.queryByName(role.getProject()) == null) {
+        throw new NotFoundException("Not found project " + role.getProject());
+      }
+      if (role.getRole() == null) {
+        throw new BadRequestException("Role must be provided");
+      }
+    }
 
     String[] roles = new String[user.getRoles().size()];
 
@@ -63,29 +104,20 @@ public class UserManagement
     return userRepository.save(user);
   }
 
-  private void checkCurrentUserNubomediaAdmin(User currentUser) {
-    if (currentUser.getRoles().iterator().next().getRole().ordinal()
-        != Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal())
-      throw new UnauthorizedUserException(
-          "Sorry only NUBOMEDIA_ADMIN can add/delete/update/query Users");
-  }
-
   @Override
-  public void delete(User user) {
-    checkCurrentUserNubomediaAdmin(getCurrentUser());
-    for (Role role : user.getRoles()) {
-      if (role.getRole().ordinal() == Role.RoleEnum.NUBOMEDIA_ADMIN.ordinal()) {
-        throw new UnsupportedOperationException("You can't delete the NUBOMEDIA_ADMIN");
-      }
-    }
+  public void delete(User user) throws BadRequestException {
+    log.debug("Deleting user: " + user);
     userDetailsManager.deleteUser(user.getUsername());
     userRepository.delete(user);
   }
 
   @Override
-  public User update(User new_user) {
+  public User update(User new_user) throws ForbiddenException {
+    log.debug("Updating user:" + new_user);
+    User user = query(new_user.getId());
+    if (!user.getUsername().equals(new_user.getUsername())) throw new ForbiddenException("Forbidden to change the username");
+    new_user.setPassword(user.getPassword());
 
-    checkCurrentUserNubomediaAdmin(getCurrentUser());
     String[] roles = new String[new_user.getRoles().size()];
 
     Role[] objects = new_user.getRoles().toArray(new Role[0]);
@@ -96,7 +128,7 @@ public class UserManagement
     org.springframework.security.core.userdetails.User userToUpdate =
         new org.springframework.security.core.userdetails.User(
             new_user.getUsername(),
-            BCrypt.hashpw(new_user.getPassword(), BCrypt.gensalt(12)),
+            new_user.getPassword(),
             new_user.isEnabled(),
             true,
             true,
@@ -108,19 +140,19 @@ public class UserManagement
 
   @Override
   public Iterable<User> query() {
-    checkCurrentUserNubomediaAdmin(getCurrentUser());
+    log.debug("Listing users");
     return userRepository.findAll();
   }
 
   @Override
-  public User query(String username) {
-    checkCurrentUserNubomediaAdmin(getCurrentUser());
-    log.trace("Looking for user: " + username);
-    return userRepository.findFirstByUsername(username);
+  public User query(String id) {
+    log.debug("Get user: " + id);
+    return userRepository.findOne(id);
   }
 
   @Override
-  public User queryDB(String username) {
+  public User queryByName(String username) {
+    log.debug("Get user: " + username);
     return userRepository.findFirstByUsername(username);
   }
 

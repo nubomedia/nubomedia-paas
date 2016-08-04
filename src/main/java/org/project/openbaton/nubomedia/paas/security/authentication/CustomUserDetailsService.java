@@ -1,17 +1,19 @@
 /*
- * Copyright (c) 2015 Fraunhofer FOKUS
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.project.openbaton.nubomedia.paas.security.authentication;
@@ -62,7 +64,7 @@ public class CustomUserDetailsService
   //private String guestPwd;
   @Autowired private ProjectManagement projectManagement;
 
-  @Value("${paas.security.project.name:default}")
+  @Value("${paas.security.project.name:admin}")
   private String projectDefaultName;
 
   @Override
@@ -73,17 +75,28 @@ public class CustomUserDetailsService
   @Override
   public void run(String... args) throws Exception {
 
+    log.debug("Creating initial Project...");
+
+    if (projectManagement.queryByName(projectDefaultName) == null) {
+      Project project = new Project();
+      project.setName(projectDefaultName);
+
+      projectManagement.add(project);
+      log.debug("Created project: " + project);
+    } else log.debug("Project " + projectDefaultName + " already existing");
+
     log.debug("Creating initial Users...");
 
     if (userRepository.findFirstByUsername("admin") == null) {
+      log.debug("Not found admin user: Create a new one");
       User ob_admin = new User();
       ob_admin.setUsername("admin");
       ob_admin.setEnabled(true);
       ob_admin.setPassword(BCrypt.hashpw(adminPwd, BCrypt.gensalt(12)));
       Set<Role> roles = new HashSet<>();
       Role role = new Role();
-      role.setRole(Role.RoleEnum.NUBOMEDIA_ADMIN);
-      role.setProject("*");
+      role.setRole(Role.RoleEnum.ADMIN);
+      role.setProject("admin");
       roles.add(role);
       ob_admin.setRoles(roles);
       userRepository.save(ob_admin);
@@ -97,29 +110,11 @@ public class CustomUserDetailsService
               true,
               true,
               true,
-              AuthorityUtils.createAuthorityList("NUBOMEDIA_ADMIN:*"));
+              AuthorityUtils.createAuthorityList("ADMIN:admin"));
       inMemManager.createUser(admin);
     } else {
       log.debug("Admin" + inMemManager.loadUserByUsername("admin"));
     }
-
-    /*if (userRepository.findFirstByUsername("guest") == null) {
-        User ob_guest = new User();
-        ob_guest.setUsername("guest");
-        ob_guest.setPassword(BCrypt.hashpw(guestPwd, BCrypt.gensalt(12)));
-        ob_guest.setEnabled(true);
-        Set<Role> roles = new HashSet<>();
-        Role role = new Role();
-        role.setRole(Role.RoleEnum.GUEST);
-        role.setProject("*");
-        roles.add(role);
-        ob_guest.setRoles(roles);
-        userRepository.save(ob_guest);
-    }
-    if (!inMemManager.userExists("guest")) {
-        UserDetails guest = new org.springframework.security.core.userdetails.User("guest", BCrypt.hashpw(guestPwd, BCrypt.gensalt(12)), true, true, true, true, AuthorityUtils.createAuthorityList("GUEST:*"));
-        inMemManager.createUser(guest);
-    }*/
 
     log.debug("User in the DB: ");
     for (User user : userRepository.findAll()) {
@@ -127,7 +122,7 @@ public class CustomUserDetailsService
     }
 
     for (User user : userRepository.findAll()) {
-      if (!user.getUsername().equals("admin") && !user.getUsername().equals("guest")) {
+      if (!user.getUsername().equals("admin")) {
         String[] roles = new String[user.getRoles().size()];
         for (int i = 0; i < user.getRoles().size(); i++) {
           roles[i] =
@@ -150,17 +145,6 @@ public class CustomUserDetailsService
 
     log.debug("Users in UserDetailManager: ");
     log.info("ADMIN: " + inMemManager.loadUserByUsername("admin"));
-    //log.debug("GUEST: " + inMemManager.loadUserByUsername("guest"));
-
-    log.debug("Creating initial Project...");
-
-    if (projectManagement.queryByName(projectDefaultName) == null) {
-      Project project = new Project();
-      project.setName(projectDefaultName);
-
-      projectManagement.add(project);
-      log.debug("Created project: " + project);
-    } else log.debug("Project " + projectDefaultName + " already existing");
   }
 
   @Override
