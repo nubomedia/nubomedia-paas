@@ -56,6 +56,7 @@
                     <th ng-if="application.route" ng-click="predicate = 'route';reverse = !reverse">route <i
                             class="fa fa-sort"></i></th>
                     <th ng-click="predicate = 'flavor'; reverse = !reverse">flavor <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'created by';reverse = !reverse">created by <i class="fa fa-sort"></i></th>
                     <th ng-click="predicate = 'created at';reverse = !reverse">created at <i class="fa fa-sort"></i></th>
                     <th ng-click="predicate = 'status'; reverse = !status">status <i class="fa fa-sort"></i></th>
                     <th>Action</th>
@@ -67,6 +68,7 @@
                     <td><a href="#applications/{{data.id}}">{{data.name}}</a></td>
                     <td ng-if="application.route"><a href="http://{{application.route}}" target="_blank">url</a></td>
                     <td>{{data.flavor}}</td>
+                    <td>{{data.createdBy}}</td>
                     <td>{{data.createdAt}}</td>
                     <td>{{data.status}}</td>
                     <td>

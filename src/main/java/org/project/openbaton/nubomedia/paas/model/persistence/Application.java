@@ -45,6 +45,8 @@ public class Application {
   private Flavor flavor;
   private AppStatus status;
 
+  private String createdBy;
+
   private Date createdAt;
 
   @JsonIgnore private boolean resourceOK;
@@ -70,8 +72,9 @@ public class Application {
       String projectName,
       String projectId,
       String route,
-      String nsrID,
       String gitURL,
+      String createdBy,
+      Date createdAt,
       List<Integer> targetPorts,
       List<Integer> ports,
       List<String> protocols,
@@ -85,6 +88,8 @@ public class Application {
     this.projectId = projectId;
     this.route = route;
     this.gitURL = gitURL;
+    this.createdBy = createdBy;
+    this.createdAt = createdAt;
     this.targetPorts = targetPorts;
 
     if (ports == null) {
@@ -285,5 +290,13 @@ public class Application {
         + ", mediaServerGroup="
         + mediaServerGroup
         + '}';
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
   }
 }
