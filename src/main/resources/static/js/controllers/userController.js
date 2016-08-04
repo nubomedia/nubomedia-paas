@@ -73,6 +73,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
     $scope.userObj = {
         "username": "",
         "password": "",
+        "email":"",
         "enabled": true,
         "roles": [
         ]
