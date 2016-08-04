@@ -84,7 +84,7 @@ public class RestProject {
   @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void delete(@PathVariable("id") String id)
-      throws ForbiddenException, NotFoundException, UnauthorizedException {
+      throws ForbiddenException, NotFoundException, UnauthorizedException, BadRequestException {
     log.info("Removing Project with id " + id);
     if (isAdmin()) {
       projectManagement.delete(projectManagement.query(id));
@@ -105,7 +105,7 @@ public class RestProject {
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void multipleDelete(@RequestBody @Valid List<String> ids)
-      throws NotFoundException, ForbiddenException, UnauthorizedException {
+      throws NotFoundException, ForbiddenException, UnauthorizedException, BadRequestException {
     if (isAdmin()) {
       for (String id : ids) projectManagement.delete(projectManagement.query(id));
     } else {

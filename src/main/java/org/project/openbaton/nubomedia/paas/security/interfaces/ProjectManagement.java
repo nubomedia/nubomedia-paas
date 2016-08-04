@@ -39,7 +39,8 @@ public interface ProjectManagement {
    *
    * @param project
    */
-  void delete(Project project) throws NotFoundException, UnauthorizedException, ForbiddenException;
+  void delete(Project project)
+      throws NotFoundException, UnauthorizedException, ForbiddenException, BadRequestException;
 
   /**
    *

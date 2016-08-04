@@ -122,4 +122,14 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
     String body = e.getMessage();
     return handleExceptionInternal(e, body, headers, HttpStatus.BAD_REQUEST, request);
   }
+
+  @ExceptionHandler({Exception.class})
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  protected ResponseEntity<Object> handleAllExceptions(Exception e, WebRequest request) {
+    logger.info("Handling parameters from" + request.getDescription(true));
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    String body = e.getMessage();
+    return handleExceptionInternal(e, body, headers, HttpStatus.INTERNAL_SERVER_ERROR, request);
+  }
 }

@@ -33,6 +33,14 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
         'GUEST'
     ];
 
+    $scope.addRoleUpdate = function() {
+        var newRole = {
+            "role": "",
+            "project": ""
+        };
+        $scope.userUpdate.roles.push(newRole);
+    };
+
     loadTable();
 
     $scope.roleAdd = {
@@ -91,7 +99,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
         //console.log(ids);
         http.post(url + 'multipledelete', ids)
             .success(function (response) {
-                showOk('Users: ' + ids.toString() + ' deleted.');
+                showOk('Users ' + ids.toString() + ' deleted.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -130,6 +138,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
     }, true);
 
     $scope.multipleDelete = true;
+    $scope.userUpdate = "";
 
     $scope.selection = {};
     $scope.selection.ids = {};
@@ -137,9 +146,9 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
 
 
     $scope.deleteuser = function (data) {
-        http.delete(url + data.id)
+        http.delete(url + data.username)
             .success(function (response) {
-                showOk('User: ' + data.name + ' deleted.');
+                showOk('User ' + data.username + ' deleted.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -151,17 +160,53 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
         $scope.alerts.splice(index, 1);
     };
 
+    $scope.update = function(data) {
+        $scope.userUpdate = JSON.parse(JSON.stringify(data));;
+        console.log(data);
+    };
 
     $scope.save = function () {
         //console.log($scope.userObj);
         http.post(url, $scope.userObj)
             .success(function (response) {
-                showOk('User: ' + $scope.userObj.username + ' saved.');
+                showOk('User ' + $scope.userObj.username + ' created.');
                 loadTable();
             })
             .error(function (response, status) {
                 showError(response, status);
             });
+    };
+
+    $scope.updateSave = function () {
+        console.log($scope.userUpdate);
+        updateObj = {};
+        updateObj.id = $scope.userUpdate.id;
+        updateObj.username = $scope.userUpdate.username;
+        updateObj.email = $scope.userUpdate.email;
+        updateObj.enabled = $scope.userUpdate.enabled;
+        updateObj.roles = [];
+        for (i = 0; i < $scope.userUpdate.roles.length; i++) {
+              var newRole = {
+                  "id": $scope.userUpdate.roles[i].id,
+                  "role": $scope.userUpdate.roles[i].role,
+                  "project": $scope.userUpdate.roles[i].project
+              };
+              updateObj.roles.push(newRole);
+        }
+        console.log("Copied");
+        console.log(updateObj);
+        http.put(url + updateObj.username, updateObj)
+            .success(function (response) {
+                    showOk('User ' + $scope.userObj.username + ' updated.');
+                    loadTable();
+            })
+            .error(function (response, status) {
+                    showError(response, status);
+            });
+    };
+    $scope.update = function(data) {
+        console.log(data);
+        $scope.userUpdate = JSON.parse(JSON.stringify(data));;
     };
     function loadTable() {
         //console.log($routeParams.userId);
@@ -184,8 +229,6 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
                 .error(function (data, status) {
                     showError(data, status);
                 });
-
-
         }
 
     }

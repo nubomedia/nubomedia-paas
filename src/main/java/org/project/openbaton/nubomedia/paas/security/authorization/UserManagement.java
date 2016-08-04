@@ -64,37 +64,9 @@ public class UserManagement
   }
 
   @Override
-  public User add(User user) throws BadRequestException, NotFoundException {
+  public User add(User user) throws BadRequestException, NotFoundException, ForbiddenException {
     log.debug("Adding new user: " + user);
-    if (user.getUsername() == null || user.getUsername().equals("")) {
-      throw new BadRequestException("Username must be provided");
-    }
-    if (user.getPassword() == null || user.getPassword().equals("")) {
-      throw new BadRequestException("Password must be provided");
-    }
-
-    if (user.getEmail() == null || user.getEmail().equals("")) {
-      throw new BadRequestException("Email must be provided");
-    }
-
-    String EMAIL_PATTERN =
-        "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-    if (!pattern.matcher(user.getEmail()).matches())
-      throw new BadRequestException("Email is not well formatted");
-
-    for (Role role : user.getRoles()) {
-      if (role.getProject() == null) {
-        throw new BadRequestException("Project must be provided");
-      }
-      if (projectManagement.queryByName(role.getProject()) == null) {
-        throw new NotFoundException("Not found project " + role.getProject());
-      }
-      if (role.getRole() == null) {
-        throw new BadRequestException("Role must be provided");
-      }
-    }
-
+    checkIntegrity(user);
     String[] roles = new String[user.getRoles().size()];
 
     Role[] objects = user.getRoles().toArray(new Role[0]);
@@ -117,19 +89,23 @@ public class UserManagement
   }
 
   @Override
-  public void delete(User user) throws BadRequestException {
+  public void delete(User user) throws ForbiddenException {
     log.debug("Deleting user: " + user);
+    if (user.getUsername().equals("admin"))
+      throw new ForbiddenException("Forbidden to delete user admin");
     userDetailsManager.deleteUser(user.getUsername());
     userRepository.delete(user);
   }
 
   @Override
-  public User update(User new_user) throws ForbiddenException {
+  public User update(User new_user)
+      throws ForbiddenException, BadRequestException, NotFoundException {
     log.debug("Updating user:" + new_user);
     User user = query(new_user.getId());
     if (!user.getUsername().equals(new_user.getUsername()))
       throw new ForbiddenException("Forbidden to change the username");
     new_user.setPassword(user.getPassword());
+    checkIntegrity(new_user);
 
     String[] roles = new String[new_user.getRoles().size()];
 
@@ -173,5 +149,45 @@ public class UserManagement
   public void changePassword(String oldPwd, String newPwd) throws UnauthorizedUserException {
     log.debug("Got old password: " + oldPwd);
     userDetailsManager.changePassword(oldPwd, newPwd);
+  }
+
+  public void checkIntegrity(User user)
+      throws BadRequestException, NotFoundException, ForbiddenException {
+    if (user.getUsername() == null || user.getUsername().equals("")) {
+      throw new BadRequestException("Username must be provided");
+    }
+    if (user.getPassword() == null || user.getPassword().equals("")) {
+      throw new BadRequestException("Password must be provided");
+    }
+    if (!user.getUsername().equals("admin")) {
+      if (user.getEmail() == null || user.getEmail().equals("")) {
+        throw new BadRequestException("Email must be provided");
+      }
+      String EMAIL_PATTERN =
+          "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+      Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+      if (!pattern.matcher(user.getEmail()).matches())
+        throw new BadRequestException("Email is not well formatted");
+    }
+    boolean adminIntegrity = false;
+    for (Role role : user.getRoles()) {
+      if (role.getProject() == null) {
+        throw new BadRequestException("Project must be provided");
+      }
+      if (projectManagement.queryByName(role.getProject()) == null) {
+        throw new NotFoundException("Not found project " + role.getProject());
+      }
+      if (role.getRole() == null) {
+        throw new BadRequestException("Role must be provided");
+      }
+      if (role.getProject().equals("admin")
+          && role.getRole().ordinal() == Role.RoleEnum.ADMIN.ordinal()) {
+        adminIntegrity = true;
+      }
+    }
+    if (user.getUsername().equals("admin")) {
+      if (!adminIntegrity)
+        throw new ForbiddenException("Forbidden to change Role admin:ADMIN for user admin");
+    }
   }
 }
