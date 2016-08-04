@@ -87,7 +87,9 @@ public class RestUsers {
     log.debug("removing User with username " + username);
     if (isAdmin()) {
       if (!getCurrentUser().getUsername().equals(username)) {
-        userManagement.delete(userManagement.queryByName(username));
+        User user = userManagement.queryByName(username);
+        if (user == null) throw new BadRequestException("Not found user " + username);
+        userManagement.delete(user);
       } else {
         throw new ForbiddenException("You can't delete yourself. Please ask another admin.");
       }
@@ -185,7 +187,7 @@ public class RestUsers {
   )
   @ResponseStatus(HttpStatus.OK)
   public User update(@PathVariable("username") String username, @RequestBody @Valid User new_user)
-      throws ForbiddenException, BadRequestException {
+      throws ForbiddenException, BadRequestException, NotFoundException {
     log.debug("Updating User " + username);
     User userToUpdate = userManagement.queryByName(username);
     if (userToUpdate == null) {

@@ -35,19 +35,19 @@ public interface UserManagement {
    *
    * @param user
    */
-  User add(User user) throws BadRequestException, NotFoundException;
+  User add(User user) throws BadRequestException, NotFoundException, ForbiddenException;
 
   /**
    *
    * @param user
    */
-  void delete(User user) throws BadRequestException;
+  void delete(User user) throws BadRequestException, ForbiddenException;
 
   /**
    *
    * @param new_user
    */
-  User update(User new_user) throws ForbiddenException;
+  User update(User new_user) throws ForbiddenException, BadRequestException, NotFoundException;
 
   /**
    *

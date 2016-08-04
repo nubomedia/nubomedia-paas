@@ -19,6 +19,7 @@
 package org.project.openbaton.nubomedia.paas.security.authorization;
 
 import org.project.openbaton.nubomedia.paas.core.AppManager;
+import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
@@ -61,7 +62,7 @@ public class ProjectManagement
 
   @Override
   public void delete(Project project)
-      throws NotFoundException, UnauthorizedException, ForbiddenException {
+      throws NotFoundException, UnauthorizedException, ForbiddenException, BadRequestException {
     Project projectToDelete = projectRepository.findFirstById(project.getId());
     if (project.getName().equals("admin"))
       throw new ForbiddenException("Forbidden to delete the project admin");
@@ -73,8 +74,10 @@ public class ProjectManagement
           rolesToRemove.add(roleTmp);
         }
       }
-      userTmp.getRoles().removeAll(rolesToRemove);
-      userManagement.update(userTmp);
+      if (rolesToRemove.size() > 0) {
+        userTmp.getRoles().removeAll(rolesToRemove);
+        userManagement.update(userTmp);
+      }
     }
     projectRepository.delete(projectToDelete);
   }

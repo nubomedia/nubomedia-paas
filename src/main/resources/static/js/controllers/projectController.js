@@ -44,7 +44,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
         //console.log(ids);
         http.post(url + 'multipledelete', ids)
             .success(function (response) {
-                showOk('Projects: ' + ids.toString() + ' deleted.');
+                showOk('Projects ' + ids.toString() + ' deleted.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -93,7 +93,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
     $scope.deleteProject = function (data) {
         http.delete(url + data.id)
             .success(function (response) {
-                showOk('Project : ' + data.name + ' deleted.');
+                showOk('Project ' + data.name + ' deleted.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -110,7 +110,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
         //console.log($scope.projectObj);
         http.post(url, $scope.projectObj)
             .success(function (response) {
-                showOk('Project: ' + $scope.projectObj.name + ' saved.');
+                showOk('Project ' + $scope.projectObj.name + ' created.');
                 loadTable();
             })
             .error(function (response, status) {
