@@ -32,12 +32,16 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.NameStructureEx
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.*;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
+import org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -53,9 +57,10 @@ public class RestAPI {
   private static final Logger logger = LoggerFactory.getLogger(RestAPI.class);
 
   @Autowired private OpenShiftManager osmanager;
-  @Autowired private OpenbatonManager obmanager;
 
   @Autowired private AppManager appManager;
+
+  @Autowired private UserManagement userManagement;
 
   @Value("${openshift.token}")
   private String token;
@@ -89,7 +94,8 @@ public class RestAPI {
       @RequestHeader(value = "project-id") String projectId)
       throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException,
           turnServerException, StunServerException {
-    Application app = appManager.createApplication(request, projectId, token);
+    Application app =
+        appManager.createApplication(request, getCurrentUser().getUsername(), projectId, token);
     return new NubomediaCreateAppResponse(app, 200);
   }
 
@@ -277,5 +283,12 @@ public class RestAPI {
   @ResponseStatus(HttpStatus.OK)
   public String getMediaServerIp() {
     return vnfmIP;
+  }
+
+  private User getCurrentUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null) return null;
+    String currentUserName = authentication.getName();
+    return userManagement.queryByName(currentUserName);
   }
 }

@@ -74,7 +74,7 @@ public class AppManager {
   private SecureRandom appIDGenerator = new SecureRandom();
 
   public Application createApplication(
-      NubomediaCreateAppRequest request, String projectId, String token)
+      NubomediaCreateAppRequest request, String user, String projectId, String token)
       throws turnServerException, StunServerException, SDKException, DuplicatedException,
           NameStructureException, UnauthorizedException {
     if (token == null) {
@@ -159,6 +159,7 @@ public class AppManager {
     app.setResourceOK(false);
     app.setFlavor(request.getFlavor());
     app.setStatus(AppStatus.CREATED);
+    app.setCreatedBy(user);
     app.setCreatedAt(new Date());
 
     appRepo.save(app);
