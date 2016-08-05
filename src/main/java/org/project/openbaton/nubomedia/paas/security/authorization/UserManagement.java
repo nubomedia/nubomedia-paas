@@ -180,19 +180,19 @@ public class UserManagement
 
   @Override
   public Iterable<User> query() {
-    log.debug("Listing users");
+    log.trace("Listing users");
     return userRepository.findAll();
   }
 
   @Override
   public User query(String id) {
-    log.debug("Get user: " + id);
+    log.trace("Get user: " + id);
     return userRepository.findOne(id);
   }
 
   @Override
   public User queryByName(String username) throws NotFoundException {
-    log.debug("Get user: " + username);
+    log.trace("Get user: " + username);
     User user = userRepository.findFirstByUsername(username);
     if (user == null) throw new NotFoundException("Not found user " + username);
     return user;

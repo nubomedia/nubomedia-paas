@@ -69,6 +69,7 @@ public class ProjectManagement
     } else {
       project.setUsers(new HashMap<String, Role.RoleEnum>());
     }
+    project = projectRepository.save(project);
     return project;
   }
 

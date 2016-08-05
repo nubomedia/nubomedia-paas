@@ -54,7 +54,7 @@ public class AuthorizeInterceptor extends HandlerInterceptorAdapter {
       throws Exception {
 
     String projectId = request.getHeader("project-id");
-    log.debug("ProjectId: " + projectId);
+    log.trace("ProjectId: " + projectId);
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     log.trace("Authentication " + authentication);
