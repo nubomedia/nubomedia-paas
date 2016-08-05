@@ -121,7 +121,7 @@ public class RestProject {
   @RequestMapping(method = RequestMethod.GET)
   public Iterable<Project> findAll()
       throws ForbiddenException, UnauthorizedException, NotFoundException {
-    log.debug("Finding all Projects");
+    log.trace("Finding all Projects");
     Set<Project> projects = new HashSet<>();
     if (isAdmin()) {
       for (Project project : projectManagement.query()) projects.add(project);
@@ -140,7 +140,7 @@ public class RestProject {
   @RequestMapping(value = "{id}", method = RequestMethod.GET)
   public Project findById(@PathVariable("id") String id)
       throws NotFoundException, ForbiddenException {
-    log.debug("Finding Project with id " + id);
+    log.trace("Finding Project with id " + id);
     Project project = projectManagement.query(id);
     if (project == null) throw new NotFoundException("Not found project " + id);
     log.trace("Found Project: " + project);

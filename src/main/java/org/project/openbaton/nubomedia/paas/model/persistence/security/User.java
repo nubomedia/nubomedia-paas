@@ -18,11 +18,9 @@
 
 package org.project.openbaton.nubomedia.paas.model.persistence.security;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.openbaton.catalogue.util.IdGenerator;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -34,7 +32,7 @@ public class User {
   @Column(unique = true)
   private String username;
 
-  @JsonIgnore private String password;
+  private String password;
 
   private boolean enabled;
 

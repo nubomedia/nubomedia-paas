@@ -68,7 +68,7 @@ public class RestUsers {
     User user = null;
     if (isAdmin()) {
       user = userManagement.add(new_user);
-      user.setPassword("********");
+      user.setPassword(null);
     } else {
       throw new ForbiddenException("Forbidden to create a new user");
     }
@@ -137,9 +137,7 @@ public class RestUsers {
     Iterable<User> users = null;
     if (isAdmin()) {
       users = userManagement.query();
-      for (User user : users) {
-        user.setPassword("********");
-      }
+      for (User user : users) user.setPassword(null);
       return users;
     } else {
       throw new ForbiddenException("Forbidden to list all users");
@@ -159,7 +157,7 @@ public class RestUsers {
     if (isAdmin() || getCurrentUser().equals(username)) {
       User user = userManagement.queryByName(username);
       log.trace("Found User: " + user);
-      user.setPassword("********");
+      user.setPassword(null);
       return user;
     } else {
       throw new ForbiddenException("Forbidden to request this user");
@@ -200,7 +198,7 @@ public class RestUsers {
     User user = null;
     if (isAdmin()) {
       user = userManagement.update(new_user);
-      user.setPassword("********");
+      user.setPassword(null);
     } else {
       throw new ForbiddenException("Forbidden to update a user");
     }
