@@ -22,6 +22,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.openbaton.catalogue.util.IdGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity

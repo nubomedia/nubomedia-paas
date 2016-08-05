@@ -93,7 +93,7 @@ public class RestAPI {
       @RequestBody NubomediaCreateAppRequest request,
       @RequestHeader(value = "project-id") String projectId)
       throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException,
-          turnServerException, StunServerException {
+          turnServerException, StunServerException, NotFoundException {
     Application app =
         appManager.createApplication(request, getCurrentUser().getUsername(), projectId, token);
     return new NubomediaCreateAppResponse(app, 200);
@@ -285,7 +285,7 @@ public class RestAPI {
     return vnfmIP;
   }
 
-  private User getCurrentUser() {
+  private User getCurrentUser() throws NotFoundException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null) return null;
     String currentUserName = authentication.getName();

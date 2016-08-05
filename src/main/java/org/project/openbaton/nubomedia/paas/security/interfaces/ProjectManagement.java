@@ -23,17 +23,22 @@ import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
+
+import java.util.Map;
 
 /**
  * Created by lto on 24/05/16.
  */
 public interface ProjectManagement {
+  Project save(Project project);
+
   /**
    *
    * @param project
    */
-  Project add(Project project) throws BadRequestException;
+  Project add(Project project) throws BadRequestException, NotFoundException, ForbiddenException;
 
   /**
    *
@@ -46,7 +51,8 @@ public interface ProjectManagement {
    *
    * @param new_project
    */
-  Project update(Project new_project) throws ForbiddenException, NotFoundException;
+  Project update(Project new_project)
+      throws ForbiddenException, NotFoundException, BadRequestException;
 
   /**
    */

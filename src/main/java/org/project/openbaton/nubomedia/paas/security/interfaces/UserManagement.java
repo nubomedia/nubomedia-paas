@@ -61,7 +61,7 @@ public interface UserManagement {
    */
   User query(String id);
 
-  public User queryByName(String username);
+  public User queryByName(String username) throws NotFoundException;
 
   void changePassword(String oldPwd, String newPwd);
 }

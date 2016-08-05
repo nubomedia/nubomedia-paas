@@ -67,7 +67,7 @@ public class RestProject {
   )
   @ResponseStatus(HttpStatus.CREATED)
   public Project create(@RequestBody @Valid Project project)
-      throws ForbiddenException, BadRequestException {
+      throws ForbiddenException, BadRequestException, NotFoundException {
     log.info("Adding Project: " + project.getName());
     if (isAdmin()) {
       return projectManagement.add(project);
@@ -144,9 +144,13 @@ public class RestProject {
     Project project = projectManagement.query(id);
     if (project == null) throw new NotFoundException("Not found project " + id);
     log.trace("Found Project: " + project);
-    for (Role role : getCurrentUser().getRoles()) {
-      if (role.getProject().equals(project.getName())) {
-        return project;
+    if (isAdmin()) {
+      return project;
+    } else {
+      for (Role role : getCurrentUser().getRoles()) {
+        if (role.getProject().equals(project.getName())) {
+          return project;
+        }
       }
     }
     throw new ForbiddenException("Forbidden to access project " + id);
@@ -166,7 +170,7 @@ public class RestProject {
   )
   @ResponseStatus(HttpStatus.ACCEPTED)
   public Project update(@RequestBody @Valid Project new_project)
-      throws ForbiddenException, UnauthorizedException, NotFoundException {
+      throws ForbiddenException, UnauthorizedException, NotFoundException, BadRequestException {
     if (isAdmin()) {
       return projectManagement.update(new_project);
     } else {
@@ -174,7 +178,7 @@ public class RestProject {
     }
   }
 
-  private User getCurrentUser() {
+  private User getCurrentUser() throws NotFoundException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null) return null;
     String currentUserName = authentication.getName();
@@ -182,7 +186,7 @@ public class RestProject {
     return userManagement.queryByName(currentUserName);
   }
 
-  public boolean isAdmin() throws ForbiddenException {
+  public boolean isAdmin() throws ForbiddenException, NotFoundException {
     User currentUser = getCurrentUser();
     log.trace("Check user if admin: " + currentUser.getUsername());
     for (Role role : currentUser.getRoles()) {

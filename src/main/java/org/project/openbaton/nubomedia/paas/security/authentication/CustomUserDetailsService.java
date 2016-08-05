@@ -23,6 +23,7 @@ import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
 import org.project.openbaton.nubomedia.paas.security.interfaces.ProjectManagement;
+import org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserExc
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -51,6 +53,8 @@ public class CustomUserDetailsService
     implements UserDetailsService, CommandLineRunner, UserDetailsManager {
 
   @Autowired private UserRepository userRepository;
+
+  @Autowired private UserManagement userManagement;
 
   @Autowired
   @Qualifier("inMemManager")
@@ -74,33 +78,32 @@ public class CustomUserDetailsService
 
   @Override
   public void run(String... args) throws Exception {
-
     log.debug("Creating initial Project...");
-
     if (projectManagement.queryByName(projectDefaultName) == null) {
       Project project = new Project();
       project.setName(projectDefaultName);
-
+      project.setDescription("default admin project");
+      project.setUsers(new HashMap<String, Role.RoleEnum>());
+      //project.getUsers().put("admin", Role.RoleEnum.ADMIN);
       projectManagement.add(project);
       log.debug("Created project: " + project);
     } else log.debug("Project " + projectDefaultName + " already existing");
 
     log.debug("Creating initial Users...");
-
     if (userRepository.findFirstByUsername("admin") == null) {
       log.debug("Not found admin user: Create a new one");
-      User ob_admin = new User();
-      ob_admin.setUsername("admin");
-      ob_admin.setEnabled(true);
-      ob_admin.setPassword(BCrypt.hashpw(adminPwd, BCrypt.gensalt(12)));
-      Set<Role> roles = new HashSet<>();
+      User admin = new User();
+      admin.setUsername("admin");
+      admin.setEnabled(true);
+      admin.setPassword(adminPwd);
+      admin.setRoles(new HashSet<Role>());
       Role role = new Role();
-      role.setRole(Role.RoleEnum.ADMIN);
       role.setProject("admin");
-      roles.add(role);
-      ob_admin.setRoles(roles);
-      userRepository.save(ob_admin);
+      role.setRole(Role.RoleEnum.ADMIN);
+      admin.getRoles().add(role);
+      userManagement.add(admin);
     }
+
     if (!inMemManager.userExists("admin")) {
       UserDetails admin =
           new org.springframework.security.core.userdetails.User(
