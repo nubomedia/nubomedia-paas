@@ -13,7 +13,7 @@
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
- *  
+ *
  */
 
 var app = angular.module('app');
@@ -28,7 +28,7 @@ var app = angular.module('app');
 app.controller('LoginController', function ($scope, AuthService, Session, $rootScope, $location, $cookieStore, $http) {
     $scope.currentUser = null;
     //$scope.URL = 'http://localhost:8081';
-    //$scope.URL= 'http://80.96.122.73:8081';
+    //$scope.URL= 'http://80.96.122.104:8081';
     $scope.URL = '';
     $scope.credential = {
         "username": '',

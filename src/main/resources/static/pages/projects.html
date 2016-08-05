@@ -56,6 +56,7 @@
                     <th><input type="checkbox" ng-model="main.checkbox"></th>
                     <th ng-click="predicate = 'id'; reverse = !reverse">Id <i class="fa fa-sort"></i></th>
                     <th ng-click="predicate = 'name'; reverse = !reverse">name <i class="fa fa-sort"></i></th>
+                    <th> Description<i class="fa"></i></th>
                     <th>Actions <i class="fa"></i></th>
                 </tr>
                 </thead>
@@ -65,13 +66,15 @@
                     <!--<td><a href="#projects/{{data.id}}">{{data.id}} </a></td>-->
                     <td>{{data.id}}</td>
                     <td>{{data.name}}</td>
+                    <td>{{data.description}}</td>
                     <td>
                         <div class="btn-group">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Action
                                 <span class="caret"></span></button>
                             <ul class="dropdown-menu" role="menu">
+                                <li ng-if="data.name!==projectSelected.name"><a href="" data-toggle="modal" ng-click="startUpdate(data)" data-target="#updateProject">Edit</a></li>
                                 <li ng-if="data.name!==projectSelected.name"><a href="" ng-click="deleteProject(data)">Delete</a></li>
-                            </ul>
+                                </ul>
                         </div>
                     </td>
                 </tr>
@@ -135,3 +138,83 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="updateProject">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Update project</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" class="form-horizontal">
+
+                    <div class="form-group">
+                        <label for="username" class="col-sm-4 control-label">Project Name</label>
+
+                        <div class="col-sm-6">
+                            <input type="text" ng-disabled="true" class="form-control" id="name" name="username"
+                                   ng-model="projectUpd.name"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ID" class="col-sm-4 control-label">Project ID</label>
+
+                        <div class="col-sm-6">
+                            <input type="text" ng-disabled="true" class="form-control" id="pass" name="id"
+                                   ng-model="projectUpd.id"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="Description" class="col-sm-4 control-label">Description:</label>
+                      <div class="col-sm-6">
+                        <textarea style="width:250px;" name="Description" ng-model="projectUpd.description" id="Description" class="form-control" rows="5" cols="50">
+                        </textarea>
+                      </div>
+                    </div>
+
+                    <!--div class="form-group" ng-repeat="(key,value) in userUpdate" ng-if="key!=='username' && key!=='password' && key!=='roles'">
+                        <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
+
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="{{key}}" name="{{key}}"
+                                   ng-model="userUpdate[key]"/>
+                        </div>
+                    </div-->
+                    <hr>
+                    <h3>Users <a title="Add a new user to this project" href="" ng-click="addUser()"><li class="fa fa-plus-square"></li></a></h3>
+                    <div class="form-group" ng-repeat="(key,value) in projectUpd.usersPairs track by $index">
+
+                            <label for="action" class="col-sm-2 control-label">User</label>
+                            <div class="col-sm-3">
+                                <select name="typeSelect" class="form-control modal-select" id="action"
+                                        ng-model="projectUpd.usersPairs[$index].name"
+                                        ng-options="user for user in users"
+                                        ng-change="">
+                                </select>
+                            </div>
+
+                        <label for="action" class="col-sm-1 control-label">Role</label>
+                        <div class="col-sm-3">
+                            <select name="typeSelect" class="form-control modal-select" id="action"
+                                    ng-model="projectUpd.usersPairs[$index].role"
+                                    ng-options="role for role in roles"
+                                    ng-change="">
+                            </select>
+                        </div>
+                        <div class="col-sm-1">
+                            <a href="" ng-click="projectUpd.usersPairs.splice($index, 1)"><h4><li class="fa fa-trash"></li></h4></a>
+                        </div>
+
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="updateSave()">Save</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
