@@ -207,12 +207,12 @@ Copy & paste on of those tokens to your configuration file.
 ### Identity Management
 
 The Identity Management includes the following entities:
-* user: A user have his own credentials to login into the PaaS Manager. The user might be assigned to one or more projects with specific roles. Only the role:NUBOMEDIA_ADMIN can manage (create, delete) users and projects. The role:ADMIN can manage applications in the assigned project and role:GUEST can browse only through the applications.
+* user: A user have his own credentials to login into the PaaS Manager. The user might be assigned to one or more projects with specific roles. Only the role:ADMIN has acces to all projects and can manage (create, delete) users and projects. The role:USER can manage applications in the assigned project and role:GUEST can browse only through the applications.
 * project: A project has an isolated view on the applications that are running in this project. A project might be used by one or multiple projects.
-* role: Roles are defining the set of actions that are permitted to execute. role:NUBOMEDIA_ADMIN can create and delete users and projects; and has access to all projects. role:ADMIN can manage the applications in the assigned projects. role:GUEST can only browse through the applications of the assigned projects.
+* role: Roles are defining the set of actions that are permitted to execute. role:ADMIN can create and delete users and projects; and has access to all projects. role:USER can manage the applications in the assigned projects. role:GUEST can only browse through the applications of the assigned projects.
 
-*NOTE* The password for the NUBOMEDIA_ADMIN is defined in the configuration file. Changing this password will be applied after a restart of the PaaS Manager.
-
+*NOTE* The password for the ADMIN is defined in the configuration file. Changing this password will be applied after a restart of the PaaS Manager.
+*NOTE* admin user and admin project can not be deleted or done anything that limits the access of the admin user.
 ### Marketplace
 
 The marketplace for NUBOMEDIA applications serves a store where the full configuration of applications can be stored. It is integrated directly in the NUBOMEDIA GUI. From the marketplace you can launch applications via your PaaS GUI without doing anything.
