@@ -22,6 +22,7 @@ import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.repository.security.UserRepository;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
@@ -37,6 +38,8 @@ import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserExc
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -67,6 +70,13 @@ public class UserManagement
   public User add(User user) throws BadRequestException, NotFoundException, ForbiddenException {
     log.debug("Adding new user: " + user);
     checkIntegrity(user);
+
+    for (Role role : user.getRoles()) {
+      Project project = projectManagement.queryByName(role.getProject());
+      project.getUsers().put(user.getUsername(), role.getRole());
+      projectManagement.save(project);
+    }
+
     String[] roles = new String[user.getRoles().size()];
 
     Role[] objects = user.getRoles().toArray(new Role[0]);
@@ -93,6 +103,11 @@ public class UserManagement
     log.debug("Deleting user: " + user);
     if (user.getUsername().equals("admin"))
       throw new ForbiddenException("Forbidden to delete user admin");
+    for (Role role : user.getRoles()) {
+      Project project = projectManagement.queryByName(role.getProject());
+      project.getUsers().remove(user.getUsername());
+      projectManagement.save(project);
+    }
     userDetailsManager.deleteUser(user.getUsername());
     userRepository.delete(user);
   }
@@ -105,7 +120,43 @@ public class UserManagement
     if (!user.getUsername().equals(new_user.getUsername()))
       throw new ForbiddenException("Forbidden to change the username");
     new_user.setPassword(user.getPassword());
+
     checkIntegrity(new_user);
+
+    for (Role role : user.getRoles()) {
+      boolean found = false;
+      for (Role roleToUpdate : new_user.getRoles()) {
+        if (role.getProject().equals(roleToUpdate.getProject())) {
+          if (role.getRole().ordinal() != roleToUpdate.getRole().ordinal()) {
+            Project project = projectManagement.queryByName(role.getProject());
+            project.getUsers().put(user.getUsername(), roleToUpdate.getRole());
+            break;
+          } else {
+            break;
+          }
+        }
+      }
+      if (!found) {
+        Project project = projectManagement.queryByName(role.getProject());
+        project.getUsers().remove(user.getUsername());
+        projectManagement.save(project);
+      }
+    }
+
+    for (Role roleToUpdate : new_user.getRoles()) {
+      boolean found = false;
+      for (Role role : user.getRoles()) {
+        if (roleToUpdate.getProject().equals(role.getProject())) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        Project project = projectManagement.queryByName(roleToUpdate.getProject());
+        project.getUsers().put(user.getUsername(), roleToUpdate.getRole());
+        projectManagement.save(project);
+      }
+    }
 
     String[] roles = new String[new_user.getRoles().size()];
 
@@ -140,13 +191,15 @@ public class UserManagement
   }
 
   @Override
-  public User queryByName(String username) {
+  public User queryByName(String username) throws NotFoundException {
     log.debug("Get user: " + username);
-    return userRepository.findFirstByUsername(username);
+    User user = userRepository.findFirstByUsername(username);
+    if (user == null) throw new NotFoundException("Not found user " + username);
+    return user;
   }
 
   @Override
-  public void changePassword(String oldPwd, String newPwd) throws UnauthorizedUserException {
+  public void changePassword(String oldPwd, String newPwd) {
     log.debug("Got old password: " + oldPwd);
     userDetailsManager.changePassword(oldPwd, newPwd);
   }
@@ -170,7 +223,15 @@ public class UserManagement
         throw new BadRequestException("Email is not well formatted");
     }
     boolean adminIntegrity = false;
+    Set<String> assignedProjects = new HashSet<>();
     for (Role role : user.getRoles()) {
+      Project project = projectManagement.queryByName(role.getProject());
+      if (project == null) throw new BadRequestException("Not found project " + role.getProject());
+      if (!assignedProjects.contains(role.getProject())) {
+        assignedProjects.add(role.getProject());
+      } else {
+        throw new BadRequestException("Only one role per project");
+      }
       if (role.getProject() == null) {
         throw new BadRequestException("Project must be provided");
       }
@@ -188,6 +249,7 @@ public class UserManagement
     if (user.getUsername().equals("admin")) {
       if (!adminIntegrity)
         throw new ForbiddenException("Forbidden to change Role admin:ADMIN for user admin");
+      if (!user.isEnabled()) throw new ForbiddenException("Forbidden to disable admin user");
     }
   }
 }

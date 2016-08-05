@@ -83,7 +83,7 @@ public class RestUsers {
   @RequestMapping(value = "{username}", method = RequestMethod.DELETE)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void delete(@PathVariable("username") String username)
-      throws ForbiddenException, BadRequestException {
+      throws ForbiddenException, BadRequestException, NotFoundException {
     log.debug("removing User with username " + username);
     if (isAdmin()) {
       if (!getCurrentUser().getUsername().equals(username)) {
@@ -110,7 +110,7 @@ public class RestUsers {
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void multipleDelete(@RequestBody @Valid List<String> ids)
-      throws ForbiddenException, BadRequestException {
+      throws ForbiddenException, BadRequestException, NotFoundException {
     if (isAdmin()) {
       for (String id : ids) {
         if (!getCurrentUser().getId().equals(id)) {
@@ -131,7 +131,8 @@ public class RestUsers {
    * @return List<User>: The list of Users available
    */
   @RequestMapping(method = RequestMethod.GET)
-  public Iterable<User> findAll() throws ForbiddenException, UnauthorizedException {
+  public Iterable<User> findAll()
+      throws ForbiddenException, UnauthorizedException, NotFoundException {
     log.debug("Find all Users");
     Iterable<User> users = null;
     if (isAdmin()) {
@@ -153,7 +154,7 @@ public class RestUsers {
    */
   @RequestMapping(value = "{username}", method = RequestMethod.GET)
   public User find(@PathVariable("username") String username)
-      throws ForbiddenException, UnauthorizedException {
+      throws ForbiddenException, UnauthorizedException, NotFoundException {
     log.debug("find User with username " + username);
     if (isAdmin() || getCurrentUser().equals(username)) {
       User user = userManagement.queryByName(username);
@@ -220,14 +221,14 @@ public class RestUsers {
         jsonObject.get("old_pwd").getAsString(), jsonObject.get("new_pwd").getAsString());
   }
 
-  private User getCurrentUser() {
+  private User getCurrentUser() throws NotFoundException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null) return null;
     String currentUserName = authentication.getName();
     return userManagement.queryByName(currentUserName);
   }
 
-  public boolean isAdmin() throws ForbiddenException {
+  public boolean isAdmin() throws ForbiddenException, NotFoundException {
     User currentUser = getCurrentUser();
     log.trace("Check user if admin: " + currentUser.getUsername());
     for (Role role : currentUser.getRoles()) {

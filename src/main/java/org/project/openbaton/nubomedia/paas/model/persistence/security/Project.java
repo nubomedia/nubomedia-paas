@@ -25,6 +25,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by lto on 24/05/16.
@@ -35,6 +38,10 @@ public class Project {
 
   @Column(unique = true)
   private String name;
+
+  private String description;
+
+  private HashMap<String, Role.RoleEnum> users;
 
   private Quota quota;
 
@@ -54,11 +61,6 @@ public class Project {
     this.name = name;
   }
 
-  @Override
-  public String toString() {
-    return "Project{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", quota=" + quota + '}';
-  }
-
   public Quota getQuota() {
     return quota;
   }
@@ -70,5 +72,40 @@ public class Project {
   @PrePersist
   public void ensureId() {
     id = IdGenerator.createUUID();
+  }
+
+  public Map<String, Role.RoleEnum> getUsers() {
+    return users;
+  }
+
+  public void setUsers(HashMap<String, Role.RoleEnum> users) {
+    this.users = users;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  @Override
+  public String toString() {
+    return "Project{"
+        + "id='"
+        + id
+        + '\''
+        + ", name='"
+        + name
+        + '\''
+        + ", description='"
+        + description
+        + '\''
+        + ", users="
+        + users
+        + ", quota="
+        + quota
+        + '}';
   }
 }
