@@ -62,8 +62,12 @@ public class ProjectManagement
       throws BadRequestException, NotFoundException, ForbiddenException {
     log.trace("Adding new project " + project.getName());
     project = projectRepository.save(project);
-    for (String username : project.getUsers().keySet()) {
-      addUserToProject(project.getId(), username, project.getUsers().get(username));
+    if (project.getUsers() != null) {
+      for (String username : project.getUsers().keySet()) {
+        addUserToProject(project.getId(), username, project.getUsers().get(username));
+      }
+    } else {
+      project.setUsers(new HashMap<String, Role.RoleEnum>());
     }
     return project;
   }
