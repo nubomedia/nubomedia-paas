@@ -133,7 +133,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
     $scope.addUserCreate = function() {
       var newUser = {
           name : "",
-          role : ""
+          role : "USER"
       };
       $scope.projectObj.usersPairs.push(newUser);
       console.log($scope.projectObj);
@@ -230,7 +230,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
     $scope.addUser = function() {
       var newUser = {
           name : "",
-          role : ""
+          role : "USER"
       };
       $scope.projectUpd.usersPairs.push(newUser);
       console.log($scope.projectUpd);

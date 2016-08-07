@@ -35,7 +35,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
 
     $scope.addRoleUpdate = function() {
         var newRole = {
-            "role": "",
+            "role": "USER",
             "project": ""
         };
         $scope.userUpdate.roles.push(newRole);
@@ -44,13 +44,13 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
     loadTable();
 
     $scope.roleAdd = {
-        "role": "",
+        "role": "USER",
         "project": ""
     };
 
     $scope.addRole = function() { 
       var newRole = {
-          "role": "",
+          "role": "USER",
            "project": ""
       };
       $scope.userObj.roles.push(newRole);
