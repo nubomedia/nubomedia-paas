@@ -21,7 +21,7 @@ package org.project.openbaton.nubomedia.paas.security.interfaces;
 import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
-import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
 
 /**
@@ -41,7 +41,7 @@ public interface UserManagement {
    *
    * @param user
    */
-  void delete(User user) throws BadRequestException, ForbiddenException;
+  void delete(User user) throws BadRequestException, ForbiddenException, NotFoundException;
 
   /**
    *
@@ -62,6 +62,15 @@ public interface UserManagement {
   User query(String id);
 
   public User queryByName(String username) throws NotFoundException;
+
+  public User addRole(String username, String project_name, Role.RoleEnum role)
+      throws NotFoundException, BadRequestException, ForbiddenException;
+
+  public User removeRole(String username, String project)
+      throws BadRequestException, NotFoundException, ForbiddenException;
+
+  public User updateRole(String username, String project_name, Role.RoleEnum role)
+      throws BadRequestException, NotFoundException, ForbiddenException;
 
   void changePassword(String oldPwd, String newPwd);
 }

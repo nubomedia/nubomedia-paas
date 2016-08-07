@@ -73,5 +73,13 @@ public interface ProjectManagement {
 
   Iterable<Project> query(User user) throws NotFoundException;
 
+  Project addUser(String project_name, String username, Role.RoleEnum role)
+      throws NotFoundException;
+
+  Project removeUser(String project_name, String username) throws NotFoundException;
+
+  Project updateUser(String project_name, String username, Role.RoleEnum role)
+      throws NotFoundException;
+
   boolean exist(String project);
 }

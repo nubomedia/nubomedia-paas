@@ -18,6 +18,7 @@
 
 package org.project.openbaton.nubomedia.paas.security.authorization;
 
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
@@ -30,9 +31,6 @@ import org.project.openbaton.nubomedia.paas.repository.security.ProjectRepositor
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -61,15 +59,13 @@ public class ProjectManagement
   public Project add(Project project)
       throws BadRequestException, NotFoundException, ForbiddenException {
     log.trace("Adding new project " + project.getName());
-    project = projectRepository.save(project);
-    if (project.getUsers() != null) {
-      for (String username : project.getUsers().keySet()) {
-        addUserToProject(project.getId(), username, project.getUsers().get(username));
-      }
-    } else {
+    if (project.getUsers() == null) {
       project.setUsers(new HashMap<String, Role.RoleEnum>());
     }
     project = projectRepository.save(project);
+    for (String username : project.getUsers().keySet()) {
+      userManagement.addRole(username, project.getName(), project.getUsers().get(username));
+    }
     return project;
   }
 
@@ -81,15 +77,10 @@ public class ProjectManagement
       throw new ForbiddenException("Forbidden to delete the project admin");
     appManager.deleteApps(project.getId());
     for (User userTmp : userManagement.query()) {
-      Set<Role> rolesToRemove = new HashSet<>();
       for (Role roleTmp : userTmp.getRoles()) {
         if (roleTmp.getProject().equals(project.getName())) {
-          rolesToRemove.add(roleTmp);
+          userManagement.removeRole(userTmp.getUsername(), projectToDelete.getName());
         }
-      }
-      if (rolesToRemove.size() > 0) {
-        userTmp.getRoles().removeAll(rolesToRemove);
-        userManagement.update(userTmp);
       }
     }
     projectRepository.delete(projectToDelete);
@@ -106,21 +97,20 @@ public class ProjectManagement
       throw new NotFoundException("Not found project " + new_project.getId());
     }
     project.setDescription(new_project.getDescription());
-    Set<String> usersToRemove = new HashSet<>();
     for (String username : project.getUsers().keySet()) {
       if (new_project.getUsers().containsKey(username)) {
         if (project.getUsers().get(username).ordinal()
             != new_project.getUsers().get(username).ordinal()) {
-          updateUserInProject(project.getId(), username, new_project.getUsers().get(username));
+          userManagement.updateRole(
+              username, project.getName(), new_project.getUsers().get(username));
         }
       } else {
-        usersToRemove.add(username);
+        userManagement.removeRole(username, project.getName());
       }
     }
-    for (String username : usersToRemove) removeUserFromProject(project.getId(), username);
     for (String username : new_project.getUsers().keySet()) {
       if (!project.getUsers().containsKey(username)) {
-        addUserToProject(project.getId(), username, new_project.getUsers().get(username));
+        userManagement.addRole(username, username, new_project.getUsers().get(username));
       }
     }
     return projectRepository.save(project);
@@ -149,59 +139,33 @@ public class ProjectManagement
     return projects;
   }
 
-  public Project addUserToProject(String id, String username, Role.RoleEnum role)
-      throws NotFoundException, BadRequestException, ForbiddenException {
-    log.trace("Adding user " + username + " to project " + id);
-    Project project = projectRepository.findFirstById(id);
-    User user = userManagement.queryByName(username);
-    if (user == null) throw new NotFoundException("Not found user " + username);
-    Role new_role = new Role();
-    new_role.setProject(project.getName());
-    new_role.setRole(role);
-    user.getRoles().add(new_role);
-    userManagement.update(user);
-    log.trace("Adder role " + role + " to user " + username);
+  @Override
+  public Project addUser(String project_name, String username, Role.RoleEnum role)
+      throws NotFoundException {
+    log.debug("Adding role " + username + ":" + role + " to project " + project_name);
+    Project project = projectRepository.findFirstByName(project_name);
+    if (project == null) throw new NotFoundException("Not found project " + username);
     project.getUsers().put(username, role);
-    log.trace("Added user " + username + " to project " + id);
-    return project;
+    return projectRepository.save(project);
   }
 
-  public Project removeUserFromProject(String id, String username)
-      throws NotFoundException, BadRequestException, ForbiddenException {
-    log.trace("Removing user " + username + " from project " + id);
-    Project project = projectRepository.findFirstById(id);
-    User user = userManagement.queryByName(username);
-    if (user == null) throw new NotFoundException("Not found user " + username);
-    for (Role role : user.getRoles()) {
-      if (role.getProject().equals(project.getName())) {
-        user.getRoles().remove(role);
-        userManagement.update(user);
-        log.trace("Removed " + role + " from user " + username);
-        break;
-      }
-    }
+  @Override
+  public Project removeUser(String project_name, String username) throws NotFoundException {
+    log.debug("Removing role " + username + " from project " + project_name);
+    Project project = projectRepository.findFirstByName(project_name);
+    if (project == null) throw new NotFoundException("Not found project " + username);
     project.getUsers().remove(username);
-    log.trace("Removed user " + username + " from " + project.getName());
-    return project;
+    return projectRepository.save(project);
   }
 
-  public Project updateUserInProject(String id, String username, Role.RoleEnum role)
-      throws NotFoundException, BadRequestException, ForbiddenException {
-    log.trace("Updating user " + username + " in " + id);
-    Project project = projectRepository.findFirstById(id);
-    User user = userManagement.queryByName(username);
-    if (user == null) throw new NotFoundException("Not found user " + username);
-    for (Role roleToUpdate : user.getRoles()) {
-      if (roleToUpdate.getProject().equals(project.getName())) {
-        roleToUpdate.setRole(role);
-        userManagement.update(user);
-        log.trace("Updated " + role + " for " + username);
-        break;
-      }
-    }
+  @Override
+  public Project updateUser(String project_name, String username, Role.RoleEnum role)
+      throws NotFoundException {
+    log.debug("Updating role " + username + ":" + role + " of project " + project_name);
+    Project project = projectRepository.findFirstByName(project_name);
+    if (project == null) throw new NotFoundException("Not found project " + username);
     project.getUsers().put(username, role);
-    log.trace("Updated user " + username + " in " + project.getName());
-    return project;
+    return projectRepository.save(project);
   }
 
   @Override
