@@ -35,7 +35,10 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
     loadTable();
 
     $scope.projectObj = {
-        'name': ''
+        'name': '',
+        'description':'',
+        'users':{},
+        'usersPairs':[]
     };
     $scope.users = [];
 
@@ -127,13 +130,30 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
     $scope.closeAlert = function (index) {
         $scope.alerts.splice(index, 1);
     };
-
+    $scope.addUserCreate = function() {
+      var newUser = {
+          name : "",
+          role : ""
+      };
+      $scope.projectObj.usersPairs.push(newUser);
+      console.log($scope.projectObj);
+    };
 
     $scope.save = function () {
         //console.log($scope.projectObj);
-        http.post(url, $scope.projectObj)
+        postObj = {};
+        postObj.name = $scope.projectObj.name;
+        postObj.description = $scope.projectObj.description;
+        postObj.users = {};
+        toPush = {};
+        for (i = 0; i < $scope.projectObj.usersPairs.length; i++) {
+          toPush[$scope.projectObj.usersPairs[i].name] = $scope.projectObj.usersPairs[i].role;
+
+        }
+        postObj.users = toPush;
+        http.post(url, postObj)
             .success(function (response) {
-                showOk('Project ' + $scope.projectObj.name + ' created.');
+                showOk('Project ' + postObj.name + ' created.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -186,7 +206,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
         updateObj.id = $scope.projectUpd.id;
         updateObj.name = $scope.projectUpd.name;
         updateObj.description = $scope.projectUpd.description;
-        updateObj.users = [];
+        updateObj.users = {};
         toPush = {};
         for (i = 0; i < $scope.projectUpd.usersPairs.length; i++) {
 
@@ -215,17 +235,6 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
       $scope.projectUpd.usersPairs.push(newUser);
       console.log($scope.projectUpd);
     };
-    $scope.go = function() {
-      updateObj = {};
-      updateObj.id = $scope.projectUpd.id;
-      updateObj.name = $scope.projectUpd.name;
-      updateObj.description = $scope.projectUpd.description;
-      updateObj.users = [];
-      for (i = 0; i < $scope.projectUpd.usersPairs.length; i++) {
 
-        updateObj.users[$scope.projectUpd.usersPairs[i].name] = $scope.projectUpd.usersPairs[i].role;
-      }
-      console.log(JSON.stringify(updateObj));
-    };
 
 });
