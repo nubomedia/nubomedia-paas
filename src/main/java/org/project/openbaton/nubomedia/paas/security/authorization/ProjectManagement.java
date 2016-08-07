@@ -113,7 +113,7 @@ public class ProjectManagement
         userManagement.addRole(username, username, new_project.getUsers().get(username));
       }
     }
-    return projectRepository.save(project);
+    return projectRepository.save(new_project);
   }
 
   @Override
