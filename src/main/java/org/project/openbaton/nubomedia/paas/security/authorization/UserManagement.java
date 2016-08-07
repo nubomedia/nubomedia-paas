@@ -249,19 +249,23 @@ public class UserManagement
     if (user.getUsername() == null || user.getUsername().equals("")) {
       throw new BadRequestException("Username must be provided");
     }
+    if (userRepository.findFirstByUsername(user.getUsername()) != null)
+      throw new BadRequestException("Username exists already");
     if (user.getPassword() == null || user.getPassword().equals("")) {
       throw new BadRequestException("Password must be provided");
     }
-    if (!user.getUsername().equals("admin")) {
-      if (user.getEmail() == null || user.getEmail().equals("")) {
-        throw new BadRequestException("Email must be provided");
-      }
+    //    if (!user.getUsername().equals("admin")) {
+    //      if (user.getEmail() == null || user.getEmail().equals("")) {
+    //        throw new BadRequestException("Email must be provided");
+    //      }
+    if (user.getEmail() != null && !user.getEmail().equals("")) {
       String EMAIL_PATTERN =
           "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
       Pattern pattern = Pattern.compile(EMAIL_PATTERN);
       if (!pattern.matcher(user.getEmail()).matches())
         throw new BadRequestException("Email is not well formatted");
     }
+    //    }
     boolean adminIntegrity = false;
     Set<String> assignedProjects = new HashSet<>();
     for (Role role : user.getRoles()) {
