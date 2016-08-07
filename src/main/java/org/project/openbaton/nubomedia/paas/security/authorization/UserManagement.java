@@ -67,6 +67,10 @@ public class UserManagement
   @Override
   public User add(User user) throws BadRequestException, NotFoundException, ForbiddenException {
     log.debug("Adding new user: " + user);
+
+    if (userRepository.findFirstByUsername(user.getUsername()) != null)
+      throw new BadRequestException("Username exists already");
+
     checkIntegrity(user);
 
     for (Role role : user.getRoles()) {
@@ -249,8 +253,6 @@ public class UserManagement
     if (user.getUsername() == null || user.getUsername().equals("")) {
       throw new BadRequestException("Username must be provided");
     }
-    if (userRepository.findFirstByUsername(user.getUsername()) != null)
-      throw new BadRequestException("Username exists already");
     if (user.getPassword() == null || user.getPassword().equals("")) {
       throw new BadRequestException("Password must be provided");
     }
@@ -269,21 +271,18 @@ public class UserManagement
     boolean adminIntegrity = false;
     Set<String> assignedProjects = new HashSet<>();
     for (Role role : user.getRoles()) {
+      if (role.getProject() == null || role.getProject().equals("")) {
+        throw new BadRequestException("Project must be provided");
+      }
+      if (role.getRole() == null || role.getRole().equals("")) {
+        throw new BadRequestException("Role must be provided");
+      }
       Project project = projectManagement.queryByName(role.getProject());
       if (project == null) throw new BadRequestException("Not found project " + role.getProject());
       if (!assignedProjects.contains(role.getProject())) {
         assignedProjects.add(role.getProject());
       } else {
         throw new BadRequestException("Only one role per project");
-      }
-      if (role.getProject() == null) {
-        throw new BadRequestException("Project must be provided");
-      }
-      if (projectManagement.queryByName(role.getProject()) == null) {
-        throw new NotFoundException("Not found project " + role.getProject());
-      }
-      if (role.getRole() == null) {
-        throw new BadRequestException("Role must be provided");
       }
       if (role.getProject().equals("admin")
           && role.getRole().ordinal() == Role.RoleEnum.ADMIN.ordinal()) {
