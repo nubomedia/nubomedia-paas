@@ -41,6 +41,7 @@ public class Project {
 
   private String description;
 
+  @Column(columnDefinition = "LONGBLOB")
   private HashMap<String, Role.RoleEnum> users;
 
   private Quota quota;
@@ -74,7 +75,6 @@ public class Project {
     id = IdGenerator.createUUID();
   }
 
-  @Column(columnDefinition = "LONGBLOB")
   public Map<String, Role.RoleEnum> getUsers() {
     return users;
   }
