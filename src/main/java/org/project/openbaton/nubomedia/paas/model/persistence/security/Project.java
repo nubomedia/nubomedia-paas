@@ -74,6 +74,7 @@ public class Project {
     id = IdGenerator.createUUID();
   }
 
+  @Column(columnDefinition = "LONGBLOB")
   public Map<String, Role.RoleEnum> getUsers() {
     return users;
   }

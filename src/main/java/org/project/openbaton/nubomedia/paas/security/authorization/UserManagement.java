@@ -21,7 +21,6 @@ package org.project.openbaton.nubomedia.paas.security.authorization;
 import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
-import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.repository.security.UserRepository;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
@@ -34,7 +33,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.oauth2.common.exceptions.UnauthorizedUserException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
@@ -72,9 +70,7 @@ public class UserManagement
     checkIntegrity(user);
 
     for (Role role : user.getRoles()) {
-      Project project = projectManagement.queryByName(role.getProject());
-      project.getUsers().put(user.getUsername(), role.getRole());
-      projectManagement.save(project);
+      projectManagement.addUser(role.getProject(), user.getUsername(), role.getRole());
     }
 
     String[] roles = new String[user.getRoles().size()];
@@ -99,14 +95,12 @@ public class UserManagement
   }
 
   @Override
-  public void delete(User user) throws ForbiddenException {
+  public void delete(User user) throws ForbiddenException, NotFoundException {
     log.debug("Deleting user: " + user);
     if (user.getUsername().equals("admin"))
       throw new ForbiddenException("Forbidden to delete user admin");
     for (Role role : user.getRoles()) {
-      Project project = projectManagement.queryByName(role.getProject());
-      project.getUsers().remove(user.getUsername());
-      projectManagement.save(project);
+      projectManagement.removeUser(role.getProject(), user.getUsername());
     }
     userDetailsManager.deleteUser(user.getUsername());
     userRepository.delete(user);
@@ -128,8 +122,7 @@ public class UserManagement
       for (Role roleToUpdate : new_user.getRoles()) {
         if (role.getProject().equals(roleToUpdate.getProject())) {
           if (role.getRole().ordinal() != roleToUpdate.getRole().ordinal()) {
-            Project project = projectManagement.queryByName(role.getProject());
-            project.getUsers().put(user.getUsername(), roleToUpdate.getRole());
+            projectManagement.updateUser(role.getProject(), user.getUsername(), role.getRole());
             break;
           } else {
             break;
@@ -137,9 +130,7 @@ public class UserManagement
         }
       }
       if (!found) {
-        Project project = projectManagement.queryByName(role.getProject());
-        project.getUsers().remove(user.getUsername());
-        projectManagement.save(project);
+        projectManagement.removeUser(role.getProject(), user.getUsername());
       }
     }
 
@@ -152,9 +143,8 @@ public class UserManagement
         }
       }
       if (!found) {
-        Project project = projectManagement.queryByName(roleToUpdate.getProject());
-        project.getUsers().put(user.getUsername(), roleToUpdate.getRole());
-        projectManagement.save(project);
+        projectManagement.addUser(
+            roleToUpdate.getProject(), user.getUsername(), roleToUpdate.getRole());
       }
     }
 
@@ -195,6 +185,56 @@ public class UserManagement
     log.trace("Get user: " + username);
     User user = userRepository.findFirstByUsername(username);
     if (user == null) throw new NotFoundException("Not found user " + username);
+    return user;
+  }
+
+  @Override
+  public User addRole(String username, String project_name, Role.RoleEnum role)
+      throws NotFoundException, BadRequestException, ForbiddenException {
+    log.trace("Adding role " + role + " to user " + username);
+    User user = userRepository.findFirstByUsername(username);
+    if (user == null) throw new NotFoundException("Not found user " + username);
+    Role new_role = new Role();
+    new_role.setProject(project_name);
+    new_role.setRole(role);
+    user.getRoles().add(new_role);
+    checkIntegrity(user);
+    userRepository.save(user);
+    return user;
+  }
+
+  @Override
+  public User removeRole(String username, String project)
+      throws BadRequestException, NotFoundException, ForbiddenException {
+    log.trace("Removing role " + project + " to user " + username);
+    User user = userRepository.findFirstByUsername(username);
+    if (user == null) throw new NotFoundException("Not found user " + username);
+    Set<Role> rolesToRemove = new HashSet<Role>();
+    for (Role role : user.getRoles()) {
+      if (role.getProject().equals(project)) {
+        rolesToRemove.add(role);
+      }
+    }
+    user.getRoles().removeAll(rolesToRemove);
+    checkIntegrity(user);
+    userRepository.save(user);
+    return user;
+  }
+
+  @Override
+  public User updateRole(String username, String project_name, Role.RoleEnum role)
+      throws BadRequestException, NotFoundException, ForbiddenException {
+    log.trace("Updating role " + role + " of user " + username);
+    User user = userRepository.findFirstByUsername(username);
+    if (user == null) throw new NotFoundException("Not found user " + username);
+    for (Role existing_role : user.getRoles()) {
+      if (existing_role.getProject().equals(project_name)) {
+        existing_role.setRole(role);
+      }
+    }
+    ;
+    checkIntegrity(user);
+    userRepository.save(user);
     return user;
   }
 
