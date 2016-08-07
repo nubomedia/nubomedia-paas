@@ -110,7 +110,8 @@ public class ProjectManagement
     }
     for (String username : new_project.getUsers().keySet()) {
       if (!project.getUsers().containsKey(username)) {
-        userManagement.addRole(username, username, new_project.getUsers().get(username));
+        userManagement.addRole(
+            username, new_project.getName(), new_project.getUsers().get(username));
       }
     }
     return projectRepository.save(new_project);
