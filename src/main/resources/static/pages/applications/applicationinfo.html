@@ -14,124 +14,138 @@
   ~ limitations under the License.
   -->
 
-<div class="row">
-    <div class="col-lg-12">
-        <h1>
-            Application
-            <small>{{application.name}}</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i>
-                Overview</a></li>
-            <li><a href="#applications"><i class="fa fa-tasks"></i>
-                Applications</a></li>
-            <li class="active"><i class="fa fa-bar-chart-o"></i>
-                {{application.name}}
+<!-- Breadcrum container -->
+<section class="breadcrumb-container clearfix">
+  <!-- Breadcrum -->
+  <ul class="c-breadcrumb">
+
+  <li class="c-breadcrumb__item">
+    <a href="/">Overview</a>
+  </li>
+
+  <li class="c-breadcrumb__item">
+    <a href="#/applications">Applications</a>
+  </li>
+
+  <li class="c-breadcrumb__item is-active">
+  <a href="">{{application.name}}</a>
+  </li>
+
+  </ul><!-- Breadcrum -->
+</section><!-- /Breadcrum container -->
+
+
+
+
+<section class="section-nav-tabs">
+
+  <alert
+    ng-repeat="alert in alerts"
+    type="alert.type"
+    close="closeAlert($index)">
+    <div ng-bind-html="alert.msg"></div>
+  </alert>
+
+  <tabset>
+
+    <tab heading="Info">
+
+      <h3 class="section section__title">
+        <a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a>
+      </h3>
+
+      <section class="simple-card">
+        <dl class="dl-horizontal">
+          <spam ng-if="application.route">
+            <dt>route</dt>
+            <dd><a href="https://{{application.route}}" target="_blank">{{application.route}}</a>
+            </dd>
+          </spam>
+          <spam ng-repeat="(k,v) in application" ng-if="k!='route'">
+            <dt>{{k}}</dt>
+            <dd>{{v}}</dd>
+          </spam>
+        </dl>
+      </section>
+    </tab>
+
+    <tab heading="Logs">
+
+      <section ng-show="application" class="log-buttons">
+
+        <div class="input-group log-button">
+          <span class="input-group-addon">N. of rows</span>
+          <input
+            type="number"
+            class="form-control log-input"
+            aria-label="Text input with dropdown button"
+            ng-model="input.numberRows">
+        </div>
+
+        <!-- Dropdown -->
+        <div class="list-btn dropdown c-dropdown dropdown-app-actions log-button">
+
+          <button
+            class="btn dropdown-toggle c-dropdown__toggle"
+            type="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="true"
+            id="get_log_app" >
+            Actions
+          </button>
+
+          <ul class="dropdown-menu c-dropdown__menu">
+            <li ng-repeat="pod in application.podList" class="c-dropdown__item">
+              <span ng-click="loadAppLog(pod)">{{pod}}</span>
             </li>
-        </ol>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12">
-        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">
-            <div ng-bind-html="alert.msg"></div>
-        </alert>
+          </ul>
 
+        </div><!-- /Dropdown -->
 
-        <tabset>
-            <tab heading="Info">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <br>
-                        <a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a>
-                        <br/>
-                        <dl class="dl-horizontal">
-                            <spam ng-if="application.route">
-                                <dt>route</dt>
-                                <dd><a href="https://{{application.route}}" target="_blank">{{application.route}}</a>
-                                </dd>
-                            </spam>
-                            <spam ng-repeat="(k,v) in application" ng-if="k!='route'">
-                                <dt>{{k}}</dt>
-                                <dd>{{v}}</dd>
-                            </spam>
-                        </dl>
-                    </div>
-                </div>
-            </tab>
+        <button
+          id="get_log"
+          class="btn btn--white log-button"
+          title="Loads the build logs"
+          ng-click="loadLog()">
+          Build Log
+        </button>
+      </section>
 
-            <tab heading="Logs">
-                <br>
-                <div class="row" ng-show="application">
-                    <div class="col-lg-12">
-                        <div class="col-sm-3">
+      <section ng-show="log">
+        <pre id="log" ng-bind-html="log"></pre>
+      </section>
 
-                            <div class="input-group">
-                                <span class="input-group-addon">N. of rows</span>
-                                <input type="number" class="form-control" aria-label="Text input with dropdown button" ng-model="input.numberRows">
-                                <div class="input-group-btn">
-                                    <button ng-disable="checkStatus()" class="btn btn-primary dropdown-toggle"
-                                            type="button"
-                                            id="get_log_app" title="Loads the App logs" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="true">
-                                        App Logs
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="get_log_app">
-                                        <li ng-repeat="pod in application.podList"><a href=""
-                                                                                      ng-click="loadAppLog(pod)">{{pod}}</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+    </tab>
 
+    <tab heading="Monitoring" ng-click="showPlot()">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Autoscaling</div>
+                    <div class="panel-body">
+
+                        <div class="col-lg-6">
+                            <h4>Number of KMS instances</h4>
+                            <div id="numberFlot"></div>
                         </div>
-                        <div class="col-sm-3">
-                        <button id="get_log" class="btn btn-secondary"
-                                title="Loads the build logs" ng-click="loadLog()">Build Log
-                        </button>
+
+
+                        <div class="col-lg-6">
+                            <h4>Total Capacity used</h4>
+
+                            <div id="capacityFlot"></div>
                         </div>
-                    </div>
-                </div>
-                <br/>
-                <div class="row" ng-show="log">
-                    <div class="col-lg-12">
-                        <pre id="log" ng-bind-html="log"></pre>
 
                     </div>
                 </div>
-            </tab>
-            <tab heading="Monitoring" ng-click="showPlot()">
-                <br>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">Autoscaling</div>
-                            <div class="panel-body">
+            </div>
+        </div>
 
-                                <div class="col-lg-6">
-                                    <h4>Number of KMS instances</h4>
-                                    <div id="numberFlot"></div>
-                                </div>
+    </tab>
 
-
-                                <div class="col-lg-6">
-                                    <h4>Total Capacity used</h4>
-
-                                    <div id="capacityFlot"></div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </tab>
-
-        </tabset>
-
-    </div>
-</div>
+  </tabset>
+</section>
 
 <!-- /.wrapper -->
 
