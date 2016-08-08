@@ -16,13 +16,11 @@
 
 var app = angular.module('app');
 
-
 /**
  *
  * Manages the login page
  *
  */
-
 app.controller('LoginController', function ($scope, AuthService, Session, $rootScope, $location, $cookieStore, $http) {
     $scope.currentUser = null;
     //$scope.URL = 'http://localhost:8081';
@@ -165,6 +163,14 @@ app.controller('IndexCtrl', function ($scope, $cookieStore, $location, AuthServi
 
 
     };
+
+
+    // Active menu link
+
+    $(document).on('click', '.js-menu-link', function(){
+        $('.js-menu-link').removeClass('is-active');
+        $(this).addClass('is-active');
+    });
 
 });
 
