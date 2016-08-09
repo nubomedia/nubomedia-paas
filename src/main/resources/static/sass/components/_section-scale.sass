@@ -1,0 +1,43 @@
+.section-scale
+  position: relative
+  margin-bottom: 50px
+  padding: 15px 15px
+  padding-left: 65px
+  text-align: center
+  border: 1px solid $color-gray--secondary
+  border-radius: 5px
+  justify-content: center
+  align-content: center
+  color: $color-gray
+
+  @media screen and (min-width: 570px)
+    display: flex
+    justify-content: center
+    align-content: center
+
+  &:before
+    position: absolute
+    top: 0
+    right: auto
+    bottom: 0
+    left: 15px
+    display: block
+    width: 45px
+    height: 35px
+    margin: auto
+    content: ""
+    background-image: url("http://placehold.it/50x50")
+    background-repeat: no-repeat
+    background-position: center
+    background-size: content
+
+  &__column
+    margin: 0 20px
+
+  &__number-in
+    margin-left: 10px
+    color: #39ae67
+
+  &__number-out
+    margin-left: 10px
+    color: $color-blue

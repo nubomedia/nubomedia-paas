@@ -1,0 +1,90 @@
+//------------------------------------------------------------------------------
+//  @GENERAL STYLES
+//------------------------------------------------------------------------------
+
+#__bs_notify__
+  right: auto !important
+  left: 0 !important
+  padding: 0 !important
+
+a
+  color: $color-blue
+
+  &:hover,
+  &:active,
+  &:focus
+    color: $color-blue - 35
+
+html,
+body
+  height: 100%
+
+body
+  font-family: "Lato", sans-serif
+  font-size: 16px
+  color: $main-color
+
+#wrapper
+  background-color: #f6f7f9
+
+#page-wrapper
+  background-color: #fafbfc
+
+.main
+  position: relative
+  min-height: 100%
+  padding-left: 240px
+  background: #fafbfc
+
+  +clearfix
+
+  +centerElement(1280px)
+
+.page-container
+  background: #fafbfc
+  border-right: 1px solid $color-gray--secondary
+
+.page-content
+  padding: 30px 30px 0 30px
+
+  @media screen and (max-width: $medium-mq-width)
+    padding: 30px 10px 0 10px
+
+// MODALS
+#modalT .modal-dialog
+  max-width: 900px
+  width: 100%
+
+dd,
+dt
+  margin-bottom: 10px
+
+#page-wrapper
+  min-height: calc(100vh - 80px)
+
+.panel,
+.panel-heading
+  border-radius: 0 !important
+
+.simple-card
+  max-width: 1200px
+  width: 100%
+  margin: 20px auto
+  padding: 20px
+  border: 1px solid $color-gray--secondary
+
+  &__title
+    margin-top: 15px
+    font-size: 18px
+    margin-bottom: 20px
+
+#log
+  height: 450px
+  overflow: auto
+  margin-top: 20px
+
+.panel--special
+  .panel-heading,
+  .panel-body,
+  .panel-footer
+    padding: 20px

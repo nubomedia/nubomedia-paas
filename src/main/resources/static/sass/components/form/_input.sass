@@ -1,0 +1,213 @@
+$color--white: #fff
+$color--black: #000
+$color--light-grey: #e6e6e6
+$color--grey: #ccc
+$color--dark-grey: #7b7b7b
+$color--primary: #2386f8
+$color--secondary: $color--primary - 10
+
+.control
+  font-weight: 400
+  position: relative
+  display: block
+  margin-bottom: 15px
+  padding-left: 30px
+  cursor: pointer
+
+  &--no-text
+    display: inline-block
+    width: 20px
+    height: 15px
+    margin: 0
+    padding: 0
+
+  &--heading
+    margin: 0
+    padding: 20px 20px 20px 40px
+
+    .control__indicator
+      top: 0
+      right: auto
+      bottom: 0
+      left: 10px
+      margin: auto
+
+    // font-size: 18px
+
+  &.is-disabled
+    cursor: no-drop
+
+.control input
+  position: absolute
+  z-index: -1
+  opacity: 0
+
+.control__indicator
+  position: absolute
+  top: 2px
+  left: 0
+  width: 20px
+  height: 20px
+  background: #e6e6e6
+
+.control--radio .control__indicator
+  border-radius: 50%
+
+.control:hover input ~ .control__indicator,
+.control input:focus ~ .control__indicator
+  background: #ccc
+
+.control input:checked ~ .control__indicator
+  background: $color--primary
+
+.control:hover input:not([disabled]):checked ~ .control__indicator,
+.control input:checked:focus ~ .control__indicator
+  background: $color--secondary
+
+.control input:disabled ~ .control__indicator
+  pointer-events: none
+  opacity: 0.6
+  background: #e6e6e6
+
+.control__indicator:after
+  position: absolute
+  display: none
+  content: ""
+
+.control input:checked ~ .control__indicator:after
+  display: block
+
+.control--checkbox .control__indicator:after
+  top: 4px
+  left: 7px
+  width: 7px
+  height: 10px
+  transform: rotate(45deg)
+  border: solid #fff
+  border-width: 0 2px 2px 0
+
+.control--checkbox input:disabled ~ .control__indicator:after
+  border-color: #7b7b7b
+
+.control--radio .control__indicator:after
+  top: 7px
+  left: 7px
+  width: 6px
+  height: 6px
+  border-radius: 50%
+  background: #fff
+
+.control--radio input:disabled ~ .control__indicator:after
+  background: #7b7b7b
+
+.select
+  position: relative
+  display: inline-block
+  width: 100%
+
+.select select
+  display: inline-block
+  width: 100%
+  padding: 6px 15px
+  cursor: pointer
+  color: #7b7b7b
+  border: 0
+  border: 1px solid $color-gray--secondary
+  border-radius: 0
+  border-radius: 4px
+  outline: 0
+  background: #fff
+  appearance: none
+  -webkit-appearance: none
+  -moz-appearance: none
+
+.select select::-ms-expand
+  display: none
+
+.select select:hover,
+.select select:focus
+  color: #000
+
+.select select:disabled
+  pointer-events: none
+  opacity: 0.5
+
+.select__arrow
+  position: absolute
+  top: 16px
+  right: 15px
+  width: 0
+  height: 0
+  pointer-events: none
+  border-width: 8px 5px 0 5px
+  border-style: solid
+  border-color: #7b7b7b transparent transparent transparent
+
+.select select:hover ~ .select__arrow,
+.select select:focus ~ .select__arrow
+  border-top-color: #000
+
+.select select:disabled ~ .select__arrow
+  border-top-color: #ccc
+
+// --------------------------------------------------------------------------
+//  @Control inline
+// --------------------------------------------------------------------------
+.control--inline
+  display: inline-block
+  margin: 8px 20px 10px 0
+  margin-right: 20px
+
+// --------------------------------------------------------------------------
+//  @Input
+// --------------------------------------------------------------------------
+.input
+  margin-bottom: 20px
+
+  +clearfix
+
+  &:last-of-type
+    margin-bottom: 0
+
+  &__label
+    font-size: 17px
+    font-weight: 400
+    color: $main-color
+
+  &__field
+    height: 35px
+    color: $main-color
+    border-color: $color-gray--secondary - 15
+
+  &__surtitle
+    font-size: 14px
+    font-weight: 300
+    display: inline-block
+    margin-right: 6px
+    color: $color-gray + 30
+
+  &__subtitle
+    font-size: 14px
+    font-weight: 300
+    display: block
+    color: $color-gray + 30
+
+// --------------------------------------------------------------------------
+//  @Input inline
+// --------------------------------------------------------------------------
+.input--inline
+  display: inline-block
+  width: auto
+  margin-right: 25px
+
+  .input
+    &__label,
+    &__field
+      display: inline-block
+      width: auto
+
+    &__label
+      margin-right: 5px
+
+    &__field[type='number']
+      max-width: 56px

@@ -1,0 +1,51 @@
+.buttons-container
+  margin-bottom: 10px
+
+  .list-btn
+    margin: 10px
+
+    &:first-child
+      margin-left: 0
+
+    &:last-child
+      margin-right: 0
+
+.btn
+  padding: 8px 25px
+  font-size: 16px
+
+.btn-primary
+  background-color: $color-blue
+  border: none
+
+  &:hover,
+  &:focus,
+  &:active
+    background-color: $color-blue - 20
+
+.btn--white
+  padding: 10px 20px 10px 20px
+  border: 1px solid $color-gray--secondary
+  outline: none !important
+  background: #fff
+  box-shadow: 0 2px 4px -1px $color-gray--secondary
+
+.btn-danger
+  background: $color-danger
+
+// Log buttons
+.log-buttons
+  text-align: left
+  +clearfix
+
+  .c-dropdown__toggle
+    width: 100%
+
+.log-button
+  float: left
+  width: 200px
+  margin-right: 20px
+  box-shadow: 0 2px 4px -1px #e6e8ed;
+
+.log-input
+  height: 43px

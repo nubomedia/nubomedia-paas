@@ -1,0 +1,37 @@
+.c-page-aside
+  position: absolute
+  z-index: 99
+  top: -1px
+  bottom: 0
+  left: 0
+  width: 100%
+  max-width: 240px
+  z-index: $menu-zindex
+  background: #f6f7f9
+
+// ----------------------------------------------------------------------------
+// @Toggle menu
+// ----------------------------------------------------------------------------
+
+@media screen and (max-width: $medium-mq-width)
+  .main
+    padding-left: 50px
+
+  .c-page-aside
+    transition: transform 0.4s
+    transform: translateX(-190px)
+
+  .left-menu-is-opened
+    .c-page-aside
+      transform: translateX(0)
+
+@media screen and (max-width: $small-mq-width)
+  .main
+    padding-left: 0
+
+  .c-page-aside
+    transform: translateX(-240px)
+
+  .left-menu-is-opened
+    .c-page-aside
+      transform: translateX(-190px)

@@ -1,0 +1,99 @@
+.aplications-table
+  .control
+    margin-bottom: 0
+    font-weight: 600
+
+  .control__indicator
+    top: 0
+
+  th
+    border-bottom: 1px solid $color-gray--secondary !important
+    padding-top: 20px !important
+    padding-bottom: 20px !important
+    background: #d6d6d6 !important
+    text-transform: uppercase
+    font-size: 14px
+
+  tr:first-child td
+    padding-top: 30px!important
+
+  td
+    border: none!important
+    padding: 0 !important
+
+  th:first-child,
+  td:first-child
+    vertical-align: middle !important
+    text-align: center !important
+
+.c-application
+  display: table
+  width: 100%
+  margin: 10px auto
+  border: 1px solid $color-gamma
+  border-radius: 4px
+
+  @media screen and (max-width: 800px)
+    margin-bottom: 35px
+
+    &:nth-child(2n+1)
+      background-color: #f7f7f7
+
+    &__component
+      padding: 20px
+      text-align: center
+
+      &:nth-child(2),
+      &:nth-child(3),
+      &:nth-child(4)
+        border-top: 1px solid $color-gamma
+
+  @media screen and (min-width: 801px)
+    &__component
+      display: table-cell
+      padding: 15px
+      vertical-align: middle
+
+      &:nth-child(2),
+      &:nth-child(3),
+      &:nth-child(4)
+        width: 20%
+        text-align: center
+        border-left: 1px solid $color-gamma
+
+  &__image
+    display: inline-block
+    width: 55px
+    height: 55px
+    margin-right: 5px
+    vertical-align: middle
+    background-image: url("http://placehold.it/55x55")
+    background-position: center
+    background-size: cover
+
+  &__title
+    font-size: 16px
+    display: inline-block
+    margin-top: 0
+    margin-bottom: 0
+    padding-top: 0
+    vertical-align: middle
+    color: $color-alpha
+    font-weight: 700
+
+  &__subtitle
+    font-size: 14px
+    font-weight: 400
+    display: block
+    margin-top: 8px
+    color: #9ca3aa
+
+  &__desc
+    margin-left: 5px
+
+  &__icon
+    margin-right: 6px
+
+  // &__capacity
+
+  // &__status

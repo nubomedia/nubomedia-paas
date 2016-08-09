@@ -1,0 +1,74 @@
+@media screen and (min-width: 769px)
+  .section-nav-tabs
+    .nav-tabs
+      margin-left: -30px
+      margin-right: -30px
+
+.tab-pane
+  padding-top: 20px
+
+  .form
+    padding-top: 0
+
+.nav-tabs
+  border-color: $color-gray--secondary
+  padding: 0 15px
+  background: #FFF
+
+  .tab-content
+    background: #fafbfc
+    padding: 30px 10px
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li > a,
+.nav > li > a:hover,
+.nav > li > a:focus
+  border: none
+  background: transparent
+
+.nav-tabs > li > a
+  color: $color-gray
+  padding: 20px !important
+  cursor: pointer
+  text-shadow: 0 0 0
+
+  &:hover
+    color: $main-color - 10
+
+.nav-tabs > li.active > a
+  color: $main-color
+  position: relative
+
+  &:after,
+  &:before
+    bottom: 0
+    top: 98%
+    right: 50%
+    bottom: 0
+    border: solid transparent
+    content: " "
+    height: 0
+    width: 0
+    position: absolute
+    pointer-events: none
+
+  &:after
+    border-color: rgba(255, 255, 255, 0)
+    border-top-color: #FFF
+    border-width: 7px
+    margin-right: -7px
+
+  &:before
+    border-color: rgba(230, 232, 237, 0)
+    border-top-color: #e6e8ed
+    border-width: 8px
+    margin-right: -8px
+
+@media screen and (min-width: $medium-mq-width + 1)
+  .tabs-container
+    margin: (-30px) -30px 0 -30px
+
+    .tab-content
+      padding: 30px
