@@ -37,16 +37,15 @@
                   <i class="fa fa-folder-open"></i> {{projectSelected.name}}
                 </a>
                 <ul class="dropdown-menu">
-                    <li>
-                      Projects
-                    </li>
-                    <li class="divider"></li>
-                    <li ng-repeat="project in projects track by $index">
-                        <a href="" ng-click="changeProject(project)">{{project.name}}  <i ng-if="project.name === projectSelected.name" class="fa fa-check"></i></a>
-                    </li>
-                    <li>
-                        <a ng-click="" href="#projects"><i class=""></i> More projects</a>
-                    </li>
+                  <li class="dropdown-title">
+                    Projects
+                  </li>
+                  <li ng-repeat="project in projects track by $index">
+                      <a href="" ng-click="changeProject(project)">{{project.name}}  <i ng-if="project.name === projectSelected.name" class="fa fa-check"></i></a>
+                  </li>
+                  <li>
+                      <a ng-click="" href="#projects"><i class=""></i> More projects</a>
+                  </li>
                 </ul>
             </li>
             <li class="dropdown">
@@ -73,35 +72,35 @@
  -->
                     <li class="c-menu-aside__item">
                       <a href="#" class="c-menu-aside__link js-menu-link" id="overviewMenu">
-                        <span class="c-menu-aside__icon"></span>
+                        <span class="c-menu-aside__icon c-icon-overview"></span>
                         <span class="c-menu-aside__link-text">Overview</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item">
                       <a href="#applications" class="c-menu-aside__link js-menu-link" id="topologiesMenu" toggle-class="is-active">
-                        <span class="c-menu-aside__icon"></span>
+                        <span class="c-menu-aside__icon c-icon-app"></span>
                         <span class="c-menu-aside__link-text">Applications</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item">
                       <a href="#marketapps" class="c-menu-aside__link js-menu-link">
-                        <span class="c-menu-aside__icon"></span>
+                        <span class="c-menu-aside__icon c-icon-app"></span>
                         <span class="c-menu-aside__link-text">App Store</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item">
                       <a href="#projects" class="c-menu-aside__link js-menu-link">
-                        <span class="c-menu-aside__icon"></span>
+                        <span class="c-menu-aside__icon c-icon-project"></span>
                         <span class="c-menu-aside__link-text">Projects</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item">
                       <a href="#users" class="c-menu-aside__link js-menu-link">
-                        <span class="c-menu-aside__icon"></span>
+                        <span class="c-menu-aside__icon c-icon-user"></span>
                         <span class="c-menu-aside__link-text">Users</span>
                       </a>
                     </li>

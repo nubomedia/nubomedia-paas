@@ -14,68 +14,94 @@
   ~ limitations under the License.
   -->
 
-<div class="row">
-    <div class="col-lg-12">
-        <h1>
-            Application
-            <small>{{application.name}}</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i>
-                Overview</a></li>
-            <li><a href="#applications"><i class="fa fa-tasks"></i>
-                Applications</a></li>
-            <li class="active"><i class="fa fa-bar-chart-o"></i>
-                {{application.name}}
-            </li>
-        </ol>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12">
-        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">
-            <div ng-bind-html="alert.msg"></div>
-        </alert>
-        <div class="row">
-            <div class="col-lg-12">
-                <br>
-                <a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a>
-                <br/>
-                <dl class="dl-horizontal">
-                    <spam ng-if="application.route">
-                        <dt>route</dt>
-                        <dd><a href="https://{{application.route}}" target="_blank">{{application.route}}</a>
-                        </dd>
-                    </spam>
-                    <spam ng-repeat="(k,v) in application" ng-if="k!='route'">
-                        <dt>{{k}}</dt>
-                        <dd>{{v}}</dd>
-                    </spam>
-                </dl>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Breadcrum container -->
+<section class="breadcrumb-container clearfix">
+  <!-- Breadcrum -->
+  <ul class="c-breadcrumb">
 
-<!-- /.wrapper -->
+  <li class="c-breadcrumb__item">
+    <a href="/">Overview</a>
+  </li>
+
+  <li class="c-breadcrumb__item">
+    <a href="#/marketapps">App Store</a>
+  </li>
+
+  <li class="c-breadcrumb__item is-active">
+  <a href="">{{application.name}}</a>
+  </li>
+
+  </ul><!-- Breadcrum -->
+</section><!-- /Breadcrum container -->
 
 
+
+
+<alert
+  ng-repeat="alert in alerts"
+  type="alert.type"
+  close="closeAlert($index)">
+  <div ng-bind-html="alert.msg"></div>
+</alert>
+
+
+
+
+<section class="simple-card">
+
+  <h3 class="section section__title">
+    <a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a>
+  </h3>
+
+  <dl class="dl-horizontal">
+    <spam ng-if="application.route">
+      <dt>route</dt>
+      <dd><a href="https://{{application.route}}" target="_blank">{{application.route}}</a>
+      </dd>
+    </spam>
+    <spam ng-repeat="(k,v) in application" ng-if="k!='route'">
+      <dt>{{k}}</dt>
+      <dd>{{v}}</dd>
+    </spam>
+  </dl>
+</section>
+
+
+
+
+<!-- Modal -->
 <div class="modal" id="jsonInfo" tabindex="" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">JSON of Topology: {{application.name}}</h4>
-            </div>
-            <div class="modal-body">
-                <pre id="json">{{applicationJSON}}</pre>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="closeModal" class="btn btn-default"
-                        data-dismiss="modal">Close
-                </button>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <header class="modal-header">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel">
+          JSON of Topology: {{application.name}}
+        </h4>
+      </header>
+
+      <div class="modal-body">
+        <pre id="json">{{applicationJSON}}</pre>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          id="closeModal"
+          class="btn btn-default"
+          data-dismiss="modal">
+          Close
+        </button>
+      </div>
+
     </div>
+  </div>
 </div>
+<!-- /Modal -->
