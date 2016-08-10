@@ -143,6 +143,42 @@
         </div>
 
     </tab>
+    <tab heading="Media Servers">
+                <br>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Media servers monitoring</div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <p>In order to access the Kurento Media Servers you can ssh using their IP addresses and username root with password nub0m3d1@</p>
+                                        <div class="form-group">
+                                            <label>Media Server Public IPs: </label>
+                                            <select ng-model="myMediaServer" ng-options="mediaServer.floatingIPs for mediaServer in mediaServers" ng-change="updateGraphMediaServer(myMediaServer.hostname)"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Media Server Hostname: </label>
+                                            <div id="hostname">{{myMediaServer.hostname}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div id="chart_div" style="width: 100%; height: 450px;"></div>
+                                        <p class="buttons-media-server">
+                                            <button type="button" ng-click="drawColumnMediaServer('memory')" class="btn btn-default btn-xs">Memory</button>
+                                            <button type="button" ng-click="drawColumnMediaServer('elements')" class="btn btn-default btn-xs">Elements</button>
+                                            <button type="button" ng-click="drawColumnMediaServer('pipelines')" class="btn btn-default btn-xs">Pipelines</button>
+                                            <button type="button" ng-click="drawColumnMediaServer('none')" class="btn btn-danger btn-xs">Reset</button>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </tab>
 
   </tabset>
 </section>

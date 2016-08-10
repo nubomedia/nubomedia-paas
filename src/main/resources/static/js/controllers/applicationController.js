@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce, $timeout, $location, $rootScope) {
+angular.module('app').controller('applicationsCtrl', function ($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce, $timeout, $location, $rootScope, $q) {
 
         var ip = $cookieStore.get('URLNb');
         var url = ip + '/api/v1/nubomedia/paas/app/';
@@ -65,6 +65,9 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
             'scaleInOut': 0,
             'scale_out_threshold': 0
         };
+
+	$rootScope.mediaServers = [];
+        $rootScope.bigDataMediaServer = [];
 
         $scope.createApp = function () {
             $http.get('json/request.json')
@@ -130,24 +133,188 @@ angular.module('app').controller('applicationsCtrl', function ($scope, http, $ro
         };
         if (!angular.isUndefined($routeParams.appId)) {
             http.get(marketurl + $routeParams.appId)
-                .success(function (data) {
-                    console.log(data);
+                .success(function(data) {
+                    console.log('jsonApp appId: ', data);
                     $scope.application = data;
                     $scope.applicationJSON = JSON.stringify(data, undefined, 4);
+		    mergeMediaServer(data.mediaServerGroup);
+                    $rootScope.myMediaServer = $rootScope.mediaServers[0]; // first floatingIps
+                    getDataFromMediaServer($rootScope.myMediaServer.hostname);
+                    renderGraphMediaServer();
                 });
         }
         if (!angular.isUndefined($routeParams.applicationId)) {
             http.get(url + $routeParams.applicationId)
-                .success(function (data) {
-                    console.log(data);
+	         .success(function(data) {
+                    console.log('jsonApp applicationId: ', data);
                     $scope.application = data;
                     $scope.applicationJSON = JSON.stringify(data, undefined, 4);
                     loadMediaManeger();
+		    google.charts.load('current', { 'packages': ['corechart'] });
+                    google.charts.setOnLoadCallback(drawGraphMediaServer);
+                    mergeMediaServer(data.mediaServerGroup);
+                    $rootScope.myMediaServer = $rootScope.mediaServers[0]; // first floatingIps
+                    getDataFromMediaServer($rootScope.myMediaServer.hostname);
+                    renderGraphMediaServer();
                 });
         }
         else {
             loadTable();
         }
+
+        function renderGraphMediaServer () {
+            $timeout(function() {
+                 $rootScope.viewMediaServerGraph.setColumns([0,1,2,3]);
+                 $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
+             }, 4000);
+         }
+
+         function getDataFromMediaServer (mediaServer) {
+             var prefixUrl = 'http://80.96.122.69/graphlot/rawdata?from=-1hours&until=-0hour&target=server.';
+             var suffixUrl = '&step=10';
+
+             var apiList = ["memory", "elements", "pipelines"];
+
+             return $q.all(apiList.map(function (item) {
+                 if (item === 'memory') {
+                     return $http({
+                         method: 'GET',
+                         url: prefixUrl+mediaServer+'.memory.memory-free'+suffixUrl
+                     });
+                 } else {
+                     return $http({
+                         method: 'GET',
+                         url: prefixUrl+mediaServer+'.'+item+suffixUrl
+                     });
+                 } 
+             }))
+             .then(function (results) {
+                 var resultObj = {};
+                 results.forEach(function (val, i) {
+                     resultObj[apiList[i]] = val.data;
+                 });
+                 $rootScope.bigDataMediaServer = zipJsonMediaServer(resultObj.memory, resultObj.elements, resultObj.pipelines);
+
+                 $timeout(function() {
+                     $rootScope.bigDataResponse = google.visualization.arrayToDataTable($rootScope.bigDataMediaServer);
+
+                     $rootScope.viewMediaServerGraph = new google.visualization.DataView($rootScope.bigDataResponse);
+                     $rootScope.viewMediaServerGraph.setColumns([0, 1, 2, 3]);
+
+                     $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph); 
+                 }, 3000);
+                 return resultObj;        
+             });
+
+         }
+
+         $scope.drawColumnMediaServer = function(nameCol) {
+             var allColumns = [0,1,2,3];
+             switch (nameCol) {
+                 case 'memory':
+                     $rootScope.viewMediaServerGraph.setColumns([0,1]);
+                     $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
+                     break;
+                 case 'elements':
+                     $rootScope.viewMediaServerGraph.setColumns([0,2]);
+                     $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
+                     break;
+                 case 'pipelines':
+                     $rootScope.viewMediaServerGraph.setColumns([0,3]);
+                     $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
+                     break;
+                 case 'none':
+                     $rootScope.viewMediaServerGraph.setColumns(allColumns);
+                     $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
+                     break;
+             }
+         }
+
+         $scope.updateGraphMediaServer = function (urlHostnameMediaServer) {
+             getDataFromMediaServer(urlHostnameMediaServer);
+         }
+
+         function drawGraphMediaServer() {
+             var dataDemo = [
+                ['Time', 'Free Memory', 'Media Elements', 'Media Pipelines'],
+                ['2013',  1000,      400,      100],
+                ['2016',  1030,      540,      1461]
+              ];
+
+             var bigDataResponse = google.visualization.arrayToDataTable(dataDemo);
+
+             $rootScope.viewMediaServerGraph = new google.visualization.DataView(bigDataResponse);
+             $rootScope.viewMediaServerGraph.setColumns([0, 1, 2, 3]);
+
+             $rootScope.optionsMediaServerGraph = {
+                 title: 'Media Server Monitoring',
+                 hAxis: { title: 'Time', titleTextStyle: { color: '#333' } },
+                 vAxis: { minValue: 0 },
+                 legend: { position: 'right', textStyle: { fontSize: 14 } }
+             };
+
+             $rootScope.chartMediaServerGraph = new google.visualization.AreaChart(document.getElementById('chart_div'));
+             $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
+         };
+
+         function estimateTimestamp(dataMemory) {
+             var arrayTimestamp = [];
+             for (var i = dataMemory[0].start; i < dataMemory[0].end + 1; i++) {
+                 arrayTimestamp.push(i);
+             }
+             return arrayTimestamp;
+         };
+
+         function removeNull(dataArry) {
+             var cleanData = [];
+             for (var i = 0; i < dataArry[0].data.length; i++) {
+                 if (dataArry[0].data[i] !== null) {
+                     cleanData.push(dataArry[0].data[i]);
+                 } else {
+                     cleanData.push(0);
+                 }
+             }
+             return cleanData;
+         };
+
+         function zipJsonMediaServer(dataMemory, dataElements, dataPipelines) {
+             var zipData = [],
+                 timestamp = [],
+                 cleanDataMemory = [],
+                 cleanDataElements = [],
+                 cleanDataPiepelines = [],
+                 subVals = [];
+
+             timestamp = estimateTimestamp(dataMemory);
+             cleanDataMemory = removeNull(dataMemory, cleanDataMemory);
+             cleanDataElements = removeNull(dataElements, cleanDataElements);
+             cleanDataPiepelines = removeNull(dataPipelines, cleanDataPiepelines);
+
+             zipData.push(['Time', 'Free memory', 'Media Elements', 'Media Pipelines']);
+
+             for (var i = 0; i < cleanDataMemory.length; i++) {
+                 subVals.push(timestamp[i]);
+                 subVals.push(cleanDataMemory[i]);
+                 subVals.push(cleanDataElements[i]);
+                 subVals.push(cleanDataPiepelines[i]);
+                 zipData.push(subVals);
+                 subVals = [];
+             }
+
+             return zipData;
+         };
+
+         function mergeMediaServer(mediaServerGroup) {
+             var mergedServer;
+             for (var i = 0; i < mediaServerGroup.floatingIPs.length; i++) {
+                 mergedServer = {
+                     floatingIPs: mediaServerGroup.floatingIPs[i],
+                     hostname: mediaServerGroup.hostnames[i]
+                 };
+                 $rootScope.mediaServers.push(mergedServer);
+             }
+         };
+
 
         function loadTable() {
             console.log($location.path());
