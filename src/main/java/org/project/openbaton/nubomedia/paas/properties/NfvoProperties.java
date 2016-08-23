@@ -33,6 +33,8 @@ public class NfvoProperties {
   private String username;
   private String password;
 
+  private Project project;
+
   public String getIp() {
     return ip;
   }
@@ -63,5 +65,25 @@ public class NfvoProperties {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public Project getProject() {
+    return project;
+  }
+
+  public void setProject(Project project) {
+    this.project = project;
+  }
+
+  public static class Project {
+    private String name;
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
   }
 }
