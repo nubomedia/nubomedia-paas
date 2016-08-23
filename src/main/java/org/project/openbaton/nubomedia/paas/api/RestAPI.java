@@ -1,17 +1,19 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.project.openbaton.nubomedia.paas.api;
@@ -21,7 +23,7 @@ import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.core.OpenShiftManager;
 import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
-import org.project.openbaton.nubomedia.paas.exceptions.NotAllowedException;
+import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
@@ -30,12 +32,16 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.NameStructureEx
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.*;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
+import org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -51,9 +57,10 @@ public class RestAPI {
   private static final Logger logger = LoggerFactory.getLogger(RestAPI.class);
 
   @Autowired private OpenShiftManager osmanager;
-  @Autowired private OpenbatonManager obmanager;
 
   @Autowired private AppManager appManager;
+
+  @Autowired private UserManagement userManagement;
 
   @Value("${openshift.token}")
   private String token;
@@ -86,8 +93,9 @@ public class RestAPI {
       @RequestBody NubomediaCreateAppRequest request,
       @RequestHeader(value = "project-id") String projectId)
       throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException,
-          turnServerException, StunServerException {
-    Application app = appManager.createApplication(request, projectId, token);
+          turnServerException, StunServerException, NotFoundException {
+    Application app =
+        appManager.createApplication(request, getCurrentUser().getUsername(), projectId, token);
     return new NubomediaCreateAppResponse(app, 200);
   }
 
@@ -148,7 +156,7 @@ public class RestAPI {
    * @param projectId
    * @param ids
    * @throws NotFoundException
-   * @throws NotAllowedException
+   * @throws ForbiddenException
    * @throws UnauthorizedException
    */
   @RequestMapping(
@@ -159,7 +167,7 @@ public class RestAPI {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void multipleDelete(
       @RequestHeader(value = "project-id") String projectId, @RequestBody @Valid List<String> ids)
-      throws NotFoundException, NotAllowedException, UnauthorizedException {
+      throws NotFoundException, ForbiddenException, UnauthorizedException {
     for (String id : ids) deleteApp(id, projectId);
   }
 
@@ -275,5 +283,12 @@ public class RestAPI {
   @ResponseStatus(HttpStatus.OK)
   public String getMediaServerIp() {
     return vnfmIP;
+  }
+
+  private User getCurrentUser() throws NotFoundException {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null) return null;
+    String currentUserName = authentication.getName();
+    return userManagement.queryByName(currentUserName);
   }
 }

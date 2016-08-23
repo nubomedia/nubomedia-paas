@@ -1,17 +1,19 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 var app = angular.module('app');
@@ -127,62 +129,90 @@ app.controller('IndexCtrl', function($scope, $cookieStore, $location, AuthServic
     }
   });
 
-  /**
-   * Checks if the user is logged
-   * @returns {unresolved}
-   */
-  $scope.loggedF = function() {
-    return $scope.logged;
-  };
+     /**
+     * Checks if the user is logged
+     * @returns {unresolved}
+     */
+    $scope.loggedF = function () {
+        return $scope.logged;
+    };
 
-  if ($scope.logged)
-    console.log('Ok Logged');
-  $location.replace();
-  $scope.username = $cookieStore.get('userNameNb');
+    if ($scope.logged)
+        console.log('Ok Logged');
+    $location.replace();
+    $scope.username = $cookieStore.get('userNameNb');
 
-  console.log($scope.username);
-
-
-  /**
-   * Delete the session of the user
-   * @returns {undefined}
-   */
-  $scope.logout = function() {
-    AuthService.logout();
-  };
+    console.log($scope.username);
 
 
-  $scope.numberApp = 0;
-  $scope.numberSecGroup = 0;
-  $scope.numberService = 0;
+    /**
+     * Delete the session of the user
+     * @returns {undefined}
+     */
+    $scope.logout = function () {
+        AuthService.logout();
+    };
 
-  function loadNumbers() {
-    http.get(url + '/nubomedia/paas/app/').success(function(data) {
-      console.log(data);
-      $scope.numberApp = data.length;
 
-    });
-  }
+    $scope.numberApp = 0;
+    $scope.numberSecGroup = 0;
+    $scope.numberService = 0;
 
-  $scope.changeProject = function(project) {
-    if (arguments.length === 0) {
-      http.syncGet(url + '/projects/')
-        .then(function(response) {
-          if (angular.isUndefined($cookieStore.get('projectNb')) || $cookieStore.get('projectNb').id === '') {
-            $rootScope.projectSelected = response[0];
-            $cookieStore.put('projectNb', response[0])
-          } else {
-            $rootScope.projectSelected = $cookieStore.get('projectNb');
-          }
-          $rootScope.projects = response;
+    function loadNumbers() {
+        http.get(url + '/nubomedia/paas/app/').success(function (data) {
+            console.log(data);
+            $scope.numberApp = data.length;
+
         });
-    } else {
-      $rootScope.projectSelected = project;
-      console.log(project);
-      $cookieStore.put('projectNb', project);
-      $window.location.reload();
     }
 
+    $scope.changeProject = function (project) {
+        if (arguments.length === 0) {
+            http.syncGet(url + '/projects/')
+                .then(function (response) {
+                    if (angular.isUndefined($cookieStore.get('projectNb')) || $cookieStore.get('projectNb').id === '') {
+                        $rootScope.projectSelected = response[0];
+                        $cookieStore.put('projectNb', response[0])
+                    } else {
+                        $rootScope.projectSelected = $cookieStore.get('projectNb');
+                    }
+                    $rootScope.projects = response;
+                });
+        }
+        else {
+            $rootScope.projectSelected = project;
+            console.log(project);
+            $cookieStore.put('projectNb', project);
+            $window.location.reload();
+        }
+
+
+    };
+
+    $scope.changePassword = function () {
+      $scope.oldPassword = '';
+      $scope.newPassword = '';
+      $scope.newPassword1 = '';
+
+      $('#modalChangePassword').modal('show');
+  };
+  $scope.postNew = function() {
+    if ($scope.newPassword.localeCompare($scope.newPassword1) == 0) {
+      $scope.passwordData = {};
+      $scope.passwordData.old_pwd = $scope.oldPassword;
+      $scope.passwordData.new_pwd = $scope.newPassword;
+      http.put(url + '/users/changepwd', JSON.stringify($scope.passwordData))
+      .success(function (response) {
+        alert("The password has been successfully changed")
+        AuthService.logout()})
+      .error(function (data, status) {
+          console.error('STATUS: ' + status + ' DATA: ' + JSON.stringify(data));
+          alert('STATUS: ' + status + ' DATA: ' + JSON.stringify(data));
+        //  ? "" : location.reload();
+      });
+  } else {
+    alert("The new passwords are not the same");
+  }
 
   };
 

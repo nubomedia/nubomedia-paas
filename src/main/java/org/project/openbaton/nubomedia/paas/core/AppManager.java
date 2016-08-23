@@ -1,17 +1,19 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.project.openbaton.nubomedia.paas.core;
@@ -72,7 +74,7 @@ public class AppManager {
   private SecureRandom appIDGenerator = new SecureRandom();
 
   public Application createApplication(
-      NubomediaCreateAppRequest request, String projectId, String token)
+      NubomediaCreateAppRequest request, String user, String projectId, String token)
       throws turnServerException, StunServerException, SDKException, DuplicatedException,
           NameStructureException, UnauthorizedException {
     if (token == null) {
@@ -157,6 +159,7 @@ public class AppManager {
     app.setResourceOK(false);
     app.setFlavor(request.getFlavor());
     app.setStatus(AppStatus.CREATED);
+    app.setCreatedBy(user);
     app.setCreatedAt(new Date());
 
     appRepo.save(app);

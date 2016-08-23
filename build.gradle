@@ -1,17 +1,19 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 buildscript {
@@ -23,6 +25,7 @@ buildscript {
     }
 }
 plugins {
+    id "nebula.os-package" version "2.2.6"
     id 'com.github.sherter.google-java-format' version '0.3.2'
 }
 apply plugin: 'spring-boot'
@@ -30,7 +33,6 @@ apply plugin: 'spring-boot'
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-
 
 /**
  * Project settings
@@ -47,8 +49,10 @@ project.ext {
     /**
      * Application Related Version
      */
+    applicationDate = new Date()
     applicationVersion = version
     applicationVersionDebian = "1";
+    applicationVersionFull = "${applicationVersion}"
 
     //------------------------------------------------//
     //------------------------------------------------//
@@ -84,19 +88,14 @@ dependencies {
     compile 'org.springframework.data:spring-data-jpa:1.8.2.RELEASE'
     compile 'org.hsqldb:hsqldb:2.3.2'
 
-
-    //SECURITY
-    //    compile project(':repository')
-//    compile project(':catalogue')
-//    compile project(':exception')
     compile 'org.springframework.boot:spring-boot-starter-websocket:' + springBootVersion
     compile 'org.springframework.security:spring-security-core:4.1.0.RELEASE'
-//    compile 'org.springframework.data:spring-data-commons-core:1.4.1.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-security:' + springBootVersion
-//    compile group: 'org.codehaus.spring-security-oauth', name: 'spring-security-oauth', version: '3.19.SS3'
 
     compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.7.RELEASE'
 
     compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.9'
 
 }
+
+apply from: 'gradle/gradle/packaging.project.debian.gradle'

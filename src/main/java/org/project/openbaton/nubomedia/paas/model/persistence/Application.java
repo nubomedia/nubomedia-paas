@@ -1,17 +1,19 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.project.openbaton.nubomedia.paas.model.persistence;
@@ -43,6 +45,8 @@ public class Application {
   private Flavor flavor;
   private AppStatus status;
 
+  private String createdBy;
+
   private Date createdAt;
 
   @JsonIgnore private boolean resourceOK;
@@ -68,8 +72,9 @@ public class Application {
       String projectName,
       String projectId,
       String route,
-      String nsrID,
       String gitURL,
+      String createdBy,
+      Date createdAt,
       List<Integer> targetPorts,
       List<Integer> ports,
       List<String> protocols,
@@ -83,6 +88,8 @@ public class Application {
     this.projectId = projectId;
     this.route = route;
     this.gitURL = gitURL;
+    this.createdBy = createdBy;
+    this.createdAt = createdAt;
     this.targetPorts = targetPorts;
 
     if (ports == null) {
@@ -283,5 +290,13 @@ public class Application {
         + ", mediaServerGroup="
         + mediaServerGroup
         + '}';
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
   }
 }

@@ -1,19 +1,63 @@
+/*
+ *
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
 var app = angular.module('app');
 app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, $cookieStore, AuthService, $rootScope) {
 
     var url = $cookieStore.get('URLNb') + "/api/v1/projects/";
+    var urlUsers = $cookieStore.get('URLNb') + "/api/v1/users/";
 
     $scope.alerts = [];
     $scope.closeAlert = function (index) {
         $scope.alerts.splice(index, 1);
     };
+    $scope.roles = [
+        'ADMIN',
+        'USER',
+        'GUEST'
+    ];
 
     loadTable();
 
     $scope.projectObj = {
-        'name': 'projectName'
+        'name': '',
+        'description':'',
+        'users':{},
+        'usersPairs':[]
     };
+    $scope.users = [];
 
+    $scope.projectUpd = {};
+    http.get(urlUsers)
+        .success(function (response) {
+            console.log('users');
+            usersObj = JSON.parse(JSON.stringify(response));
+            console.log(usersObj);
+            for (i = 0; i < usersObj.length; i++) {
+              $scope.users.push(usersObj[i].username);
+
+            }
+            console.log($scope.users);
+            //$scope.projects.push({name: ''});
+        })
+        .error(function (response, status) {
+            showError(response, status);
+        });
     /* -- multiple delete functions Start -- */
 
     $scope.multipleDeleteReq = function(){
@@ -26,7 +70,7 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
         //console.log(ids);
         http.post(url + 'multipledelete', ids)
             .success(function (response) {
-                showOk('Projects: ' + ids.toString() + ' deleted.');
+                showOk('Projects ' + ids.toString() + ' deleted.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -71,11 +115,11 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
     /* -- multiple delete functions END -- */
 
 
-    $scope.types = ['REST', 'RABBIT', 'JMS'];
+    $scope.types = ['REST', 'RABBIT'];
     $scope.deleteProject = function (data) {
         http.delete(url + data.id)
             .success(function (response) {
-                showOk('Project : ' + data.name + ' deleted.');
+                showOk('Project ' + data.name + ' deleted.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -86,13 +130,30 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
     $scope.closeAlert = function (index) {
         $scope.alerts.splice(index, 1);
     };
-
+    $scope.addUserCreate = function() {
+      var newUser = {
+          name : "",
+          role : "USER"
+      };
+      $scope.projectObj.usersPairs.push(newUser);
+      console.log($scope.projectObj);
+    };
 
     $scope.save = function () {
         //console.log($scope.projectObj);
-        http.post(url, $scope.projectObj)
+        postObj = {};
+        postObj.name = $scope.projectObj.name;
+        postObj.description = $scope.projectObj.description;
+        postObj.users = {};
+        toPush = {};
+        for (i = 0; i < $scope.projectObj.usersPairs.length; i++) {
+          toPush[$scope.projectObj.usersPairs[i].name] = $scope.projectObj.usersPairs[i].role;
+
+        }
+        postObj.users = toPush;
+        http.post(url, postObj)
             .success(function (response) {
-                showOk('Project: ' + $scope.projectObj.name + ' saved.');
+                showOk('Project ' + postObj.name + ' created.');
                 loadTable();
             })
             .error(function (response, status) {
@@ -127,8 +188,53 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
         loadTable();
         $('.modal').modal('hide');
     }
+    $scope.startUpdate = function(data) {
+        $scope.projectUpd = JSON.parse(JSON.stringify(data));
+        $scope.projectUpd.usersPairs = [];
+
+        for (var key in  $scope.projectUpd.users) {
+          var newRole = {name: key, role:$scope.projectUpd.users[key]};
+          console.log("here is new role " + newRole);
+          $scope.projectUpd.usersPairs.push(newRole);
+        }
+
+        console.log($scope.projectUpd);
+    };
+    $scope.updateSave = function () {
+        //console.log($scope.userUpdate);
+        updateObj = {};
+        updateObj.id = $scope.projectUpd.id;
+        updateObj.name = $scope.projectUpd.name;
+        updateObj.description = $scope.projectUpd.description;
+        updateObj.users = {};
+        toPush = {};
+        for (i = 0; i < $scope.projectUpd.usersPairs.length; i++) {
+
+
+          toPush[$scope.projectUpd.usersPairs[i].name] = $scope.projectUpd.usersPairs[i].role;
+
+        }
+        updateObj.users = toPush;
+        console.log("Copied");
+        console.log(updateObj);
+        http.put(url + updateObj.id, updateObj)
+            .success(function (response) {
+                    showOk('User ' + updateObj.name + ' updated.');
+                    loadTable();
+            })
+            .error(function (response, status) {
+                    showError(response, status);
+            });
+    };
+
+    $scope.addUser = function() {
+      var newUser = {
+          name : "",
+          role : "USER"
+      };
+      $scope.projectUpd.usersPairs.push(newUser);
+      console.log($scope.projectUpd);
+    };
+
 
 });
-
-
-

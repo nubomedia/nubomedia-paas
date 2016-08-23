@@ -1,0 +1,135 @@
+#!/bin/sh -e
+
+. /lib/lsb/init-functions
+
+_PROJECT_NAME=nubomedia-paas
+_CONFIG_FILE=/etc/nubomedia/paas.properties
+_DEFAULT_CONFIG_FILE=etc/paas.properties
+_PROJECT_EXE_FOLDER=/usr/bin
+_PROJECT_LOGS_FOLDER=/var/log/nubomedia
+_DATABASE_NAME=paasnubomedia
+
+TMPFOLDER=$(mktemp -d)
+
+_USER="$(id -un 2>/dev/null || true)"
+
+checkBinary () {
+    if command -v $1 >/dev/null 2>&1 ; then
+        log_success_msg "Checking for '$1'"
+        return 0
+    else
+        log_failure_msg "Checking for '$1'"
+        return 1
+    fi
+}
+
+_ex='sh -c'
+if [ "${_USER}" != 'root' ]; then
+    if checkBinary sudo; then
+        _ex='sudo -E sh -c'
+    elif checkBinary su; then
+        _ex='su -c'
+    fi
+fi
+
+ulimit -S -n 4096
+
+
+# Set the installation mode (interactive or not interactive)
+INTERACTIVE=true
+RESULT=$(env | grep DEBIAN_FRONTEND=noninteractive | wc -l)
+if [ ${RESULT} -ne 0 ]; then
+    INTERACTIVE=false
+fi
+
+
+##################
+#### RabbitMQ ####
+##################
+
+configureRabbitMQ () {
+    # Allow the use of the .deb package to install Open Baton with Docker (because of issues when installing and configuring RabbitMQ during a docker image build)
+    # See documentation for more info
+    result=`$_ex 'rabbitmqctl list_users' | grep '^'"$_PROJECT_NAME" | wc -l`
+    if [ ${result} -eq 0 ]; then
+        rabbitMqPassword=`< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-32};echo;`
+        $_ex 'rabbitmqctl add_user '"$_PROJECT_NAME"' '"$rabbitMqPassword"
+        log_success_msg "Created RabbitMQ user \"${_PROJECT_NAME}\""
+    else
+        log_warning_msg "User \"${_PROJECT_NAME}\" exists already"
+        rabbitMqPassword=`< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-32};echo;`
+        $_ex 'rabbitmqctl change_password '"$_PROJECT_NAME"' '"$rabbitMqPassword"
+        log_success_msg "Changed password of RabbitMQ user \"${_PROJECT_NAME}\""
+    fi
+    $_ex 'rabbitmqctl set_user_tags '"$_PROJECT_NAME"' administrator'
+    $_ex 'rabbitmqctl set_permissions -p / '"$_PROJECT_NAME"' ".*" ".*" ".*"'
+    $_ex 'sed -i "s/^rabbitmq.username=.*/rabbitmq.username='"$_PROJECT_NAME"'/g" '"$_CONFIG_FILE"
+    $_ex 'sed -i "s/^rabbitmq.password=.*/rabbitmq.password='"$rabbitMqPassword"'/g" '"$_CONFIG_FILE"
+    #### Workaround to enable rabbitmq management plugin ####
+    #$_ex 'rabbitmq-plugins enable rabbitmq_management'
+    if [ -f /etc/rabbitmq/enabled_plugins ]; then
+        result=$(grep /etc/rabbitmq/enabled_plugins -e "[rabbitmq_management].")
+        if [ "${result}" != "[rabbitmq_management]." ]; then
+            $_ex 'echo "[rabbitmq_management]." >> /etc/rabbitmq/enabled_plugins'
+        fi
+    else
+        $_ex 'echo "[rabbitmq_management]." > /etc/rabbitmq/enabled_plugins'
+    fi
+    ##########################################################
+    $_ex 'service rabbitmq-server restart'
+    if [ "$?" != "0" ]; then
+        log_failure_msg "rabbitmq is not running properly (check the problem in /var/log/rabbitmq)"
+        exit 1
+    fi
+}
+
+##########################################
+#### Configure project ####
+##########################################
+
+setPassword () {
+    stty -echo
+    read -p "Provide the new password for admin user of $_PROJECT_NAME: " password ; echo
+    stty echo
+    if [ "${password}" != "" ]; then
+        export password=${password}
+        stty -echo
+        read -p "Repeat the password: " password2 ; echo
+        stty echo
+        export password2=${password2}
+        if [ "${password}" = "${password2}" ]; then
+            $_ex 'sed -i "s/paas.security.admin.password=.*/paas.security.admin.password='"$password"'/g" '"$_CONFIG_FILE"
+        else
+            log_failure_msg "Passwords didn't match. Try again ..."
+            setPassword
+        fi
+    else
+        log_warning_msg "Admin password must be provided ..."
+        setPassword
+    fi
+}
+
+createLogsFolder () {
+    if [ ! -d "${_PROJECT_LOGS_FOLDER}" ]; then
+        $_ex 'mkdir -p '"$_PROJECT_LOGS_FOLDER"
+        log_success_msg "Created log folder \"${_PROJECT_LOGS_FOLDER}\""
+    fi
+    $_ex 'chown -R '"$_USER $_PROJECT_LOGS_FOLDER"
+    log_success_msg "Configured permissions of log folder \"${_PROJECT_LOGS_FOLDER}\""
+}
+
+configure () {
+    log_success_msg "Configuring $_PROJECT_NAME installation ..."
+    configureRabbitMQ
+
+    log_success_msg "Giving nubomedia-paas execution permissions ..."
+    $_ex "chmod a+x ${_PROJECT_EXE_FOLDER}/nubomedia-paas"
+
+    setPassword
+
+    createLogsFolder
+
+    log_success_msg "$_PROJECT_NAME installation and configuration completed"
+}
+
+configure

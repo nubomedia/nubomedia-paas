@@ -1,0 +1,53 @@
+/*
+ *
+ *  * Copyright (c) 2016 Open Baton
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
+ext {
+    //debianDistribution = (applicationRelease) ? "release" : "snapshot"
+    debianApplicationVersionFull = "${applicationVersionFull}".replaceAll("-", ".")
+    projectInstallDir = "/opt/nubomedia"
+}
+
+task makedeb(type: Deb, dependsOn: [jar, build]) { 
+    packageName = "nubomedia-paas"
+    version = debianApplicationVersionFull
+    release = 1 
+    priority = 'optional'
+    arch = 'amd64'
+    maintainer = 'NUBOMEDIA Team'
+    vendor = 'Open Source (Implemented by Fraunhofer FOKUS and TUB)'
+    license = 'Apache 2.0 License'
+    url = 'https://github.com/nubomedia/nubomedia-paas'
+    summary = 'NUBOMEDIA PaaS-Manager'
+    packageDescription = 'The NUBOMEDIA PaaS-Manager is one of the most important components of the NUBOMEDIA controller. It provides all the functionalities of the PaaS including an Dashboard'
+
+    postInstall file('gradle/gradle/scripts/debian/postinst')
+    preUninstall file('gradle/gradle/scripts/debian/prerm')
+    postUninstall file('gradle/gradle/scripts/debian/postrm')
+
+    requires('openjdk-7-jre')
+    requires('rabbitmq-server')
+
+    // Copy files from "from path" to "into path"
+    from('etc/paas.properties')                  			   { into '/etc/nubomedia/' }  // properties file             { into '/etc/nubomedia/' }                 // keystore file
+    from('etc/cloudrepo-vnfd.json')     			           { into '/etc/nubomedia/' }                 // cloudrepo vnfd file
+    from('etc/nubomedia-nsd.json')     			               { into '/etc/nubomedia/' }                 // nubomedia nsd file
+    from(jar.outputs.files) 				                   { into '/usr/lib/nubomedia/' }             // jar file
+    from('gradle/gradle/scripts/nubomedia-paas') 	           { into '/usr/bin/'}                        // executable to run the PaaS
+    from('gradle/gradle/scripts/nubomedia-paas') 	           { into '/etc/init.d/'}                     // executable to run the PaaS as a service (SysV)
+    from('gradle/gradle/scripts/nubomedia-paas.conf') 	       { into '/etc/init/'}                       // conf file to run the PaaS as a service (Upstart)
+}
