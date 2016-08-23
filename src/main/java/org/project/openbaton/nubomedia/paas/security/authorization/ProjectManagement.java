@@ -90,11 +90,11 @@ public class ProjectManagement
   public Project update(Project new_project)
       throws NotFoundException, ForbiddenException, BadRequestException {
     Project project = projectRepository.findFirstById(new_project.getId());
-    if (!project.getName().equals(new_project.getName())) {
-      throw new ForbiddenException("Forbidden to change the project name");
-    }
     if (project == null) {
       throw new NotFoundException("Not found project " + new_project.getId());
+    }
+    if (!project.getName().equals(new_project.getName())) {
+      throw new ForbiddenException("Forbidden to change the project name");
     }
     project.setDescription(new_project.getDescription());
     for (String username : project.getUsers().keySet()) {

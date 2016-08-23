@@ -29,8 +29,6 @@ import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
  */
 public interface UserManagement {
 
-  User getCurrentUser() throws ForbiddenException;
-
   /**
    *
    * @param user

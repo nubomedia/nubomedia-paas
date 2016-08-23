@@ -58,13 +58,6 @@ public class UserManagement
   private Logger log = LoggerFactory.getLogger(this.getClass());
 
   @Override
-  public User getCurrentUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String currentUserName = authentication.getName();
-    return query(currentUserName);
-  }
-
-  @Override
   public User add(User user) throws BadRequestException, NotFoundException, ForbiddenException {
     log.debug("Adding new user: " + user);
 
