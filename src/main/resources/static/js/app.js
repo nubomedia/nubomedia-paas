@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCookies'])
+angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCookies', 'angular-clipboard'])
     .config(function ($routeProvider) {
 
         $routeProvider.

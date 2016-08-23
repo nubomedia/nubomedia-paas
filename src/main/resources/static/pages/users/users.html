@@ -1,5 +1,5 @@
 <!-- Breadcrum container -->
-<section class="breadcrumb-container clearfix">
+<section class="breadcrumb-container clearfix" ng-show="!createFormViewIsVisible">
 
   <div class="row">
 
@@ -7,8 +7,8 @@
       <!-- Breadcrum -->
       <ul class="c-breadcrumb">
 
-        <li class="c-breadcrumb__item">
-          <a href="/">Overview</a>
+        <li class="c-breadcrumb__item" >
+          <a href="/" ng-click="resetCreateFormView()">Overview</a>
         </li>
 
         <li class="c-breadcrumb__item is-active">
@@ -25,8 +25,7 @@
         href="#"
         class="btn btn--white"
         title="Add new user"
-        data-toggle="modal"
-        data-target="#createUser">
+        ng-click="toggleCreateFormView()">
         <span class="glyphicon glyphicon-plus-sign text-primary"></span>
         Add new User
       </button>
@@ -52,8 +51,30 @@
 
 
 
+<!-- Breadcrum container -->
+<section class="breadcrumb-container clearfix" ng-show="createFormViewIsVisible">
+  <ul class="c-breadcrumb">
+
+    <li class="c-breadcrumb__item">
+      <a href="#/" ng-click="resetCreateFormView()">Overview</a>
+    </li>
+
+    <li class="c-breadcrumb__item">
+      <a href="#/users" ng-click="resetCreateFormView()">Users</a>
+    </li>
+
+    <li class="c-breadcrumb__item">
+      <span>Create new user<span>
+    </li>
+
+  </ul><!-- Breadcrum -->
+</section><!-- /Breadcrum container -->
+
+
+
+
 <!-- Users -->
-<section class="users">
+<section class="users" ng-show="!createFormViewIsVisible">
 
   <alert
     ng-repeat="alert in alerts"
@@ -162,6 +183,146 @@
 
 
 
+
+<form
+  role="form"
+  class="form form-horizontal form-new-user"
+  ng-show="createFormViewIsVisible">
+
+  <!-- Form section -->
+  <section class="form__section">
+
+    <h3 class="form__section-title">General</h3>
+
+    <!-- Username -->
+    <div class="form-group input">
+      <label for="username" class="col-sm-4 control-label input__label">
+        Username
+      </label>
+      <div class="col-sm-6">
+        <input
+          type="text"
+          class="form-control input__field"
+          id="username"
+          name="username"
+          ng-model="userObj.username"/>
+      </div>
+    </div><!-- /Username -->
+
+    <!-- Password -->
+    <div class="form-group input">
+      <label for="pass" class="col-sm-4 control-label input__label">
+        Password
+      </label>
+
+      <div class="col-sm-6">
+        <input
+          type="password"
+          class="form-control input__field"
+          id="pass"
+          name="pass"
+         ng-model="userObj.password"/>
+      </div>
+    </div><!-- Password -->
+
+    <!-- ng repeat -->
+    <div
+      class="form-group input"
+      ng-repeat="(key,value) in userObj"
+      ng-if="key!=='username' && key!=='password' && key!=='roles'">
+        <label for="{{key}}" class="col-sm-4 control-label input__label">
+          {{key}}
+        </label>
+
+        <div class="col-sm-6">
+          <input
+            type="text"
+            class="form-control input__field"
+            id="{{key}}"
+            name="{{key}}"
+            ng-model="userObj[key]"/>
+        </div>
+    </div><!-- /ng repeat -->
+
+  </section><!-- Form section -->
+
+  <!-- Form section -->
+  <section class="form__section">
+
+    <h3 class="form__section-title">Roles</h3>
+
+    <div class="form-group input" ng-repeat="role in userObj.roles track by $index">
+
+      <label for="action" class="col-sm-1 control-label input__label">
+        Project
+      </label>
+
+      <div class="col-sm-4">
+        <!-- Select -->
+        <div class="select">
+          <select
+            name="typeSelect"
+            class="form-control modal-select"
+            id="action"
+            ng-model="userObj.roles[$index].project"
+            ng-options="project.name as project.name for project in projects"
+            ng-change="">
+          </select>
+          <div class="select__arrow"></div>
+        </div>
+      </div><!-- /col -->
+
+      <label for="action" class="col-sm-1 control-label input__label">
+        Role
+      </label>
+
+      <div class="col-sm-4">
+        <!-- Select -->
+        <div class="select">
+          <select
+            name="typeSelect"
+            class="form-control modal-select"
+            id="action"
+            ng-model="userObj.roles[$index].role"
+            ng-options="role for role in roles"
+            ng-change="">
+          </select>
+          <div class="select__arrow"></div>
+        </div>
+      </div><!-- /col -->
+
+      <div class="col-sm-2">
+        <a href="" ng-click="userObj.roles.splice($index, 1)">
+          <h4><li class="fa fa-trash"></li></h4>
+        </a>
+      </div>
+
+    </div><!-- /form group -->
+
+    <div class="form-group">
+      <button
+        class="btn btn--white u-ml-15"
+        ng-click="userObj.roles.push(roleAdd)">
+        Add more roles
+      </button>
+    </div>
+
+  </section><!-- /Roles -->
+
+  <button
+    type="button"
+    class="btn btn-primary form__submit pull-right"
+    ng-click="save()">
+    Save
+  </button>
+
+</form>
+
+
+
+
+
+
 <!-- Modal create user -->
 <section class="modal fade" tabindex="-1" role="dialog" id="createUser">
   <div class="modal-dialog">
@@ -180,8 +341,6 @@
 
       <div class="modal-body">
         <form role="form" class="form form-horizontal">
-
-
 
 
           <!-- Form section -->

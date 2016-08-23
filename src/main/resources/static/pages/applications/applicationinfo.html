@@ -16,22 +16,37 @@
 
 <!-- Breadcrum container -->
 <section class="breadcrumb-container clearfix">
-  <!-- Breadcrum -->
-  <ul class="c-breadcrumb">
 
-  <li class="c-breadcrumb__item">
-    <a href="/">Overview</a>
-  </li>
+  <div class="row">
 
-  <li class="c-breadcrumb__item">
-    <a href="#/applications">Applications</a>
-  </li>
+    <div class="col-xs-12 col-md-6">
+      <!-- Breadcrum -->
+      <ul class="c-breadcrumb">
 
-  <li class="c-breadcrumb__item is-active">
-  <a href="">{{application.name}}</a>
-  </li>
+      <li class="c-breadcrumb__item">
+        <a href="/">Overview</a>
+      </li>
 
-  </ul><!-- Breadcrum -->
+      <li class="c-breadcrumb__item">
+        <a href="#/applications">Applications</a>
+      </li>
+
+      <li class="c-breadcrumb__item is-active">
+      <a href="">{{application.name}}</a>
+      </li>
+
+      </ul><!-- Breadcrum -->
+    </div><!-- /col -->
+
+    <div class="col-xs-12 col-md-6 text-right">
+      <button class="btn btn--white btn--icon">
+        <span class="glyphicon glyphicon-refresh text-primary"></span>
+        Restart app
+      </button>
+    </div>
+
+  </div><!-- /row -->
+
 </section><!-- /Breadcrum container -->
 
 
@@ -48,137 +63,38 @@
 
   <tabset>
 
-    <tab heading="Info">
-
-      <h3 class="section section__title">
-        <a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a>
-      </h3>
-
-      <section class="simple-card">
-        <dl class="dl-horizontal">
-          <spam ng-if="application.route">
-            <dt>route</dt>
-            <dd><a href="https://{{application.route}}" target="_blank">{{application.route}}</a>
-            </dd>
-          </spam>
-          <spam ng-repeat="(k,v) in application" ng-if="k!='route'">
-            <dt>{{k}}</dt>
-            <dd>{{v}}</dd>
-          </spam>
-        </dl>
-      </section>
+    <!-- Resources -->
+    <tab heading="Resources" >
+      <div ng-include src="'./templates/resources.html'"></div>
     </tab>
 
+    <!-- Deploy -->
+    <tab heading="Deploy">
+      <div ng-include src="'./templates/deploy.html'"></div>
+    </tab>
+
+    <!-- Metrics -->
+    <tab heading="Metrics" ng-click="showPlot()">
+      <div class="form">
+        <div ng-include src="'./templates/autoscaling.html'"></div>
+        <div ng-include src="'./templates/media-servers.html'"></div>
+      </div>
+    </tab>
+
+    <!-- Activity -->
+    <tab heading="Activity">
+      <div ng-include src="'./templates/activity.html'"></div>
+    </tab>
+
+    <!-- Settings -->
+    <tab heading="Settings">
+      <div ng-include src="'./templates/settings.html'"></div>
+    </tab>
+
+    <!-- Logs -->
     <tab heading="Logs">
-
-      <section ng-show="application" class="log-buttons">
-
-        <div class="input-group log-button">
-          <span class="input-group-addon">N. of rows</span>
-          <input
-            type="number"
-            class="form-control log-input"
-            aria-label="Text input with dropdown button"
-            ng-model="input.numberRows">
-        </div>
-
-        <!-- Dropdown -->
-        <div class="list-btn dropdown c-dropdown dropdown-app-actions log-button">
-
-          <button
-            class="btn dropdown-toggle c-dropdown__toggle"
-            type="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="true"
-            id="get_log_app" >
-            Actions
-          </button>
-
-          <ul class="dropdown-menu c-dropdown__menu">
-            <li ng-repeat="pod in application.podList" class="c-dropdown__item">
-              <span ng-click="loadAppLog(pod)">{{pod}}</span>
-            </li>
-          </ul>
-
-        </div><!-- /Dropdown -->
-
-        <button
-          id="get_log"
-          class="btn btn--white log-button"
-          title="Loads the build logs"
-          ng-click="loadLog()">
-          Build Log
-        </button>
-      </section>
-
-      <section ng-show="log">
-        <pre id="log" ng-bind-html="log"></pre>
-      </section>
-
+      <div ng-include src="'./templates/logs.html'"></div>
     </tab>
-
-    <tab heading="Monitoring" ng-click="showPlot()">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Autoscaling</div>
-                    <div class="panel-body">
-
-                        <div class="col-lg-6">
-                            <h4>Number of KMS instances</h4>
-                            <div id="numberFlot"></div>
-                        </div>
-
-
-                        <div class="col-lg-6">
-                            <h4>Total Capacity used</h4>
-
-                            <div id="capacityFlot"></div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </tab>
-    <tab heading="Media Servers">
-                <br>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">Media servers monitoring</div>
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <p>In order to access the Kurento Media Servers you can ssh using their IP addresses and username root with password nub0m3d1@</p>
-                                        <div class="form-group">
-                                            <label>Media Server Public IPs: </label>
-                                            <select ng-model="myMediaServer" ng-options="mediaServer.floatingIPs for mediaServer in mediaServers" ng-change="updateGraphMediaServer(myMediaServer.hostname)"></select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Media Server Hostname: </label>
-                                            <div id="hostname">{{myMediaServer.hostname}}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div id="chart_div" style="width: 100%; height: 450px;"></div>
-                                        <p class="buttons-media-server">
-                                            <button type="button" ng-click="drawColumnMediaServer('memory')" class="btn btn-default btn-xs">Memory</button>
-                                            <button type="button" ng-click="drawColumnMediaServer('elements')" class="btn btn-default btn-xs">Elements</button>
-                                            <button type="button" ng-click="drawColumnMediaServer('pipelines')" class="btn btn-default btn-xs">Pipelines</button>
-                                            <button type="button" ng-click="drawColumnMediaServer('none')" class="btn btn-danger btn-xs">Reset</button>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </tab>
 
   </tabset>
 </section>
@@ -187,21 +103,21 @@
 
 
 <div class="modal" id="jsonInfo" tabindex="" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">JSON of Topology: {{application.name}}</h4>
-            </div>
-            <div class="modal-body">
-                <pre id="json">{{applicationJSON}}</pre>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="closeModal" class="btn btn-default"
-                        data-dismiss="modal">Close
-                </button>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                  class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="myModalLabel">JSON of Topology: {{application.name}}</h4>
+      </div>
+      <div class="modal-body">
+          <pre id="json">{{applicationJSON}}</pre>
+      </div>
+      <div class="modal-footer">
+          <button type="button" id="closeModal" class="btn btn-default"
+                  data-dismiss="modal">Close
+          </button>
+      </div>
     </div>
+  </div>
 </div>

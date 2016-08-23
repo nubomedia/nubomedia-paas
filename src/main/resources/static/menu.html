@@ -28,34 +28,47 @@
             <a class="logo" href="#">
               <img src="./img/logo-blue.png" alt="Nubomedia">
             </a>
+
+            <form class="search-form">
+              <button type="submit" class="btn btn-default glyphicon glyphicon-search"></button>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search applicaitons, repository, etc">
+              </div>
+            </form>
         </div>
         <!-- /.navbar-header -->
 
         <ul class="nav navbar-top-links navbar-right">
-            <li class="dropdown">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" ng-init="changeProject()">
-                  <i class="fa fa-folder-open"></i> {{projectSelected.name}}
-                </a>
-                <ul class="dropdown-menu">
-                  <li class="dropdown-title">
-                    Projects
-                  </li>
-                  <li ng-repeat="project in projects track by $index">
-                      <a href="" ng-click="changeProject(project)">{{project.name}}  <i ng-if="project.name === projectSelected.name" class="fa fa-check"></i></a>
-                  </li>
+          <li>
+            <a href="#"><span class="menu-icon icon-notification"></span></a>
+          </li>
+          <li>
+            <a href="#"><span class="menu-icon icon-cart"></span></a>
+          </li>
+          <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown" ng-init="changeProject()">
+                <i class="fa fa-folder-open"></i> {{projectSelected.name}}
+              </a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-title">
+                  Projects
+                </li>
+                <li ng-repeat="project in projects track by $index">
+                    <a href="" ng-click="changeProject(project)">{{project.name}}  <i ng-if="project.name === projectSelected.name" class="fa fa-check"></i></a>
+                </li>
+                <li>
+                    <a ng-click="" href="#projects"><i class=""></i> More projects</a>
+                </li>
+              </ul>
+          </li>
+          <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{username}}</a>
+              <ul class="dropdown-menu">
                   <li>
-                      <a ng-click="" href="#projects"><i class=""></i> More projects</a>
+                    <a ng-click="logout()" href=""><i class="fa fa-fw fa-power-off"></i>Log Out</a>
                   </li>
-                </ul>
-            </li>
-            <li class="dropdown">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{username}}</a>
-                <ul class="dropdown-menu">
-                    <li>
-                      <a ng-click="logout()" href=""><i class="fa fa-fw fa-power-off"></i>Log Out</a>
-                    </li>
-                </ul>
-            </li>
+              </ul>
+          </li>
         </ul>
         <!-- /.navbar-top-links -->
 
@@ -70,28 +83,28 @@
                     </li>
 
                     <li class="c-menu-aside__item">
-                      <a href="#applications" class="c-menu-aside__link js-menu-link" id="topologiesMenu" toggle-class="is-active">
+                      <a href="#applications" ng-click="resetCreateFormView()" class="c-menu-aside__link js-menu-link" id="topologiesMenu" toggle-class="is-active">
                         <span class="c-menu-aside__icon c-icon-app"></span>
                         <span class="c-menu-aside__link-text">Applications</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item">
-                      <a href="#marketapps" class="c-menu-aside__link js-menu-link">
+                      <a href="#marketapps" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()">
                         <span class="c-menu-aside__icon c-icon-app"></span>
                         <span class="c-menu-aside__link-text">App Store</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item">
-                      <a href="#projects" class="c-menu-aside__link js-menu-link">
+                      <a href="#projects" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()">
                         <span class="c-menu-aside__icon c-icon-project"></span>
                         <span class="c-menu-aside__link-text">Projects</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item">
-                      <a href="#users" class="c-menu-aside__link js-menu-link">
+                      <a href="#users" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()">
                         <span class="c-menu-aside__icon c-icon-user"></span>
                         <span class="c-menu-aside__link-text">Users</span>
                       </a>

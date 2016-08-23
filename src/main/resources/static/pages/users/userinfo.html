@@ -4,15 +4,15 @@
     <ul class="c-breadcrumb">
 
     <li class="c-breadcrumb__item">
-      <a href="/">Overview</a>
+      <a href="/" ng-click="resetCreateFormView()">Overview</a>
     </li>
 
     <li class="c-breadcrumb__item">
-      <a href="#/users">Users</a>
+      <a href="#/users" ng-click="resetCreateFormView()">Users</a>
     </li>
 
     <li class="c-breadcrumb__item is-active">
-    <a href="">{{user.username}}</a>
+      <a href="#/users/{{user.username}}" ng-click="resetCreateFormView()">{{user.username}}</a>
     </li>
 
     </ul><!-- Breadcrum -->
@@ -30,43 +30,45 @@
       <div ng-bind-html="alert.msg"></div>
   </alert>
 
-  <div ng-show="user">
+  <!-- Form app settings-->
+  <form class="form form-horizontal form-app-settings" ng-show="user">
+    <section class="form__section">
 
-    <div class="simple-card">
+      <h3 class="form__section-title clearfix">
+        User info
+        <p class="pull-right"><a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a></p>
+      </h3>
 
-      <h4 class="simple-card__title">
-        <a href="#" data-toggle="modal" data-target="#jsonInfo">
-          Show JSON
-        </a>
-      </h4>
+      <div ng-repeat="(key,value) in user" ng-if="key !== 'scripts'" class="form-group input">
 
-      <dl class="dl-horizontal">
-        <span
-          class="dl-horizontal"
-          ng-repeat="(key,value) in user"
-          ng-if="key !== 'scripts'">
+        <div ng-if="key !== 'roles'">
+          <label  class="col-md-4 control-label input__label">
+            {{key}}
+          </label>
 
-          <div ng-if="key !== 'roles'">
-              <dt>{{key}}:</dt>
-              <dd>{{value}}</dd>
+          <div class="col-md-8">
+            <input type="text" class="form-control input__field" value="{{value}}" readonly>
           </div>
+        </div>
 
-          <div ng-if="key === 'roles'">
-            <dt>roles:</dt>
-            <dd>
-              <span ng-repeat="role in value">
-                <b>id</b>: {{role.id}},
-                <b>project</b>: {{role.project}},
-                <b>role</b>: {{role.role}}
-                <span ng-if="!$last">; </span>
-              </span>
-            </dd>
-          </div>
-        </span>
-      </dl>
-    </div>
+        <div ng-if="key === 'roles'">
+          <label class="col-md-4 control-label input__label">
+            Roles
+          </label>
+          <dd class="col-md-8">
+            <span ng-repeat="role in value">
+              <b>id</b>: {{role.id}},
+              <b>project</b>: {{role.project}},
+              <b>role</b>: {{role.role}}
+              <span ng-if="!$last">; </span>
+            </span>
+          </dd>
+        </div>
 
-  </div>
+      </div>
+
+    </section><!-- /Form section -->
+  </form>
 </section>
 
 

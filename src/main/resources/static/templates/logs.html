@@ -1,0 +1,44 @@
+<section ng-show="application" class="log-buttons">
+  <button
+    id="get_log"
+    class="btn btn-primary log-button"
+    title="Loads the build logs"
+    ng-click="loadLog()">
+    Build Log
+  </button>
+
+  <div class="input-group log-button">
+    <span class="input-group-addon">N. of rows</span>
+    <input
+      type="number"
+      class="form-control log-input"
+      aria-label="Text input with dropdown button"
+      ng-model="input.numberRows">
+  </div>
+
+  <!-- Dropdown -->
+  <div class="list-btn dropdown c-dropdown dropdown-app-actions log-button">
+
+    <button
+      class="btn dropdown-toggle c-dropdown__toggle"
+      type="button"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="true"
+      id="get_log_app" >
+      Server
+    </button>
+
+    <ul class="dropdown-menu c-dropdown__menu">
+      <li ng-repeat="pod in application.podList" class="c-dropdown__item">
+        <span ng-click="loadAppLog(pod)">{{pod}}</span>
+      </li>
+    </ul>
+
+  </div><!-- /Dropdown -->
+
+</section>
+
+<section ng-show="log">
+  <pre id="log" ng-bind-html="log"></pre>
+</section>

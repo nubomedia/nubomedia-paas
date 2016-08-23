@@ -1,0 +1,47 @@
+<section class="form__section">
+
+  <h3 class="form__section-title">Media servers monitoring</h3>
+  <p>In order to access the Kurento Media Servers you can ssh using their IP addresses and username root with password nub0m3d1@</p>
+
+  <div class="row form">
+
+    <div class="col-xs-12 col-md-6">
+      <div class="form-group input">
+        <label class="control-label input__label">Media Server Public IPs</label>
+        <div class="select">
+          <select
+            ng-model="myMediaServer"
+            ng-options="mediaServer.floatingIPs for mediaServer in mediaServers"
+            ng-change="updateGraphMediaServer(myMediaServer.hostname)">
+          </select>
+          <div class="select__arrow"></div>
+        </div>
+      </div>
+    </div><!-- /col -->
+
+    <div class="col-xs-12 col-md-6">
+      <div class="form-group input">
+        <label class="control-label input__label">Media Server Hostname</label>
+        <input
+          type="text"
+          id="hostname"
+          class="form-control input__field"
+          value="{{myMediaServer.hostname}}"
+          readonly>
+      </div>
+    </div><!-- /col -->
+
+  </div><!-- /row -->
+
+  <!-- Card -->
+  <section class="c-card card-chart">
+    <h3 class="c-card__title">Number of KMS instances</h3>
+    <div id="chart_div" class="media-server-chart"></div>
+    <p class="buttons-media-server">
+    <button type="button" ng-click="drawColumnMediaServer('memory')" class="btn btn--white btn-xs">Memory</button>
+    <button type="button" ng-click="drawColumnMediaServer('elements')" class="btn btn--white btn-xs">Elements</button>
+    <button type="button" ng-click="drawColumnMediaServer('pipelines')" class="btn btn--white btn-xs">Pipelines</button>
+    <button type="button" ng-click="drawColumnMediaServer('none')" class="btn btn-danger btn-xs">Reset</button>
+  </section><!-- /Card -->
+
+</section>

@@ -1,0 +1,223 @@
+<!-- Form app settings-->
+<form class="form form-horizontal form-app-settings">
+
+  <!-- Form section -->
+  <section class="form__section">
+
+    <h3 class="form__section-title clearfix">
+      All settings
+      <p class="pull-right"><a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a></p>
+    </h3>
+
+    <div ng-repeat="(k,v) in application" ng-if="k!='route'" class="form-group input">
+      <label for="app-public-url" class="col-md-4 control-label input__label">
+        {{k}}
+      </label>
+
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" value="{{v}}" readonly>
+      </div>
+    </div>
+
+  </section><!-- /Form section -->
+
+
+
+
+  <!-- Form section -->
+  <section class="form__section">
+
+    <h3 class="form__section-title">General</h3>
+
+    <!-- Application name -->
+    <div class="form-group input">
+      <label for="app-name" class="col-md-4 control-label input__label">
+        Application name
+      </label>
+
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" id="app-name" ng-model="application.name" readonly>
+      </div>
+    </div><!-- /Application name -->
+
+    <!-- Application kms -->
+    <div class="form-group input">
+      <label for="app-kms" class="col-md-4 control-label input__label">
+        KMS Build Packs
+        <span class="input__subtitle">
+          Buildpacks are scripts that are run when KMS is displayed. They are used to install dependencies for KMS and configure the KMS servers environment.
+          <span>Example</span>
+        </span>
+      </label>
+
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" id="app-kms">
+      </div>
+    </div><!-- /Application kms -->
+
+  </section><!-- /Form section -->
+
+
+
+
+  <!-- Form section -->
+  <section class="form__section">
+
+    <h3 class="form__section-title">Variables</h3>
+
+    <!-- Environment variables -->
+    <div class="form-group input">
+
+      <label for="app-kms" class="col-md-4 control-label input__label">
+        Environment variables
+        <span class="input__subtitle">
+          ENV variables change the way your app behaves. They are basicaly Linux ENV vars and in java they cand be used in code like this:
+          <strong>process.env ["MYSQL_PASS"]</strong>
+        </span>
+      </label>
+
+      <div class="col-md-8">
+        <div class="row">
+
+          <div class="col-md-12 col-lg-4">
+            <label class="form__group-label">Variables</label>
+          </div><!-- /col -->
+
+          <div class="col-md-12 col-lg-8">
+            <label class="form__group-label">Value</label>
+          </div><!-- /col -->
+
+          <!-- Section to add dynamic fields for env variables -->
+          <section class="js-section-add-env">
+            <!-- ENV variable section -->
+            <div class="col-md-12 col-lg-4">
+              <div class="input">
+                <input type="text" class="form-control input__field" placeholder="variable">
+              </div>
+            </div><!-- /col -->
+
+            <div class="col-md-12 col-lg-8">
+              <div class="input">
+                <input type="text" class="form-control input__field" placeholder="value">
+              </div>
+            </div><!-- ENV variable section -->
+          </section><!-- /Section to add dynamic fields for env variables -->
+
+        </div><!-- /row -->
+      </div><!-- /col -->
+
+    </div><!-- /Application kms -->
+
+    <!-- Custom TURN Server -->
+    <div class="form-group input">
+
+      <label class="col-md-4 control-label input__label">
+        Custo TURN Server
+      </label>
+
+      <div class="col-md-8">
+        <div class="row">
+
+          <div class="col-md-12 col-lg-4">
+            <input type="text" class="form-control input__field" placeholder="URL">
+          </div><!-- /col -->
+
+          <div class="col-md-12 col-lg-4">
+            <input type="text" class="form-control input__field" placeholder="Username">
+          </div><!-- /col -->
+
+          <div class="col-md-12 col-lg-4">
+            <input type="text" class="form-control input__field" placeholder="Password">
+          </div><!-- /col -->
+
+        </div><!-- /row -->
+      </div><!-- /col -->
+
+    </div><!-- /Custom TURN Server -->
+
+    <!-- Custom STUN Server -->
+    <div class="form-group input">
+
+      <label class="col-md-4 control-label input__label">
+        Custo STUN Server
+      </label>
+
+      <div class="col-md-8">
+        <div class="row">
+
+          <div class="col-md-12 col-lg-4">
+            <input type="text" class="form-control input__field" placeholder="URL">
+          </div><!-- /col -->
+
+          <div class="col-md-12 col-lg-4">
+            <input type="text" class="form-control input__field" placeholder="Username">
+          </div><!-- /col -->
+
+          <div class="col-md-12 col-lg-4">
+            <input type="text" class="form-control input__field" placeholder="Password">
+          </div><!-- /col -->
+
+        </div><!-- /row -->
+      </div><!-- /col -->
+
+    </div><!-- /Custom STUN Server -->
+
+  </section><!-- /Form section -->
+
+
+
+
+  <!-- Form section -->
+  <section class="form__section">
+
+    <h3 class="form__section-title">Security</h3>
+
+    <!-- Public domain name -->
+    <div class="form-group input">
+
+      <label for="app-public-url" class="col-md-4 control-label input__label">
+        Public domain name
+      </label>
+
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" id="app-public-url" placeholder="URL">
+      </div>
+
+    </div><!-- /Public domain name -->
+
+    <!-- Upload to marketplace -->
+    <div class="form-group input">
+
+      <label for="app-kms" class="col-md-4 control-label input__label">
+        Upload to marketplace
+        <span class="input__subtitle">
+          Your app will be available in our store.
+        </span>
+      </label>
+
+      <div class="col-md-8">
+        <span class="btn btn--white">Add now</span>
+      </div>
+
+    </div><!-- /Upload to marketplace -->
+
+    <!-- Delete the application -->
+    <div class="form-group input">
+
+      <label for="app-kms" class="col-md-4 control-label input__label">
+        Delete the application
+        <span class="input__subtitle">
+          Use this carefull, the process is ireversible
+        </span>
+      </label>
+
+      <div class="col-md-8">
+        <span class="btn btn-danger">Delete</span>
+      </div>
+
+    </div><!-- /Delete the application -->
+
+  </section><!-- /Form section -->
+
+</form>
+

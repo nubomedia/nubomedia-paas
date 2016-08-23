@@ -65,6 +65,11 @@ repositories {
         url "http://get.openbaton.org:8081/nexus/content/groups/public"
     }
 }
+
+bootRun {
+    addResources = true
+}
+
 dependencies {
     compile 'org.openbaton:sdk:2.0.2'
     compile 'commons-dbcp:commons-dbcp:1.4'
@@ -94,7 +99,4 @@ dependencies {
 
     compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.9'
 
-
 }
-
-
