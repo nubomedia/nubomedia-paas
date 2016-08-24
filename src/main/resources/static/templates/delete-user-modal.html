@@ -1,6 +1,6 @@
 <section
   class="modal"
-  id="modalDeleteApplication"
+  id="modalDeleteUser"
   tabindex="-1"
   role="dialog"
   aria-labelledby="myModalLabel">
@@ -9,13 +9,13 @@
 
       <header class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title" id="serviceFormLabel">Are you sure you want to delete the <strong>{{application.name}}</strong> application?</h4>
+        <h4 class="modal-title" id="serviceFormLabel">Are you sure you want to delete the <strong>{{user.name}}</strong> user?</h4>
       </header>
 
       <div class="modal-footer">
         <button type="button" id="closeModal" class="btn btn--white" data-dismiss="modal">Close
         </button>
-        <button type="button" id="closeModal" class="btn btn-danger" ng-click="deleteData(application.id, 'applications')">Yes
+        <button type="button" id="closeModal" class="btn btn-danger" ng-click="deleteuser(user, 'users')">Yes
         </button>
       </div><!--footer-->
 

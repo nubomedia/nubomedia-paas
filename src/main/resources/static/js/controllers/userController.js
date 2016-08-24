@@ -13,11 +13,11 @@
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
- *  
+ *
  */
 
 var app = angular.module('app');
-app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $cookieStore, AuthService, $window) {
+app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $cookieStore, AuthService, $window, $location) {
 
     var url = $cookieStore.get('URLNb') + "/api/v1/users/";
     var urlprojects = $cookieStore.get('URLNb') + "/api/v1/projects/";
@@ -25,6 +25,11 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
     $scope.alerts = [];
     $scope.closeAlert = function (index) {
         $scope.alerts.splice(index, 1);
+    };
+
+    $scope.deleteUserModal = function (data) {
+      $scope.user = data;
+      $('#modalDeleteUser').modal('show');
     };
 
     $scope.roles = [
@@ -48,7 +53,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
         "project": ""
     };
 
-    $scope.addRole = function() { 
+    $scope.addRole = function() {
       var newRole = {
           "role": "USER",
            "project": ""
@@ -145,11 +150,14 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
     /* -- multiple delete functions END -- */
 
 
-    $scope.deleteuser = function (data) {
+    $scope.deleteuser = function (data, location) {
         http.delete(url + data.username)
             .success(function (response) {
                 showOk('User ' + data.username + ' deleted.');
                 loadTable();
+                if(location) {
+                  $location.path('/' + location);
+                }
             })
             .error(function (response, status) {
                 showError(response, status);
@@ -171,6 +179,7 @@ app.controller('UserCtrl', function ($scope, serviceAPI, $routeParams, http, $co
             .success(function (response) {
                 showOk('User ' + $scope.userObj.username + ' created.');
                 loadTable();
+                $scope.toggleCreateFormView();
             })
             .error(function (response, status) {
                 showError(response, status);

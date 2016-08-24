@@ -18,22 +18,22 @@
 
 <!-- Breadcrum container -->
 <section class="breadcrumb-container clearfix">
-    <!-- Breadcrum -->
-    <ul class="c-breadcrumb">
+  <!-- Breadcrum -->
+  <ul class="c-breadcrumb">
 
-    <li class="c-breadcrumb__item">
-      <a href="/" ng-click="resetCreateFormView()">Overview</a>
-    </li>
+  <li class="c-breadcrumb__item">
+    <a href="/" ng-click="resetCreateFormView()">Overview</a>
+  </li>
 
-    <li class="c-breadcrumb__item">
-      <a href="#/users" ng-click="resetCreateFormView()">Users</a>
-    </li>
+  <li class="c-breadcrumb__item">
+    <a href="#/users" ng-click="resetCreateFormView()">Users</a>
+  </li>
 
-    <li class="c-breadcrumb__item is-active">
-      <a href="#/users/{{user.username}}" ng-click="resetCreateFormView()">{{user.username}}</a>
-    </li>
+  <li class="c-breadcrumb__item is-active">
+    <a href="#/users/{{user.username}}" ng-click="resetCreateFormView()">{{user.username}}</a>
+  </li>
 
-    </ul><!-- Breadcrum -->
+  </ul><!-- Breadcrum -->
 </section><!-- /Breadcrum container -->
 
 
@@ -85,9 +85,26 @@
 
       </div>
 
+      <div class="form-group input">
+
+        <label for="app-kms" class="col-md-4 control-label input__label">
+          Delete the user
+          <span class="input__subtitle">
+            Use this carefull, the process is ireversible
+          </span>
+        </label>
+
+        <div class="col-md-8">
+          <button type="button" id="closeModal" class="btn btn-danger" ng-click= "deleteUserModal(user)">Yes
+        </div>
+      </div>
+
+
     </section><!-- /Form section -->
   </form>
 </section>
+
+<!-- Delete the application -->
 
 
 
@@ -127,4 +144,7 @@
     </div><!-- /modal content -->
   </div><!-- /modal dialog -->
 </section><!-- Modal -->
+
+<!-- Delete single user modal -->
+<div ng-include src="'./templates/delete-user-modal.html'"></div>
 
