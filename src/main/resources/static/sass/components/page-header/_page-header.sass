@@ -38,7 +38,10 @@
   display: flex
   align-items: center
   justify-content: center
-  height: 75px
+  height: 70px
+  position: absolute
+  top: 0
+  left: 240px
 
   .form-group
     margin: 0
@@ -52,6 +55,7 @@
       box-shadow: none
       width: 100%
       border-bottom: 1px solid $color-gray--secondary
+      border-radius: 0
 
   .btn
     border-radius: 0
@@ -326,7 +330,7 @@
 .navbar
   min-height: 70px
   border-bottom: 1px solid $color-gray--secondary
-  background-color: #FFF!important
+  background-color: #FFF !important
 
 .navbar-top-links
   margin-top: 10px
@@ -354,10 +358,9 @@
     font-weight: 300
 
   &__link
-    color: #FFF!important
+    color: #FFF !important
     text-decoration: underline
     font-weight: 500
-
 
 .logo
   width: 250px
@@ -365,13 +368,36 @@
   text-align: center
 
   img
-    width: 150px
+    width: 140px
     display: inline-block
-    margin-top: 4px
+    margin-top: 6px
+
+
+// Menu Icons
+.menu-icon
+  width: 22px
+  height: 22px
+  background-size: contain
+  background-position: center
+  background-repeat: no-repeat
+  display: inline-block
+  vertical-align: middle
+  position: relative
+  top: -2px
+
+  &.icon-cart
+    background-image: url("../img/Webapp/shopping_cart.png")
+
+  &.icon-notification
+    background-image: url("../img/Webapp/notifications.png")
 
 @media screen and (min-width: 768px)
   .sidebar
     z-index: 1
     position: absolute
-    width: 250px
+    width: 240px
     margin-top: 70px
+
+  #page-wrapper
+    margin: 0px 0 0 240px
+    border-left: $color-gray--secondary
