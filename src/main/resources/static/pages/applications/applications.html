@@ -226,18 +226,51 @@
   <!-- Form tab -->
   <tab heading="Create Application">
     <!-- Form new app -->
-    <form class="form form-horizontal form-new-app">
+    <form class="form form-horizontal form-new-app" name="formNewApp">
 
       <!-- Form section -->
       <section class="form__section">
 
         <h3 class="form__section-title">General Information</h3>
 
+        <div class="form-group input">
+
+          <!-- Label -->
+          <label
+            for="{{name}}"
+            class="col-md-4 control-label input__label">
+            Application name
+            <span class="input__subtitle">
+              <i
+                popover="{{textInfo}}"
+                popover-placement="bottom"
+                popover-trigger="mouseenter"
+                ng-mouseover="getInfos('name')">Tip: Hover me</i>
+            </span>
+          </label><!-- /Label -->
+
+          <!-- Column -->
+          <div class="col-md-8">
+            <input
+              class="form-control input__field"
+              type="text"
+              id="name"
+              name="name"
+              ng-model="appCreate.name"
+              required>
+
+            <p ng-show="formNewApp.name.$error.required" class="text-danger form__message">
+              *Application name is required.
+            </p>
+          </div><!-- /Column -->
+
+        </div><!-- /URL, NAME, REPLICAS_NUMBER -->
+
         <!-- URL, NAME, REPLICAS_NUMBER -->
         <div
           class="form-group input"
           ng-repeat="(key,value) in appCreate"
-          ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut'">
+          ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut' && key!='name'">
 
           <!-- Label -->
           <label
@@ -266,8 +299,7 @@
         </div><!-- /URL, NAME, REPLICAS_NUMBER -->
 
         <!-- Flavour -->
-        <div
-          class="form-group input">
+        <div class="form-group input">
 
           <!-- Label -->
           <label

@@ -1,5 +1,7 @@
 // --------------------------------------------------------------------------
 //  @Form
+//  Note for sublime sass formatter users:  sass format can't be complete
+//  because of -ms-input-placeholder and other stuff I guess
 // --------------------------------------------------------------------------
 .form
   padding: 20px 0
@@ -19,6 +21,12 @@
   .panel-heading
     padding: 0
     border: none
+
+  &__message
+    font-size: 12px
+
+    &:last-child
+      margin-bottom: 0
 
   &__group-label
     font-size: 15px

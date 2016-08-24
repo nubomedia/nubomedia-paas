@@ -13,7 +13,7 @@
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
- *  
+ *
  */
 
 require({
@@ -28,6 +28,7 @@ require({
         vis: "../dist/js/vis",
         underscore: "libs/underscore/underscore-min",
         angular: "libs/angular/angular.min",
+        angular_messages: "../bower_components/angular-messages/angular-messages.min",
         angular_route: "libs/angular/angular-route.min",
         angular_cookies: "libs/angular/angular-cookies.min",
         ui_bootstrap: "libs/angular/ui-bootstrap-tpls-0.10.0.min",
@@ -90,6 +91,9 @@ require({
         app: {
             deps: ['angular', 'angular_route', 'angular_sanitize', 'ui_bootstrap']
         },
+        angular_messages: {
+            deps: ['angular']
+        },
         angularclipboard: {
             deps: ['angular']
         },
@@ -129,6 +133,7 @@ require({
     'sb_admin_2',
     'underscore',
     'angular',
+    'angular_messages',
     'angular_route',
     'vis',
     'indexController',
