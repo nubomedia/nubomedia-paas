@@ -159,6 +159,10 @@ public class AppManager {
     app.setResourceOK(false);
     app.setFlavor(request.getFlavor());
     app.setStatus(AppStatus.CREATED);
+    app.setCdnConnector(request.isCdnConnector());
+    app.setCloudRepository(request.isCloudRepository());
+    app.setScaleInOut(request.getScaleInOut());
+    app.setScaleOutThreshold(request.getScale_out_threshold());
     app.setCreatedBy(user);
     app.setCreatedAt(new Date());
 
