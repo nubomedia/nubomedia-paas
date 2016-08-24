@@ -64,8 +64,7 @@ public class CustomUserDetailsService
 
   @Value("${paas.security.admin.password:nub0m3d14}")
   private String adminPwd;
-  //@Value("${paas.security.guest.password:guest}")
-  //private String guestPwd;
+
   @Autowired private ProjectManagement projectManagement;
 
   @Value("${paas.security.project.name:admin}")
@@ -73,7 +72,7 @@ public class CustomUserDetailsService
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return inMemManager.loadUserByUsername(username);
+    return inMemManager.loadUserByUsername(username.toLowerCase());
   }
 
   @Override
@@ -183,7 +182,7 @@ public class CustomUserDetailsService
 
   @Override
   public void deleteUser(String username) {
-    inMemManager.deleteUser(username);
+    inMemManager.deleteUser(username.toLowerCase());
     userRepository.delete(userRepository.findFirstByUsername(username).getId());
   }
 
@@ -196,7 +195,6 @@ public class CustomUserDetailsService
     if (!BCrypt.checkpw(oldPassword, user.getPassword())) {
       throw new UnauthorizedUserException("Old password is wrong");
     }
-    log.debug("changing pwd");
     inMemManager.changePassword(oldPassword, BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
     if (!(authentication instanceof AnonymousAuthenticationToken)) {
       user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
@@ -206,7 +204,7 @@ public class CustomUserDetailsService
 
   @Override
   public boolean userExists(String username) {
-    return inMemManager.userExists(username)
+    return inMemManager.userExists(username.toLowerCase())
         && (userRepository.findFirstByUsername(username) != null);
   }
 }
