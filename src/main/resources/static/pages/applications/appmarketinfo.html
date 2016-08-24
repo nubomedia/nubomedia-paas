@@ -89,22 +89,6 @@
       </div>
     </div>
 
-    <!-- Upload to marketplace -->
-    <div class="form-group input">
-
-      <label for="app-kms" class="col-md-4 control-label input__label">
-        Upload to marketplace
-        <span class="input__subtitle">
-          Your app will be available in our store.
-        </span>
-      </label>
-
-      <div class="col-md-8">
-        <span class="btn btn--white" ng-click="sendApp('market', 'fromSettings', application)">Add now</span>
-      </div>
-
-    </div><!-- /Upload to marketplace -->
-
     <!-- Delete the application -->
     <div class="form-group input">
 
@@ -116,7 +100,7 @@
       </label>
 
       <div class="col-md-8">
-        <span class="btn btn-danger" ng-click="deleteAppModal(application)">Delete</span>
+        <span class="btn btn-danger" ng-click="deleteMarketAppModal(application, 'marketapps')">Delete</span>
       </div>
 
   </section><!-- /Form section -->

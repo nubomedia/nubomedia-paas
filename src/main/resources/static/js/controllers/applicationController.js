@@ -503,11 +503,14 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         showError(status, data);
       });
   };
-  $scope.deleteAppMarket = function(id) {
+  $scope.deleteAppMarket = function(id, location) {
     http.delete(marketurl + id)
       .success(function(response) {
         showOk('Deleted App with id: ' + id + ' done.');
         loadTable();
+        if(location) {
+          $location.path('/' + location);
+        }
       })
       .error(function(data, status) {
         showError(status, data);
