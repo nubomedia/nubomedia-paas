@@ -144,7 +144,6 @@ app.controller('IndexCtrl', function($scope, $cookieStore, $location, AuthServic
 
     console.log($scope.username);
 
-
     /**
      * Delete the session of the user
      * @returns {undefined}

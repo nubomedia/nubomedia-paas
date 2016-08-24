@@ -83,6 +83,21 @@
 
 
 
+<alert
+  ng-repeat="alert in alerts"
+  type="alert.type"
+  close="closeAlert($index)">
+  <div ng-bind-html="alert.msg"></div>
+</alert>
+<button
+  class="btn btn--white btn--clear-alert"
+  ng-if="alerts.length > 1"
+  ng-click="clearAlerts(alerts)">Clear alerts
+</button>
+
+
+
+
 <!-- Applications -->
 <section class="applications-container" ng-show="!createFormViewIsVisible">
 
@@ -225,6 +240,7 @@
 
   <!-- Form tab -->
   <tab heading="Create Application">
+
     <!-- Form new app -->
     <form class="form form-horizontal form-new-app" name="formNewApp">
 
@@ -740,9 +756,6 @@
   <div ng-include src="'./templates/modal-private-key.html'"></div>
 </section><!-- /Modal -->
 
-
-
-
 <!-- Modal -->
 <div class="modal fade" tabindex="-1" role="dialog" id="deleteModal">
   <div class="modal-dialog">
@@ -788,7 +801,6 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /Modal -->
-
 
 <!-- Delete single app modal -->
 <div ng-include src="'./templates/delete-app-modal.html'"></div>

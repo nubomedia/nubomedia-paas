@@ -85,6 +85,23 @@
 
 
 
+
+
+<alert
+  ng-repeat="alert in alerts"
+  type="alert.type"
+  close="closeAlert($index)">
+  <div ng-bind-html="alert.msg"></div>
+</alert>
+<button
+  class="btn btn--white btn--clear-alert"
+  ng-if="alerts.length > 1"
+  ng-click="clearAlerts(alerts)">Clear alerts
+</button>
+
+
+
+
 <!-- Applications -->
 <section class="applications-container" ng-show="!createFormViewIsVisible" ng-if="applications.length > 0">
 

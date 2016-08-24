@@ -370,6 +370,10 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       });
   }
 
+  $scope.clearAlerts = function () {
+    $scope.alerts = [];
+  };
+
   $scope.closeAlert = function(index) {
     $scope.alerts.splice(index, 1);
   };
