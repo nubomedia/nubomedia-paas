@@ -24,7 +24,6 @@ import com.google.gson.JsonParseException;
 import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.catalogue.nfvo.EndpointType;
 import org.openbaton.catalogue.nfvo.EventEndpoint;
-import org.openbaton.catalogue.security.Project;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
@@ -51,7 +50,7 @@ public class OpenbatonEventReceiver implements CommandLineRunner {
 
   @Autowired private AppManager appManager;
 
-  private NFVORequestor nfvoRequestor;
+  @Autowired private NFVORequestor nfvoRequestor;
 
   @PreDestroy
   private void close() {
@@ -146,40 +145,6 @@ public class OpenbatonEventReceiver implements CommandLineRunner {
   @Override
   public void run(String... args) throws Exception {
     logger.debug("Creating queues");
-    this.nfvoRequestor =
-        new NFVORequestor(
-            nfvoProperties.getUsername(),
-            nfvoProperties.getPassword(),
-            "*",
-            false,
-            nfvoProperties.getIp(),
-            nfvoProperties.getPort(),
-            "1");
-    try {
-      logger.info("Finding NUBOMEDIA project");
-      boolean found = false;
-      for (Project project : nfvoRequestor.getProjectAgent().findAll()) {
-        if (project.getName().equals(nfvoProperties.getProject().getName())) {
-          found = true;
-          nfvoRequestor.setProjectId(project.getId());
-          logger.info("Found NUBOMEDIA project");
-        }
-      }
-      if (!found) {
-        logger.info("Not found NUBOMEDIA project");
-        logger.info("Creating NUBOMEDIA project");
-        Project project = new Project();
-        project.setDescription("NUBOMEDIA project");
-        project.setName(nfvoProperties.getProject().getName());
-        project = nfvoRequestor.getProjectAgent().create(project);
-        nfvoRequestor.setProjectId(project.getId());
-        logger.info("Created NUBOMEDIA project " + project);
-      }
-    } catch (SDKException e) {
-      throw new SDKException(e.getMessage());
-    } catch (ClassNotFoundException e) {
-      throw new SDKException(e.getMessage());
-    }
     this.createEventCreationEndpoint();
     this.createEventErrorEndpoint();
   }

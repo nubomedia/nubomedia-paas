@@ -18,7 +18,6 @@
 
 package org.project.openbaton.nubomedia.paas.security.authorization;
 
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
@@ -33,7 +32,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by lto on 24/05/16.

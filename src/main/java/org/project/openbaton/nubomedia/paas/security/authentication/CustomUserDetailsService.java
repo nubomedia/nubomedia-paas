@@ -18,10 +18,10 @@
 
 package org.project.openbaton.nubomedia.paas.security.authentication;
 
-import org.project.openbaton.nubomedia.paas.repository.security.UserRepository;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
+import org.project.openbaton.nubomedia.paas.repository.security.UserRepository;
 import org.project.openbaton.nubomedia.paas.security.interfaces.ProjectManagement;
 import org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement;
 import org.slf4j.Logger;
@@ -45,7 +45,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 @Component

@@ -25,7 +25,6 @@ import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.VimInstance;
-import org.openbaton.catalogue.security.Project;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.util.NSDUtil;
@@ -37,8 +36,6 @@ import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.QoS;
-import org.project.openbaton.nubomedia.paas.properties.NfvoProperties;
-import org.project.openbaton.nubomedia.paas.properties.VimProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,63 +54,22 @@ public class OpenbatonManager {
 
   @Autowired private VimInstance vimInstance;
 
-  @Autowired private NfvoProperties nfvoProperties;
-
-  @Autowired private VimProperties vimProperties;
-
   @Autowired private VirtualNetworkFunctionDescriptor cloudRepository;
 
   @Autowired private NSDUtil nsdUtil;
+
+  @Autowired private NFVORequestor nfvoRequestor;
 
   @Autowired
   @Qualifier("networkServiceDescriptorNubo")
   private NetworkServiceDescriptor networkServiceDescriptorNubo;
 
   private Logger logger;
-  private NFVORequestor nfvoRequestor;
-  private String apiPath;
 
   @PostConstruct
   private void init() throws IOException, SDKException {
 
     this.logger = LoggerFactory.getLogger(this.getClass());
-    this.nfvoRequestor =
-        new NFVORequestor(
-            nfvoProperties.getUsername(),
-            nfvoProperties.getPassword(),
-            "*",
-            false,
-            nfvoProperties.getIp(),
-            nfvoProperties.getPort(),
-            "1");
-    this.apiPath = "/api/v1/nubomedia/paas";
-    this.logger.info("Starting the Open Baton Manager Bean");
-
-    try {
-      logger.info("Finding NUBOMEDIA project");
-      boolean found = false;
-      for (Project project : nfvoRequestor.getProjectAgent().findAll()) {
-        if (project.getName().equals(nfvoProperties.getProject().getName())) {
-          found = true;
-          nfvoRequestor.setProjectId(project.getId());
-          logger.info("Found NUBOMEDIA project");
-        }
-      }
-      if (!found) {
-        logger.info("Not found NUBOMEDIA project");
-        logger.info("Creating NUBOMEDIA project");
-        Project project = new Project();
-        project.setDescription("NUBOMEDIA project");
-        project.setName(nfvoProperties.getProject().getName());
-        project = nfvoRequestor.getProjectAgent().create(project);
-        nfvoRequestor.setProjectId(project.getId());
-        logger.info("Created NUBOMEDIA project " + project);
-      }
-    } catch (SDKException e) {
-      throw new SDKException(e.getMessage());
-    } catch (ClassNotFoundException e) {
-      throw new SDKException(e.getMessage());
-    }
 
     try {
       this.logger.debug("Trying to create the VIM Instance " + vimInstance.getName());
