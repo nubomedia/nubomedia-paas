@@ -13,7 +13,7 @@
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
- *  
+ *
  */
 
 angular.module('app').controller('applicationsCtrl', function($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce, $timeout, $location, $rootScope, $q) {
@@ -71,6 +71,16 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
 
   $rootScope.mediaServers = [];
   $rootScope.bigDataMediaServer = [];
+
+  $scope.deleteAppModal = function (data) {
+    $scope.application = data;
+    $('#modalDeleteApplication').modal('show');
+  };
+
+  $scope.deleteMarketAppModal = function (data) {
+    $scope.application = data;
+    $('#modalDeleteMarketApplication').modal('show');
+  };
 
   $scope.createApp = function() {
     $http.get('json/request.json')
@@ -386,10 +396,9 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       })
   };
 
-  $scope.sendApp = function(value) {
+  $scope.sendApp = function(value, location) {
     var postTopology;
     var sendOk = true;
-
 
     if ($scope.appCreate.stunServerActivate) {
       if ($scope._stunServer.stunServerIp !== '')
@@ -442,13 +451,14 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     if (sendOk) {
       console.log(JSON.stringify(postTopology));
 
-      if (arguments.length > 0)
+      if (value !== '')
         http.post(marketurl, postTopology)
         .success(function(response) {
           showOk('App Saved!');
           loadTable();
           $scope.file = '';
           $scope.appJson = '';
+          $scope.toggleCreateFormView();
         })
         .error(function(data, status) {
           showError(status, data);
@@ -460,6 +470,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
           loadTable();
           $scope.file = '';
           $scope.appJson = '';
+          $scope.toggleCreateFormView();
         })
         .error(function(data, status) {
           showError(status, data);
@@ -479,11 +490,14 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.deletePort = function(index) {
     $scope.appCreate.ports.splice(index, 1);
   };
-  $scope.deleteData = function(id) {
+  $scope.deleteData = function(id, location) {
     http.delete(url + id)
       .success(function(response) {
         showOk('Deleted App with id: ' + id + ' done.');
         loadTable();
+        if(location) {
+          $location.path('/' + location);
+        }
       })
       .error(function(data, status) {
         showError(status, data);

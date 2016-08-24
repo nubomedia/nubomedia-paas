@@ -130,7 +130,7 @@
     </thead>
 
     <tbody>
-      <tr ng-repeat="data in applications| orderBy:predicate:reverse">
+      <tr ng-repeat="data in applications | orderBy:predicate:reverse">
 
         <td>
           <label class="control control--no-text control control--checkbox">
@@ -198,7 +198,7 @@
                     <a href="#applications/{{data.id}}">View</a>
                   </li>
                   <li class="c-dropdown__item">
-                    <span class="text-danger" ng-click="deleteData(data.id)">Delete</span>
+                    <span class="text-danger" ng-click="deleteAppModal(data)">Delete</span>
                   </li>
                 </ul>
 
@@ -362,7 +362,7 @@
           <div class="col-md-8">
 
             <label class="control control--inline control--checkbox">
-              <input type="checkbox" ng-model="toggle.threshold">
+              <input type="checkbox" ng-model="toggle.threshold" id="inOutThreshold" name="inOutThreshold">
               <div class="control__indicator"></div>
               Enable
             </label>
@@ -378,7 +378,12 @@
                     ng-mouseover="getInfos(key)">Tip: Hover me</i>
                 </span>
               </label>
-              <input type="number" class="form-control input__field" ng-disabled="!toggle.threshold">
+              <input
+                type="number"
+                id="{{_threshold[key]}}"
+                class="form-control input__field"
+                ng-disabled="!toggle.threshold"
+                ng-model="_threshold[key]">
             </div>
 
           </div>
@@ -588,7 +593,7 @@
                <div class="col-xs-6 col-md-3">
                  <input
                   class="form-control input__field"
-                  type="test"
+                  type="text"
                   ng-model="appCreate.ports[$index][['protocol']]">
                </div><!-- /Column -->
 
@@ -634,6 +639,7 @@
             <div class="addon addon--checkbox">
               <label class="control control--inline control--checkbox addon__container">
                 <input
+                  id="cloudRepository"
                   type="checkbox"
                   name="togglecloudRepository"
                   ng-model="appCreate.cloudRepository"
@@ -655,7 +661,7 @@
             id="sendTemplate"
             class="btn btn-primary form__submit"
             ng-class="{'disabled': disableButton}"
-            ng-click="sendApp()">
+            ng-click="sendApp('', 'applications')">
             Create
           </button>
         </div>
@@ -750,3 +756,7 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /Modal -->
+
+
+<!-- Delete single app modal -->
+<div ng-include src="'./templates/delete-app-modal.html'"></div>

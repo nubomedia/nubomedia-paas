@@ -200,7 +200,7 @@
                     <a href="#applications/{{data.id}}">View</a>
                   </li>
                   <li class="c-dropdown__item">
-                    <span class="text-danger" ng-click="deleteData(data.id)">Delete</span>
+                    <span class="text-danger" ng-click="deleteMarketAppModal(data)">Delete</span>
                   </li>
                 </ul>
 
@@ -738,3 +738,6 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </section><!-- Modal -->
+
+<!-- Delete single app modal -->
+<div ng-include src="'./templates/delete-market-app-modal.html'"></div>

@@ -123,7 +123,7 @@
 
                 <ul class="dropdown-menu c-dropdown__menu">
                   <li ng-if="data.name!==projectSelected.name" class="c-dropdown__item">
-                    <span ng-click="deleteProject(data)">Delete</span>
+                    <span ng-click="deleteProjectModal(data)">Delete</span>
                   </li>
                 </ul>
 
@@ -252,3 +252,6 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /Modal -->
+
+<!-- Delete single project modal -->
+<div ng-include src="'./templates/delete-project-modal.html'"></div>

@@ -114,6 +114,10 @@ app.controller('ProjectCtrl', function ($scope, serviceAPI, $routeParams, http, 
     $scope.selection.ids = {};
     /* -- multiple delete functions END -- */
 
+    $scope.deleteProjectModal = function (data) {
+      $scope.project = data;
+      $('#modalDeleteProject').modal('show');
+    };
 
     $scope.types = ['REST', 'RABBIT'];
     $scope.deleteProject = function (data) {
