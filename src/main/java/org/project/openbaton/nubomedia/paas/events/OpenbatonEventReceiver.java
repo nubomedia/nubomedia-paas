@@ -50,7 +50,7 @@ public class OpenbatonEventReceiver implements CommandLineRunner {
 
   @Autowired private AppManager appManager;
 
-  private NFVORequestor nfvoRequestor;
+  @Autowired private NFVORequestor nfvoRequestor;
 
   @PreDestroy
   private void close() {
@@ -145,13 +145,6 @@ public class OpenbatonEventReceiver implements CommandLineRunner {
   @Override
   public void run(String... args) throws Exception {
     logger.debug("Creating queues");
-    this.nfvoRequestor =
-        new NFVORequestor(
-            nfvoProperties.getUsername(),
-            nfvoProperties.getPassword(),
-            nfvoProperties.getIp(),
-            nfvoProperties.getPort(),
-            "1");
     this.createEventCreationEndpoint();
     this.createEventErrorEndpoint();
   }

@@ -33,9 +33,9 @@ import org.project.openbaton.nubomedia.paas.messages.*;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
+import org.project.openbaton.nubomedia.paas.properties.PaaSProperties;
 import org.project.openbaton.nubomedia.paas.properties.VnfmProperties;
 import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
-import org.project.openbaton.nubomedia.paas.properties.PaaSProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,6 +159,10 @@ public class AppManager {
     app.setResourceOK(false);
     app.setFlavor(request.getFlavor());
     app.setStatus(AppStatus.CREATED);
+    app.setCdnConnector(request.isCdnConnector());
+    app.setCloudRepository(request.isCloudRepository());
+    app.setScaleInOut(request.getScaleInOut());
+    app.setScaleOutThreshold(request.getScale_out_threshold());
     app.setCreatedBy(user);
     app.setCreatedAt(new Date());
 

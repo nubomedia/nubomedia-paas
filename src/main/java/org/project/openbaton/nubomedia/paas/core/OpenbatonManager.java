@@ -20,6 +20,7 @@ package org.project.openbaton.nubomedia.paas.core;
 
 import org.openbaton.catalogue.mano.common.LifecycleEvent;
 import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
+import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
@@ -35,7 +36,6 @@ import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.QoS;
-import org.project.openbaton.nubomedia.paas.properties.NfvoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +44,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by lto on 24/09/15.
@@ -56,33 +54,23 @@ public class OpenbatonManager {
 
   @Autowired private VimInstance vimInstance;
 
-  @Autowired private NfvoProperties nfvoProperties;
-
   @Autowired private VirtualNetworkFunctionDescriptor cloudRepository;
 
   @Autowired private NSDUtil nsdUtil;
+
+  @Autowired private NFVORequestor nfvoRequestor;
 
   @Autowired
   @Qualifier("networkServiceDescriptorNubo")
   private NetworkServiceDescriptor networkServiceDescriptorNubo;
 
   private Logger logger;
-  private NFVORequestor nfvoRequestor;
-  private String apiPath;
 
   @PostConstruct
-  private void init() throws IOException {
+  private void init() throws IOException, SDKException {
 
     this.logger = LoggerFactory.getLogger(this.getClass());
-    this.nfvoRequestor =
-        new NFVORequestor(
-            nfvoProperties.getUsername(),
-            nfvoProperties.getPassword(),
-            nfvoProperties.getIp(),
-            nfvoProperties.getPort(),
-            "1");
-    this.apiPath = "/api/v1/nubomedia/paas";
-    this.logger.info("Starting the Open Baton Manager Bean");
+
     try {
       this.logger.debug("Trying to create the VIM Instance " + vimInstance.getName());
       vimInstance = this.nfvoRequestor.getVimInstanceAgent().create(vimInstance);
@@ -184,8 +172,19 @@ public class OpenbatonManager {
 
     targetNSD = nfvoRequestor.getNetworkServiceDescriptorAgent().create(targetNSD);
     mediaServerGroup.setNsdID(targetNSD.getId());
+    HashMap<String, ArrayList<String>> vduVimInstances = new HashMap<>();
+    for (VirtualNetworkFunctionDescriptor vnfd : targetNSD.getVnfd()) {
+      for (VirtualDeploymentUnit vdu : vnfd.getVdu()) {
+        vduVimInstances.put(vdu.getName(), (ArrayList<String>) vdu.getVimInstanceName());
+      }
+    }
+    ArrayList<String> keys = new ArrayList<>();
+    //    keys.add(vimProperties.getKeypair());
+
     NetworkServiceRecord nsr =
-        nfvoRequestor.getNetworkServiceRecordAgent().create(targetNSD.getId());
+        nfvoRequestor
+            .getNetworkServiceRecordAgent()
+            .create(targetNSD.getId(), vduVimInstances, keys);
     logger.debug("NSR " + nsr.toString());
     mediaServerGroup.setNsrID(nsr.getId());
     logger.debug("Result " + mediaServerGroup.toString());

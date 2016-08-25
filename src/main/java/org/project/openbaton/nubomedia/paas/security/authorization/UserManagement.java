@@ -22,16 +22,14 @@ import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
-import org.project.openbaton.nubomedia.paas.repository.security.UserRepository;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
+import org.project.openbaton.nubomedia.paas.repository.security.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
@@ -58,13 +56,6 @@ public class UserManagement
   private Logger log = LoggerFactory.getLogger(this.getClass());
 
   @Override
-  public User getCurrentUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String currentUserName = authentication.getName();
-    return query(currentUserName);
-  }
-
-  @Override
   public User add(User user) throws BadRequestException, NotFoundException, ForbiddenException {
     log.debug("Adding new user: " + user);
 
@@ -86,7 +77,7 @@ public class UserManagement
 
     org.springframework.security.core.userdetails.User userToAdd =
         new org.springframework.security.core.userdetails.User(
-            user.getUsername(),
+            user.getUsername().toLowerCase(),
             BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12)),
             user.isEnabled(),
             true,
@@ -106,7 +97,7 @@ public class UserManagement
     for (Role role : user.getRoles()) {
       projectManagement.removeUser(role.getProject(), user.getUsername());
     }
-    userDetailsManager.deleteUser(user.getUsername());
+    userDetailsManager.deleteUser(user.getUsername().toLowerCase());
     userRepository.delete(user);
   }
 
@@ -115,7 +106,7 @@ public class UserManagement
       throws ForbiddenException, BadRequestException, NotFoundException {
     log.debug("Updating user:" + new_user);
     User user = query(new_user.getId());
-    if (!user.getUsername().equals(new_user.getUsername()))
+    if (!user.getUsername().toLowerCase().equals(new_user.getUsername().toLowerCase()))
       throw new ForbiddenException("Forbidden to change the username");
     new_user.setPassword(user.getPassword());
 
@@ -161,7 +152,7 @@ public class UserManagement
 
     org.springframework.security.core.userdetails.User userToUpdate =
         new org.springframework.security.core.userdetails.User(
-            new_user.getUsername(),
+            new_user.getUsername().toLowerCase(),
             new_user.getPassword(),
             new_user.isEnabled(),
             true,
