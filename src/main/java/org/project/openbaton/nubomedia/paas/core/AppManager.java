@@ -78,9 +78,9 @@ public class AppManager {
     if (token == null) {
       throw new UnauthorizedException("No auth-token header");
     }
-    if (request.getName().length() > 18) {
-      throw new NameStructureException("Name is too long");
-    }
+    //    if (request.getName().length() > 18) {
+    //      throw new NameStructureException("Name is too long");
+    //    }
     if (request.getName().contains(".")) {
       throw new NameStructureException("Name can't contains dots");
     }
