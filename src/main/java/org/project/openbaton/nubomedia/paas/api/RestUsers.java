@@ -165,9 +165,10 @@ public class RestUsers {
   }
 
   @RequestMapping(value = "current", method = RequestMethod.GET)
-  public User findCurrentUser() throws ForbiddenException, UnauthorizedException {
-    User user = userManagement.getCurrentUser();
-    user.setPassword("********");
+  public User findCurrentUser()
+      throws ForbiddenException, UnauthorizedException, NotFoundException {
+    User user = getCurrentUser();
+    user.setPassword(null);
     log.trace("Found User: " + user);
     return user;
   }

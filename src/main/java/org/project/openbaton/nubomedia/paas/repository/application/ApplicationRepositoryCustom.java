@@ -18,8 +18,6 @@
 
 package org.project.openbaton.nubomedia.paas.repository.application;
 
-import org.openbaton.catalogue.mano.record.VNFRecordDependency;
-import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 
 /**

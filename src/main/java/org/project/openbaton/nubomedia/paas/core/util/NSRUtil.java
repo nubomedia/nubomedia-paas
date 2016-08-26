@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -39,7 +40,12 @@ public class NSRUtil {
     for (VirtualDeploymentUnit vdu : vnfr.getVdu()) {
       for (VNFCInstance instance : vdu.getVnfc_instance()) {
         logger.debug("found instance " + instance.getHostname() + " getting IPs");
-        floatingIPs.add(instance.getFloatingIps().iterator().next().getIp());
+        Iterator<Ip> ipIterator = instance.getFloatingIps().iterator();
+        if (ipIterator.hasNext()) {
+          floatingIPs.add(ipIterator.next().getIp());
+        } else {
+          logger.warn("Not found any floating ip for " + instance.getHostname());
+        }
       }
     }
     return floatingIPs;

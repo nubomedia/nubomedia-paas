@@ -22,13 +22,13 @@ import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundExcept
 import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
-import org.project.openbaton.nubomedia.paas.messages.NubomediaAppNotFoundMessage;
-import org.project.openbaton.nubomedia.paas.messages.NubomediaDupMessage;
-import org.project.openbaton.nubomedia.paas.messages.NubomediaUnauthorizedMessage;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.NameStructureException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
+import org.project.openbaton.nubomedia.paas.messages.NubomediaAppNotFoundMessage;
+import org.project.openbaton.nubomedia.paas.messages.NubomediaDupMessage;
+import org.project.openbaton.nubomedia.paas.messages.NubomediaUnauthorizedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;

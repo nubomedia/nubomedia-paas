@@ -33,9 +33,9 @@ import org.project.openbaton.nubomedia.paas.messages.*;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
+import org.project.openbaton.nubomedia.paas.properties.PaaSProperties;
 import org.project.openbaton.nubomedia.paas.properties.VnfmProperties;
 import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
-import org.project.openbaton.nubomedia.paas.properties.PaaSProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,6 +159,10 @@ public class AppManager {
     app.setResourceOK(false);
     app.setFlavor(request.getFlavor());
     app.setStatus(AppStatus.CREATED);
+    app.setCdnConnector(request.isCdnConnector());
+    app.setCloudRepository(request.isCloudRepository());
+    app.setScaleInOut(request.getScaleInOut());
+    app.setScaleOutThreshold(request.getScale_out_threshold());
     app.setCreatedBy(user);
     app.setCreatedAt(new Date());
 
@@ -259,7 +263,6 @@ public class AppManager {
                   cdnServerIp);
 
         } catch (ResourceAccessException e) {
-          obmanager.deleteDescriptor(mediaServerGroup.getNsdID());
           app.setStatus(AppStatus.FAILED);
           appRepo.save(app);
         }
@@ -270,7 +273,6 @@ public class AppManager {
         appRepo.save(app);
         return;
       }
-      obmanager.deleteDescriptor(mediaServerGroup.getNsdID());
       app.setRoute(route);
       appRepo.save(app);
     } else if (evt.getAction().equals(Action.ERROR)) {
@@ -311,21 +313,22 @@ public class AppManager {
       String name = app.getName();
       String projectName = app.getProjectName();
 
-      checkAppStatus(app);
-
+      obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
+      obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
       appRepo.delete(app);
       return new NubomediaDeleteAppResponse(id, name, projectName, 200);
     }
 
     if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
-      obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
       obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
+      obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
       appRepo.delete(app);
 
       return new NubomediaDeleteAppResponse(id, app.getName(), app.getProjectName(), 200);
     }
 
     obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
+    obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
     HttpStatus resDelete = HttpStatus.BAD_REQUEST;
     try {
       resDelete = osmanager.deleteApplication(token, app.getName());
@@ -356,41 +359,7 @@ public class AppManager {
 
     logger.debug("Deleting " + apps);
     for (Application app : apps) {
-      if (!app.isResourceOK()) {
-        checkAppStatus(app);
-        appRepo.delete(app);
-        response
-            .getResponses()
-            .add(
-                new NubomediaDeleteAppResponse(
-                    app.getId(), app.getName(), app.getProjectName(), 200));
-        break;
-      }
-
-      if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
-        obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
-        appRepo.delete(app);
-        response
-            .getResponses()
-            .add(
-                new NubomediaDeleteAppResponse(
-                    app.getId(), app.getName(), app.getProjectName(), 200));
-        break;
-      }
-      obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
-      HttpStatus resDelete = HttpStatus.BAD_REQUEST;
-      try {
-        resDelete = osmanager.deleteApplication(token, app.getName());
-      } catch (ResourceAccessException e) {
-        logger.info("PaaS Missing");
-      }
-
-      appRepo.delete(app);
-      response
-          .getResponses()
-          .add(
-              new NubomediaDeleteAppResponse(
-                  app.getId(), app.getName(), app.getProjectName(), resDelete.value()));
+      response.getResponses().add(deleteApp(app.getProjectId(), app.getId()));
     }
     for (NubomediaDeleteAppResponse singleRes : response.getResponses()) {
       if (singleRes.getCode() != 200) {
@@ -401,19 +370,6 @@ public class AppManager {
     }
     response.setMessage("All applications of this project were removed successfully");
     return response;
-  }
-
-  private void checkAppStatus(Application app) {
-    if (app.getStatus().equals(AppStatus.CREATED)
-        || app.getStatus().equals(AppStatus.INITIALIZING)
-        || app.getStatus().equals(AppStatus.FAILED)) {
-      logger.debug("media server group: " + app.getMediaServerGroup());
-      obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
-      if (!app.getStatus().equals(AppStatus.FAILED)
-          && obmanager.existRecord(app.getMediaServerGroup().getNsrID())) {
-        obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
-      }
-    }
   }
 
   public NubomediaBuildLogs getBuildLogs(String projectId, String id)

@@ -75,7 +75,7 @@ bootRun {
 }
 
 dependencies {
-    compile 'org.openbaton:sdk:2.0.2'
+    compile 'org.openbaton:sdk:2.1.3-SNAPSHOT'
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'mysql:mysql-connector-java:5.1.35'
     compile 'org.springframework.boot:spring-boot-starter-test:' + springBootVersion

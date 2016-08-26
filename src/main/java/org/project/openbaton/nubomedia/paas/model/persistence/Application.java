@@ -45,6 +45,13 @@ public class Application {
   private Flavor flavor;
   private AppStatus status;
 
+  private boolean cdnConnector;
+  private boolean cloudRepository;
+
+  private int scaleInOut;
+
+  private double scaleOutThreshold;
+
   private String createdBy;
 
   private Date createdAt;
@@ -73,6 +80,10 @@ public class Application {
       String projectId,
       String route,
       String gitURL,
+      boolean cdnConnector,
+      boolean cloudRepository,
+      int scaleInOut,
+      double scaleOutThreshold,
       String createdBy,
       Date createdAt,
       List<Integer> targetPorts,
@@ -88,6 +99,10 @@ public class Application {
     this.projectId = projectId;
     this.route = route;
     this.gitURL = gitURL;
+    this.cdnConnector = cdnConnector;
+    this.cloudRepository = cloudRepository;
+    this.scaleInOut = scaleInOut;
+    this.scaleOutThreshold = scaleOutThreshold;
     this.createdBy = createdBy;
     this.createdAt = createdAt;
     this.targetPorts = targetPorts;
@@ -245,6 +260,38 @@ public class Application {
     this.createdAt = createdAt;
   }
 
+  public boolean isCdnConnector() {
+    return cdnConnector;
+  }
+
+  public void setCdnConnector(boolean cdnConnector) {
+    this.cdnConnector = cdnConnector;
+  }
+
+  public boolean isCloudRepository() {
+    return cloudRepository;
+  }
+
+  public void setCloudRepository(boolean cloudRepository) {
+    this.cloudRepository = cloudRepository;
+  }
+
+  public int getScaleInOut() {
+    return scaleInOut;
+  }
+
+  public void setScaleInOut(int scaleInOut) {
+    this.scaleInOut = scaleInOut;
+  }
+
+  public double getScaleOutThreshold() {
+    return scaleOutThreshold;
+  }
+
+  public void setScaleOutThreshold(double scaleOutThreshold) {
+    this.scaleOutThreshold = scaleOutThreshold;
+  }
+
   @Override
   public String toString() {
     return "Application{"
@@ -275,6 +322,17 @@ public class Application {
         + flavor
         + ", status="
         + status
+        + ", cdnConnector="
+        + cdnConnector
+        + ", cloudRepository="
+        + cloudRepository
+        + ", scaleInOut="
+        + scaleInOut
+        + ", scaleOutThreshold="
+        + scaleOutThreshold
+        + ", createdBy='"
+        + createdBy
+        + '\''
         + ", createdAt="
         + createdAt
         + ", resourceOK="

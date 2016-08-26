@@ -19,7 +19,6 @@
 package org.project.openbaton.nubomedia.paas.repository.msgroup;
 
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
-import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.springframework.data.repository.CrudRepository;
 
 /**

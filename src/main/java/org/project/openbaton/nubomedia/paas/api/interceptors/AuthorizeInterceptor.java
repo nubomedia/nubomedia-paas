@@ -20,7 +20,6 @@ package org.project.openbaton.nubomedia.paas.api.interceptors;
 
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
-import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;

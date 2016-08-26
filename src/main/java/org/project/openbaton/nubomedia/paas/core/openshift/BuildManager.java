@@ -18,9 +18,9 @@
 
 package org.project.openbaton.nubomedia.paas.core.openshift;
 
-import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
+import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.openshift.RouteConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

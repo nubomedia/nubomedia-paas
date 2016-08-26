@@ -18,7 +18,6 @@
 
 package org.project.openbaton.nubomedia.paas.security.authorization;
 
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
@@ -33,7 +32,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by lto on 24/05/16.
@@ -90,11 +91,11 @@ public class ProjectManagement
   public Project update(Project new_project)
       throws NotFoundException, ForbiddenException, BadRequestException {
     Project project = projectRepository.findFirstById(new_project.getId());
-    if (!project.getName().equals(new_project.getName())) {
-      throw new ForbiddenException("Forbidden to change the project name");
-    }
     if (project == null) {
       throw new NotFoundException("Not found project " + new_project.getId());
+    }
+    if (!project.getName().equals(new_project.getName())) {
+      throw new ForbiddenException("Forbidden to change the project name");
     }
     project.setDescription(new_project.getDescription());
     for (String username : project.getUsers().keySet()) {

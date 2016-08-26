@@ -21,7 +21,6 @@ package org.project.openbaton.nubomedia.paas.api;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.core.OpenShiftManager;
-import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;

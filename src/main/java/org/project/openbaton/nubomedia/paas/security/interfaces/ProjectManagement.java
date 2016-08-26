@@ -26,8 +26,6 @@ import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
 
-import java.util.Map;
-
 /**
  * Created by lto on 24/05/16.
  */
