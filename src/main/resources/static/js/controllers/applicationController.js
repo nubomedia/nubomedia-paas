@@ -31,7 +31,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
   //console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
 
-
   if (angular.isUndefined($cookieStore.get('server-ip'))) {
     http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
       .success(function(data) {
@@ -165,6 +164,9 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         $scope.application = data;
         $scope.applicationJSON = JSON.stringify(data, undefined, 4);
         loadMediaManeger();
+        $scope.mediaServerProgress = function() {
+          return $scope.application.mediaServerGroup.floatingIPs.length * 100 / $scope.application.scaleInOut + '%';
+        };
         google.charts.load('current', {
           'packages': ['corechart']
         });

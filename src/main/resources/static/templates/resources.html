@@ -8,17 +8,21 @@
   <!-- Progress container -->
   <div class="progress-container">
     <span class="progress-server"></span>
-    <p class="progress-info progress-info--right">Max: 20</p>
+    <p class="progress-info progress-info--right">
+      Max: {{application.scaleInOut}}
+    </p>
     <p class="progress-info progress-notification progress-info--left">Information</p>
     <div class="progress">
       <div
         class="progress-bar"
         role="progressbar"
-        style="width: 50%"
+        ng-style="{'width': mediaServerProgress()}"
         aria-valuenow="11"
         aria-valuemin="0"
-        aria-valuemax="20">
-<!--         <span class="progress-label">test</span> -->
+        aria-valuemax="{{application.scaleInOut}}">
+        <span class="progress-label">
+          {{mediaServerProgress()}}
+        </span>
       </div>
     </div>
   </div><!-- Progress container -->
@@ -32,12 +36,14 @@
 <section class="section-scale">
   <div class="section-scale__column section-scale__in">
     <span class="nm-icon icon-arrow-right"></span>
-    Scale IN treshold <span class="section-scale__number-in">4</span>
+    Scale InOut
+    <span class="section-scale__number-in">{{application.scaleInOut}}</span>
   </div>
 
   <div class="section-scale__column section-scale__out">
     <span class="nm-icon icon-arrow-left"></span>
-    Scale OUT treshold <span class="section-scale__number-out">4</span>
+    Scale OutThreshold
+    <span class="section-scale__number-out">{{application.scaleOutThreshold}}</span>
   </div>
 
 </section><!-- /Section scale -->
@@ -58,7 +64,7 @@
   <section class="addons-container">
 
     <!-- Addon -->
-    <article class="addon">
+    <article class="addon" ng-show="application.cdnConnector">
       <div class="addon__container">
         <div class="addon__content">
           <span class="addon__image cdn"></span>
@@ -68,7 +74,7 @@
     </article><!-- /Addon -->
 
     <!-- Addon -->
-    <article class="addon">
+    <article class="addon" ng-show="application.cloudRepository">
       <div class="addon__container">
         <div class="addon__content">
           <span class="addon__image cloud"></span>
