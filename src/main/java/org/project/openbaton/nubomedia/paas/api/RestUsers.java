@@ -237,4 +237,35 @@ public class RestUsers {
     }
     return false;
   }
+
+  /**
+   * Updates the User
+   *
+   * @param username : The User to reset the password
+   * @return User The User updated
+   */
+  @RequestMapping(
+    value = "{username}/reset",
+    method = RequestMethod.PUT,
+    consumes = MediaType.APPLICATION_JSON_VALUE,
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  @ResponseStatus(HttpStatus.OK)
+  public User resetPassword(
+      @PathVariable("username") String username, @RequestBody JsonObject password)
+      throws ForbiddenException, BadRequestException, NotFoundException {
+    log.debug("Reseting password for User " + username);
+    User userToReset = userManagement.queryByName(username);
+    if (userToReset == null) {
+      throw new BadRequestException("Not found user " + username);
+    }
+    User user = null;
+    if (isAdmin()) {
+      user = userManagement.resetPassword(userToReset, password.get("password").getAsString());
+      user.setPassword(null);
+    } else {
+      throw new ForbiddenException("Forbidden to update a user");
+    }
+    return user;
+  }
 }
