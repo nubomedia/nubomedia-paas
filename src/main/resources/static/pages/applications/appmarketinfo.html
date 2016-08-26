@@ -47,13 +47,15 @@
 </alert>
 
 
+
+
 <!-- Form app settings-->
 <form class="form form-horizontal form-app-settings">
   <!-- Form section -->
   <section class="form__section">
 
     <h3 class="form__section-title clearfix">
-      All settingss
+      All settings
       <p class="pull-right"><a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a></p>
     </h3>
 
@@ -245,6 +247,19 @@
   <!-- Actions -->
   <section class="form__section">
     <h3 class="form__section-title">Actions</h3>
+
+    <!-- Launch application -->
+    <div class="form-group input">
+
+      <label for="app-kms" class="col-md-4 control-label input__label">
+        Launch the application
+      </label>
+
+      <div class="col-md-8">
+        <span class="btn btn--white" ng-click="launch(application.id)">Launch</span>
+      </div>
+    </div>
+
     <!-- Delete the application -->
     <div class="form-group input">
 

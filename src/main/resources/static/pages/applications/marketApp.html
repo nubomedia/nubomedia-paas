@@ -226,7 +226,10 @@
 
                 <ul class="dropdown-menu c-dropdown__menu">
                   <li class="c-dropdown__item">
-                    <a href="#applications/{{data.id}}">View</a>
+                    <span href="#applications/{{data.id}}">View</a>
+                  </li>
+                  <li class="c-dropdown__item">
+                    <span ng-click="launch(data.id)">Launch</span>
                   </li>
                   <li class="c-dropdown__item">
                     <span class="text-danger" ng-click="deleteMarketAppModal(data)">Delete</span>
