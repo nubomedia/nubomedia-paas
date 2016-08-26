@@ -1,24 +1,42 @@
 .c-table
+  color: #70777c
+  p
+    margin-bottom: 0
+
   .control
     margin: 0
 
   th
     border-bottom: none!important
-    padding: 15px !important
+    padding: 20px 10px !important
     background: #FFF!important
     text-transform: uppercase
     font-size: 14px
     vertical-align: middle!important;
 
   td
-    padding: 20px 10px!important
+    padding: 15px 10px!important
     vertical-align: middle!important
     border: none !important
 
+  th,
+  td
+    text-align: left !important
+
   th:first-child,
   td:first-child
-    text-align: center !important
+    width: 80px
+    padding-left: 15px!important
 
+  &.simple-table
+    th:last-child,
+    td:last-child
+      padding-right: 15px!important
+      text-align: right!important
+
+    th:last-child
+      width: 100px;
+      text-align: center!important
 
 th[ng-click]
   cursor: pointer!important
@@ -26,5 +44,5 @@ th[ng-click]
 .table-striped > tbody > tr:nth-of-type(odd)
   background-color: #f1f1f1
 
-.table-striped > tbody > tr:nth-of-type(event)
+.table-striped > tbody > tr
   background-color: #f9f9f9

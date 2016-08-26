@@ -60,9 +60,20 @@
     <div ng-bind-html="alert.msg"></div>
   </alert>
 
+  <form class="search-form search-form--table">
+    <span class="btn glyphicon glyphicon-search"></span>
+    <div class="form-group">
+      <input
+        type="text"
+        class="form-control"
+        ng-model="searchInput"
+        placeholder="Search for a project">
+    </div>
+  </form>
+
 
   <section class="table-responsive" ng-show="projects.length>0">
-    <table class="table table-striped table-hover tablesorter c-table">
+    <table class="table table-striped tablesorter c-table simple-table">
 
       <thead>
         <tr>
@@ -74,12 +85,12 @@
             </label>
           </th>
 
-          <th ng-click="predicate = 'id'; reverse = !reverse">
-            Id <i class="fa fa-sort"></i>
+          <th ng-click="predicate = 'name'; reverse = !reverse">
+            Project name <i class="fa fa-sort"></i>
           </th>
 
-          <th ng-click="predicate = 'name'; reverse = !reverse">
-            name <i class="fa fa-sort"></i>
+          <th ng-click="predicate = 'id'; reverse = !reverse">
+            Id <i class="fa fa-sort"></i>
           </th>
 
           <th>Actions <i class="fa"></i></th>
@@ -88,8 +99,7 @@
       </thead>
 
         <tbody>
-          <tr
-            ng-repeat="data in projects | filter:search|orderBy:predicate:reverse">
+          <tr ng-repeat="data in projects | filter:search|orderBy:predicate:reverse | filter: searchInput">
 
             <td>
               <label
@@ -104,9 +114,9 @@
               </label>
             </td>
 
-            <td>{{data.id}}</td>
-
             <td>{{data.name}}</td>
+
+            <td>{{data.id}}</td>
 
             <td>
               <!-- Dropdown -->

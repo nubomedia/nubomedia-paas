@@ -95,13 +95,12 @@
   ng-click="clearAlerts(alerts)">Clear alerts
 </button>
 
-
-
-
 <!-- Applications -->
 <section class="applications-container" ng-show="!createFormViewIsVisible">
 
-  <table class="table tablesorter aplications-table c-table" id="topoTabletable">
+  <table
+    class="table tablesorter aplications-table c-table"
+    id="topoTabletable">
 
     <thead>
       <tr>
@@ -114,6 +113,7 @@
         </th>
 
         <th>
+
           <!-- Dropdown -->
           <div class="list-btn dropdown c-dropdown">
 
@@ -139,13 +139,25 @@
             </ul>
 
           </div><!-- /Dropdown -->
+
+          <form class="search-form">
+            <span class="btn glyphicon glyphicon-search"></span>
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control"
+                ng-model="searchInput"
+                placeholder="Search for an applicaiton">
+            </div>
+          </form>
+
         </th>
 
       </tr>
     </thead>
 
     <tbody>
-      <tr ng-repeat="data in applications | orderBy:predicate:reverse">
+      <tr ng-repeat="data in applications | orderBy:predicate:reverse | filter: searchInput">
 
         <td>
           <label class="control control--no-text control control--checkbox">

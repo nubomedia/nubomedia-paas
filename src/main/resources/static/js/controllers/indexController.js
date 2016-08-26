@@ -66,8 +66,10 @@ app.controller('LoginController', function($scope, AuthService, Session, $rootSc
     $scope.logged = $cookieStore.get('loggedNb');
     $rootScope.logged = $cookieStore.get('loggedNb');
   }
+
   $location.replace();
   console.log($scope.logged);
+
   $scope.loggedF = function() {
     return $scope.logged;
   };
