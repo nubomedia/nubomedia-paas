@@ -286,4 +286,26 @@ public class UserManagement
       if (!user.isEnabled()) throw new ForbiddenException("Forbidden to disable admin user");
     }
   }
+
+  @Override
+  public User resetPassword(User user, String newPassword) {
+    String[] roles = new String[user.getRoles().size()];
+
+    Role[] objects = user.getRoles().toArray(new Role[0]);
+    for (int i = 0; i < user.getRoles().size(); i++) {
+      roles[i] = objects[i].getRole() + ":" + objects[i].getProject();
+    }
+    org.springframework.security.core.userdetails.User userToUpdate =
+        new org.springframework.security.core.userdetails.User(
+            user.getUsername().toLowerCase(),
+            BCrypt.hashpw(newPassword, BCrypt.gensalt(12)),
+            user.isEnabled(),
+            true,
+            true,
+            true,
+            AuthorityUtils.createAuthorityList(roles));
+    user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(12)));
+    userDetailsManager.updateUser(userToUpdate);
+    return userRepository.save(user);
+  }
 }

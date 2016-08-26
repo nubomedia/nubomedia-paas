@@ -25,14 +25,17 @@ public class NubomediaDeleteAppResponse {
 
   private String id;
   private String name;
+  private String suffix;
   private String nameSpace;
   private int code;
 
   public NubomediaDeleteAppResponse() {}
 
-  public NubomediaDeleteAppResponse(String id, String name, String nameSpace, int deleteStatus) {
+  public NubomediaDeleteAppResponse(
+      String id, String name, String suffix, String nameSpace, int deleteStatus) {
     this.id = id;
     this.name = name;
+    this.suffix = suffix;
     this.nameSpace = nameSpace;
     this.code = deleteStatus;
   }
@@ -51,6 +54,14 @@ public class NubomediaDeleteAppResponse {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getSuffix() {
+    return suffix;
+  }
+
+  public void setSuffix(String suffix) {
+    this.suffix = suffix;
   }
 
   public String getNameSpace() {

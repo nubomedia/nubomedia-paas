@@ -28,13 +28,13 @@ import java.util.List;
  */
 public class MessageBuilderFactory {
 
-  public static ImageStreamConfig getImageStreamMessage(String name) {
-    ImageStreamMessageBuilder ism = new ImageStreamMessageBuilder(name);
+  public static ImageStreamConfig getImageStreamMessage(String osName) {
+    ImageStreamMessageBuilder ism = new ImageStreamMessageBuilder(osName);
     return ism.buildMessage();
   }
 
   public static BuildConfig getBuilderMessage(
-      String name,
+      String osName,
       String dockerRepo,
       String gitURL,
       String secretName,
@@ -70,7 +70,7 @@ public class MessageBuilderFactory {
     ConfigChangeTrigger trigger = new ConfigChangeTrigger("ConfigChange");
     BuildMessageBuilder builder =
         new BuildMessageBuilder(
-            name,
+            osName,
             strategy,
             new BuildElements("DockerImage", dockerRepo + ":latest"),
             gitURL,
@@ -81,7 +81,7 @@ public class MessageBuilderFactory {
   }
 
   public static DeploymentConfig getDeployMessage(
-      String name, String dockerRepo, int[] ports, String[] protocols, int replicasNumber) {
+      String osName, String dockerRepo, int[] ports, String[] protocols, int replicasNumber) {
     Container.Port[] cports = new Container.Port[ports.length];
     for (int i = 0; i < ports.length; i++) {
       cports[i] = new Container.Port(protocols[i], ports[i]);
@@ -89,14 +89,14 @@ public class MessageBuilderFactory {
     List<ContainerVolume> volumes = new ArrayList<>();
     ContainerVolume sharedMemory = new ContainerVolume("dshm", false, "/dev/shm");
     volumes.add(sharedMemory);
-    Container container = new Container(name + "-cnt", dockerRepo + ":latest", cports);
+    Container container = new Container(osName + "-cnt", dockerRepo + ":latest", cports);
     ImageChangeTrigger.ImageChangeParams params =
         new ImageChangeTrigger.ImageChangeParams(
-            true, new BuildElements("ImageStream", name), new String[] {container.getName()});
+            true, new BuildElements("ImageStream", osName), new String[] {container.getName()});
     ImageChangeTrigger trigger = new ImageChangeTrigger("ImageChange", params);
     DeploymentMessageBuilder builder =
         new DeploymentMessageBuilder(
-            name,
+            osName,
             new Container[] {container},
             replicasNumber,
             new ImageChangeTrigger[] {trigger},
@@ -112,15 +112,15 @@ public class MessageBuilderFactory {
   }
 
   public static ServiceConfig getServiceMessage(
-      String name, int[] ports, int[] targetPorts, String[] protocols) {
-    ServiceMessageBuilder smb = new ServiceMessageBuilder(name, protocols, ports, targetPorts);
+      String osName, int[] ports, int[] targetPorts, String[] protocols) {
+    ServiceMessageBuilder smb = new ServiceMessageBuilder(osName, protocols, ports, targetPorts);
     return smb.buildMessage();
   }
 
-  public static RouteConfig getRouteMessage(String name, String id, String domainName) {
+  public static RouteConfig getRouteMessage(String osName, String domainName) {
 
     RouteTls tls = new RouteTls("passthrough", null, null, null, null);
-    RouteMessageBuilder rmb = new RouteMessageBuilder(name, id, domainName, tls);
+    RouteMessageBuilder rmb = new RouteMessageBuilder(osName, domainName, tls);
     return rmb.buildMessage();
   }
 
@@ -130,10 +130,10 @@ public class MessageBuilderFactory {
     return secretKeyMessageBuilder.buildMessage();
   }
 
-  public static HorizontalPodAutoscaler getHpa(String appName, int replicasNumber, int targetPerc) {
+  public static HorizontalPodAutoscaler getHpa(String osName, int replicasNumber, int targetPerc) {
 
     HorizontalPodAutoscalerMessageBuilder builder =
-        new HorizontalPodAutoscalerMessageBuilder(appName, 1, replicasNumber, targetPerc);
+        new HorizontalPodAutoscalerMessageBuilder(osName, 1, replicasNumber, targetPerc);
     return builder.buildMessage();
   }
 }

@@ -24,6 +24,8 @@ import org.openbaton.catalogue.nfvo.Action;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.util.NSRUtil;
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
+import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
+import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
@@ -45,10 +47,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by gca on 24/05/16.
@@ -70,8 +70,6 @@ public class AppManager {
 
   @Value("${openshift.token}")
   private String token;
-
-  private SecureRandom appIDGenerator = new SecureRandom();
 
   public Application createApplication(
       NubomediaCreateAppRequest request, String user, String projectId, String token)
@@ -95,9 +93,9 @@ public class AppManager {
       throw new NameStructureException("Name must match [a-z0-9]+(?:[._-][a-z0-9]+)*");
     }
 
-    if (!appRepo.findByName(request.getName()).isEmpty()) {
-      throw new DuplicatedException("Application with " + request.getName() + " already exist");
-    }
+    //    if (!appRepo.findByName(request.getName()).isEmpty()) {
+    //      throw new DuplicatedException("Application with " + request.getName() + " already exist");
+    //    }
 
     logger.debug("REQUEST" + request.toString());
 
@@ -122,12 +120,15 @@ public class AppManager {
             + protocols
             + " "
             + request.getReplicasNumber());
-
+    Random r = new Random();
+    char c = (char) (r.nextInt(26) + 'a');
+    String osName = c + UUID.randomUUID().toString().substring(0, 8);
     //Openbaton MediaServer Request
     logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
     MediaServerGroup mediaServerGroup =
         this.obmanager.createMediaServerGroup(
             request.getName(),
+            osName,
             request.getFlavor(),
             this.paaSProperties.getPort(),
             request.isCloudRepository(),
@@ -146,6 +147,7 @@ public class AppManager {
     // Creating the application
     Application app = new Application();
     app.setName(request.getName());
+    app.setOsName(osName);
     app.setProjectName(openshiftProject);
     app.setProjectId(projectId);
     app.setMediaServerGroup(mediaServerGroup);
@@ -178,7 +180,8 @@ public class AppManager {
    * @param evt
    * @throws UnauthorizedException
    */
-  public void startOpenshiftBuild(OpenBatonEvent evt) throws UnauthorizedException {
+  public void startOpenshiftBuild(OpenBatonEvent evt)
+      throws UnauthorizedException, BadRequestException {
     String nsrId = evt.getPayload().getId();
     logger.debug("starting callback for app with media server group ID " + nsrId);
     logger.info("Received event " + evt);
@@ -249,6 +252,7 @@ public class AppManager {
                   token,
                   app.getId(),
                   app.getName(),
+                  app.getOsName(),
                   app.getGitURL(),
                   ports,
                   targetPorts,
@@ -283,13 +287,26 @@ public class AppManager {
     }
   }
 
+  public Application getApp(String id) throws ApplicationNotFoundException {
+    Application app = null;
+    if ((app = appRepo.findFirstById(id)) == null) {
+      throw new ApplicationNotFoundException("Application with ID " + id + " not found");
+    }
+    return app;
+  }
+
   public Application getApp(String projectId, String id) throws ApplicationNotFoundException {
     Application app = null;
     if ((app = appRepo.findFirstByAppIdAndProjectId(id, projectId)) == null) {
       throw new ApplicationNotFoundException(
-          "Application with ID in Project " + projectId + " not found");
+          "Application with ID " + id + " in Project " + projectId + " not found");
     }
     return app;
+  }
+
+  public Iterable<Application> getApps() throws ApplicationNotFoundException {
+    Iterable<Application> applications = this.appRepo.findAll();
+    return applications;
   }
 
   public Iterable<Application> getApps(String projectId) throws ApplicationNotFoundException {
@@ -297,49 +314,55 @@ public class AppManager {
     return applications;
   }
 
+  public NubomediaDeleteAppResponse deleteApp(String id)
+      throws UnauthorizedException, NotFoundException {
+    Application app = appRepo.findFirstById(id);
+    if (app == null) throw new NotFoundException("Not found Application with ID " + id);
+    return deleteApp(app.getProjectId(), id);
+  }
+
   public NubomediaDeleteAppResponse deleteApp(String projectId, String id)
       throws UnauthorizedException {
     Application app = null;
     if ((app = appRepo.findFirstByAppIdAndProjectId(id, projectId)) == null) {
       return new NubomediaDeleteAppResponse(
-          id, "Application not found in Project " + projectId + " not found", "null", 404);
+          id, "Application not found in Project " + projectId + " not found", "null", "null", 404);
     }
 
     logger.debug("Retrieved Application to be deleted " + app);
 
     // check that the app has been instantiated on openshift
-    if (!app.isResourceOK()) {
-
-      String name = app.getName();
-      String projectName = app.getProjectName();
-
-      obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
-      obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
-      appRepo.delete(app);
-      return new NubomediaDeleteAppResponse(id, name, projectName, 200);
+    if (!app.isResourceOK() || app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
+      try {
+        obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
+        obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
+      } catch (Exception e) {
+        logger.error(e.getMessage());
+      } finally {
+        appRepo.delete(app);
+      }
+      return new NubomediaDeleteAppResponse(
+          id, app.getName(), app.getOsName(), app.getProjectName(), 200);
     }
 
-    if (app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
-      obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
-      obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
-      appRepo.delete(app);
-
-      return new NubomediaDeleteAppResponse(id, app.getName(), app.getProjectName(), 200);
-    }
-
-    obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
-    obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
     HttpStatus resDelete = HttpStatus.BAD_REQUEST;
     try {
-      resDelete = osmanager.deleteApplication(token, app.getName());
+      resDelete = osmanager.deleteApplication(token, app.getOsName());
     } catch (ResourceAccessException e) {
       logger.info("Application does not exist on the PaaS");
+    } catch (Exception e) {
+      logger.warn(e.getMessage());
     }
-
-    appRepo.delete(app);
-
+    try {
+      obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
+      obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+    } finally {
+      appRepo.delete(app);
+    }
     return new NubomediaDeleteAppResponse(
-        id, app.getName(), app.getProjectName(), resDelete.value());
+        id, app.getName(), app.getOsName(), app.getProjectName(), resDelete.value());
   }
 
   public NubomediaDeleteAppsProjectResponse deleteApps(String projectId)
@@ -370,6 +393,13 @@ public class AppManager {
     }
     response.setMessage("All applications of this project were removed successfully");
     return response;
+  }
+
+  public NubomediaBuildLogs getBuildLogs(String id)
+      throws UnauthorizedException, ApplicationNotFoundException, NotFoundException {
+    Application app = appRepo.findFirstById(id);
+    if (app == null) throw new NotFoundException("Not found Application with ID " + id);
+    return getBuildLogs(app.getProjectId(), id);
   }
 
   public NubomediaBuildLogs getBuildLogs(String projectId, String id)
@@ -410,12 +440,15 @@ public class AppManager {
       res.setName(app.getName());
       res.setProjectName(app.getProjectName());
       try {
-        res.setLog(osmanager.getBuildLogs(token, app.getName()));
+        res.setLog(osmanager.getBuildLogs(token, app.getName(), app.getOsName()));
       } catch (ResourceAccessException e) {
         app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
         appRepo.save(app);
         res.setLog(
-            "Openshift is not responding, app " + app.getName() + " is not anymore available");
+            "Openshift is not responding, app "
+                + app.getName()
+                + app.getOsName()
+                + " is not anymore available");
       }
     }
     return res;
@@ -434,6 +467,13 @@ public class AppManager {
           + app.getStatus()
           + ", logs are not available until the status is RUNNING";
     }
-    return osmanager.getApplicationLog(token, app.getName(), podName);
+    return osmanager.getApplicationLog(token, app.getOsName(), podName);
+  }
+
+  public String getApplicationLogs(String id, String podName)
+      throws NotFoundException, UnauthorizedException, ApplicationNotFoundException {
+    Application app = appRepo.findFirstById(id);
+    if (app == null) throw new NotFoundException("Not found Application with ID " + id);
+    return getApplicationLogs(app.getProjectId(), id, podName);
   }
 }

@@ -28,14 +28,14 @@ import org.project.openbaton.nubomedia.paas.model.openshift.Metadata;
  */
 public class HorizontalPodAutoscalerMessageBuilder {
 
-  private String appName;
+  private String osName;
   private int minReplicas;
   private int maxReplicas;
   private int cpuUtilization;
 
   public HorizontalPodAutoscalerMessageBuilder(
-      String appName, int minReplicas, int maxReplicas, int cpuUtilization) {
-    this.appName = appName;
+      String osName, int minReplicas, int maxReplicas, int cpuUtilization) {
+    this.osName = osName;
     this.minReplicas = minReplicas;
     this.maxReplicas = maxReplicas;
     this.cpuUtilization = cpuUtilization;
@@ -43,9 +43,9 @@ public class HorizontalPodAutoscalerMessageBuilder {
 
   public HorizontalPodAutoscaler buildMessage() {
 
-    Metadata metadata = new Metadata(appName + "-hpa", null, null);
+    Metadata metadata = new Metadata(osName + "-hpa", null, null);
     HPASpecCpuMetrics metrics = new HPASpecCpuMetrics(cpuUtilization);
-    HPASpec.HPASpecScaleRef scaleRef = new HPASpec.HPASpecScaleRef(appName + "-dc");
+    HPASpec.HPASpecScaleRef scaleRef = new HPASpec.HPASpecScaleRef(osName + "-dc");
     HPASpec spec = new HPASpec(scaleRef, minReplicas, maxReplicas, metrics);
 
     return new HorizontalPodAutoscaler(metadata, spec);

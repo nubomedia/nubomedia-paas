@@ -56,7 +56,7 @@ public class BuildStatusManager {
 
   //Responses: Complete, Running, Failed
   public AppStatus getBuildStatus(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
 
     AppStatus res = null;
@@ -64,7 +64,7 @@ public class BuildStatusManager {
     BuildList buildList = this.getBuilds(baseURL, namespace, authHeader);
 
     for (Build b : buildList.getItems()) {
-      if (b.getStatus().getConfig().getName().equals(appName + "-bc")) {
+      if (b.getStatus().getConfig().getName().equals(osName + "-bc")) {
         logger.debug("build is " + mapper.toJson(b, Build.class));
         status = b.getStatus();
       }
@@ -90,13 +90,13 @@ public class BuildStatusManager {
   }
 
   public HttpStatus deleteBuilds(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
 
-    Build target = this.retrieveBuild(baseURL, appName, namespace, authHeader);
+    Build target = this.retrieveBuild(baseURL, osName, namespace, authHeader);
     String URL = baseURL + namespace + suffix + target.getMetadata().getName();
     HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
-    logger.debug("Deleting " + appName + " builds of project " + namespace);
+    logger.debug("Deleting " + osName + " builds of project " + namespace);
     ResponseEntity<String> responseEntity =
         template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
 
@@ -111,10 +111,10 @@ public class BuildStatusManager {
   }
 
   public String retrieveLogs(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
 
-    Build target = this.retrieveBuild(baseURL, appName, namespace, authHeader);
+    Build target = this.retrieveBuild(baseURL, osName, namespace, authHeader);
     String URL = baseURL + namespace + suffix + target.getMetadata().getName() + logSuffix;
     HttpEntity<String> logEntity = new HttpEntity<>(authHeader);
     ResponseEntity<String> res = null;
@@ -139,7 +139,7 @@ public class BuildStatusManager {
   }
 
   private Build retrieveBuild(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
 
     Build res = null;
@@ -147,7 +147,7 @@ public class BuildStatusManager {
 
     for (Build bd : buildList.getItems()) {
 
-      if (bd.getStatus().getConfig().getName().equals(appName + "-bc")) {
+      if (bd.getStatus().getConfig().getName().equals(osName + "-bc")) {
         logger.debug("build is " + mapper.toJson(bd, Build.class));
         res = bd;
       }

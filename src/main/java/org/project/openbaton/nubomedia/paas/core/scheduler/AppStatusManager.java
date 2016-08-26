@@ -87,11 +87,16 @@ public class AppStatusManager {
     logger.trace("Refreshing Application (running) status");
     Iterable<Application> applications = this.appRepo.findAll();
     for (Application app : applications) {
-      logger.trace("Updating Application status of " + app.getName() + " while running");
+      logger.trace(
+          "Updating Application status of "
+              + app.getName()
+              + "-"
+              + app.getOsName()
+              + " while running");
       try {
         app.setStatus(this.getStatus(this.token, app));
         logger.trace("Updated Application status: " + app);
-        app.setPodList(osmanager.getPodList(this.token, app.getName()));
+        app.setPodList(osmanager.getPodList(this.token, app.getOsName()));
       } catch (UnauthorizedException e) {
         logger.error("There were issues in connecting to OpenShift ");
         e.printStackTrace();
@@ -103,7 +108,14 @@ public class AppStatusManager {
   private AppStatus getStatus(String token, Application app) throws UnauthorizedException {
     AppStatus res;
     logger.debug(
-        "application (" + app.getId() + "-" + app.getName() + ") status is " + app.getStatus());
+        "application ("
+            + app.getId()
+            + "-"
+            + app.getName()
+            + "-"
+            + app.getOsName()
+            + ") status is "
+            + app.getStatus());
 
     switch (app.getStatus()) {
       case CREATED:
@@ -119,7 +131,7 @@ public class AppStatusManager {
           break;
         } else {
           try {
-            res = osmanager.getStatus(token, app.getName());
+            res = osmanager.getStatus(token, app.getOsName());
           } catch (ResourceAccessException e) {
             res = AppStatus.PAAS_RESOURCE_MISSING;
           }
@@ -127,7 +139,7 @@ public class AppStatusManager {
         break;
       default:
         try {
-          res = osmanager.getStatus(token, app.getName());
+          res = osmanager.getStatus(token, app.getOsName());
         } catch (ResourceAccessException e) {
           res = AppStatus.PAAS_RESOURCE_MISSING;
         }

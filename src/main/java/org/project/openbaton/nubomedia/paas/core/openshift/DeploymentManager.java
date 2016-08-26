@@ -63,7 +63,7 @@ public class DeploymentManager {
 
   public ResponseEntity<String> makeDeployment(
       String baseURL,
-      String appName,
+      String osName,
       String dockerRepo,
       int[] ports,
       String[] protocols,
@@ -74,7 +74,7 @@ public class DeploymentManager {
 
     logger.debug(
         "params arg: "
-            + appName
+            + osName
             + " "
             + dockerRepo
             + " "
@@ -84,7 +84,7 @@ public class DeploymentManager {
             + " "
             + repnumbers);
     DeploymentConfig message =
-        MessageBuilderFactory.getDeployMessage(appName, dockerRepo, ports, protocols, repnumbers);
+        MessageBuilderFactory.getDeployMessage(osName, dockerRepo, ports, protocols, repnumbers);
     logger.debug(mapper.toJson(message, DeploymentConfig.class));
     String URL = baseURL + namespace + suffix;
     HttpEntity<String> deployEntity =
@@ -94,7 +94,7 @@ public class DeploymentManager {
     logger.debug("Deployment response: " + response);
 
     if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
-      throw new DuplicatedException("Application with " + appName + " is already present");
+      throw new DuplicatedException("Application with " + osName + " is already present");
     }
 
     if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
@@ -106,11 +106,11 @@ public class DeploymentManager {
   }
 
   public HttpStatus deleteDeployment(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
 
-    logger.debug("Deleting deployment config " + appName + " of project " + namespace);
-    String URL = baseURL + namespace + suffix + appName + "-dc";
+    logger.debug("Deleting deployment config " + osName + " of project " + namespace);
+    String URL = baseURL + namespace + suffix + osName + "-dc";
     HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
     ResponseEntity<String> res =
         template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
@@ -128,17 +128,17 @@ public class DeploymentManager {
   }
 
   public HttpStatus deletePodsRC(
-      String kubernetesBaseURL, String appName, String namespace, HttpHeaders authHeader)
+      String kubernetesBaseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
 
     HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
-    String rcURL = kubernetesBaseURL + namespace + rcSuffix + appName + "-dc-1";
+    String rcURL = kubernetesBaseURL + namespace + rcSuffix + osName + "-dc-1";
 
     if (!this.existRC(requestEntity, rcURL)) {
       return HttpStatus.OK;
     }
 
-    logger.debug("deleting replication controller for " + appName + " of project " + namespace);
+    logger.debug("deleting replication controller for " + osName + " of project " + namespace);
     ResponseEntity<String> deleteEntity =
         template.exchange(rcURL, HttpMethod.DELETE, requestEntity, String.class);
 
@@ -147,7 +147,7 @@ public class DeploymentManager {
       Pods pods = this.getPodsList(podsURL, requestEntity);
       for (String pod : pods.getPodNames()) {
 
-        if (pod.contains(appName)) {
+        if (pod.contains(osName)) {
           deleteEntity =
               template.exchange(podsURL + pod, HttpMethod.DELETE, requestEntity, String.class);
           if (deleteEntity.getStatusCode() != HttpStatus.OK) {
@@ -180,7 +180,7 @@ public class DeploymentManager {
   }
 
   public AppStatus getDeployStatus(
-      String kubernetesBaseURL, String appName, String namespace, HttpHeaders authHeader) {
+      String kubernetesBaseURL, String osName, String namespace, HttpHeaders authHeader) {
 
     AppStatus res =
         AppStatus
@@ -190,7 +190,7 @@ public class DeploymentManager {
     Pods podList = this.getPodsList(podsURL, podEntity);
 
     for (String podName : podList.getPodNames()) {
-      if (podName.equals(appName + "-dc-1-deploy")) {
+      if (podName.equals(osName + "-dc-1-deploy")) {
         ResponseEntity<String> deployPod =
             template.exchange(podsURL + podName, HttpMethod.GET, podEntity, String.class);
         Pod targetPod = mapper.fromJson(deployPod.getBody(), Pod.class);
@@ -213,7 +213,7 @@ public class DeploymentManager {
   }
 
   public List<String> getPodNameList(
-      String kubernatesBaseURL, String namespace, String appName, HttpEntity<String> requestEntity)
+      String kubernatesBaseURL, String namespace, String osName, HttpEntity<String> requestEntity)
       throws UnauthorizedException {
     String podsURL = kubernatesBaseURL + namespace + podSuffix;
     Pods podList = this.getPodsList(podsURL, requestEntity);
@@ -222,7 +222,7 @@ public class DeploymentManager {
 
     for (String podName : podList.getPodNames()) {
       logger.debug("Current pod is " + podName);
-      CharSequence sequence = appName + "-dc-1";
+      CharSequence sequence = osName + "-dc-1";
       if (podName.contains(sequence)) {
         logger.debug("Probably found target " + podName);
         if (!podName.contains("bc-1-build") || !podName.contains("-deploy")) {
@@ -239,7 +239,7 @@ public class DeploymentManager {
   public String getPodLogs(
       String kubernetesBaseURL,
       String namespace,
-      String appName,
+      String osName,
       String podName,
       HttpEntity<String> requestEntity)
       throws UnauthorizedException {
@@ -266,7 +266,7 @@ public class DeploymentManager {
 
       logEntity = template.exchange(targetUrl, HttpMethod.GET, requestEntity, String.class);
     } catch (HttpClientErrorException e) {
-      return "No log available for the application " + appName;
+      return "No log available for the application " + osName;
     } catch (HttpServerErrorException e) {
       return "Pod(s) crashed for too long time, logs are not anymore available";
     }
@@ -285,7 +285,7 @@ public class DeploymentManager {
 
   public HorizontalPodAutoscaler createHpa(
       String paasUrl,
-      String appName,
+      String osName,
       String namespace,
       int replicasNumber,
       int targetPerc,
@@ -294,15 +294,14 @@ public class DeploymentManager {
 
     String url =
         paasUrl + "/apis/extensions/v1beta1/namespaces/" + namespace + "/horizontalpodautoscalers";
-    HorizontalPodAutoscaler body =
-        MessageBuilderFactory.getHpa(appName, replicasNumber, targetPerc);
+    HorizontalPodAutoscaler body = MessageBuilderFactory.getHpa(osName, replicasNumber, targetPerc);
     HttpEntity<String> hpaEntity =
         new HttpEntity<>(mapper.toJson(body, HorizontalPodAutoscaler.class), authHeader);
     ResponseEntity<String> createHpa =
         template.exchange(url, HttpMethod.POST, hpaEntity, String.class);
 
     if (createHpa.getStatusCode().equals(HttpStatus.CONFLICT)) {
-      throw new DuplicatedException("Application with " + appName + " is already present");
+      throw new DuplicatedException("Application with " + osName + " is already present");
     }
 
     if (createHpa.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
