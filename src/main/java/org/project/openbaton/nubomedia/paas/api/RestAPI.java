@@ -31,7 +31,11 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.NameStructureEx
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.*;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
+import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
+import org.project.openbaton.nubomedia.paas.properties.NfvoProperties;
+import org.project.openbaton.nubomedia.paas.security.interfaces.ProjectManagement;
 import org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +64,8 @@ public class RestAPI {
   @Autowired private AppManager appManager;
 
   @Autowired private UserManagement userManagement;
+
+  @Autowired private ProjectManagement projectManagement;
 
   @Value("${openshift.token}")
   private String token;
@@ -109,9 +115,14 @@ public class RestAPI {
   @ResponseBody
   public Application getApp(
       @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId)
-      throws ApplicationNotFoundException, UnauthorizedException {
+      throws ApplicationNotFoundException, UnauthorizedException, NotFoundException {
     logger.info("Request status for " + id + " app");
-    Application app = appManager.getApp(projectId, id);
+    Application app = null;
+    if (isAdminProject(projectId)) {
+      app = appManager.getApp(id);
+    } else {
+      app = appManager.getApp(projectId, id);
+    }
     return app;
   }
 
@@ -127,9 +138,14 @@ public class RestAPI {
     produces = MediaType.APPLICATION_JSON_VALUE
   )
   public Iterable<Application> getApps(@RequestHeader(value = "project-id") String projectId)
-      throws UnauthorizedException, ApplicationNotFoundException {
+      throws UnauthorizedException, ApplicationNotFoundException, NotFoundException {
     logger.debug("Received request GET Applications");
-    Iterable<Application> applications = appManager.getApps(projectId);
+    Iterable<Application> applications = null;
+    if (isAdminProject(projectId)) {
+      applications = appManager.getApps();
+    } else {
+      applications = appManager.getApps(projectId);
+    }
     logger.debug("Returning from GET Applications " + applications);
     return applications;
   }
@@ -144,9 +160,13 @@ public class RestAPI {
   @ResponseBody
   public NubomediaDeleteAppResponse deleteApp(
       @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId)
-      throws UnauthorizedException {
+      throws UnauthorizedException, NotFoundException {
     logger.debug("Received delete Application (id " + id + ")request");
-    return appManager.deleteApp(projectId, id);
+    if (isAdminProject(projectId)) {
+      return appManager.deleteApp(id);
+    } else {
+      return appManager.deleteApp(projectId, id);
+    }
   }
 
   /**
@@ -167,7 +187,11 @@ public class RestAPI {
   public void multipleDelete(
       @RequestHeader(value = "project-id") String projectId, @RequestBody @Valid List<String> ids)
       throws NotFoundException, ForbiddenException, UnauthorizedException {
-    for (String id : ids) deleteApp(id, projectId);
+    if (isAdminProject(projectId)) {
+      for (String id : ids) appManager.deleteApp(id);
+    } else {
+      for (String id : ids) appManager.deleteApp(id, projectId);
+    }
   }
 
   /**
@@ -194,12 +218,18 @@ public class RestAPI {
   @ResponseBody
   public NubomediaBuildLogs getBuildLogs(
       @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId)
-      throws UnauthorizedException, ApplicationNotFoundException {
+      throws UnauthorizedException, ApplicationNotFoundException, NotFoundException {
     logger.debug("Requested build log of Application " + id + " of project " + projectId);
     if (token == null) {
       throw new UnauthorizedException("no auth-token header");
     }
-    return appManager.getBuildLogs(projectId, id);
+    NubomediaBuildLogs logs = null;
+    if (isAdminProject(projectId)) {
+      logs = appManager.getBuildLogs(id);
+    } else {
+      logs = appManager.getBuildLogs(projectId, id);
+    }
+    return logs;
   }
 
   /**
@@ -218,7 +248,7 @@ public class RestAPI {
       @PathVariable("id") String id,
       @PathVariable("podName") String podName,
       @RequestHeader(value = "project-id") String projectId)
-      throws UnauthorizedException, ApplicationNotFoundException {
+      throws UnauthorizedException, ApplicationNotFoundException, NotFoundException {
     logger.debug(
         "Requested Application logs of Application "
             + id
@@ -229,7 +259,13 @@ public class RestAPI {
     if (token == null) {
       throw new UnauthorizedException("no auth-token header");
     }
-    return appManager.getApplicationLogs(projectId, id, podName);
+    String logs = "";
+    if (isAdminProject(projectId)) {
+      logs = appManager.getApplicationLogs(id, podName);
+    } else {
+      logs = appManager.getApplicationLogs(projectId, id, podName);
+    }
+    return logs;
   }
 
   @RequestMapping(value = "/secret", method = RequestMethod.POST)
@@ -289,5 +325,25 @@ public class RestAPI {
     if (authentication == null) return null;
     String currentUserName = authentication.getName();
     return userManagement.queryByName(currentUserName);
+  }
+
+  public boolean isAdmin() throws ForbiddenException, NotFoundException {
+    User currentUser = getCurrentUser();
+    logger.trace("Check user if admin: " + currentUser.getUsername());
+    for (Role role : currentUser.getRoles()) {
+      if (role.getRole().ordinal() == Role.RoleEnum.ADMIN.ordinal()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean isAdminProject(String projectId) throws NotFoundException {
+    Project project = projectManagement.query(projectId);
+    logger.trace("Check if admin project: " + projectId);
+    if (project != null && project.getName().equals("admin")) {
+      return true;
+    }
+    return false;
   }
 }
