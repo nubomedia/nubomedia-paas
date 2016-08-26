@@ -783,15 +783,15 @@
           data-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Delete all the Apps from <b>{{projectSelected.name}}</b> project</h4>
+        <h4 class="modal-title">Delete multiple apps from <b>{{projectSelected.name}}</b> project</h4>
       </header>
 
       <div class="modal-body">
         <p>You are going to delete these applications:</p>
-        <ul ng-repeat="data in applications">
-          <li>{{data.name}</li>
+        <ul ng-repeat="(k,v) in selection.ids" ng-if="v">
+          <li>{{k}}</li>
         </ul>
-        <p>Please confirm your selection.</p>
+        <strong>Please confirm your selection!</strong>
       </div>
 
       <footer class="modal-footer">
