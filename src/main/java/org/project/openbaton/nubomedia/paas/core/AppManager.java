@@ -78,9 +78,9 @@ public class AppManager {
     if (token == null) {
       throw new UnauthorizedException("No auth-token header");
     }
-    if (request.getName().length() > 18) {
-      throw new NameStructureException("Name is too long");
-    }
+    //    if (request.getName().length() > 18) {
+    //      throw new NameStructureException("Name is too long");
+    //    }
     if (request.getName().contains(".")) {
       throw new NameStructureException("Name can't contains dots");
     }
@@ -163,10 +163,18 @@ public class AppManager {
     app.setStatus(AppStatus.CREATED);
     app.setCdnConnector(request.isCdnConnector());
     app.setCloudRepository(request.isCloudRepository());
+    app.setQualityOfService(request.getQualityOfService());
     app.setScaleInOut(request.getScaleInOut());
     app.setScaleOutThreshold(request.getScale_out_threshold());
     app.setCreatedBy(user);
     app.setCreatedAt(new Date());
+    app.setStunServerActivate(request.isStunServerActivate());
+    app.setStunServerIp(request.getStunServerIp());
+    app.setStunServerPort(request.getStunServerPort());
+    app.setTurnServerActivate(request.isTurnServerActivate());
+    app.setTurnServerUrl(request.getTurnServerUrl());
+    app.setTurnServerUsername(request.getTurnServerUsername());
+    app.setTurnServerPassword(request.getTurnServerPassword());
 
     appRepo.save(app);
     return app;
