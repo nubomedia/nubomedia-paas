@@ -72,12 +72,12 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $rootScope.mediaServers = [];
   $rootScope.bigDataMediaServer = [];
 
-  $scope.deleteAppModal = function (data) {
+  $scope.deleteAppModal = function(data) {
     $scope.application = data;
     $('#modalDeleteApplication').modal('show');
   };
 
-  $scope.deleteMarketAppModal = function (data) {
+  $scope.deleteMarketAppModal = function(data) {
     $scope.application = data;
     $('#modalDeleteMarketApplication').modal('show');
   };
@@ -96,6 +96,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       $('body').resize();
     }, 500);
   };
+
   $scope.createMarketApp = function() {
     $http.get('json/app.json')
       .then(function(res) {
@@ -127,11 +128,9 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.privateKeyReq = {
     projectName: 'nubomedia',
     privateKey: ''
-
   };
 
   $scope.sendPK = function(privateKeyReq) {
-
     console.log(urlPK + 'secret');
     http.post(urlPK + 'secret', privateKeyReq, 'text')
       .success(function(data) {
@@ -145,6 +144,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         showError(status, data);
       });
   };
+
   if (!angular.isUndefined($routeParams.appId)) {
     http.get(marketurl + $routeParams.appId)
       .success(function(data) {
@@ -157,6 +157,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         renderGraphMediaServer();
       });
   }
+
   if (!angular.isUndefined($routeParams.applicationId)) {
     http.get(url + $routeParams.applicationId)
       .success(function(data) {
@@ -220,7 +221,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         }, 3000);
         return resultObj;
       });
-
   }
 
   $scope.drawColumnMediaServer = function(nameCol) {
@@ -243,11 +243,11 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
         break;
     }
-  }
+  };
 
   $scope.updateGraphMediaServer = function(urlHostnameMediaServer) {
     getDataFromMediaServer(urlHostnameMediaServer);
-  }
+  };
 
   function drawGraphMediaServer() {
     var dataDemo = [
@@ -282,7 +282,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
 
     $rootScope.chartMediaServerGraph = new google.visualization.AreaChart(document.getElementById('chart_div'));
     $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
-  };
+  }
 
   function estimateTimestamp(dataMemory) {
     var arrayTimestamp = [];
@@ -290,7 +290,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       arrayTimestamp.push(i);
     }
     return arrayTimestamp;
-  };
+  }
 
   function removeNull(dataArry) {
     var cleanData = [];
@@ -302,7 +302,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       }
     }
     return cleanData;
-  };
+  }
 
   function zipJsonMediaServer(dataMemory, dataElements, dataPipelines) {
     var zipData = [],
@@ -329,7 +329,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     }
 
     return zipData;
-  };
+  }
 
   function mergeMediaServer(mediaServerGroup) {
     var mergedServer;
@@ -340,8 +340,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       };
       $rootScope.mediaServers.push(mergedServer);
     }
-  };
-
+  }
 
   function loadTable() {
     console.log($location.path());
@@ -370,7 +369,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       });
   }
 
-  $scope.clearAlerts = function () {
+  $scope.clearAlerts = function() {
     $scope.alerts = [];
   };
 
@@ -392,12 +391,12 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         http.post(url, result)
           .success(function(data, status) {
             console.log(data);
-            showOk("App launched correctly.")
+            showOk("App launched correctly.");
           })
           .error(function(data, status) {
             showError(status, data);
-          })
-      })
+          });
+      });
   };
 
   $scope.sendApp = function(value, location) {
@@ -437,14 +436,14 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
 
     if ($scope.file !== '') {
       postTopology = $scope.file;
-      console.log("It's a File!")
+      console.log("It's a File!");
     } else if ($scope.appJson !== '') {
       postTopology = $scope.appJson;
-      console.log("It's a TextArea!")
+      console.log("It's a TextArea!");
 
     } else if (angular.isUndefined(postTopology)) {
       postTopology = $scope.appCreate;
-      console.log("It's a Form!")
+      console.log("It's a Form!");
 
     } else {
       alert('Problem with Topology');
@@ -480,7 +479,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
           showError(status, data);
         });
     }
-
   };
 
   $scope.addPort = function() {
@@ -494,12 +492,13 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.deletePort = function(index) {
     $scope.appCreate.ports.splice(index, 1);
   };
+
   $scope.deleteData = function(id, location) {
     http.delete(url + id)
       .success(function(response) {
         showOk('Deleted App with id: ' + id + ' done.');
         loadTable();
-        if(location) {
+        if (location) {
           $location.path('/' + location);
         }
       })
@@ -507,12 +506,13 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         showError(status, data);
       });
   };
+
   $scope.deleteAppMarket = function(id, location) {
     http.delete(marketurl + id)
       .success(function(response) {
         showOk('Deleted App with id: ' + id + ' done.');
         loadTable();
-        if(location) {
+        if (location) {
           $location.path('/' + location);
         }
       })
@@ -520,6 +520,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         showError(status, data);
       });
   };
+
   $scope.deleteAllApp = function() {
     http.delete(url)
       .success(function(response) {
@@ -531,14 +532,12 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       });
   };
 
-
   $scope.changeText = function(text) {
     $scope.appJson = text;
     console.log($scope.appJson);
   };
 
   $scope.loadLog = function() {
-
     http.get(url + $routeParams.applicationId + '/buildlogs')
       .success(function(response) {
         //$scope.log = response;
@@ -552,18 +551,17 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.input = {
     numberRows: 35
   };
+
   $scope.loadAppLog = function(podName) {
     console.log(podName);
     http.get(url + $routeParams.applicationId + '/logs/' + podName)
       .success(function(response) {
-
         var stringArray = response.split('\\n');
 
         var subLog = stringArray.slice(stringArray.length - $scope.input.numberRows, -1);
         var string = subLog.join('\\n');
         //console.log(subLog);
         //console.log($scope.input.numberRows);
-
         $scope.log = $sce.trustAsHtml(n2br(string));
       })
       .error(function(data, status) {
@@ -595,9 +593,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     });
   };
 
-
   /* -- multiple delete functions Start -- */
-
   $scope.multipleDeleteReq = function() {
     var ids = [];
     angular.forEach($scope.selection.ids, function(value, k) {
@@ -614,12 +610,12 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       .error(function(response, status) {
         showError(response, status);
       });
-
   };
 
   $scope.main = {
     checkbox: false
   };
+
   $scope.$watch('main', function(newValue, oldValue) {
     //console.log(newValue.checkbox);
     //console.log($scope.selection.ids);
@@ -641,8 +637,8 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
           $scope.multipleDelete = true;
         }
       }
-
     });
+
     if (keepGoing)
       $scope.mainCheckbox = false;
   }, true);
@@ -653,7 +649,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.selection.ids = {};
   /* -- multiple delete functions END -- */
 
-
   function n2br(str) {
     str = str.replace(/(?:\\[rn]|[\r\n]+)+/g, "<br />");
     //return str.replace(/\r\n|\r|\n//g, "<br />");
@@ -663,13 +658,22 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       return String.fromCharCode(parseInt(grp, 16));
     });
     x = unescape(x);
-    return x
+    return x;
   }
 
   function showError(status, data) {
+    // !Important: To check if there can be multiple messages in data object
+    var message = '';
+
+    if (typeof data === 'string') {
+      message = data;
+    } else {
+      message = data.message;
+    }
+
     $scope.alerts.push({
       type: 'danger',
-      msg: 'ERROR: <strong>HTTP status</strong>: ' + status + ' response <strong>data</strong>: ' + JSON.stringify(data)
+      msg: message
     });
 
     $('.modal').modal('hide');
@@ -704,15 +708,11 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         disableButton(true);
         changeDivPane('panel-danger');
       }
-
-
     }).catch(function(reason) {
       console.error.bind(console);
       console.log(reason);
       disableButton(true);
     });
-
-
   };
 
   function disableButton(value) {
@@ -731,22 +731,20 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   }
 
   function checkTURNServer(turnConfig, timeout) {
-
     return new Promise(function(resolve, reject) {
-
       setTimeout(function() {
         if (promiseResolved) return;
         resolve(false);
         promiseResolved = true;
       }, timeout || 5000);
 
-      var promiseResolved = false,
-        myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection //compatibility for firefox and chrome
-        ,
-        pc = new myPeerConnection({
-          iceServers: [turnConfig]
-        }),
-        noop = function() {};
+      var promiseResolved = false;
+      var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection; //compatibility for firefox and chrome,
+      var pc = new myPeerConnection({
+        iceServers: [turnConfig]
+      });
+      var noop = function() {};
+
       pc.createDataChannel(""); //create a bogus data channel
       pc.createOffer(function(sdp) {
         if (sdp.sdp.indexOf('typ relay') > -1) { // sometimes sdp contains the ice candidates...
@@ -774,7 +772,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
 
 
   //$scope.vnfrId = 'ed5c8629-36bb-402a-8481-49b3a8d3d6a3';
-  $scope.vnfrId;
+  $scope.vnfrId = '';
   $scope.numberValue = 1;
   $scope.loadValue = 0;
 
@@ -795,10 +793,8 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
             loadNumberHistory();
           }
         });
-
       });
   }
-
 
   function loadNumberHistory() {
     if (!angular.isUndefined($scope.vnfrId))
@@ -813,7 +809,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
 
         });
         console.log($scope.numbersHistory);
-
       });
   }
 
@@ -829,13 +824,11 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
             $scope.loadValue = load.value;
             if (load.value > maxLoad)
               maxLoad = load.value + 50.0;
-
           });
           console.log($scope.loadHistory);
         });
     }
   }
-
 
   function getValue(type) {
     //console.log(urlMediaManager + $scope.vnfrId + '/media-server/' + type);
@@ -847,7 +840,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
           $scope.numberValue = data;
         else
           $scope.loadValue = data;
-
       });
     else
       console.error('vnfrId == undefined');
@@ -859,14 +851,11 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     }
   }
 
-
   function drawGraph(id) {
     var DELAY = 10000; // delay in ms to add new data points
 
-
     // create a graph2d with an (currently empty) dataset
     var container = document.getElementById(id);
-
 
     var options = {
       start: vis.moment().add(-60, 'seconds'), // changed so its faster
@@ -887,19 +876,18 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       shaded: {
         orientation: 'bottom' // top, bottom
       }
-
     };
 
+    var dataset = '';
 
     if (id === 'numberFlot') {
       delete options.shaded;
-      var dataset = new vis.DataSet($scope.numbersHistory);
+      dataset = new vis.DataSet($scope.numbersHistory);
 
     }
     if (id === 'capacityFlot') {
       options.dataAxis.left.range.max = maxLoad;
-      var dataset = new vis.DataSet($scope.loadHistory);
-
+      dataset = new vis.DataSet($scope.loadHistory);
     }
 
     var graph2d = new vis.Graph2d(container, dataset, options);
@@ -930,7 +918,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         animation: false
       });
       setTimeout(renderStep, DELAY);
-
     }
 
     renderStep();
@@ -959,7 +946,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       setTimeout(addDataPoint, DELAY);
     }
 
-
     addDataPoint();
 
   }
@@ -974,6 +960,4 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
    console.log('is TURN server active? ', bool? 'yes':'no');
    }).catch(console.error.bind(console));*/
 
-
 });
-
