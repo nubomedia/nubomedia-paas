@@ -27,6 +27,7 @@ app.controller('LoginController', function($scope, AuthService, Session, $rootSc
   $scope.currentUser = null;
   //$scope.URL = 'http://localhost:8081';
   //$scope.URL= 'http://80.96.122.73:8081';
+  $rootScope.googleCharIsLoaded = false;
   $scope.URL = '';
   $scope.credential = {
     "username": '',

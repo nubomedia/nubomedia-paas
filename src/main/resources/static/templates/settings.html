@@ -1,12 +1,23 @@
 <!-- Form app settings-->
 <form class="form form-horizontal form-app-settings">
+
   <!-- Form section -->
   <section class="form__section">
 
     <h3 class="form__section-title clearfix">
-      All settings
+      General
       <p class="pull-right"><a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a></p>
     </h3>
+
+    <div class="form-group input">
+      <label class="col-md-4 control-label input__label">
+        Application route
+      </label>
+
+      <div class="col-md-8">
+        <a href="{{application.route}}" target="_blank">{{application.route}}</a>
+      </div>
+    </div>
 
     <div class="form-group input">
       <label class="col-md-4 control-label input__label">
@@ -28,32 +39,188 @@
       </div>
     </div>
 
-    <div ng-repeat="(k,v) in application" ng-if="k!='name' && k!='projectName'" class="form-group input">
-      <label class="col-md-4 control-label input__label">
-        {{k}}
-      </label>
+    <div ng-repeat="(key, value) in application" ng-if="key!='name' && key!='projectName' && key!='route' && key!='targetPorts' && key!='mediaServerGroup' && key!='cdnConnector' && key!='cloudRepository' && key!='scaleInOut' && key!='scaleOutThreshold'" class="form-group input">
 
-      <div class="col-md-8">
-        <input type="text" class="form-control input__field" value="{{v}}" readonly>
+      <div ng-if="key === 'protocols'">
+
+        <label class="col-md-4 control-label input__label">
+          Ports
+        </label>
+
+        <div class="col-md-8">
+
+          <div class="row">
+            <label class="input__label col-xs-4">Port</label>
+            <label class="input__label col-xs-4">Target Prot</label>
+            <label class="input__label col-xs-4">Protocol</label>
+          </div><!-- /row -->
+
+          <div class="row" ng-repeat="item in value track by $index">
+
+            <div class="col-xs-4">
+              <input
+                type="text"
+                class="form-control input__field u-mt-5"
+                value="{{application.ports[$index]}}"
+                readonly>
+            </div><!-- col -->
+
+            <div class="col-xs-4">
+              <input
+                type="text"
+                class="form-control input__field u-mt-5"
+                value="{{application.targetPorts[$index]}}"
+                readonly>
+            </div><!-- col -->
+
+            <div class="col-xs-4">
+              <input
+                type="text"
+                class="form-control input__field u-mt-5"
+                value="{{item}}"
+                readonly>
+            </div><!-- col -->
+
+          </div><!-- row -->
+
+        </div><!-- col -->
+
+      </div>
+
+      <div ng-if="key !== 'protocols'">
+        <label class="col-md-4 control-label input__label">
+          {{key}}
+        </label>
+
+        <div class="col-md-8">
+          <input type="text" class="form-control input__field" value="{{value}}" readonly>
+        </div>
       </div>
     </div>
 
-    <!-- Upload to marketplace -->
+  </section><!-- /Form section -->
+
+
+
+  <!-- Media Server Group -->
+  <section class="form__section">
+
+    <h3 class="form__section-title clearfix">
+      Media Server Group
+    </h3>
+
     <div class="form-group input">
-
-      <label for="app-kms" class="col-md-4 control-label input__label">
-        Upload to marketplace
-        <span class="input__subtitle">
-          Your app will be available in our store.
-        </span>
-      </label>
-
+      <label class="col-md-4 control-label input__label">ID:</label>
       <div class="col-md-8">
-        <span class="btn btn--white" ng-click="sendApp('market', 'fromSettings', application)">Add now</span>
+        <input type="text" class="form-control input__field" value="{{application.mediaServerGroup.id}}" readonly>
+      </div>
+    </div><!-- /input -->
+
+    <div class="form-group input">
+      <label class="col-md-4 control-label input__label">NSD ID:</label>
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" value="{{application.mediaServerGroup.nsdID}}" readonly>
+      </div>
+    </div><!-- /input -->
+
+    <div class="form-group input">
+      <label class="col-md-4 control-label input__label">NSR ID:</label>
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" value="{{application.mediaServerGroup.nsrID}}" readonly>
+      </div>
+    </div><!-- /input -->
+
+    <div class="form-group input" ng-if="application.mediaServerGroup.hostnames">
+      <label class="col-md-4 control-label input__label">host names:</label>
+      <div class="col-md-8">
+        <input
+          ng-repeat="item in application.mediaServerGroup.hostnames track by $index"
+          type="text"
+          class="form-control input__field u-mb-5"
+          value="{{item}}" readonly>
+      </div>
+    </div><!-- /input -->
+
+    <div class="form-group input" ng-if="application.mediaServerGroup.floatingIPs">
+      <label class="col-md-4 control-label input__label">floatingIPs:</label>
+      <div class="col-md-8">
+        <input
+          ng-repeat="item in application.mediaServerGroup.floatingIPs track by $index"
+          type="text"
+          class="form-control input__field u-mb-5"
+          value="{{item}}" readonly>
+      </div>
+    </div><!-- /input -->
+
+  </section><!-- /Media Server Group -->
+
+
+
+  <!-- Scale -->
+  <section class="form__section">
+    <h3 class="form__section-title">Scale</h3>
+
+    <!-- Section scale -->
+    <section class="section-scale">
+      <div class="section-scale__column section-scale__in">
+        <span class="nm-icon icon-arrow-right"></span>
+        Scale InOut
+        <span class="section-scale__number-in">{{application.scaleInOut}}</span>
       </div>
 
-    </div><!-- /Upload to marketplace -->
+      <div class="section-scale__column section-scale__out">
+        <span class="nm-icon icon-arrow-left"></span>
+        Scale OutThreshold
+        <span class="section-scale__number-out">{{application.scaleOutThreshold}}</span>
+      </div>
 
+    </section><!-- /Section scale -->
+  </section>
+  <!-- /Scale -->
+
+
+
+
+  <section class="form__section" ng-if="application.cdnConnector || application.cloudRepository">
+    <h3 class="form__section-title">Add-ons</h3>
+
+    <!-- Addons -->
+    <section class="section">
+
+      <!-- /Addons container -->
+      <section class="addons-container">
+
+        <!-- Addon -->
+        <article class="addon" ng-show="application.cdnConnector">
+          <div class="addon__container">
+            <div class="addon__content">
+              <span class="addon__image cdn"></span>
+              <p class="addon__title">CDN Conector</p>
+            </div>
+          </div>
+        </article><!-- /Addon -->
+
+        <!-- Addon -->
+        <article class="addon" ng-show="application.cloudRepository">
+          <div class="addon__container">
+            <div class="addon__content">
+              <span class="addon__image cloud"></span>
+              <p class="addon__title">Cloud Repository</p>
+            </div>
+          </div>
+        </article><!-- /Addon -->
+
+      </section><!-- /Addons container -->
+
+    </section><!-- /Addons -->
+  </section>
+
+
+
+
+  <!-- Actions -->
+  <section class="form__section">
+    <h3 class="form__section-title">Actions</h3>
     <!-- Delete the application -->
     <div class="form-group input">
 
@@ -68,8 +235,7 @@
         <span class="btn btn-danger" ng-click="deleteAppModal(application)">Delete</span>
       </div>
     </div>
-
-  </section><!-- /Form section -->
+  </section><!-- /Actions -->
 
 </form>
 

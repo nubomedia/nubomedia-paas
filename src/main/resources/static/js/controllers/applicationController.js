@@ -167,9 +167,17 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         $scope.mediaServerProgress = function() {
           return $scope.application.mediaServerGroup.floatingIPs.length * 100 / $scope.application.scaleInOut + '%';
         };
-        google.charts.load('current', {
-          'packages': ['corechart']
-        });
+
+        // TODO
+        // Need to check how this chart works
+        // $rootScope.myMediaServer.hostname throws error sometimes
+        if (!$rootScope.googleCharIsLoaded) {
+          google.charts.load('current', {
+            'packages': ['corechart']
+          });
+          $rootScope.googleCharIsLoaded = !$rootScope.googleCharIsLoaded;
+        }
+
         google.charts.setOnLoadCallback(drawGraphMediaServer);
         mergeMediaServer(data.mediaServerGroup);
         $rootScope.myMediaServer = $rootScope.mediaServers[0]; // first floatingIps
