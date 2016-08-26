@@ -36,6 +36,7 @@ public class Application {
 
   @Id private String id;
   private String name;
+  private String osName;
   private String projectName;
   private String projectId;
   private String route;
@@ -76,6 +77,7 @@ public class Application {
   public Application(
       Flavor flavor,
       String name,
+      String osName,
       String projectName,
       String projectId,
       String route,
@@ -95,6 +97,7 @@ public class Application {
       boolean resourceOK) {
     this.flavor = flavor;
     this.name = name;
+    this.osName = osName;
     this.projectName = projectName;
     this.projectId = projectId;
     this.route = route;
@@ -138,6 +141,14 @@ public class Application {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getOsName() {
+    return osName;
+  }
+
+  public void setOsName(String osName) {
+    this.osName = osName;
   }
 
   public String getProjectName() {
@@ -300,6 +311,9 @@ public class Application {
         + '\''
         + ", name='"
         + name
+        + '\''
+        + ", osName='"
+        + osName
         + '\''
         + ", projectName='"
         + projectName

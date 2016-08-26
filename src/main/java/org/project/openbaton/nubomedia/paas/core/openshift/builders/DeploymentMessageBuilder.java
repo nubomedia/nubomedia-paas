@@ -25,19 +25,19 @@ import org.project.openbaton.nubomedia.paas.model.openshift.*;
  */
 public class DeploymentMessageBuilder {
 
-  private String name;
+  private String osName;
   private Container[] containers;
   private int replicaNumber;
   private ImageChangeTrigger[] triggers;
   private String strategyType;
 
   public DeploymentMessageBuilder(
-      String name,
+      String osName,
       Container[] containers,
       int replicaNumber,
       ImageChangeTrigger[] triggers,
       String strategyType) {
-    this.name = name;
+    this.osName = osName;
     this.containers = containers;
     this.replicaNumber = replicaNumber;
     this.triggers = triggers;
@@ -46,9 +46,9 @@ public class DeploymentMessageBuilder {
 
   public DeploymentConfig buildMessage() {
 
-    Metadata metadata = new Metadata(name + "-dc", "", "");
-    MetadataDeploy metadeploy = new MetadataDeploy(new MetadataDeploy.Labels(name));
-    Selector selector = new Selector(name);
+    Metadata metadata = new Metadata(osName + "-dc", "", "");
+    MetadataDeploy metadeploy = new MetadataDeploy(new MetadataDeploy.Labels(osName));
+    Selector selector = new Selector(osName);
     DeploymentConfigSpec.Strategy strategy = new DeploymentConfigSpec.Strategy(strategyType);
 
     DeploymentConfigSpec spec =
