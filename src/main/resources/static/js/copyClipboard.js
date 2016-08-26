@@ -800,7 +800,6 @@
 
     var clipboard = new Clipboard('.js-clipboard-btn');
     var copyTooltip = $('.js-clipboard-btn');
-    debugger;
 
     copyTooltip.tooltip({
       container: 'body',

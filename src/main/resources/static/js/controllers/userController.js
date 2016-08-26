@@ -65,7 +65,7 @@ app.controller('UserCtrl', function($scope, serviceAPI, $routeParams, http, $coo
     http.get(url + 'current')
       .success(function(response) {
         console.log(response);
-        $scope.currentUser = response
+        $scope.currentUser = response;
       })
       .error(function(response, status) {
         showError(status, response);

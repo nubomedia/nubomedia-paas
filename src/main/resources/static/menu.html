@@ -94,14 +94,14 @@
                       </a>
                     </li>
 
-                    <li class="c-menu-aside__item">
+                    <li class="c-menu-aside__item" ng-if="userIsAdmin">
                       <a href="#projects" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()">
                         <span class="c-menu-aside__icon c-icon-project"></span>
                         <span class="c-menu-aside__link-text">Projects</span>
                       </a>
                     </li>
 
-                    <li class="c-menu-aside__item">
+                    <li class="c-menu-aside__item" ng-if="userIsAdmin">
                       <a href="#users" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()">
                         <span class="c-menu-aside__icon c-icon-user"></span>
                         <span class="c-menu-aside__link-text">Users</span>
