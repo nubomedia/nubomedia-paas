@@ -30,7 +30,7 @@
         </li>
 
         <li class="c-breadcrumb__item is-active">
-          <a href="#/users">Users</a>
+          <a href="#/users" ng-click="resetCreateFormView()">Users</a>
         </li>
 
       </ul><!-- Breadcrum -->
@@ -82,7 +82,7 @@
     </li>
 
     <li class="c-breadcrumb__item">
-      <span>Create new user<span>
+      <span>Add new user<span>
     </li>
 
   </ul><!-- Breadcrum -->
@@ -90,19 +90,23 @@
 
 
 
+<alert
+  ng-repeat="alert in alerts"
+  type="alert.type"
+  close="closeAlert($index)">
+  <div ng-bind-html="alert.msg"></div>
+</alert>
+<button
+  class="btn btn--white btn--clear-alert"
+  ng-if="alerts.length > 1"
+  ng-click="clearAlerts(alerts)">Clear alerts
+</button>
+
+
+
 
 <!-- Users -->
 <section class="users" ng-show="!createFormViewIsVisible">
-
-  <alert
-    ng-repeat="alert in alerts"
-    type="alert.type"
-    close="closeAlert($index)">
-    <div ng-bind-html="alert.msg"></div>
-  </alert>
-
-
-
 
   <section class="table-responsive" ng-show="users.length>0">
 

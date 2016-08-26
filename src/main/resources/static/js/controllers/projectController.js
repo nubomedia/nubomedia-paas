@@ -23,9 +23,15 @@ app.controller('ProjectCtrl', function($scope, serviceAPI, $routeParams, http, $
   var urlUsers = $cookieStore.get('URLNb') + "/api/v1/users/";
 
   $scope.alerts = [];
+
   $scope.closeAlert = function(index) {
     $scope.alerts.splice(index, 1);
   };
+
+  $scope.clearAlerts = function() {
+    $scope.alerts = [];
+  };
+
   $scope.roles = [
     'ADMIN',
     'USER',
@@ -162,6 +168,7 @@ app.controller('ProjectCtrl', function($scope, serviceAPI, $routeParams, http, $
       .success(function(response) {
         showOk('Project ' + postObj.name + ' created.');
         loadTable();
+        $scope.toggleCreateFormView();
       })
       .error(function(response, status) {
         showError(response, status);

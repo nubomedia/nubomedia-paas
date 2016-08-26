@@ -1,5 +1,5 @@
 <!-- Breadcrum container -->
-<section class="breadcrumb-container clearfix">
+<section class="breadcrumb-container clearfix" ng-show="!createFormViewIsVisible">
 
   <div class="row">
 
@@ -8,11 +8,11 @@
       <ul class="c-breadcrumb">
 
         <li class="c-breadcrumb__item">
-          <a href="/">Overview</a>
+          <a href="/" ng-click="resetCreateFormView()" >Overview</a>
         </li>
 
         <li class="c-breadcrumb__item is-active">
-          <a href="#/projects">Projects</a>
+          <a href="#/projects" ng-click="resetCreateFormView()">Projects</a>
         </li>
 
       </ul><!-- Breadcrum -->
@@ -24,11 +24,10 @@
         id="btn_create_nsd"
         href="#"
         class="btn btn--white"
-        title="Add a new project"
-        data-toggle="modal"
-        data-target="#createProject">
+        title="Add new user"
+        ng-click="toggleCreateFormView()">
         <span class="glyphicon glyphicon-plus-sign text-primary"></span>
-        Add a new Project
+        Add new project
       </button>
 
       <button
@@ -48,17 +47,45 @@
 
 </section><!-- /Breadcrum container -->
 
+<!-- Breadcrum container -->
+<section class="breadcrumb-container clearfix" ng-show="createFormViewIsVisible">
+  <!-- Breadcrum -->
+  <ul class="c-breadcrumb">
+
+    <li class="c-breadcrumb__item" >
+      <a href="/" ng-click="resetCreateFormView()">Overview</a>
+    </li>
+
+    <li class="c-breadcrumb__item" >
+      <a href="#/projects" ng-click="resetCreateFormView()">Projects</a>
+    </li>
+
+    <li class="c-breadcrumb__item">
+      <span>Add new project</span>
+    </li>
+
+  </ul><!-- Breadcrum -->
+</section><!-- /Breadcrum container -->
+
+
+
+<alert
+  ng-repeat="alert in alerts"
+  type="alert.type"
+  close="closeAlert($index)">
+  <div ng-bind-html="alert.msg"></div>
+</alert>
+<button
+  class="btn btn--white btn--clear-alert"
+  ng-if="alerts.length > 1"
+  ng-click="clearAlerts(alerts)">Clear alerts
+</button>
+
+
 
 
 <!-- Projects -->
-<section class="projects">
-
-  <alert
-    ng-repeat="alert in alerts"
-    type="alert.type"
-    close="closeAlert($index)">
-    <div ng-bind-html="alert.msg"></div>
-  </alert>
+<section class="projects" ng-show="!createFormViewIsVisible">
 
   <form class="search-form search-form--table">
     <span class="btn glyphicon glyphicon-search"></span>
@@ -70,7 +97,6 @@
         placeholder="Search for a project">
     </div>
   </form>
-
 
   <section class="table-responsive" ng-show="projects.length>0">
     <table class="table table-striped tablesorter c-table simple-table">
@@ -150,68 +176,106 @@
 
 
 
-<!-- Modal -->
-<section class="modal fade" tabindex="-1" role="dialog" id="createProject">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<form role="form" class="form-horizontal form form-new-project" ng-show="createFormViewIsVisible">
 
-      <header class="modal-header">
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title">Create a new Project</h4>
-      </header>
+  <section class="form__secction">
 
-      <div class="modal-body">
-        <form role="form" class="form-horizontal">
-          <div
-            class="form-group input"
-            ng-repeat="(key,value) in projectObj"
-            ng-if="key!=='event' && key!=='type' && key!=='description'">
+    <h3 class="form__section-title">General</h3>
 
-            <label for="{{key}}" class="col-sm-4 control-label input__label">
-              {{key}}
-            </label>
-
-            <div class="col-sm-6">
-              <input
-                type="text"
-                class="form-control input__field"
-                id="{{key}}"
-                name="{{key}}"
-                ng-model="projectObj[key]"/>
-            </div>
-
-          </div>
-        </form>
+    <!-- Name -->
+    <div class="form-group input">
+      <label class="col-sm-4 control-label input__label">
+        Name
+      </label>
+      <div class="col-sm-8">
+        <input
+          type="text"
+          class="form-control input__field"
+          ng-model="projectObj.name">
       </div>
+    </div>
 
-      <footer class="modal-footer">
+    <!-- Description -->
+    <div class="form-group input">
+      <label class="col-sm-4 control-label input__label">
+        Description
+      </label>
+      <div class="col-sm-8">
+        <textarea
+          type="text"
+          class="form-control input__field"
+          ng-model="projectObj.description"/>
+          </textarea>
+      </div>
+    </div><!-- /Username -->
 
-        <button
-          type="button"
-          class="btn btn-default"
-          data-dismiss="modal">
-          Close
-        </button>
+    <section class="form__section">
+      <h3 class="form__section-title">Users</h3>
+      <div class="form-group input">
 
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-dismiss="modal"
-          ng-click="save()">
-        Save
-        </button>
+        <label  class="col-sm-4 control-label input__label">
+          <span class="btn btn--white u-mt-5" ng-click="addUserCreate()">
+            Add user
+          </span>
+        </label>
 
-      </footer>
+        <div class="col-sm-8">
+          <div class="form-group"
+            ng-repeat="(key,value) in projectObj.usersPairs track by $index">
 
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</section><!-- /Modal -->
+            <div class="col-sm-5">
+              <div class="select">
+                <select
+                  name="typeSelect"
+                  class="form-control modal-select ng-pristine ng-valid"
+                  ng-model="projectObj.usersPairs[$index].name"
+                  ng-options="user for user in users"
+                  ng-change="">
+                </select>
+                <div class="select__arrow"></div>
+              </div><!-- /select -->
+            </div><!-- /col -->
+
+            <div class="col-sm-5">
+              <div class="select">
+                <select
+                  name="typeSelect"
+                  class="form-control modal-select ng-pristine ng-valid"
+                  ng-model="projectObj.usersPairs[$index].role"
+                  ng-options="role for role in roles"
+                  ng-change="">
+                </select>
+                <div class="select__arrow"></div>
+              </div><!-- /select -->
+            </div><!-- /col -->
+
+            <div class="col-sm-2">
+              <span ng-click="projectObj.usersPairs.splice($index, 1)">
+                <span class="fa fa-trash"></span>
+              </span>
+            </div><!-- /col -->
+
+          </div><!-- /form-group -->
+
+        </div><!-- /column -->
+
+      </div><!-- /input -->
+
+    </section>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-dismiss="modal"
+      ng-click="save()">
+      Save
+    </button>
+  </section>
+
+</form>
+
+
+
 
 
 

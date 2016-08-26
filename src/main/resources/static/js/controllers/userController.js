@@ -23,8 +23,13 @@ app.controller('UserCtrl', function($scope, serviceAPI, $routeParams, http, $coo
   var urlprojects = $cookieStore.get('URLNb') + "/api/v1/projects/";
 
   $scope.alerts = [];
+
   $scope.closeAlert = function(index) {
     $scope.alerts.splice(index, 1);
+  };
+
+  $scope.clearAlerts = function() {
+    $scope.alerts = [];
   };
 
   $scope.deleteUserModal = function(data) {
