@@ -121,6 +121,7 @@ app.controller('IndexCtrl', function($scope, $cookieStore, $location, AuthServic
   $scope.logged = $cookieStore.get('loggedNb');
   console.log($scope.logged);
   $location.replace();
+  loadNumbers();
 
   $scope.$watch('projectSelected', function(newValue, oldValue) {
     console.log(newValue);
@@ -174,6 +175,12 @@ app.controller('IndexCtrl', function($scope, $cookieStore, $location, AuthServic
       if (data.roles[0].role === 'ADMIN') {
         $scope.userIsAdmin = true;
       }
+    });
+
+  // Dashboard info
+  http.get(url + '/users')
+    .success(function(data) {
+      $rootScope.userList = data;
     });
 
   $scope.changeProject = function(project) {
