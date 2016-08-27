@@ -165,9 +165,18 @@ $color--secondary: $color--primary - 10
 //  @Input
 // --------------------------------------------------------------------------
 .input
+  position: relative
   margin-bottom: 20px
 
   +clearfix
+
+  .show-pass
+    position: absolute
+    top: auto
+    right: 10px
+    bottom: 8px
+    left: auto
+    cursor: pointer
 
   &:last-of-type
     margin-bottom: 0
@@ -199,6 +208,7 @@ $color--secondary: $color--primary - 10
     display: block
     margin-top: -2px
     color: $color-gray + 30
+
     &--inline
       display: inline-block
 

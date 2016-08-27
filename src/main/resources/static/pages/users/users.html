@@ -205,7 +205,10 @@
                   <a href="#users/{{data.username}}">View</a>
                 </li>
                 <li  class="c-dropdown__item">
-                  <span ng-click="deleteUserModal(data)">Delete</span>
+                  <span ng-click="changeUserPassModal(data.username)">Change password</span>
+                </li>
+                <li  class="c-dropdown__item">
+                  <span ng-click="deleteUserModal(data)" class="text-danger">Delete</span>
                 </li>
               </ul>
 
@@ -553,6 +556,76 @@
     </div><!-- /.modal-dialog -->
 </section><!-- /Modal delete user -->
 
+
+
+
+<!-- Modal delete user -->
+<section class="modal modal--change-pass fade" tabindex="-1" role="dialog" id="changeUserPassModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+        <header class="modal-header">
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">
+            Change <strong>{{selectedUsername}}</strong>'s password!
+          </h4>
+          <p class="text-success" ng-show="userPassSuccess">
+            Password changed successfuly!
+          </p>
+          <p class="text-danger" ng-show="userPassError">
+            'Password change failed!'
+          </p>
+        </header>
+
+        <div class="modal-body">
+            <form class="form form-change-pass">
+
+              <div class="form-group input">
+                <label for="username" class="control-label input__label">
+                  Enter a new password
+                </label>
+                <input
+                  type="{{userPassInputType}}"
+                  class="form-control input__field"
+                  ng-model="userNewPassword"/>
+                  <span
+                    class="show-pass glyphicon"
+                    ng-class="userPassInputToggle ? 'glyphicon-eye-close' : 'glyphicon-eye-open'"
+                    title="{{userPassInputAlt}}"
+                    ng-click="togglePassInputType()"></span>
+              </div><!-- /Username -->
+
+            </form>
+        </div>
+
+        <footer class="modal-footer">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal">
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="btn btn--white"
+            ng-click="adminChangeUserPass(selectedUsername, userNewPassword)"
+            data-dismiss="modal">
+            Change password
+          </button>
+
+        </footer>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</section><!-- /Modal delete user -->
 
 <!-- Delete single user modal -->
 <div ng-include src="'./templates/delete-user-modal.html'"></div>

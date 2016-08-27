@@ -77,6 +77,42 @@ app.controller('UserCtrl', function($scope, serviceAPI, $routeParams, http, $coo
       });
   };
 
+  // Change user pass by Admin
+  $scope.userPassInputToggle = false;
+  $scope.userPassInputType = 'password';
+  $scope.userPassInputAlt = 'Show password';
+
+  $scope.togglePassInputType = function() {
+    $scope.userPassInputToggle = !$scope.userPassInputToggle;
+    if ($scope.userPassInputToggle) {
+      $scope.userPassInputAlt = 'Hide password';
+      $scope.userPassInputType = 'text';
+    } else {
+      $scope.userPassInputAlt = 'Show password';
+      $scope.userPassInputType = 'password';
+    }
+  };
+
+  $scope.changeUserPassModal = function(username) {
+    $scope.selectedUsername = username;
+    $scope.userNewPassword = '';
+    $('#changeUserPassModal').modal('show');
+  };
+
+  $scope.adminChangeUserPass = function(username, newPassword) {
+    var newPassJson = {
+      'password': newPassword
+    };
+
+    http.post(url + username + '/reset', newPassJson)
+      .success(function(data) {
+        showOk( selectedUsername + ' \'s password changed successfuly');
+      }).error(function(data) {
+        showError('Password change failed!', 'danger');
+      });
+  };
+  // End Change user pass by Admin
+
   http.get(urlprojects)
     .success(function(response) {
       //console.log(response);

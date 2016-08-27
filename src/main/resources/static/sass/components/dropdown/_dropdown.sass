@@ -59,8 +59,14 @@
     text-align: center
 
     > *
-      padding: 3px 20px;
+      padding: 3px 0
+      display: inline-block
+      line-height: 1.1
       background: transparent!important
+      color: $color-gray!important
+
+      &.text-danger
+        color: $color-danger!important
 
     &:hover
       background: $color-gray--secondary
