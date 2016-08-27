@@ -77,8 +77,7 @@ app.controller('UserCtrl', function($scope, serviceAPI, $routeParams, http, $coo
       });
   };
 
-  // Change user pass by Admin
-  $scope.userPassInputToggle = false;
+  // Toggle password visibility
   $scope.userPassInputType = 'password';
   $scope.userPassInputAlt = 'Show password';
 
@@ -93,6 +92,9 @@ app.controller('UserCtrl', function($scope, serviceAPI, $routeParams, http, $coo
     }
   };
 
+  // Change user pass by Admin
+  $scope.userPassInputToggle = false;
+
   $scope.changeUserPassModal = function(username) {
     $scope.selectedUsername = username;
     $scope.userNewPassword = '';
@@ -106,7 +108,7 @@ app.controller('UserCtrl', function($scope, serviceAPI, $routeParams, http, $coo
 
     http.post(url + username + '/reset', newPassJson)
       .success(function(data) {
-        showOk( selectedUsername + ' \'s password changed successfuly');
+        showOk(selectedUsername + ' \'s password changed successfully');
       }).error(function(data) {
         showError('Password change failed!', 'danger');
       });
