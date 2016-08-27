@@ -231,11 +231,12 @@ app.controller('IndexCtrl', function($scope, $cookieStore, $location, AuthServic
     }
   };
 
-  // Active menu link
-  // Needs a better approach
-  $(document).on('click', '.js-menu-link', function() {
-    $('.js-menu-link').removeClass('is-active');
-    $(this).addClass('is-active');
-  });
+  $scope.setActiveLink = function(path) {
+    if ($location.url() === '/' && path === 'home') {
+      return 'is-active';
+    } else {
+      return ($location.url().substr(0, path.length) === path) ? 'is-active' : '';
+    }
+  };
 
 });

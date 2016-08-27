@@ -74,35 +74,35 @@
             <div class="sidebar-nav navbar-collapse">
                 <ul class="nav c-menu" id="side-menu">
                     <li class="c-menu-aside__item">
-                      <a href="#" class="c-menu-aside__link js-menu-link" id="overviewMenu">
+                      <a href="#" class="c-menu-aside__link js-menu-link" ng-class="setActiveLink('home')">
                         <span class="c-menu-aside__icon c-icon-overview"></span>
                         <span class="c-menu-aside__link-text">Overview</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item">
-                      <a href="#applications" ng-click="resetCreateFormView()" class="c-menu-aside__link js-menu-link" id="topologiesMenu" toggle-class="is-active">
+                      <a href="#applications" ng-click="resetCreateFormView()" class="c-menu-aside__link js-menu-link" ng-class="setActiveLink('/applications')">
                         <span class="c-menu-aside__icon c-icon-app"></span>
                         <span class="c-menu-aside__link-text">Applications</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item">
-                      <a href="#marketapps" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()">
+                      <a href="#marketapps" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()" ng-class="setActiveLink('/marketapps')">
                         <span class="c-menu-aside__icon c-icon-app"></span>
                         <span class="c-menu-aside__link-text">App Store</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item" ng-if="userIsAdmin">
-                      <a href="#projects" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()">
+                      <a href="#projects" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()" ng-class="setActiveLink('/projects')">
                         <span class="c-menu-aside__icon c-icon-project"></span>
                         <span class="c-menu-aside__link-text">Projects</span>
                       </a>
                     </li>
 
                     <li class="c-menu-aside__item" ng-if="userIsAdmin">
-                      <a href="#users" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()">
+                      <a href="#users" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()" ng-class="setActiveLink('/users')">
                         <span class="c-menu-aside__icon c-icon-user"></span>
                         <span class="c-menu-aside__link-text">Users</span>
                       </a>
