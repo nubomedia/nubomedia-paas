@@ -50,10 +50,15 @@
 
   <tabset>
 
-  <!-- Overview -->
-  <tab heading="Overview">
-    <div ng-include src="'./templates/settings.html'"></div>
-  </tab>
+    <!-- Overview -->
+    <tab heading="Overview">
+      <div ng-include src="'./templates/settings.html'"></div>
+    </tab>
+
+    <!-- Resources -->
+    <tab heading="Resources">
+      <div ng-include src="'./templates/resources.html'"></div>
+    </tab>
 
     <!-- Metrics -->
     <tab heading="Metrics" ng-click="showPlot()">
