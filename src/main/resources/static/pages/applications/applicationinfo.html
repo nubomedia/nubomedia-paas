@@ -39,7 +39,7 @@
 
 
 
-<section class="section-nav-tabs">
+<section class="section-nav-tabs app-tabs">
 
   <alert
     ng-repeat="alert in alerts"
@@ -52,11 +52,6 @@
 
     <!-- Overview -->
     <tab heading="Overview">
-      <div ng-include src="'./templates/settings.html'"></div>
-    </tab>
-
-    <!-- Resources -->
-    <tab heading="Resources">
       <div ng-include src="'./templates/resources.html'"></div>
     </tab>
 
@@ -69,8 +64,13 @@
     </tab>
 
     <!-- Debug -->
-    <tab heading="Debug">
+    <tab heading="Debug" class="debug">
       <div ng-include src="'./templates/logs.html'"></div>
+    </tab>
+
+    <!-- Settings -->
+    <tab heading="Settings">
+      <div ng-include src="'./templates/settings.html'"></div>
     </tab>
 
   </tabset>
