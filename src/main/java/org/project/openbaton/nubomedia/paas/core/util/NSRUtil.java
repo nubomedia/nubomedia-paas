@@ -27,7 +27,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by gca on 08/06/16.
@@ -35,8 +38,8 @@ import java.util.List;
 public class NSRUtil {
   private static final Logger logger = LoggerFactory.getLogger(NSRUtil.class);
 
-  public static List<String> getFloatingIPs(VirtualNetworkFunctionRecord vnfr) {
-    List<String> floatingIPs = new ArrayList<>();
+  public static Set<String> getFloatingIPs(VirtualNetworkFunctionRecord vnfr) {
+    Set<String> floatingIPs = new HashSet<>();
     for (VirtualDeploymentUnit vdu : vnfr.getVdu()) {
       for (VNFCInstance instance : vdu.getVnfc_instance()) {
         logger.debug("found instance " + instance.getHostname() + " getting IPs");
@@ -51,8 +54,8 @@ public class NSRUtil {
     return floatingIPs;
   }
 
-  public static List<String> getHostnames(VirtualNetworkFunctionRecord vnfr) {
-    List<String> hostnames = new ArrayList<>();
+  public static Set<String> getHostnames(VirtualNetworkFunctionRecord vnfr) {
+    Set<String> hostnames = new HashSet<>();
     for (VirtualDeploymentUnit vdu : vnfr.getVdu()) {
       for (VNFCInstance instance : vdu.getVnfc_instance()) {
         logger.debug("found instance " + instance.getHostname());

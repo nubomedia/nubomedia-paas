@@ -21,7 +21,7 @@ package org.project.openbaton.nubomedia.paas.model.persistence.openbaton;
 import org.openbaton.catalogue.util.IdGenerator;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by maa on 21.10.15.
@@ -34,10 +34,10 @@ public class MediaServerGroup {
   private String nsrID;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  private List<String> floatingIPs;
+  private Set<String> floatingIPs;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  private List<String> hostnames;
+  private Set<String> hostnames;
 
   public MediaServerGroup() {}
 
@@ -66,19 +66,19 @@ public class MediaServerGroup {
     this.nsrID = nsrID;
   }
 
-  public List<String> getFloatingIPs() {
+  public Set<String> getFloatingIPs() {
     return floatingIPs;
   }
 
-  public void setFloatingIPs(List<String> floatingIPs) {
+  public void setFloatingIPs(Set<String> floatingIPs) {
     this.floatingIPs = floatingIPs;
   }
 
-  public List<String> getHostnames() {
+  public Set<String> getHostnames() {
     return hostnames;
   }
 
-  public void setHostnames(List<String> hostnames) {
+  public void setHostnames(Set<String> hostnames) {
     this.hostnames = hostnames;
   }
 
