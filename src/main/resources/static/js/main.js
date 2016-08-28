@@ -1,5 +1,3 @@
-
-
 /*
  *
  *  * Copyright (c) 2016 Open Baton
@@ -15,7 +13,7 @@
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
- *  
+ *
  */
 
 require({
@@ -23,12 +21,14 @@ require({
     paths: {
         jquery: 'libs/jquery/jquery.min',
         jquery_ui: 'libs/jquery/jquery-ui.min',
+        angularclipboard: '../bower_components/angular-clipboard/angular-clipboard',
         bootstrapJS: "../bower_components/bootstrap/dist/js/bootstrap.min",
         metisMenu: "../bower_components/metisMenu/dist/metisMenu.min",
         sb_admin_2: "../dist/js/sb-admin-2",
         vis: "../dist/js/vis",
         underscore: "libs/underscore/underscore-min",
         angular: "libs/angular/angular.min",
+        angular_messages: "../bower_components/angular-messages/angular-messages.min",
         angular_route: "libs/angular/angular-route.min",
         angular_cookies: "libs/angular/angular-cookies.min",
         ui_bootstrap: "libs/angular/ui-bootstrap-tpls-0.10.0.min",
@@ -76,10 +76,10 @@ require({
             deps: ['app']
         },
         projectController: {
-            deps: ['app', 'servicesServices', 'httpService', 'angular_cookies','authService']
+            deps: ['app', 'servicesServices', 'httpService', 'angular_cookies', 'authService']
         },
         userController: {
-            deps: ['app', 'servicesServices', 'httpService', 'angular_cookies','authService']
+            deps: ['app', 'servicesServices', 'httpService', 'angular_cookies', 'authService']
         },
         underscore: {
             exports: '_',
@@ -90,6 +90,12 @@ require({
         },
         app: {
             deps: ['angular', 'angular_route', 'angular_sanitize', 'ui_bootstrap']
+        },
+        angular_messages: {
+            deps: ['angular']
+        },
+        angularclipboard: {
+            deps: ['angular']
         },
         angular_route: {
             deps: ['angular']
@@ -127,12 +133,14 @@ require({
     'sb_admin_2',
     'underscore',
     'angular',
+    'angular_messages',
     'angular_route',
     'vis',
     'indexController',
     'projectController',
     'userController',
-    'applicationController'
+    'applicationController',
+    'angularclipboard'
 ], function(require) {
-    return require(['bootstrap','vis']);
+    return require(['bootstrap', 'vis']);
 });

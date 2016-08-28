@@ -1,0 +1,117 @@
+.aplications-table
+  .control
+    margin-bottom: 0
+    font-weight: 600
+
+  td
+    padding: 0 !important
+
+  tr:first-child td
+    padding-top: 20px !important
+
+.c-application
+  display: table
+  width: 100%
+  margin: 10px auto
+  border: 1px solid $color-gamma
+  border-radius: 4px
+
+  @media screen and (max-width: 800px)
+    margin-bottom: 35px
+
+    &:nth-child(2n+1)
+      background-color: #f7f7f7
+
+    &__component
+      padding: 20px
+      text-align: center
+
+      &:nth-child(2),
+      &:nth-child(3),
+      &:nth-child(4)
+        border-top: 1px solid $color-gamma
+
+  @media screen and (min-width: 801px)
+    &__component
+      display: table-cell
+      padding: 15px
+      vertical-align: middle
+
+      &:nth-child(2),
+      &:nth-child(3),
+      &:nth-child(4)
+        width: 16%
+        text-align: center
+        border-left: 1px solid $color-gamma
+        word-break: break-all
+
+  &__image
+    display: inline-block
+    width: 55px
+    height: 55px
+    margin-right: 5px
+    vertical-align: middle
+    background-image: url("../img/icon5.png")
+    background-position: center
+    background-repeat: no-repeat
+    background-size: contain
+    background-color: #E3E8ED
+
+  &__title
+    font-size: 16px
+    display: inline-block
+    margin-top: 0
+    margin-bottom: 0
+    padding-top: 0
+    vertical-align: middle
+    color: $color-gray
+
+  &__subtitle
+    font-size: 12px
+    font-weight: 400
+    display: block
+    margin-top: 8px
+    color: $color-gray + 20
+    text-transform: uppercase
+
+  &__desc
+    margin-left: 5px
+
+  &__icon
+    position: relative
+    top: -3px
+    margin-right: 3px
+    background-size: contain
+    width: 16px
+    height: 16px
+    background-repeat: no-repeat
+    vertical-align: middle
+
+    &.flavour
+      display: inline-block
+      background-image: url('../img/Webapp/good.png')
+
+    &.running,
+    &.RUNNING
+      background-image: url('../img/Webapp/resources.png')
+      display: inline-block
+
+    &.failed,
+    &.FAILED,
+    &.PAAS_RESOURCE_MISSING
+      background-image: url('../img/Webapp/error.png')
+      display: inline-block
+
+  // &__capacity
+
+  &__status
+    &.running,
+    &.RUNNING
+      color: $color-success
+
+    &.failed,
+    &.FAILED
+      color: $color-danger
+
+    &.PAAS_RESOURCE_MISSING
+      color: $color-warning

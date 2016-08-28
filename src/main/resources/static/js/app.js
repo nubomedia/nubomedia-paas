@@ -13,10 +13,10 @@
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
- *  
+ *
  */
 
-angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCookies'])
+angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCookies', 'angular-clipboard', 'ngMessages'])
     .config(function ($routeProvider) {
 
         $routeProvider.
@@ -61,7 +61,6 @@ angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCookies'])
             });
 
     });
-
 
 
 /**

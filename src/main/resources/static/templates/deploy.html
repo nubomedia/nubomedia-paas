@@ -1,0 +1,38 @@
+<!-- Section deploy -->
+<section class="section">
+
+  <h3 class="section__title">
+    Github URL
+    <a href="#" class="section__edit"><span class="nm-icon"></span>Edit</a>
+  </h3>
+
+  <form class="form form-deploy">
+    <!-- Application name -->
+    <div class="form-group input">
+      <input
+        type="text"
+        class="form-control input__field"
+        id="clipboard-input"
+        ng-model="application.gitURL"
+        value="{{application.gitURL}}"
+        readonly>
+      <span
+        class="btn form-deploy__copy"
+        title="Copied!"
+        supported="supported"
+        on-copied="clipboardSuccess()"
+        text="application.gitURL"
+        on-error="clipboardFail(err)"
+        clipboard
+        alt="Copy to clipboard">
+          <span class="form-deploy__info js-form-clipboard-info">Copied!</span>
+          Copy
+      </span>
+    </div><!-- /Application name -->
+
+    <button class="btn btn-primary form__submit">
+      Deploy
+    </button>
+  </form>
+
+</section><!-- Section deploy -->

@@ -1,0 +1,98 @@
+$aside-animation-time: 0.2s
+
+.sidebar#sidebar
+  .c-menu-aside
+    position: relative
+    padding: 0
+    list-style: none
+
+    &__item
+      border: none!important
+
+    .main-logo
+      position: absolute
+      top: -62px
+      right: 0
+      bottom: auto
+      left: 0
+      margin: auto
+
+    &__link.is-active
+      color: #fff
+      background: $color-blue
+
+      &:before
+        opacity: 1
+
+    &__link
+      position: relative
+      display: block
+      padding: 13px 16px 13px 24px
+      transition: all $aside-animation-time ease-in-out
+      text-decoration: none !important
+      color: $color-gray
+
+      &--user
+        padding: 30px 20px 30px 30px
+
+      &:before
+        position: absolute
+        top: 0
+        bottom: 0
+        left: 0
+        display: block
+        width: 4px
+        content: ""
+        transition: opacity $aside-animation-time ease-in-out
+        opacity: 0
+        background: #246fc4
+
+      // &:hover
+      //   color: #fff
+      //   background: #2386f8
+
+      &:hover:before
+        opacity: 1
+
+    &__icon
+      display: inline-block
+      width: 20px
+      height: 20px
+      margin-right: 8px
+      vertical-align: middle
+      background-color: #ddd
+      background-repeat: no-repeat
+      background-position: center
+      background-size: cover
+
+      &.c-icon-overview
+        background-image: url("../img/icon2.png")
+        background-color: transparent
+
+      &.c-icon-app
+        background-image: url("../img/icon1.png")
+        background-color: transparent
+
+      &.c-icon-project
+        background-image: url("../img/icon4.png")
+        background-color: transparent
+
+      &.c-icon-user
+        background-image: url("../img/icon3.png")
+        background-color: transparent
+
+      &--mobile
+        position: absolute
+        top: 0
+        right: 16px
+        bottom: 0
+        left: auto
+        display: none
+        margin: auto
+
+        @media screen and (max-width: $medium-mq-width)
+          display: block
+
+    &__link-text
+      display: inline-block
+      vertical-align: middle

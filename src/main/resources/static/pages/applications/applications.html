@@ -16,424 +16,806 @@
   ~  */
   -->
 
-<div class="row">
-    <div class="col-lg-12">
-        <h1>Applications</h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i>
-                Overview</a></li>
-            <li class="active"><i class="fa fa-tasks"></i>
-                Applications
-            </li>
-        </ol>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12 ">
-        <button id="deleteMultiple" href="#"  ng-disabled="multipleDelete" class="btn btn-danger pull-right"  ng-style="{'margin-left':'25px'}"
-                title="Delete all the items selected" data-target="#deleteModal" data-toggle="modal">Delete
-        </button>
+<!-- Breadcrum container -->
+<section class="breadcrumb-container clearfix" ng-show="!createFormViewIsVisible">
 
-        <button id="btn_create_topology" class="btn btn-primary pull-right"
-                title="Create a new App" ng-click="createApp()">Create App
-        </button>
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-12 top-buffer">
-        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">
-            <div ng-bind-html="alert.msg"></div>
-        </alert>
+  <div class="row">
 
-        <div class="table-responsive" ng-if="applications.length > 0">
-            <table
-                    class="table table-bordered table-striped table-hover tablesorter"
-                    id="topoTabletable">
-                <thead>
-                <tr>
-                    <th><input type="checkbox" ng-model="main.checkbox"></th>
-                    <th ng-click="predicate = 'name';reverse = !reverse">name <i class="fa fa-sort"></i></th>
-                    <th ng-if="application.route" ng-click="predicate = 'route';reverse = !reverse">route <i
-                            class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'flavor'; reverse = !reverse">flavor <i class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'created by';reverse = !reverse">created by <i class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'created at';reverse = !reverse">created at <i class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'status'; reverse = !status">status <i class="fa fa-sort"></i></th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="data in applications| orderBy:predicate:reverse">
-                    <td><input type="checkbox" ng-init="selection.ids[data.id] = false" ng-model="selection.ids[data.id]" name="group" id="{{data.id}}" /></td>
-                    <td><a href="#applications/{{data.id}}">{{data.name}}</a></td>
-                    <td ng-if="application.route"><a href="http://{{application.route}}" target="_blank">url</a></td>
-                    <td>{{data.flavor}}</td>
-                    <td>{{data.createdBy}}</td>
-                    <td>{{data.createdAt}}</td>
-                    <td>{{data.status}}</td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                Action <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li class="divider"></li>
-                                <li><a href="" ng-click="deleteData(data.id)">Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="col-xs-12 col-md-7">
+      <!-- Breadcrum -->
+      <ul class="c-breadcrumb">
 
-    </div>
-</div>
+        <li class="c-breadcrumb__item">
+          <a href="/">Overview</a>
+        </li>
+
+        <li class="c-breadcrumb__item is-active">
+          <a href="#/applications" ng-click="resetCreateFormView()">Applications</a>
+        </li>
+
+      </ul><!-- Breadcrum -->
+    </div><!-- /col -->
+
+    <div class="col-xs-12 col-md-5 text-right">
+
+      <button
+        class="btn btn--white"
+        title="Create a new App"
+        ng-click="toggleCreateFormView(); createApp()">
+        <span class="glyphicon glyphicon-plus-sign text-primary"></span>
+        Create new app
+      </button>
+
+      <button
+        class="btn btn-danger"
+        ng-disabled="multipleDelete"
+        title="Delete all the items selected"
+        data-target="#deleteModal"
+        data-toggle="modal">
+        Delete
+      </button>
+
+    </div><!-- /col -->
+
+  </div><!-- /row -->
+
+</section><!-- /Breadcrum container -->
+
+<!-- Breadcrum container -->
+<section class="breadcrumb-container clearfix" ng-show="createFormViewIsVisible">
+  <ul class="c-breadcrumb">
+
+    <li class="c-breadcrumb__item">
+      <a href="/">Overview</a>
+    </li>
+
+    <li class="c-breadcrumb__item">
+      <a href="#/applications" ng-click="resetCreateFormView()">Applications</a>
+    </li>
+
+    <li class="c-breadcrumb__item">
+      <span>Create new application<span>
+    </li>
+
+  </ul><!-- Breadcrum -->
+</section><!-- /Breadcrum container -->
 
 
-<div class="modal " id="modalT">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                        aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="serviceFormLabel">Create App</h4>
+
+
+<alert
+  ng-repeat="alert in alerts"
+  type="alert.type"
+  close="closeAlert($index)">
+  <div ng-bind-html="alert.msg"></div>
+</alert>
+<button
+  class="btn btn--white btn--clear-alert"
+  ng-if="alerts.length > 1"
+  ng-click="clearAlerts(alerts)">Clear alerts
+</button>
+
+
+
+
+<!-- Applications -->
+<section class="applications-container" ng-show="!createFormViewIsVisible">
+
+  <table
+    class="table tablesorter aplications-table c-table"
+    id="topoTabletable">
+
+    <thead>
+      <tr>
+
+        <th>
+          <label class="control control--no-text control--checkbox">
+            <input type="checkbox" ng-model="main.checkbox">
+            <div class="control__indicator"></div>
+          </label>
+        </th>
+
+        <th>
+
+          <!-- Dropdown -->
+          <div class="list-btn dropdown c-dropdown">
+
+            <button
+              class="btn dropdown-toggle c-dropdown__toggle"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="true">
+              Sort By:
+            </button>
+
+            <ul class="dropdown-menu c-dropdown__menu">
+              <li class="c-dropdown__item" ng-click="predicate = 'name'; reverse = !reverse">
+                Name
+              </li>
+              <li class="c-dropdown__item" ng-click="predicate = 'flavor'; reverse = !reverse">
+                Flavour
+              </li>
+              <li class="c-dropdown__item" ng-click="predicate = 'status'; reverse = !status">
+                Status
+              </li>
+            </ul>
+
+          </div><!-- /Dropdown -->
+
+          <form class="search-form">
+            <span class="btn glyphicon glyphicon-search"></span>
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control"
+                ng-model="searchInput"
+                placeholder="Search for an applicaiton">
             </div>
-            <div class="modal-body" ng-if="appCreate" ng-init="resize()">
-                <tabset>
-                    <tab heading="Form">
-                        <form class="form-horizontal" name="formApp" id="formModalL">
-                            <br/>
+          </form>
 
-                            <div class="form-group" ng-repeat="(key,value) in appCreate"
-                                 ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut'">
-                                <label for="{{key}}" class="col-sm-4 control-label">
+        </th>
 
-                                    <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left"
-                                       popover-trigger="mouseenter"
-                                       ng-mouseover="getInfos(key)"> </i>
-                                    {{key}}</label>
+      </tr>
+    </thead>
 
-                                <div class="col-sm-6">
-                                    <input type="text" class="form-control" id="{{key}}" name="{{key}}"
-                                           ng-model="appCreate[key]"/>
-                                </div>
+    <tbody>
+      <tr ng-repeat="data in applications | orderBy:predicate:reverse | filter: searchInput">
 
-                            </div>
+        <td>
+          <label class="control control--no-text control control--checkbox">
+            <input
+              ng-init="selection.ids[data.id] = false"
+              ng-model="selection.ids[data.id]"
+              id="{{data.id}}"
+              type="checkbox"
+              name="group">
+            <div class="control__indicator"></div>
+          </label>
+        </td>
 
+        <td colspan="4">
 
-                            <div class="form-group">
-                                <label for="flavor" class="col-sm-4 control-label">
+          <!-- Application -->
+          <article class="c-application">
 
-                                    <i class="fa fa-info-circle" popover="{{textInfo}}" popover-placement="left"
-                                       popover-trigger="mouseenter"
-                                       ng-mouseover="getInfos('flavor')"> </i>
-                                    flavor</label>
+            <div class="c-application__component">
+              <span class="c-application__image"></span>
 
-                                <div class="col-sm-6">
+              <h3 class="c-application__title">
+                <a href="#applications/{{data.id}}">{{data.name}}</a>
+                <span class="c-application__subtitle">
+                  Created at:
+                  <strong class="c-application__desc">{{data.createdAt}}</strong>
+                </span>
+              </h3>
+            </div><!-- /application component -->
 
-                                    <select ng-model="appCreate.flavor" class="form-control modal-select" name="flavor"
-                                            id="flavor">
-                                        <option ng-repeat="flavor in flavors track by $index"
-                                                ng-init="appCreate.flavor = flavors[0]" value="{{flavor}}">{{flavor}}
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
+            <div class="c-application__component">
+              <h3 class="c-application__title">
+                <span class="c-application__icon flavour"></span> Flavour
+                <span class="c-application__subtitle">
+                  {{data.flavor}}
+                </span>
+              </h3>
+            </div><!-- /application component -->
 
+            <div class="c-application__component">
+              <h3 class="c-application__title">
+                <span class="c-application__icon" ng-class="data.status"></span> Status
+                <span class="c-application__subtitle c-application__status" ng-class="data.status">
+                  {{data.status}}
+                </span>
+              </h3>
+            </div><!-- /application component -->
 
-                            <div class="form-group">
-                                <label for="projectKey" class="col-sm-4 control-label">
-                                    <i class="fa fa-info-circle" ng-mouseover="getInfos('secretName')"
+            <div class="c-application__component">
 
-                                       popover="{{textInfo}}" popover-placement="left"
-                                       popover-trigger="mouseenter"> </i>
+              <!-- Dropdown -->
+              <div class="list-btn dropdown c-dropdown">
 
-                                    secretName</label>
-
-                                <div ng-class="row" class="col-sm-6">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="projectKey" name="projectKey"
-                                               ng-model="appCreate.secretName"/>
-                                        <span class="input-group-addon"><a href="" data-toggle="modal"
-                                                                           data-target="#modalPrivateKey">
-                                            <li title="Add a Private key" class="fa fa-plus-square"></li>
-                                        </a></span>
-                                    </div>
-                                    <!--<input type="text" class="form-control" id="{{key}}" name="{{key}}"-->
-                                    <!--ng-model="appCreate.privateKey"/><a href="" data-toggle="modal" data-target="#modalPrivateKey">-->
-                                    <!--<li class="fa fa-plus-square"></li>-->
-                                    </a>
-                                </div>
-                            </div>
-
-
-
-                            <div class="panel panel-default">
-                                <div class="panel-heading"><b>Do you want to set the scale IN/OUT threshold ?</b>
-                                    <input type="checkbox" id="inOutThreshold" name="inOutThreshold"
-                                           ng-model="toggle.threshold"></div>
-                                <div class="panel-body" ng-if="toggle.threshold">
-                                    <div class="form-group" ng-repeat="(key,value) in _threshold"
-                                         ng-if="key!='turnServerPassword'">
-                                        <label for="{{key}}" class="col-sm-4 control-label">
-                                            <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
-
-                                               popover="{{textInfo}}" popover-placement="left"
-                                               popover-trigger="mouseenter"> </i>
-
-                                            {{key}}</label>
-                                        <div class="col-sm-6">
-                                            <input type="number" class="form-control" id="{{key}}" name="{{key}}"
-                                                   ng-model="_threshold[key]"/>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-
-
-                            <div class="panel panel-default">
-                                <div class="panel-heading"><b>Do you want to set the Quality of Service?</b>
-                                    <input type="checkbox" id="qos" name="qos"
-                                           ng-model="toggle.qualityOfService"></div>
-                                <div class="panel-body" ng-if="toggle.qualityOfService">
-                                    <label ng-repeat="qos in _qualityOfService"
-                                           class="radio-inline">
-                                        <input type="radio" name="optradio" ng-model="qosValue._qos" value="{{qos}}">{{qos}}</label>
-                                </div>
-                            </div>
-
-                            <div class="panel panel-default">
-                                <div class="panel-heading"><b>Do you need a CDN Connector?</b>
-                                    <input type="checkbox" id="cdnConnector" name="togglecloudRepository"
-                                           ng-model="appCreate.cdnConnector" ng-change="changeCdn()">
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading"><b>Do you need a cloud repository for your app?</b>
-                                    <input type="checkbox" id="cloudRepository" name="togglecloudRepository"
-                                           ng-model="appCreate.cloudRepository" ng-disabled="appCreate.cdnConnector">
-                                </div>
-                            </div>
-
-
-                            <div class="panel panel-default" ng-class="classVar">
-                                <div class="panel-heading"><b>Do you want to set the Turn Server?</b>
-                                    <div class="pull-right"><a title="check if the turn server is running"
-                                                               ng-click="checkTurn()" href=""><i class="fa fa-check">
-                                        check</i></a></div>
-                                    <input type="checkbox" id="turnServer" name="turnServer"
-                                           ng-change="changedTurnServerBool()"
-                                           ng-model="appCreate.turnServerActivate"></div>
-                                <div ng-if="disableButton" class="alert alert-danger" role="alert">
-                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                    Turn server should running or leave the credentials empty
-                                </div>
-                                <div class="panel-body" ng-if="appCreate.turnServerActivate">
-                                    <div class="form-group" ng-repeat="(key,value) in _turnServer"
-                                         ng-if="key!='turnServerPassword'">
-                                        <label for="{{key}}" class="col-sm-4 control-label">
-
-
-                                            <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
-
-                                               popover="{{textInfo}}" popover-placement="left"
-                                               popover-trigger="mouseenter"> </i>
-
-                                            {{key}}</label>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control" id="{{key}}" name="{{key}}"
-                                                   ng-model="_turnServer[key]"/>
-                                        </div>
-
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="turnServerPassword" class="col-sm-4 control-label">
-                                            <i class="fa fa-info-circle" ng-mouseover="getInfos('turnServerPassword')"
-
-                                               popover="{{textInfo}}" popover-placement="left"
-                                               popover-trigger="mouseenter"> </i>
-
-                                            turnServerPassword</label>
-                                        <div class="col-sm-6">
-                                            <input type="password" class="form-control" id="turnServerPassword"
-                                                   name="turnServerPassword"
-                                                   ng-model="_turnServer.turnServerPassword"/>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading"><b>Do you want to set the Stun Server?</b>
-                                    <input type="checkbox" id="turnServer" name="turnServer"
-                                           ng-model="appCreate.stunServerActivate"></div>
-                                <div class="panel-body" ng-if="appCreate.stunServerActivate">
-                                    <div class="form-group" ng-repeat="(key,value) in _stunServer"
-                                         ng-if="key!='stunServerActivate'">
-                                        <label for="{{key}}" class="col-sm-4 control-label">
-                                            <i class="fa fa-info-circle" ng-mouseover="getInfos(key)"
-
-                                               popover="{{textInfo}}" popover-placement="left"
-                                               popover-trigger="mouseenter"> </i>
-
-                                            {{key}}</label>
-                                        <div class="col-sm-6">
-                                            <input type="text" class="form-control" id="{{key}}" name="{{key}}"
-                                                   ng-model="_stunServer[key]"/>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <h4>Ports <a href="" title="Add a new port">
-                                <li class="fa fa-plus-square" ng-click="addPort()"></li>
-                            </a></h4>
-                            <table ng-if="appCreate.ports.length>0">
-                                <tr>
-                                    <td class="col-lg-3"></td>
-                                    <td class="col-lg-2 "><b>Port</b></td>
-                                    <td class="col-lg-2 "><b>PortTarget</b></td>
-                                    <td class="col-lg-2 "><b>Protocol</b></td>
-                                </tr>
-                            </table>
-                            <!--<hr/>-->
-
-
-                            <div class="form-group" ng-repeat="port in appCreate.ports track by $index"
-                                 ng-if="key!='ports'">
-                                <!--<label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>-->
-                                <div class="col-lg-2"></div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control" id="port" name="port"
-                                           ng-model="appCreate.ports[$index]['port']"/>
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="number" class="form-control" id="targetPort" name="targetPort"
-                                           ng-model="appCreate.ports[$index]['targetPort']"/>
-                                </div>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control" id="protocol" name="protocol"
-                                           ng-model="appCreate.ports[$index][['protocol']]"/>
-                                </div>
-                                <div class="col-sm-1">
-                                    <h4><a href="" ng-click="deletePort($index)">
-                                        <li class="fa fa-trash"></li>
-                                    </a></h4>
-                                </div>
-                            </div>
-
-
-                        </form>
-
-
-                    </tab>
-                    <tab heading="Json">
-                        <form role="form" id="formJson">
-                            <div class="form-group">
-                                <br> <label for="jsonInputArea">Insert Your Json</label>
-                                <textarea name="appjson" ng-model="appJson" id="jsonInputArea"
-                                          class="form-control" rows="5"
-                                          placeholder="{ }" ng-change="changeText(appJson)"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="jsonInputFile">File input</label>
-                                <input type="file" id="jsonInputFile"
-                                       onchange="angular.element(this).scope().setFile(this)">
-
-                                <p class="help-block">Example: reqApp.json </p>
-                            </div>
-                        </form>
-                    </tab>
-
-                </tabset>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="closeModal" class="btn btn-default"
-                        data-dismiss="modal">Close
+                <button
+                  class="btn dropdown-toggle c-dropdown__toggle"
+                  type="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="true">
+                  Actions
                 </button>
-                <button type="button" id="sendTemplate"
-                        data-dismiss="modal"
-                        class="btn btn-primary" ng-class="{'disabled': disableButton}" ng-click="sendApp()">Create App
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /.modal -->
 
-
-<div class="modal " id="modalPrivateKey">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                        aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="serviceFormLabel">Save Private key</h4>
-            </div>
-            <div class="modal-body">
-
-
-                <form class="form-horizontal" id="" role="form">
-                    <div class="form-group">
-                        <label for="projectName" class="col-sm-4 control-label">projectName</label>
-
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="projectName" name="projectName"
-                                   ng-model="privateKeyReq.projectName"/>
-                        </div>
-
-                    </div>
-
-                    <br/>
-
-                    <div class="inputKeyP">
-                        <div class="form-group">
-                            <br> <label for="jsonInputArea" class="">Insert Your Private Key</label>
-                                <textarea name="appJson" ng-model="privateKeyReq.privateKey" id="jsonInputArea"
-                                          class="form-control" rows="25"
-                                          placeholder="-----BEGIN PRIVATE KEY-----"></textarea>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="closeModal" class="btn btn-default"
-                        data-dismiss="modal">Close
-                </button>
-                <button type="button" id="sendTemplate"
-                        data-dismiss="modal"
-                        class="btn btn-primary" ng-click="sendPK(privateKeyReq)">Send PrivateKey
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" tabindex="-1" role="dialog" id="deleteModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Delete all the Apps from <b>{{projectSelected.name}}</b> project</h4>
-            </div>
-            <div class="modal-body">
-                <p>You are going to delete these applications:</p>
-                <ul ng-repeat="data in applications">
-                    <li>{{data.name}</li>
+                <ul class="dropdown-menu c-dropdown__menu">
+                  <li class="c-dropdown__item">
+                    <a href="#applications/{{data.id}}">View</a>
+                  </li>
+                  <li class="c-dropdown__item">
+                    <span class="text-danger" ng-click="deleteAppModal(data)">Delete</span>
+                  </li>
                 </ul>
-                <p>Please confirm your selection.</p>
+
+              </div><!-- /Dropdown -->
+
+
+            </div><!-- /application component -->
+
+          </article><!-- /Application -->
+
+        </td>
+
+      </tr>
+    </tbody>
+
+  </table>
+
+</section><!-- /Applications -->
+
+
+
+<!-- Tabset New Application -->
+<tabset ng-show="createFormViewIsVisible" class="form-tabset">
+
+  <!-- Form tab -->
+  <tab heading="Create Application">
+
+    <!-- Form new app -->
+    <form class="form form-horizontal form-new-app" name="formNewApp">
+
+      <!-- Form section -->
+      <section class="form__section">
+
+        <h3 class="form__section-title">General Information</h3>
+
+        <div class="form-group input">
+
+          <!-- Label -->
+          <label
+            for="{{name}}"
+            class="col-md-4 control-label input__label">
+            Application name
+            <span class="input__subtitle">
+              <i
+                popover="{{textInfo}}"
+                popover-placement="bottom"
+                popover-trigger="mouseenter"
+                ng-mouseover="getInfos('name')">Tip: Hover me</i>
+            </span>
+          </label><!-- /Label -->
+
+          <!-- Column -->
+          <div class="col-md-8">
+            <input
+              class="form-control input__field"
+              type="text"
+              id="name"
+              name="name"
+              ng-model="appCreate.name"
+              required>
+
+            <p ng-show="formNewApp.name.$error.required" class="text-danger form__message">
+              Application name is required!
+            </p>
+          </div><!-- /Column -->
+
+        </div><!-- /URL, NAME, REPLICAS_NUMBER -->
+
+        <!-- URL, NAME, REPLICAS_NUMBER -->
+        <div
+          class="form-group input"
+          ng-repeat="(key,value) in appCreate"
+          ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut' && key!='name'">
+
+          <!-- Label -->
+          <label
+            for="{{key}}"
+            class="col-md-4 control-label input__label">
+            {{key}}
+            <span class="input__subtitle">
+              <i
+                popover="{{textInfo}}"
+                popover-placement="bottom"
+                popover-trigger="mouseenter"
+                ng-mouseover="getInfos(key)">Tip: Hover me</i>
+            </span>
+          </label><!-- /Label -->
+
+          <!-- Column -->
+          <div class="col-md-8">
+            <input
+              class="form-control input__field"
+              type="text"
+              id="{{key}}"
+              name="{{key}}"
+              ng-model="appCreate[key]">
+          </div><!-- /Column -->
+
+        </div><!-- /URL, NAME, REPLICAS_NUMBER -->
+
+        <!-- Flavour -->
+        <div class="form-group input">
+
+          <!-- Label -->
+          <label
+            for="flavor"
+            class="col-md-4 control-label input__label">
+            Flavor
+            <span class="input__subtitle">
+              <i
+                popover="{{textInfo}}"
+                popover-placement="bottom"
+                popover-trigger="mouseenter"
+                ng-mouseover="getInfos('flavor')">Tip: Hover me</i>
+            </span>
+          </label><!-- /Label -->
+
+          <!-- Column -->
+          <div class="col-md-8">
+            <!-- Select -->
+            <div class="select">
+              <select
+                class="modal-select"
+                name="flavor"
+                id="flavor"
+                ng-model="appCreate.flavor">
+                <option
+                  ng-repeat="flavor in flavors track by $index"
+                  ng-init="appCreate.flavor = flavors[0]"
+                  value="{{flavor}}">{{flavor}}
+                </option>
+              </select>
+              <div class="select__arrow"></div>
+            </div><!-- /Select -->
+          </div><!-- /Column -->
+
+        </div><!-- /Flavour -->
+
+        <!-- Secret name  -->
+        <div class="form-group input">
+
+          <!-- Label -->
+          <label
+            for="projectKey"
+            class="col-md-4 control-label input__label">
+            Secret Name
+            <span class="input__subtitle">
+              <i
+                popover="{{textInfo}}"
+                popover-placement="bottom"
+                popover-trigger="mouseenter"
+                ng-mouseover="getInfos('secretName')">Tip: Hover me</i>
+            </span>
+          </label><!-- /Label -->
+
+          <!-- Column -->
+          <div class="col-md-8">
+            <div class="input-group">
+              <input
+                class="form-control input__field"
+                type="text"
+                id="projectKey"
+                name="projectKey"
+                ng-model="appCreate.secretName">
+                <span
+                  class="input-group-addon"
+                  data-toggle="modal"
+                  data-target="#modalPrivateKey">
+                  <span class="glyphicon glyphicon-plus-sign text-primary" title="Add a Private key"></span>
+                </span>
+              </div>
+            </div><!-- /Secret name  -->
+
+        </div><!-- Secret name  -->
+
+      </section><!-- /Form section -->
+
+
+
+
+      <!-- Form section -->
+      <section class="form__section">
+
+        <h3 class="form__section-title">
+          Additional Information
+        </h3>
+
+        <!-- In/OUT scale -->
+        <div class="form-group input">
+          <label for="" class="col-md-4 control-label input__label">
+            In/OUT scale
+          </label>
+
+          <div class="col-md-8">
+
+            <label class="control control--inline control--checkbox">
+              <input type="checkbox" ng-model="toggle.threshold" id="inOutThreshold" name="inOutThreshold">
+              <div class="control__indicator"></div>
+              Enable
+            </label>
+
+            <div class="input input--inline" ng-repeat="(key,value) in _threshold">
+              <label for="app-scalling-in" class="input__label">
+                {{key}}
+                <span class="input__subtitle">
+                  <i
+                    popover="{{textInfo}}"
+                    popover-placement="bottom"
+                    popover-trigger="mouseenter"
+                    ng-mouseover="getInfos(key)">Tip: Hover me</i>
+                </span>
+              </label>
+              <input
+                type="number"
+                id="{{_threshold[key]}}"
+                class="form-control input__field"
+                ng-disabled="!toggle.threshold"
+                ng-model="_threshold[key]">
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" ng-click="multipleDeleteReq()" data-dismiss="modal">Delete</button>
+
+          </div>
+        </div><!-- /In/OUT scale -->
+
+        <!-- QoS -->
+        <div class="form-group input">
+          <label for="app-flavour-type" class="col-md-4 control-label input__label">
+            Qos
+          </label>
+
+          <div class="col-md-8">
+
+            <label class="control control--inline control--checkbox">
+              <input
+                type="checkbox"
+                id="qos"
+                name="qos"
+                ng-model="toggle.qualityOfService">
+              <div class="control__indicator"></div>
+              Enable
+            </label>
+
+            <label class="control control--inline control--radio" ng-repeat="qos in _qualityOfService" ng-disabled="!toggle.qualityOfService">
+              <input
+                type="radio"
+                name="optradio"
+                ng-model="qosValue._qos"
+                value="{{qos}}"
+                ng-disabled="!toggle.qualityOfService">
+              <div class="control__indicator"></div>
+              {{qos}}
+            </label>
+
+          </div>
+        </div><!-- /QoS -->
+
+        <!-- Turn Server -->
+        <div class="form-group input">
+          <label for="app-flavour-type" class="col-md-4 control-label input__label">
+            Turn Server
+            <span class="input__subtitle" ng-if="disableButton">
+              <span class="text-danger">Turn server should be running or leave the credentials empty!</span>
+          </label>
+
+          <div class="col-md-8">
+
+            <label class="control control--checkbox">
+              <input
+                type="checkbox"
+                name="turnServer"
+                ng-change="changedTurnServerBool()"
+                ng-model="appCreate.turnServerActivate">
+              <div class="control__indicator"></div>
+              Enable
+            </label>
+
+            <!-- Input -->
+            <div
+              class="input"
+              ng-repeat="(key,value) in _turnServer"
+              ng-if="key!='turnServerPassword'">
+              <label for="app-scalling-in" class="input__label">
+                {{key}}
+                <span class="input__subtitle input__subtitle--inline">
+                  <i
+                    popover="{{textInfo}}"
+                    popover-placement="bottom"
+                    popover-trigger="mouseenter"
+                    ng-mouseover="getInfos(key)">Tip: Hover me</i>
+                </span>
+              </label>
+              <input
+                type="text"
+                class="form-control input__field"
+                name="{{key}}"
+                ng-model="_turnServer[key]"
+                ng-disabled="!appCreate.turnServerActivate">
+            </div><!-- /Input -->
+
+            <!-- Input -->
+             <div class="input">
+
+               <!-- Label -->
+               <label
+                 for="{{key}}"
+                 class="input__label">
+                 turnServerPassword
+                 <span class="input__subtitle input__subtitle--inline">
+                   <i
+                     popover="{{textInfo}}"
+                     popover-placement="bottom"
+                     popover-trigger="mouseenter"
+                     ng-mouseover="getInfos('turnServerPassword')">
+                    Tip: Hover me
+                   </i>
+                 </span>
+               </label><!-- /Label -->
+
+               <input
+                 class="form-control input__field"
+                 type="text"
+                 name="turnServerPassword"
+                 ng-model="_turnServer.turnServerPassword"
+                 ng-disabled="!appCreate.turnServerActivate">
+
+             </div><!-- /Input -->
+
+          </div><!-- /col -->
+        </div><!-- /Turn Server -->
+
+        <!-- /Stun Server -->
+        <div class="form-group input">
+          <label for="app-flavour-type" class="col-md-4 control-label input__label">
+            Stun Server
+            <span class="input__subtitle" ng-if="disableButton">
+              <span class="text-danger"> Stun server should be running or leave the credentials empty!</span>
+          </label>
+
+          <div class="col-md-8">
+
+            <label class="control control--checkbox">
+              <input
+                type="checkbox"
+                name="stunServer"
+                ng-model="appCreate.stunServerActivate">
+              <div class="control__indicator"></div>
+              Enable
+            </label>
+
+            <!-- Input -->
+            <div
+              class="input"
+              ng-repeat="(key,value) in _stunServer">
+
+              <label class="input__label">
+                {{key}}
+                <span class="input__subtitle input__subtitle--inline">
+                  <i
+                    popover="{{textInfo}}"
+                    popover-placement="bottom"
+                    popover-trigger="mouseenter"
+                    ng-mouseover="getInfos('stunServerPassword')">Tip: Hover me</i>
+                </span>
+              </label>
+
+              <input
+                class="form-control input__field"
+                type="text"
+                name="stunServerPassword"
+                ng-model="_stunServer[key]"
+                ng-disabled="!appCreate.stunServerActivate">
+
+            </div><!-- /Input -->
+
+          </div><!-- /col -->
+        </div><!-- /Stun Server -->
+
+        <!-- Ports -->
+        <div class="form-group input">
+          <label for="" class="col-md-4 control-label input__label">
+            Ports
+            <div>
+              <button class="btn btn--white u-mt-5" ng-click="addPort()">Add more</button>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
+          </label>
+
+          <div class="col-md-8">
+
+            <div class="row">
+              <label class="input__label col-xs-6 col-md-4">
+                  Port
+              </label>
+
+              <label class="input__label col-xs-6 col-md-4">
+              Port Target
+              </label>
+
+              <label class="input__label col-xs-6 col-md-3">
+                  Protocol
+              </label>
+            </div><!-- /row -->
+
+            <!-- Input -->
+             <div
+              class="form-group input"
+              ng-repeat="port in appCreate.ports track by $index"
+              ng-if="key!='ports'">
+
+               <!-- Column -->
+               <div class="col-xs-6 col-md-4">
+                 <input
+                  class="form-control input__field"
+                  type="number"
+                  ng-model="appCreate.ports[$index]['port']"/>
+               </div><!-- /Column -->
+
+               <!-- Column -->
+               <div class="col-xs-6 col-md-4">
+                 <input
+                  class="form-control input__field"
+                  type="number"
+                  ng-model="appCreate.ports[$index]['targetPort']">
+               </div><!-- /Column -->
+
+               <!-- Column -->
+               <div class="col-xs-6 col-md-3">
+                 <input
+                  class="form-control input__field"
+                  type="text"
+                  ng-model="appCreate.ports[$index][['protocol']]">
+               </div><!-- /Column -->
+
+               <!-- Column -->
+               <div class="col-xs-6 col-md-1 text-right">
+                 <a href="" ng-click="deletePort($index)">
+                    <span class="fa fa-trash text-danger"></span>
+                </a>
+               </div><!-- /Column -->
+
+             </div><!-- /Input -->
+
+          </div><!-- /col -->
+
+        </div><!-- /Ports -->
+
+        <!-- /Add-ons -->
+        <div class="form-group input">
+
+          <label for="app-flavour-type" class="col-md-4 control-label input__label">
+            Add-ons
+          </label>
+
+          <div class="col-md-8">
+
+            <!-- Addon -->
+            <div class="addon addon--checkbox">
+              <label class="control control--inline control--checkbox addon__container">
+                <input
+                  type="checkbox"
+                  name="togglecloudRepository"
+                  ng-model="appCreate.cdnConnector"
+                  ng-change="changeCdn()">
+                <div class="control__indicator"></div>
+                <div class="addon__content">
+                  <span class="addon__image cdn"></span>
+                  <p class="addon__title">CDN Connector</p>
+                </div>
+              </label>
+            </div><!-- /Addon -->
+
+            <!-- Addon -->
+            <div class="addon addon--checkbox">
+              <label class="control control--inline control--checkbox addon__container">
+                <input
+                  id="cloudRepository"
+                  type="checkbox"
+                  name="togglecloudRepository"
+                  ng-model="appCreate.cloudRepository"
+                  ng-disabled="appCreate.cdnConnector">
+                <div class="control__indicator"></div>
+                <div class="addon__content">
+                  <span class="addon__image cloud"></span>
+                  <p class="addon__title">Cloud Repository</p>
+                </div>
+              </label>
+            </div><!-- /Addon -->
+
+          </div><!-- /col -->
+        </div><!-- /Add-ons -->
+
+        <div class="col-xs-12 col-md-8 col-md-offset-4">
+          <button
+            type="button"
+            id="sendTemplate"
+            class="btn btn-primary form__submit"
+            ng-class="{'disabled': disableButton}"
+            ng-click="sendApp('', 'applications')">
+            Create
+          </button>
+        </div>
+
+      </section><!-- /Form section -->
+
+    </form><!-- Form new app -->
+  </tab>
+
+  <!-- Json tab -->
+  <tab heading="Json">
+    <form role="form" id="formJson">
+      <div class="form-group input">
+        <label for="jsonInputArea" class="input__label">Insert Your Json</label>
+        <textarea
+          name="appjson"
+          ng-model="appJson"
+          id="jsonInputArea"
+          class="form-control"
+          rows="5"
+          placeholder="{ }"
+          ng-change="changeText(appJson)">
+        </textarea>
+      </div>
+      <div class="form-group input">
+          <label for="jsonInputFile" class="input__label">Upload a file</label>
+          <input
+            type="file"
+            id="jsonInputFile"
+            onchange="angular.element(this).scope().setFile(this)">
+
+          <p class="help-block">Example: reqApp.json </p>
+      </div>
+  </form>
+  </tab>
+
+</tabset><!-- /Tabset New Application -->
+
+
+
+
+<!-- Modal for private key -->
+<section class="modal " id="modalPrivateKey">
+  <div ng-include src="'./templates/modal-private-key.html'"></div>
+</section><!-- /Modal -->
+
+<!-- Modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="deleteModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <header class="modal-header">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close">
+          <span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Delete multiple apps from <b>{{projectSelected.name}}</b> project</h4>
+      </header>
+
+      <div class="modal-body">
+        <p>You are going to delete these applications:</p>
+        <ul ng-repeat="(k,v) in selection.ids" ng-if="v">
+          <li>{{k}}</li>
+        </ul>
+        <strong>Please confirm your selection!</strong>
+      </div>
+
+      <footer class="modal-footer">
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal">
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-danger"
+          ng-click="multipleDeleteReq()"
+          data-dismiss="modal">
+          Delete
+        </button>
+
+      </footer>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /Modal -->
+
+<!-- Delete single app modal -->
+<div ng-include src="'./templates/delete-app-modal.html'"></div>

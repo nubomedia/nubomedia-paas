@@ -16,68 +16,309 @@
   ~  */
   -->
 
-<div class="row">
-    <div class="col-lg-12">
-        <h1>
-            Application
-            <small>{{application.name}}</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i>
-                Overview</a></li>
-            <li><a href="#applications"><i class="fa fa-tasks"></i>
-                Applications</a></li>
-            <li class="active"><i class="fa fa-bar-chart-o"></i>
-                {{application.name}}
-            </li>
-        </ol>
+<!-- Breadcrum container -->
+<section class="breadcrumb-container clearfix">
+  <!-- Breadcrum -->
+  <ul class="c-breadcrumb">
+
+  <li class="c-breadcrumb__item">
+    <a href="/">Overview</a>
+  </li>
+
+  <li class="c-breadcrumb__item">
+    <a href="#/marketapps">App Store</a>
+  </li>
+
+  <li class="c-breadcrumb__item is-active">
+  <a href="">{{application.name}}</a>
+  </li>
+
+  </ul><!-- Breadcrum -->
+</section><!-- /Breadcrum container -->
+
+
+
+
+<alert
+  ng-repeat="alert in alerts"
+  type="alert.type"
+  close="closeAlert($index)">
+  <div ng-bind-html="alert.msg"></div>
+</alert>
+
+
+
+
+<!-- Form app settings-->
+<form class="form form-horizontal form-app-settings">
+  <!-- Form section -->
+  <section class="form__section">
+
+    <h3 class="form__section-title clearfix">
+      All settings
+      <p class="pull-right"><a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a></p>
+    </h3>
+
+    <div class="form-group input">
+      <label class="col-md-4 control-label input__label">
+        Git URL
+      </label>
+
+      <div class="col-md-8">
+        <a href="{{application.gitURL}}" target="_blank">{{application.gitURL}}</a>
+      </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-lg-12">
-        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">
-            <div ng-bind-html="alert.msg"></div>
-        </alert>
-        <div class="row">
-            <div class="col-lg-12">
-                <br>
-                <a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a>
-                <br/>
-                <dl class="dl-horizontal">
-                    <spam ng-if="application.route">
-                        <dt>route</dt>
-                        <dd><a href="https://{{application.route}}" target="_blank">{{application.route}}</a>
-                        </dd>
-                    </spam>
-                    <spam ng-repeat="(k,v) in application" ng-if="k!='route'">
-                        <dt>{{k}}</dt>
-                        <dd>{{v}}</dd>
-                    </spam>
-                </dl>
-            </div>
+
+    <div class="form-group input">
+      <label class="col-md-4 control-label input__label">
+        Application name
+      </label>
+
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" value="{{application.name}}" readonly>
+      </div>
+    </div>
+
+    <div class="form-group input">
+      <label class="col-md-4 control-label input__label">
+        ID
+      </label>
+
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" value="{{application.id}}" readonly>
+      </div>
+    </div>
+
+    <div class="form-group input" ng-if="application.projectName">
+      <label class="col-md-4 control-label input__label">
+        Project name
+      </label>
+
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" value="{{application.projectName}}" readonly>
+      </div>
+    </div>
+
+    <div ng-repeat="(key, value) in application" ng-if=" key!='name' && key!='projectName' && key!='scaleInOut' && key!='scale_out_threshold' && key!='gitURL' && key!='id' " ng-show="value !== null" class="form-group input">
+
+      <!-- /Ports -->
+      <div ng-if="key === 'ports'">
+
+        <label class="col-md-4 control-label input__label">
+          Ports
+        </label>
+
+        <div class="col-md-8">
+
+          <div class="row">
+            <label class="input__label col-xs-4">Port</label>
+            <label class="input__label col-xs-4">Target Prot</label>
+            <label class="input__label col-xs-4">Protocol</label>
+          </div><!-- /row -->
+
+          <div class="row" ng-repeat="item in value track by $index">
+
+            <div class="col-xs-4">
+              <input
+                type="text"
+                class="form-control input__field u-mt-5"
+                value="{{application.ports[$index].port}}"
+                readonly>
+            </div><!-- col -->
+
+            <div class="col-xs-4">
+              <input
+                type="text"
+                class="form-control input__field u-mt-5"
+                value="{{application.ports[$index].targetPort}}"
+                readonly>
+            </div><!-- col -->
+
+            <div class="col-xs-4">
+              <input
+                type="text"
+                class="form-control input__field u-mt-5"
+                value="{{application.ports[$index].protocol}}"
+                readonly>
+            </div><!-- col -->
+
+          </div><!-- row -->
+
+        </div><!-- col -->
+
+      </div><!-- /Ports -->
+
+      <!-- General -->
+      <div ng-if="key !== 'ports'">
+        <label class="col-md-4 control-label input__label">
+          {{key}}
+        </label>
+
+        <div class="col-md-8">
+          <input type="text" class="form-control input__field" value="{{value}}" readonly>
         </div>
+      </div><!--/ General -->
+    </div><!-- /form-group -->
+
+  </section><!-- /Form section -->
+
+
+
+  <!-- Media Server Group -->
+  <section class="form__section" ng-if="application.mediaServerGroup.id || application.mediaServerGroup.nsrID || application.mediaServerGroup.nsrID || application.mediaServerGroup.hostnames || application.mediaServerGroup.floatingIPs">
+
+    <h3 class="form__section-title clearfix">
+      Media Server Group
+    </h3>
+
+    <div class="form-group input" ng-if="application.mediaServerGroup.id">
+      <label class="col-md-4 control-label input__label">ID:</label>
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" value="{{application.mediaServerGroup.id}}" readonly>
+      </div>
+    </div><!-- /input -->
+
+    <div class="form-group input" ng-if="application.mediaServerGroup.nsdID">
+      <label class="col-md-4 control-label input__label">NSD ID:</label>
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" value="{{application.mediaServerGroup.nsdID}}" readonly>
+      </div>
+    </div><!-- /input -->
+
+    <div class="form-group input" ng-if="application.mediaServerGroup.nsrID">
+      <label class="col-md-4 control-label input__label">NSR ID:</label>
+      <div class="col-md-8">
+        <input type="text" class="form-control input__field" value="{{application.mediaServerGroup.nsrID}}" readonly>
+      </div>
+    </div><!-- /input -->
+
+    <div class="form-group input" ng-if="application.mediaServerGroup.hostnames">
+      <label class="col-md-4 control-label input__label">host names:</label>
+      <div class="col-md-8">
+        <input
+          ng-repeat="item in application.mediaServerGroup.hostnames track by $index"
+          type="text"
+          class="form-control input__field u-mb-5"
+          value="{{item}}" readonly>
+      </div>
+    </div><!-- /input -->
+
+    <div class="form-group input" ng-if="application.mediaServerGroup.floatingIPs">
+      <label class="col-md-4 control-label input__label">floatingIPs:</label>
+      <div class="col-md-8">
+        <input
+          ng-repeat="item in application.mediaServerGroup.floatingIPs track by $index"
+          type="text"
+          class="form-control input__field u-mb-5"
+          value="{{item}}" readonly>
+      </div>
+    </div><!-- /input -->
+
+  </section><!-- /Media Server Group -->
+
+
+
+
+  <!-- Scale -->
+  <section class="form__section">
+    <h3 class="form__section-title">Scale</h3>
+
+    <!-- Section scale -->
+    <section class="section-scale">
+      <div class="section-scale__column section-scale__in">
+        <span class="nm-icon icon-arrow-right"></span>
+        Scale InOut
+        <span class="section-scale__number-in">{{application.scaleInOut}}</span>
+      </div>
+
+      <div class="section-scale__column section-scale__out">
+        <span class="nm-icon icon-arrow-left"></span>
+        Scale OutThreshold
+        <span class="section-scale__number-out">{{application.scale_out_threshold}}</span>
+      </div>
+
+    </section><!-- /Section scale -->
+  </section>
+  <!-- /Scale -->
+
+
+
+
+  <!-- Actions -->
+  <section class="form__section">
+    <h3 class="form__section-title">Actions</h3>
+
+    <!-- Launch application -->
+    <div class="form-group input">
+
+      <label for="app-kms" class="col-md-4 control-label input__label">
+        Launch the application
+      </label>
+
+      <div class="col-md-8">
+        <span class="btn btn--white" ng-click="launch(application.id)">Launch</span>
+      </div>
     </div>
-</div>
 
-<!-- /.wrapper -->
+    <!-- Delete the application -->
+    <div class="form-group input">
+
+      <label for="app-kms" class="col-md-4 control-label input__label">
+        Delete the application
+        <span class="input__subtitle">
+          Use this carefull, the process is ireversible
+        </span>
+      </label>
+
+      <div class="col-md-8">
+        <span class="btn btn-danger" ng-click="deleteMarketAppModal(application, 'marketapps')">Delete</span>
+      </div>
+    </div>
+  </section><!-- /Actions -->
+
+</form>
 
 
+
+
+<!-- Modal -->
 <div class="modal" id="jsonInfo" tabindex="" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">JSON of Topology: {{application.name}}</h4>
-            </div>
-            <div class="modal-body">
-                <pre id="json">{{applicationJSON}}</pre>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="closeModal" class="btn btn-default"
-                        data-dismiss="modal">Close
-                </button>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <header class="modal-header">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel">
+          JSON of Topology: {{application.name}}
+        </h4>
+      </header>
+
+      <div class="modal-body">
+        <pre id="json">{{applicationJSON}}</pre>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          id="closeModal"
+          class="btn btn-default"
+          data-dismiss="modal">
+          Close
+        </button>
+      </div>
+
     </div>
+  </div>
 </div>
+<!-- /Modal -->
+
+
+<!-- Delete single app modal -->
+<div ng-include src="'./templates/delete-market-app-modal.html'"></div>
+

@@ -16,72 +16,135 @@
   ~  */
   -->
 
-<div class="row">
-    <div class="col-lg-12">
-        <h1>
-            User
-            <small>Information</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i>
-                Overview</a></li>
-            <li><a href="#users"><i class="fa fa-users"></i>
-                Users</a></li>
-            <li class="active"><i class="fa fa-user"></i> User: {{user.username}}</li>
-        </ol>
-    </div>
-</div>
-<!-- /.row -->
-<div class="row top-buffer">
-    <div class="col-lg-12">
-        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">
-            <div ng-bind-html="alert.msg"></div>
-        </alert>
+<!-- Breadcrum container -->
+<section class="breadcrumb-container clearfix">
+  <!-- Breadcrum -->
+  <ul class="c-breadcrumb">
 
-        <div class="col-lg-12" ng-show="user">
-            <h3>Username: {{user.username}}</h3>
-            <a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a>
+  <li class="c-breadcrumb__item">
+    <a href="/" ng-click="resetCreateFormView()">Overview</a>
+  </li>
 
-            <dl class="dl-horizontal">
-        <span class="dl-horizontal" ng-repeat="(key,value) in user" ng-if="key !== 'scripts'">
+  <li class="c-breadcrumb__item">
+    <a href="#/users" ng-click="resetCreateFormView()">Users</a>
+  </li>
 
-                    <div ng-if="key !== 'roles'">
-                        <dt>{{key}}:</dt>
-                        <dd>{{value}}</dd>
-                    </div>
-                    <div ng-if="key === 'roles'">
-                        <dt>roles:</dt>
-                        <dd><span ng-repeat="role in value">
-                            <b>id</b>: {{role.id}},
-                            <b>project</b>: {{role.project}},
-                            <b>role</b>: {{role.role}}
-                            <span ng-if="!$last">; </span>
-                            </span></dd>
-                    </div>
-                </span>
+  <li class="c-breadcrumb__item is-active">
+    <a href="#/users/{{user.username}}" ng-click="resetCreateFormView()">{{user.username}}</a>
+  </li>
 
-            </dl>
+  </ul><!-- Breadcrum -->
+</section><!-- /Breadcrum container -->
+
+
+
+
+<section class="section">
+
+  <alert
+    ng-repeat="alert in alerts"
+    type="alert.type"
+    close="closeAlert($index)">
+      <div ng-bind-html="alert.msg"></div>
+  </alert>
+
+  <!-- Form app settings-->
+  <form class="form form-horizontal form-app-settings" ng-show="user">
+    <section class="form__section">
+
+      <h3 class="form__section-title clearfix">
+        User info
+        <p class="pull-right"><a href="#" data-toggle="modal" data-target="#jsonInfo">Show JSON</a></p>
+      </h3>
+
+      <div ng-repeat="(key,value) in user" ng-if="key !== 'scripts'" class="form-group input">
+
+        <div ng-if="key !== 'roles'">
+          <label  class="col-md-4 control-label input__label">
+            {{key}}
+          </label>
+
+          <div class="col-md-8">
+            <input type="text" class="form-control input__field" value="{{value}}" readonly>
+          </div>
         </div>
-    </div>
-</div>
 
-<div class="modal" id="jsonInfo" tabindex="" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-                        class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">JSON of Event: {{user.name}}</h4>
-            </div>
-            <div class="modal-body">
-                <pre id="json">{{userJSON}}</pre>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="closeModal" class="btn btn-default"
-                        data-dismiss="modal">Close
-                </button>
-            </div>
+        <div ng-if="key === 'roles'">
+          <label class="col-md-4 control-label input__label">
+            Roles
+          </label>
+          <dd class="col-md-8">
+            <span ng-repeat="role in value">
+              <b>id</b>: {{role.id}},
+              <b>project</b>: {{role.project}},
+              <b>role</b>: {{role.role}}
+              <span ng-if="!$last">; </span>
+            </span>
+          </dd>
         </div>
-    </div>
-</div>
+
+      </div>
+
+      <div class="form-group input">
+
+        <label for="app-kms" class="col-md-4 control-label input__label">
+          Delete the user
+          <span class="input__subtitle">
+            Use this carefull, the process is ireversible
+          </span>
+        </label>
+
+        <div class="col-md-8">
+          <button type="button" id="closeModal" class="btn btn-danger" ng-click= "deleteUserModal(user)">Delete
+        </div>
+      </div>
+
+
+    </section><!-- /Form section -->
+  </form>
+</section>
+
+<!-- Delete the application -->
+
+
+
+
+<!-- Modal -->
+<section class="modal" id="jsonInfo" tabindex="" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel">
+          JSON of Event: {{user.name}}
+        </h4>
+      </div>
+
+      <div class="modal-body">
+          <pre id="json">{{userJSON}}</pre>
+      </div>
+
+      <footer class="modal-footer">
+        <button
+          type="button"
+          id="closeModal"
+          class="btn btn-default"
+          data-dismiss="modal">
+        Close
+        </button>
+      </footer>
+
+    </div><!-- /modal content -->
+  </div><!-- /modal dialog -->
+</section><!-- Modal -->
+
+<!-- Delete single user modal -->
+<div ng-include src="'./templates/delete-user-modal.html'"></div>
 

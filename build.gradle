@@ -69,6 +69,11 @@ repositories {
         url "http://get.openbaton.org:8081/nexus/content/groups/public"
     }
 }
+
+bootRun {
+    addResources = true
+}
+
 dependencies {
     compile 'org.openbaton:sdk:2.1.3-SNAPSHOT'
     compile 'commons-dbcp:commons-dbcp:1.4'
@@ -94,4 +99,3 @@ dependencies {
 }
 
 apply from: 'gradle/gradle/packaging.project.debian.gradle'
-
