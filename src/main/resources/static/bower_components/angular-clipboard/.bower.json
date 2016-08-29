@@ -24,7 +24,6 @@
     "commit": "8f38e38e77d20ea280405cae63f4bd0941f38c12"
   },
   "_source": "https://github.com/omichelsen/angular-clipboard.git",
-  "_target": "^1.4.2",
-  "_originalSource": "angular-clipboard",
-  "_direct": true
+  "_target": "1.4.2",
+  "_originalSource": "angular-clipboard"
 }
