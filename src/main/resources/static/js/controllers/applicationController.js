@@ -148,6 +148,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     http.get(marketurl + $routeParams.appId)
       .success(function(data) {
         console.log('jsonApp appId: ', data);
+        debugger;
         $scope.application = data;
         $scope.applicationJSON = JSON.stringify(data, undefined, 4);
         mergeMediaServer(data.mediaServerGroup);

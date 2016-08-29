@@ -16,7 +16,7 @@
  *
  */
 
-angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCookies', 'angular-clipboard', 'ngMessages'])
+angular.module('app', ['ngRoute', 'ngSanitize', 'ui.bootstrap', 'ngCookies'])
     .config(function ($routeProvider) {
 
         $routeProvider.
