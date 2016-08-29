@@ -50,9 +50,9 @@ public class ImageStreamManager {
   }
 
   public ResponseEntity<String> makeImageStream(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws DuplicatedException, UnauthorizedException {
-    ImageStreamConfig message = MessageBuilderFactory.getImageStreamMessage(appName);
+    ImageStreamConfig message = MessageBuilderFactory.getImageStreamMessage(osName);
     logger.debug("Sending message " + mapper.toJson(message, ImageStreamConfig.class));
     String URL = baseURL + namespace + suffix;
     HttpEntity<String> imageStreamEntity =
@@ -63,7 +63,7 @@ public class ImageStreamManager {
     logger.debug("response " + response.getBody());
 
     if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
-      throw new DuplicatedException("Application with " + appName + " is already present");
+      throw new DuplicatedException("Application with " + osName + " is already present");
     }
 
     if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
@@ -75,10 +75,10 @@ public class ImageStreamManager {
   }
 
   public HttpStatus deleteImageStream(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
 
-    String URL = baseURL + namespace + suffix + appName;
+    String URL = baseURL + namespace + suffix + osName;
     HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
     ResponseEntity<String> deleteResponse =
         template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
@@ -86,7 +86,7 @@ public class ImageStreamManager {
     if (deleteResponse.getStatusCode() != HttpStatus.OK)
       logger.debug(
           "Error deleting imagestream for "
-              + appName
+              + osName
               + " in project "
               + namespace
               + " response "

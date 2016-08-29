@@ -50,10 +50,8 @@ public class RouteManager {
 
   public ResponseEntity<String> makeRoute(
       String baseURL,
-      String id,
-      String name,
+      String osName,
       String namespace,
-      String domainName,
       HttpHeaders authHeader,
       RouteConfig routeConfig)
       throws DuplicatedException, UnauthorizedException {
@@ -69,7 +67,7 @@ public class RouteManager {
     ResponseEntity response = template.exchange(URL, HttpMethod.POST, routeEntity, String.class);
 
     if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
-      throw new DuplicatedException("Application with " + name + " is already present");
+      throw new DuplicatedException("Application with " + osName + " is already present");
     }
 
     if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
@@ -83,15 +81,16 @@ public class RouteManager {
   }
 
   public HttpStatus deleteRoute(
-      String baseURL, String name, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
-    String URL = baseURL + namespace + suffix + name + "-route";
+    String URL = baseURL + namespace + suffix + osName + "-route";
     HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
     ResponseEntity<String> deleteResponse =
         template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
 
     if (deleteResponse.getStatusCode() != HttpStatus.OK)
-      logger.debug("Error deleting route " + name + "-route response " + deleteResponse.toString());
+      logger.debug(
+          "Error deleting route " + osName + "-route response " + deleteResponse.toString());
 
     if (deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 

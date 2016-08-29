@@ -27,18 +27,18 @@ import org.project.openbaton.nubomedia.paas.model.openshift.SshGitChallengeSecre
  */
 public class SecretChallengeMessageBuilder {
 
-  private String name;
+  private String osName;
   private String user;
   private String password;
 
-  public SecretChallengeMessageBuilder(String appName, String user, String password) {
-    this.name = appName;
+  public SecretChallengeMessageBuilder(String osName, String user, String password) {
+    this.osName = osName;
     this.user = user;
     this.password = password;
   }
 
   public SecretConfig buildMessage() {
-    Metadata secretMeta = new Metadata(name + "-secret", "", "");
+    Metadata secretMeta = new Metadata(osName + "-secret", "", "");
     SshGitChallengeSecret secret = new SshGitChallengeSecret(user, password);
     return new SecretConfig(secretMeta, secret);
   }

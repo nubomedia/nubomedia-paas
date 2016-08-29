@@ -117,6 +117,7 @@ The following table provides you with descriptions of the main properties to be 
 | nfvo.port| port | defines the port on which Marketplace is reachable |
 | nfvo.username | admin | defines the username to be used for the NFVO |
 | nfvo.password | openbaton | defines the password to be used for the NFVO |
+| nfvo.project.name | nubomedia | defines the project to be used |
 | vnfm.ip | localhost | defines the ip where the VNFM is running |
 | vnfm.port | 9000 | defines the port on which VNFM is reachable |
 | marketplace.ip | defines the ip where the Marketplace is running  | |

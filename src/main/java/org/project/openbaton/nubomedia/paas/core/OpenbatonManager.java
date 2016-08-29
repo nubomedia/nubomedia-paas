@@ -60,10 +60,6 @@ public class OpenbatonManager {
 
   @Autowired private NFVORequestor nfvoRequestor;
 
-  @Autowired
-  @Qualifier("networkServiceDescriptorNubo")
-  private NetworkServiceDescriptor networkServiceDescriptorNubo;
-
   private Logger logger;
 
   @PostConstruct
@@ -99,6 +95,7 @@ public class OpenbatonManager {
 
   public MediaServerGroup createMediaServerGroup(
       String appName,
+      String osName,
       Flavor flavorID,
       String callbackUrl,
       boolean cloudRepositorySet,
@@ -134,8 +131,7 @@ public class OpenbatonManager {
     MediaServerGroup mediaServerGroup = new MediaServerGroup();
     // building network service descriptor
     NetworkServiceDescriptor targetNSD =
-        nsdUtil.getNetworkServiceDescriptor(
-            networkServiceDescriptorNubo,
+        nsdUtil.getNSD(
             flavorID,
             qos,
             turnServerActivate,
@@ -147,7 +143,6 @@ public class OpenbatonManager {
             stunServerPort,
             scaleInOut,
             scale_out_threshold);
-    targetNSD.setName(appName);
     if (cloudRepositorySet && !cdnConnectorSet) {
       Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
       vnfds.add(cloudRepository);
@@ -169,7 +164,14 @@ public class OpenbatonManager {
       vnfds.add(cdnConnectorVnfd);
       targetNSD.setVnfd(vnfds);
     }
-
+    //Set names
+    targetNSD.setName(appName + "-" + osName);
+    for (VirtualNetworkFunctionDescriptor vnfd : targetNSD.getVnfd()) {
+      vnfd.setName(vnfd.getName() + "-" + osName);
+      for (VirtualDeploymentUnit vdu : vnfd.getVdu()) {
+        vdu.setName("vdu-" + osName);
+      }
+    }
     targetNSD = nfvoRequestor.getNetworkServiceDescriptorAgent().create(targetNSD);
     mediaServerGroup.setNsdID(targetNSD.getId());
     HashMap<String, ArrayList<String>> vduVimInstances = new HashMap<>();

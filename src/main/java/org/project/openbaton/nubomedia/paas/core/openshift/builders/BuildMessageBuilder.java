@@ -25,7 +25,7 @@ import org.project.openbaton.nubomedia.paas.model.openshift.*;
  */
 public class BuildMessageBuilder {
 
-  private String name;
+  private String osName;
   private BuildStrategy bs;
   private BuildElements be;
   private String gitURL;
@@ -33,13 +33,13 @@ public class BuildMessageBuilder {
   private Source.SourceSecret secret;
 
   public BuildMessageBuilder(
-      String name,
+      String osName,
       BuildStrategy bs,
       BuildElements be,
       String gitURL,
       ConfigChangeTrigger[] triggers,
       Source.SourceSecret secret) {
-    this.name = name;
+    this.osName = osName;
     this.bs = bs;
     this.be = be;
     this.gitURL = gitURL;
@@ -53,6 +53,6 @@ public class BuildMessageBuilder {
     Output output = new Output(be, null);
     BuildConfig.Spec spec = new BuildConfig.Spec(triggers, src, bs, output, new Resources());
 
-    return new BuildConfig(new Metadata(name + "-bc", "", ""), spec);
+    return new BuildConfig(new Metadata(osName + "-bc", "", ""), spec);
   }
 }

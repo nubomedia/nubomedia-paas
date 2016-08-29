@@ -28,13 +28,13 @@ import org.project.openbaton.nubomedia.paas.model.openshift.ServiceSpec;
  */
 public class ServiceMessageBuilder {
 
-  private String name;
+  private String osName;
   private String[] protocols;
   private int[] targetPorts;
   private int[] ports;
 
-  public ServiceMessageBuilder(String name, String[] protocols, int[] ports, int[] targetPorts) {
-    this.name = name;
+  public ServiceMessageBuilder(String osName, String[] protocols, int[] ports, int[] targetPorts) {
+    this.osName = osName;
     this.protocols = protocols;
     this.targetPorts = targetPorts;
     this.ports = ports;
@@ -72,8 +72,8 @@ public class ServiceMessageBuilder {
                 protocols[i].toLowerCase() + "-" + targetPorts[i]);
       }
     }
-    Metadata metadata = new Metadata(name + "-svc", "", "");
-    Selector selector = new Selector(name);
+    Metadata metadata = new Metadata(osName + "-svc", "", "");
+    Selector selector = new Selector(osName);
     ServiceSpec spec = new ServiceSpec(selector, sPorts);
 
     return new ServiceConfig(metadata, spec);

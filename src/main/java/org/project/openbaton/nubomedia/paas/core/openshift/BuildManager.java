@@ -49,7 +49,7 @@ public class BuildManager {
 
   public ResponseEntity<String> createBuild(
       String baseURL,
-      String appName,
+      String osName,
       String namespace,
       String gitURL,
       String dockerRepo,
@@ -65,7 +65,7 @@ public class BuildManager {
       throws DuplicatedException, UnauthorizedException {
     logger.info(
         "Creating buildconfig for "
-            + appName
+            + osName
             + " in project "
             + namespace
             + " from gitURL "
@@ -74,7 +74,7 @@ public class BuildManager {
             + secretName);
     return builderManager.createBuildConfig(
         baseURL,
-        appName,
+        osName,
         namespace,
         dockerRepo,
         gitURL,
@@ -90,31 +90,31 @@ public class BuildManager {
   }
 
   public HttpStatus deleteBuild(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
-    logger.info("Deleting buildconfig for " + appName + " in project " + namespace);
-    HttpStatus res = builderManager.deleteBuildConfig(baseURL, appName, namespace, authHeader);
+    logger.info("Deleting buildconfig for " + osName + " in project " + namespace);
+    HttpStatus res = builderManager.deleteBuildConfig(baseURL, osName, namespace, authHeader);
 
     if (!res.is2xxSuccessful()) {
       logger.debug("Error deleting bc");
     }
 
-    return statusManager.deleteBuilds(baseURL, appName, namespace, authHeader);
+    return statusManager.deleteBuilds(baseURL, osName, namespace, authHeader);
   }
 
   public AppStatus getApplicationStatus(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
-    AppStatus status = statusManager.getBuildStatus(baseURL, appName, namespace, authHeader);
+    AppStatus status = statusManager.getBuildStatus(baseURL, osName, namespace, authHeader);
     logger.info("Status:" + status);
     return status;
   }
 
   public String getBuildLogs(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
-    String logs = statusManager.retrieveLogs(baseURL, appName, namespace, authHeader);
-    logger.info("Build for " + appName + "logs are " + logs);
+    String logs = statusManager.retrieveLogs(baseURL, osName, namespace, authHeader);
+    logger.info("Build for " + osName + "logs are " + logs);
     return logs;
   }
 }

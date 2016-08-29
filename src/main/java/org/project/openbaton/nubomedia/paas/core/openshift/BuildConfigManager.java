@@ -52,7 +52,7 @@ public class BuildConfigManager {
 
   public ResponseEntity<String> createBuildConfig(
       String baseURL,
-      String appName,
+      String osName,
       String namespace,
       String dockerRepo,
       String gitURL,
@@ -69,7 +69,7 @@ public class BuildConfigManager {
 
     BuildConfig message =
         MessageBuilderFactory.getBuilderMessage(
-            appName,
+            osName,
             dockerRepo,
             gitURL,
             secretName,
@@ -88,7 +88,7 @@ public class BuildConfigManager {
     logger.debug("Build response: " + response.toString());
 
     if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
-      throw new DuplicatedException("Application with " + appName + " is already present");
+      throw new DuplicatedException("Application with " + osName + " is already present");
     }
     if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 
@@ -99,10 +99,10 @@ public class BuildConfigManager {
   }
 
   public HttpStatus deleteBuildConfig(
-      String baseURL, String appName, String namespace, HttpHeaders authHeader)
+      String baseURL, String osName, String namespace, HttpHeaders authHeader)
       throws UnauthorizedException {
 
-    String URL = baseURL + namespace + suffix + appName + "-bc";
+    String URL = baseURL + namespace + suffix + osName + "-bc";
     HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
     ResponseEntity<String> responseEntity =
         template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);

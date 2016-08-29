@@ -1,3 +1,4 @@
+
 /*
  *
  *  * Copyright (c) 2016 Open Baton
@@ -19,10 +20,7 @@
 package org.project.openbaton.nubomedia.paas.core.util;
 
 import org.openbaton.catalogue.mano.common.*;
-import org.openbaton.catalogue.mano.descriptor.InternalVirtualLink;
-import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
-import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
-import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
+import org.openbaton.catalogue.mano.descriptor.*;
 import org.openbaton.catalogue.nfvo.ConfigurationParameter;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
@@ -34,7 +32,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,8 +47,7 @@ public class NSDUtil {
 
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  public NetworkServiceDescriptor getNetworkServiceDescriptor(
-      NetworkServiceDescriptor nsd,
+  public NetworkServiceDescriptor getNSD(
       Flavor flavor,
       QoS Qos,
       boolean turnServerActivate,
@@ -61,6 +60,7 @@ public class NSDUtil {
       int scaleInOut,
       double scale_out_threshold)
       throws turnServerException, StunServerException {
+    NetworkServiceDescriptor nsd = createInitialNSD();
     logger.debug("Start configuring network service descriptor");
     nsd = this.injectFlavor(flavor.getValue(), kmsProperties.getImage(), nsd);
     logger.debug("After flavor the nsd is\n" + nsd.toString() + "\n****************************");
@@ -310,5 +310,80 @@ public class NSDUtil {
     nsd.setVnfd(virtualNetworkFunctionDescriptors);
 
     return nsd;
+  }
+
+  private NetworkServiceDescriptor createInitialNSD() {
+    NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
+    nsd.setVendor("TUB");
+    nsd.setVersion("1.0");
+
+    Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
+    vnfds.add(createMsVnfd());
+
+    nsd.setVnfd(vnfds);
+
+    VirtualLinkDescriptor vld = new VirtualLinkDescriptor();
+    vld.setName("internal_nubomedia");
+    Set<VirtualLinkDescriptor> vlds = new HashSet<>();
+    vlds.add(vld);
+    nsd.setVld(vlds);
+    nsd.setVnf_dependency(new HashSet<VNFDependency>());
+    return nsd;
+  }
+
+  private VirtualNetworkFunctionDescriptor createMsVnfd() {
+    VirtualNetworkFunctionDescriptor vnfd = new VirtualNetworkFunctionDescriptor();
+    vnfd.setVendor("TUB");
+    vnfd.setVersion("1.0");
+    vnfd.setName("media-server-vnf");
+    vnfd.setType("media-server");
+    vnfd.setEndpoint("media-server");
+
+    Set<VirtualDeploymentUnit> vdus = new HashSet<>();
+    vdus.add(createMsVdu());
+    vnfd.setVdu(vdus);
+
+    Set<InternalVirtualLink> vls = new HashSet<>();
+    InternalVirtualLink ivl = new InternalVirtualLink();
+    ivl.setName("internal_nubomedia");
+    vls.add(ivl);
+    vnfd.setVirtual_link(vls);
+
+    Set<VNFDeploymentFlavour> dfs = new HashSet<>();
+    VNFDeploymentFlavour df = new VNFDeploymentFlavour();
+    df.setFlavour_key("d1.medium");
+    dfs.add(df);
+    vnfd.setDeployment_flavour(dfs);
+
+    vnfd.setVnfPackageLocation("");
+
+    return vnfd;
+  }
+
+  private VirtualDeploymentUnit createMsVdu() {
+    VirtualDeploymentUnit vdu = new VirtualDeploymentUnit();
+
+    Set<String> images = new HashSet<>();
+    images.add("nubomedia/kurento-media-server");
+    vdu.setVm_image(images);
+
+    List<String> vimInstanceNames = new ArrayList<>();
+    vimInstanceNames.add("nubomedia-vim");
+    vdu.setVimInstanceName(vimInstanceNames);
+
+    vdu.setScale_in_out(1);
+
+    Set<VNFComponent> vnfcs = new HashSet<>();
+    VNFComponent vnfc = new VNFComponent();
+    Set<VNFDConnectionPoint> cps = new HashSet<>();
+    VNFDConnectionPoint cp = new VNFDConnectionPoint();
+    cp.setFloatingIp("random");
+    cp.setVirtual_link_reference("internal_nubomedia");
+    cps.add(cp);
+    vnfc.setConnection_point(cps);
+    vnfcs.add(vnfc);
+    vdu.setVnfc(vnfcs);
+
+    return vdu;
   }
 }

@@ -59,16 +59,18 @@ public interface UserManagement {
    */
   User query(String id);
 
-  public User queryByName(String username) throws NotFoundException;
+  User queryByName(String username) throws NotFoundException;
 
-  public User addRole(String username, String project_name, Role.RoleEnum role)
+  User addRole(String username, String project_name, Role.RoleEnum role)
       throws NotFoundException, BadRequestException, ForbiddenException;
 
-  public User removeRole(String username, String project)
+  User removeRole(String username, String project)
       throws BadRequestException, NotFoundException, ForbiddenException;
 
-  public User updateRole(String username, String project_name, Role.RoleEnum role)
+  User updateRole(String username, String project_name, Role.RoleEnum role)
       throws BadRequestException, NotFoundException, ForbiddenException;
 
   void changePassword(String oldPwd, String newPwd);
+
+  User resetPassword(User user, String newPassword);
 }

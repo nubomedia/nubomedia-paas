@@ -13,13 +13,28 @@
   &__copy
     line-height: 2.2
     position: absolute
-    padding: 5px
     top: 0
     right: 0
     bottom: 0
     width: 90px
+    padding: 5px
     text-transform: uppercase
     color: #fff !important
     border-top-left-radius: 0
     border-bottom-left-radius: 0
     background: #cbd6da
+
+  &__info
+    position: absolute
+    top: -36px
+    right: 0
+    width: 89px
+    transition: opacity 0.5s
+    text-transform: none
+    opacity: 0
+    color: #fff
+    border-radius: 5px
+    background: rgba(0, 0, 0, 0.8)
+
+    &.show
+      opacity: 1
