@@ -20,95 +20,94 @@
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Nubomedia - Elasticity Media Manger</a>
-        </div>
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="logo" href="#">
+          <img src="./img/logo-blue.png" alt="Nubomedia">
+        </a>
+      </div>
         <!-- /.navbar-header -->
 
         <ul class="nav navbar-top-links navbar-right">
-            <li class="dropdown">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" ng-init="changeProject()"><i class="fa fa-folder-open"></i> {{projectSelected.name}} <b
-                        class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <div style="padding-left:15px;">Projects:</div>
-                    </li>
-                    <li ng-repeat="project in projects track by $index">
-                        <a href="" ng-click="changeProject(project)">{{project.name}}  <i ng-if="project.name === projectSelected.name" class="fa fa-check"></i></a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a ng-click="" href="#projects"><i class=""></i> More projects</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="dropdown">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{username}} <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                   <!-- <li>
-                        <a href="" data-toggle="modal" data-target="#modalSettings"><i class="fa fa-fw fa-gear"></i> Settings</a>
-                    </li>-->
-                    <li>
-                          <a ng-click="changePassword()" href=""><i class="fa fa-wrench"></i> Change Password</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a ng-click="logout()" href=""><i class="fa fa-fw fa-power-off"></i> Log Out</a>
-                    </li>
-                </ul>
-            </li>
+<!--           <li>
+            <a href="#"><span class="menu-icon icon-notification"></span></a>
+          </li> -->
+          <li>
+            <a href="#marketapps"><span class="menu-icon icon-cart"></span></a>
+          </li>
+          <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown" ng-init="changeProject()">
+                <i class="fa fa-folder-open"></i> {{projectSelected.name}}
+              </a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-title">
+                  Projects
+                </li>
+                <li ng-repeat="project in projects track by $index">
+                    <a href="" ng-click="changeProject(project)">{{project.name}}  <i ng-if="project.name === projectSelected.name" class="fa fa-check"></i></a>
+                </li>
+                <li>
+                    <a ng-click="" href="#projects"><i class=""></i> More projects</a>
+                </li>
+              </ul>
+          </li>
+          <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{username}}</a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a ng-click="changePassword()" href="#">Change password</a>
+                </li>
+                <li>
+                  <a ng-click="logout()" href="#">Log Out</a>
+                </li>
+              </ul>
+          </li>
         </ul>
         <!-- /.navbar-top-links -->
 
-        <div class="navbar-default sidebar" role="navigation">
+        <div class="navbar-default sidebar" role="navigation" id="sidebar">
             <div class="sidebar-nav navbar-collapse">
-                <ul class="nav" id="side-menu">
-                    <li id="li-logo">
-                        <div class="container logo">
-                            <img src="img/nubomedia-logo.png" class="img-responsive"
-                                 alt="Responsive image">
-                        </div>
+                <ul class="nav c-menu" id="side-menu">
+                    <li class="c-menu-aside__item">
+                      <a href="#" class="c-menu-aside__link js-menu-link" ng-class="setActiveLink('home')">
+                        <span class="c-menu-aside__icon c-icon-overview"></span>
+                        <span class="c-menu-aside__link-text">Overview</span>
+                      </a>
+                    </li>
 
+                    <li class="c-menu-aside__item">
+                      <a href="#applications" ng-click="resetCreateFormView()" class="c-menu-aside__link js-menu-link" ng-class="setActiveLink('/applications')">
+                        <span class="c-menu-aside__icon c-icon-app"></span>
+                        <span class="c-menu-aside__link-text">Applications</span>
+                      </a>
                     </li>
-                    <li>
-                        <a id="overviewMenu" href="#"><i class="fa fa-dashboard fa-fw"></i> Overview</a>
-                    </li>
-                    <li>
-                        <a id="topologiesMenu" href="#applications"><i class="fa fa-gears fa-fw"></i> Applications</a>
-                    </li>
-                    <li>
-                        <a href=""><i class="fa fa-shopping-cart fa-fw"></i> Marketplace<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level metismenu">
-                            <li>
-                                <a href="#marketapps"><i class="fa fa-arrow-up fa-fw"></i> App Store</a>
-                            </li>
-                            <!--<li>
-                                <a href="#vnfdescriptors"><i class="fa fa-file-text-o fa-fw"></i> VNF
-                                    Descriptors</a>
-                            </li>-->
 
-                        </ul>
-                        <!-- /.nav-second-level -->
+                    <li class="c-menu-aside__item">
+                      <a href="#marketapps" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()" ng-class="setActiveLink('/marketapps')">
+                        <span class="c-menu-aside__icon c-icon-app"></span>
+                        <span class="c-menu-aside__link-text">App Store</span>
+                      </a>
                     </li>
-                    <li>
-                        <a href="#"><i class="fa fa-shield fa-fw"></i> Identity<span
-                                class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level metismenu">
-                            <li>
-                                <a href="#projects"><i class="fa fa-folder"></i> Projects</a>
-                            </li>
-                            <li>
-                                <a href="#users"><i class="fa fa-users"></i> Users</a>
-                            </li>
-                        </ul>
-                        <!-- /.nav-second-level -->
+
+                    <li class="c-menu-aside__item" ng-if="userIsAdmin">
+                      <a href="#projects" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()" ng-class="setActiveLink('/projects')">
+                        <span class="c-menu-aside__icon c-icon-project"></span>
+                        <span class="c-menu-aside__link-text">Projects</span>
+                      </a>
                     </li>
+
+                    <li class="c-menu-aside__item" ng-if="userIsAdmin">
+                      <a href="#users" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()" ng-class="setActiveLink('/users')">
+                        <span class="c-menu-aside__icon c-icon-user"></span>
+                        <span class="c-menu-aside__link-text">Users</span>
+                      </a>
+                    </li>
+
                 </ul>
             </div>
             <!-- /.sidebar-collapse -->
@@ -118,56 +117,53 @@
 
     <div id="page-wrapper">
 
-
-        <div ng-view></div>
-
+      <div ng-view></div>
 
     </div>
-    <div class="modal" id="modalChangePassword" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                      aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="serviceFormLabel">Change Password</h4>
-            </div>
-            <form class="form-horizontal" role="form" id="formChangePassword">
-              <div class="form-group">
-                <label for="name" class="col-sm-4 control-label">Old Password</label>
-
-                <div class="col-sm-6">
-                    <input type="password" class="form-control" id="oldPassword" name="oldPassword"
-                          ng-model="oldPassword"/>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="name" class="col-sm-4 control-label">New Password</label>
-
-                <div class="col-sm-6">
-                    <input type="password" class="form-control" id="newPassword" name="newPassword"
-                          ng-model="newPassword"/>
-                </div>
-              </div>
-                <div class="form-group">
-                  <label for="name" class="col-sm-4 control-label">New Password</label>
-
-                  <div class="col-sm-6">
-                      <input type="password" class="form-control" id="newPassword1" name="newPassword1"
-                            ng-model="newPassword1"/>
-                  </div>
-              </div>
-            </form>
-            <div class="modal-footer">
-              <button type="button" id="closeModal" class="btn btn-default"
-                      data-dismiss="modal">Close
-              </button>
-              <button type="button" id="changePassword"
-                     class="btn btn-primary" ng-click="postNew()">Change Password
-             </button>
-            </div><!--footer-->
-         </div>
-      </div>
-   </div>
     <!-- /#page-wrapper -->
+
+  <section class="modal" id="modalChangePassword" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <header class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title" id="serviceFormLabel">Change Password</h4>
+        </header>
+
+        <form class="form-horizontal form" role="form" id="formChangePassword">
+          <div class="form-group input">
+            <label for="name" class="col-sm-4 control-label input__label">Old Password</label>
+
+            <div class="col-sm-6">
+                <input type="password" class="form-control input__field" id="oldPassword" name="oldPassword" ng-model="oldPassword">
+            </div>
+          </div>
+          <div class="form-group input">
+            <label for="name" class="col-sm-4 control-label input__label">New Password</label>
+
+            <div class="col-sm-6">
+                <input type="password" class="form-control input__field" id="newPassword" name="newPassword" ng-model="newPassword">
+            </div>
+          </div>
+            <div class="form-group input">
+              <label for="name" class="col-sm-4 control-label input__label">New Password</label>
+
+              <div class="col-sm-6">
+                  <input type="password" class="form-control input__field" id="newPassword1" name="newPassword1" ng-model="newPassword1">
+              </div>
+          </div>
+        </form>
+
+        <div class="modal-footer">
+          <button type="button" id="closeModal" class="btn btn-default" data-dismiss="modal">Close
+          </button>
+          <button type="button" id="changePassword" class="btn btn-primary" ng-click="postNew()">Change Password
+         </button>
+        </div><!--footer-->
+
+       </div>
+    </div>
+ </section>
 
 </div>

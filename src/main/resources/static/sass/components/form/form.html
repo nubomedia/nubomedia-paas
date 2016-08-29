@@ -1,0 +1,51 @@
+<form class="form form-horizontal form-new-app">
+
+  <!-- Application name -->
+  <div class="form-group input">
+    <label for="app-name" class="col-md-4 control-label input__label">
+      Application name
+    </label>
+
+    <div class="col-md-8">
+      <input type="text" class="form-control input__field" id="app-name" >
+    </div>
+  </div><!-- /Application name -->
+
+  <!-- /Scalling -->
+  <div class="form-group input">
+    <label for="" class="col-md-4 control-label input__label">
+      Scalling
+    </label>
+
+    <div class="col-md-8 [ js-toggle-input-container ]">
+
+      <label class="control control--inline control--checkbox [ js-toggle-inputs ]">
+        <input type="checkbox" class="js-toggle-inputs">
+        <div class="control__indicator"></div>
+        Tresholds
+      </label>
+
+      <div class="input input--inline [js-control]">
+        <label for="app-scalling-in" class="input__label">In</label>
+        <input type="number" class="form-control input__field js-toggle-inputs" id="app-scalling-in" disabled>
+      </div>
+
+      <div class="input input--inline [js-control]">
+        <label for="app-scalling-out" class="input__label">Out</label>
+        <input type="number" class="form-control input__field js-toggle-inputs" id="app-scalling-out" disabled>
+      </div>
+
+    </div>
+  </div><!-- /Scalling -->
+
+  <!-- Select -->
+  <div class="select">
+    <select>
+      <option>First select</option>
+      <option>Option</option>
+      <option>Option</option>
+    </select>
+    <div class="select__arrow"></div>
+  </div><!-- /Select -->
+
+</form>

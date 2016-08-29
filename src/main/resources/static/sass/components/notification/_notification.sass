@@ -1,0 +1,125 @@
+// ----------------------------------------------------------------------------
+// @Notification
+// ----------------------------------------------------------------------------
+.notification
+  position: relative
+  display: table
+  width: 100%
+  min-height: 70px
+  margin-bottom: 10px
+  padding-left: 105px
+
+  &:last-of-type:after
+    bottom: 0
+
+  &__container
+    font-weight: 300
+    position: relative
+    display: table-cell
+    padding: 10px 80px 10px 80px
+    vertical-align: middle
+    color: $color-gray
+    border: 1px solid $color-gray--secondary
+    border-radius: 5px
+    background: #fff
+
+  &:before
+    position: absolute
+    top: 0
+    right: auto
+    bottom: 0
+    left: 73px
+    display: block
+    width: 14px
+    height: 14px
+    margin: auto
+    content: ""
+    border: 2px solid #d6dadd
+    border-radius: 50%
+    background: #f4f7fb
+    z-index: 9
+
+  &:after
+    position: absolute
+    top: 0
+    bottom: -20px
+    left: 80px
+    display: block
+    width: 1px
+    content: ""
+    background: #d6dadd
+
+  &__date
+    font-size: 12px
+    font-weight: 400
+    position: absolute
+    top: 0
+    right: auto
+    bottom: 0
+    left: -120px
+    display: inline-block
+    width: 80px
+    height: 20px
+    margin: auto
+    text-align: right
+
+  &__avatar
+    position: absolute
+    top: 0
+    right: auto
+    bottom: 0
+    left: 20px
+    display: inline-block
+    width: 50px
+    height: 50px
+    margin: auto
+    vertical-align: middle
+    border-radius: 50%
+    background-image: url("http://placehold.it/50x50")
+    background-repeat: no-repeat
+    background-position: center
+    background-size: contain
+
+  &__person
+    font-weight: 400
+    vertical-align: middle
+    color: $main-color
+
+  &__message
+    vertical-align: middle
+
+  &__time
+    font-size: 14px
+    position: absolute
+    top: 0
+    right: 20px
+    bottom: 0
+    display: block
+    height: 20px
+    margin: auto
+
+  &--today:before
+    border-color: $color-blue
+
+// ----------------------------------------------------------------------------
+// @Notifications mobile
+// ----------------------------------------------------------------------------
+@media screen and (max-width: 700px)
+  .notification
+    min-height: 95px
+    padding-top: 25px
+    padding-left: 0
+    margin-bottom: 35px
+
+    &:after
+      display: none
+
+    &:before
+      bottom: auto
+      left: 0
+
+    &__date
+      top: -28px
+      bottom: auto
+      left: 20px
+      text-align: left

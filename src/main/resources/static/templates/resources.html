@@ -1,0 +1,97 @@
+<!-- Route-->
+<section class="form__section">
+  <h3 class="form__section-title">Application route</h3>
+  <a ng-href="{{'https://' + application.route}}" target="_blank">{{'https://' + application.route}}</a>
+</section><!-- /Media servers -->
+
+
+<!-- Media servers -->
+<section class="form__section">
+  <h3 class="form__section-title">Media Servers</h3>
+
+  <!-- Progress container -->
+  <div class="progress-container">
+    <span class="progress-server"></span>
+    <p class="progress-info progress-info--right">
+      Max: {{application.scaleInOut}}
+    </p>
+    <p class="progress-info progress-notification progress-info--left">Information</p>
+    <div class="progress">
+      <div
+        class="progress-bar"
+        role="progressbar"
+        ng-style="{'width': mediaServerProgress()}"
+        aria-valuenow="11"
+        aria-valuemin="0"
+        aria-valuemax="{{application.scaleInOut}}">
+        <span class="progress-label">
+          {{mediaServerProgress()}}
+        </span>
+      </div>
+    </div>
+  </div><!-- Progress container -->
+
+</section><!-- /Media servers -->
+
+
+
+
+<!-- Scale -->
+<section class="form__section">
+  <h3 class="form__section-title">Scale</h3>
+
+  <!-- Section scale -->
+  <section class="section-scale">
+    <div class="section-scale__column section-scale__in">
+      <span class="nm-icon icon-arrow-right"></span>
+      Scale InOut
+      <span class="section-scale__number-in">{{application.scaleInOut}}</span>
+    </div>
+
+    <div class="section-scale__column section-scale__out">
+      <span class="nm-icon icon-arrow-left"></span>
+      Scale OutThreshold
+      <span class="section-scale__number-out">{{application.scaleOutThreshold}}</span>
+    </div>
+
+  </section><!-- /Section scale -->
+</section>
+<!-- /Scale -->
+
+
+
+
+<section class="form__section" ng-if="application.cdnConnector || application.cloudRepository">
+  <h3 class="form__section-title">Add-ons</h3>
+
+  <!-- Addons -->
+  <section class="section">
+
+    <!-- /Addons container -->
+    <section class="addons-container">
+
+      <!-- Addon -->
+      <article class="addon" ng-show="application.cdnConnector">
+        <div class="addon__container">
+          <div class="addon__content">
+            <span class="addon__image cdn"></span>
+            <p class="addon__title">CDN Conector</p>
+          </div>
+        </div>
+      </article><!-- /Addon -->
+
+      <!-- Addon -->
+      <article class="addon" ng-show="application.cloudRepository">
+        <div class="addon__container">
+          <div class="addon__content">
+            <span class="addon__image cloud"></span>
+            <p class="addon__title">Cloud Repository</p>
+          </div>
+        </div>
+      </article><!-- /Addon -->
+
+    </section><!-- /Addons container -->
+
+  </section><!-- /Addons -->
+</section>
+

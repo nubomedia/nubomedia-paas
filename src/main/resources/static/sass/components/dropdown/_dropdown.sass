@@ -1,0 +1,85 @@
+.c-dropdown
+  display: inline-block
+
+  &__toggle
+    padding: 10px 45px 10px 30px
+    border: 1px solid $color-gray--secondary
+    outline: none !important
+    background: #fff
+    box-shadow: 0 2px 4px -1px #e6e8ed
+
+    &:after
+      position: absolute
+      top: 0
+      right: 17px
+      bottom: 0
+      left: auto
+      width: 7px
+      height: 7px
+      margin: auto
+      content: ""
+      transform: rotate(-45deg)
+      border-bottom: 1px solid $color-gray
+      border-left: 1px solid $color-gray
+
+  &__menu
+    width: 100%
+    min-width: 100%
+    margin-top: 10px
+    padding: 10px 0
+    border: 1px solid $color-gray--secondary
+
+    &:after,
+    &:before
+      position: absolute
+      right: 20px
+      bottom: 100%
+      left: auto
+      width: 0
+      height: 0
+      content: " "
+      pointer-events: none
+      border: solid transparent
+
+    &:after
+      margin-right: -7px
+      border-width: 7px
+      border-color: rgba(255, 255, 255, 0)
+      border-bottom-color: #fff
+
+    &:before
+      margin-right: -8px
+      border-width: 8px
+      border-color: rgba(230, 232, 237, 0)
+      border-bottom-color: #e6e8ed
+
+  &__item
+    padding: 5px 0
+    cursor: pointer
+    text-align: center
+
+    > *
+      padding: 3px 15px
+      display: inline-block
+      width: 100%
+      line-height: 1.1
+      background: transparent!important
+      color: $color-gray!important
+
+      &.text-danger
+        color: $color-danger!important
+
+    &:hover
+      background: $color-gray--secondary
+
+.dropdown-title
+  font-size: 14px
+  padding-bottom: 10px
+  text-transform: uppercase
+  color: $color-gray
+
+.dropdown-menu .fa
+  font-size: 12px
+  position: relative
+  top: -1px
+  right: -2px

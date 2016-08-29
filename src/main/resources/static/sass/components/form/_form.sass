@@ -1,0 +1,87 @@
+// --------------------------------------------------------------------------
+//  @Form
+// --------------------------------------------------------------------------
+.form
+  padding: 20px 0
+  margin-top: 15px
+  margin-bottom: 15px
+
+  .panel
+    border-radius: 0
+
+  .add-protocol
+    position: absolute
+    top: 0
+    right: 25px
+    bottom: 0
+    left: auto
+    height: 15px
+    margin: auto
+
+  .panel-heading
+    padding: 0
+    border: none
+
+  &__message
+    font-size: 12px
+
+    &:last-child
+      margin-bottom: 0
+
+  &__group-label
+    font-size: 15px
+    font-weight: 300
+    color: $color-gray
+
+  &__section
+    margin-bottom: 55px
+    +clearfix
+
+  &__section-title
+    font-size: 15px
+    margin-bottom: 30px
+    padding-bottom: 10px
+    text-transform: uppercase
+    color: $color-gray
+    border-bottom: 1px solid $color-gray--secondary
+
+  &__submit
+    font-size: 18px
+    min-width: 148px
+    padding: 10px 20px
+    margin-top: 20px
+
+  ::-webkit-input-placeholder
+    color: $color-gray + 50
+    font-weight: 300
+
+  ::-moz-placeholder
+    color: $color-gray + 50
+    font-weight: 300
+
+  -ms-input-placeholder:
+    color: $color-gray + 50
+    font-weight: 300
+
+  -moz-placeholder:
+    color: $color-gray + 50
+    font-weight: 300
+
+  .form-control[readonly]
+    cursor: default
+
+
+@media screen and (max-width: 991px)
+  .form-horizontal .control-label
+    text-align: left
+
+// --------------------------------------------------------------------------
+//  @Form app settings
+// --------------------------------------------------------------------------
+.form-app-settings
+  padding-top: 0
+
+  +centerElement(985px)
+
+  .btn-danger
+    padding: 10 15px

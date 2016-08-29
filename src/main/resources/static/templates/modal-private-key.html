@@ -1,0 +1,84 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+
+    <header class="modal-header">
+      <button
+        type="button"
+        class="close"
+        data-dismiss="modal"
+        aria-hidden="true">
+        &times;
+      </button>
+      <h4 class="modal-title" id="serviceFormLabel">Save Private key</h4>
+    </header>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+
+        <!-- Form -->
+        <form class="form-horizontal" id="" role="form">
+
+            <!-- Input -->
+            <div class="form-group input">
+
+              <label
+                for="projectName"
+                class="col-sm-4 control-label input__label">
+                Project Name
+              </label>
+
+              <div class="col-sm-6">
+                <input
+                  type="text"
+                  class="form-control input__field"
+                  id="projectName"
+                  name="projectName"
+                 ng-model="privateKeyReq.projectName"/>
+              </div>
+
+            </div><!-- Input -->
+
+            <!-- inputkeyP -->
+            <div class="inputKeyP">
+              <div class="form-group">
+                <label for="jsonInputArea" class="">
+                  Insert Your Private Key
+                </label>
+                <textarea
+                  name="appJson"
+                  ng-model="privateKeyReq.privateKey"
+                  id="jsonInputArea"
+                  class="form-control"
+                  rows="25"
+                  placeholder="-----BEGIN PRIVATE KEY-----">
+                </textarea>
+                </div>
+            </div><!--/ inputkeyP -->
+
+        </form><!-- /Form -->
+
+      </div><!-- Modal body -->
+
+    <footer class="modal-footer">
+
+        <button
+          type="button"
+          id="closeModal"
+          class="btn btn-default"
+          data-dismiss="modal">
+          Close
+        </button>
+
+        <button
+          type="button"
+          id="sendTemplate"
+          data-dismiss="modal"
+          class="btn btn-primary"
+          ng-click="sendPK(privateKeyReq)">
+          Send PrivateKey
+        </button>
+
+    </footer>
+
+  </div>
+</div>

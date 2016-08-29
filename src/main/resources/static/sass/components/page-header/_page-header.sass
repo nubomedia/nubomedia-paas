@@ -1,0 +1,361 @@
+// ----------------------------------------------------------------------------
+// @Page header
+// ----------------------------------------------------------------------------
+.page-header
+  margin: 0
+  padding: 0
+  border-color: $color-gray--secondary
+
+  +clearfix
+
+  &__container
+    +centerElement(1280px)
+
+.page-top-bar
+  border-bottom: 1px solid $color-gray--secondary
+  background: #FFF
+  height: 50px
+  display: none
+  position: fixed
+  z-index: $menu-zindex + 11
+  top: 0
+  width: 100%
+
+// ----------------------------------------------------------------------------
+// @Hamburger
+// ----------------------------------------------------------------------------
+.hamburger-container
+  width: 32px
+  height: 25px
+  position: fixed
+  top: 13px
+  right: 15px
+  left: auto
+  display: block
+
+  &--left
+    right: auto
+    left: 15px
+    display: none
+
+    @media screen and (max-width: $small-mq-width)
+      display: block
+
+.hamburger
+  width: 32px
+  height: 4px
+  display: block
+  background: $color-blue
+  position: relative
+
+  &:after,
+  &:before
+    content: ""
+    width: 32px
+    height: 4px
+    background: $color-blue
+    position: absolute
+
+  &:before
+    bottom: -20px
+
+  &:after
+    bottom: -10px
+
+// ----------------------------------------------------------------------------
+// @Header menu
+// ----------------------------------------------------------------------------
+.header-menu
+  margin: 0
+  padding: 0
+  list-style: none
+
+  a
+    font-size: 16px
+    font-weight: 300
+    color: $color-gray
+
+    &:focus,
+    &:hover,
+    &:active
+      text-decoration: none
+      background-color: transparent !important
+
+  &__item
+    display: inline-block
+    margin: 0 10px
+
+  &__icon
+    display: inline-block
+    width: 30px
+    height: 30px
+    margin-left: 16px
+    vertical-align: middle
+    background-image: url("http://placehold.it/30x30")
+    background-repeat: no-repeat
+    background-position: center
+    background-size: cover
+
+@media screen and (min-width: $medium-mq-width + 1)
+  .header-menu
+    display: flex
+    float: right
+    height: 74px
+    align-items: center
+    justify-content: center
+
+  .user-dropdown
+    margin-left: 40px
+
+// ----------------------------------------------------------------------------
+// @User avatar
+// ----------------------------------------------------------------------------
+.user-avatar
+  width: 35px
+  height: 35px
+  margin-right: 20px
+  border-radius: 50%
+  background-image: url("http://placehold.it/35x35")
+
+.user-avatar--big
+  width: 63px
+  height: 63px
+  margin: 0 10px 0 0
+
+.link-user
+  text-decoration: none !important
+
+.user-info
+  display: inline-block
+  vertical-align: middle
+
+  &__app,
+  &__name
+    display: block
+
+  &__name
+    color: $main-color
+    font-weight: 400
+
+  &__app
+    color: $color-gray + 20
+
+// ----------------------------------------------------------------------------
+// @User dropdown
+// ----------------------------------------------------------------------------
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus
+  background: transparent
+
+.navbar-top-links li
+  margin-right: 25px !important
+
+.navbar .dropdown
+  // Dropwdown Arrow
+  .dropdown-menu
+    &:after,
+    &:before
+      bottom: 100%
+      left: auto
+      right: 28px
+      border: solid transparent
+      content: " "
+      height: 0
+      width: 0
+      position: absolute
+      pointer-events: none
+
+    &:after
+      border-color: rgba(255, 255, 255, 0)
+      border-bottom-color: #FFF
+      border-width: 7px
+      margin-right: -7px
+
+    &:before
+      border-color: rgba(230, 232, 237, 0)
+      border-bottom-color: #e6e8ed
+      border-width: 8px
+      margin-right: -8px
+
+  > a
+    position: relative !important
+    padding: 15px !important
+    color: $color-gray !important
+
+  > a:after
+    position: absolute
+    top: -2px
+    right: 0
+    bottom: 0
+    left: auto
+    width: 7px
+    height: 7px
+    margin: auto
+    content: ""
+    transform: rotate(-45deg)
+    border-bottom: 1px solid $color-gray
+    border-left: 1px solid $color-gray
+
+  .dropdown-menu
+    right: (-25px) !important
+    left: auto !important
+    width: 266px !important
+    padding: 20px 30px !important
+    border-color: $color-gray--secondary !important
+    border-radius: 5px !important
+    box-shadow: 0 1px 10px $color-gray--secondary !important
+
+    a
+      font-size: 16px !important
+      font-weight: 300 !important
+      padding: 10px 0 !important
+      color: $color-gray !important
+      background: transparent !important
+
+      &:hover
+        text-decoration: underline !important
+
+// ----------------------------------------------------------------------------
+// @Mobile menu (not to clean :()
+// ----------------------------------------------------------------------------
+@media screen and (max-width: $medium-mq-width)
+  .page-header
+    padding-top: 50px
+
+    &__container
+      will-change: auto
+      transition: all 0.3s
+      background: #FFF
+      position: fixed
+      z-index: $menu-zindex + 1
+      transform: translateY(-150%)
+
+  .page-top-bar
+    display: block
+
+  .header-menu
+    padding-top: 35px
+
+    &__item
+      display: block
+      margin-bottom: 30px
+      padding: 0 15px
+
+      a
+        display: block
+
+  .top-menu-is-opened
+    .page-header__container
+      transform: translateY(0)
+      height: auto
+
+  .user-avatar
+    margin-left: 0
+
+  .user-dropdown .dropdown-menu
+    width: auto !important
+    right: 15px !important
+    left: 15px !important
+    margin-top: 15px
+
+    &:after, &:before
+      display: none
+
+// ----------------------------------------------------------------------------
+// @Menu overlay
+// ----------------------------------------------------------------------------
+.menu-overlay
+  display: none
+  position: fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+  z-index: $menu-overlay-zindex
+  background: rgba(0, 0, 0, 0.4)
+  cursor: pointer
+  transition: background 1.5s ease
+
+  &.is-active
+    display: block
+
+// ----------------------------------------------------------------------------
+// @Nav overrides
+// ----------------------------------------------------------------------------
+.navbar-top-links li .fa
+  margin-right: 5px
+
+.navbar
+  min-height: 70px
+  border-bottom: 1px solid $color-gray--secondary
+  background-color: #FFF !important
+
+.navbar-top-links
+  margin-top: 10px
+
+// ----------------------------------------------------------------------------
+// @Page hero
+// ----------------------------------------------------------------------------
+.page-hero
+  margin-left: -30px
+  margin-right: -30px
+  padding: 5% 15px
+  background-image: url("../img/bg.png")
+  background-repeat: no-repeat
+  background-position: center
+  background-size: cover
+  color: #FFF
+  text-align: center
+  margin-bottom: 30px
+
+  &__text
+    font-size: 32px
+    max-width: 820px
+    margin: 0 auto
+    line-height: 1.4
+    font-weight: 300
+
+  &__link
+    color: #FFF !important
+    text-decoration: underline
+    font-weight: 500
+
+.logo
+  width: 250px
+  display: block
+  text-align: center
+
+  img
+    width: 140px
+    display: inline-block
+    margin-top: 6px
+
+// Menu Icons
+.menu-icon
+  width: 22px
+  height: 22px
+  background-size: contain
+  background-position: center
+  background-repeat: no-repeat
+  display: inline-block
+  vertical-align: middle
+  position: relative
+  top: -2px
+
+  &.icon-cart
+    background-image: url("../img/Webapp/shopping_cart.png")
+
+  &.icon-notification
+    background-image: url("../img/Webapp/notifications.png")
+
+@media screen and (min-width: 768px)
+  .sidebar
+    z-index: 1
+    position: absolute
+    width: 240px
+    margin-top: 70px
+
+  #page-wrapper
+    margin: 0px 0 0 240px
+    border-left: $color-gray--secondary

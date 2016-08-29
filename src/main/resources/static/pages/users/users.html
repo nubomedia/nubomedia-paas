@@ -16,222 +16,361 @@
   ~  */
   -->
 
-<div class="row">
-    <div class="col-lg-12">
-        <h1>
-            Users
-            <small> List of users</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i>
-                Overview</a></li>
-            <li class="active"><i class="fa fa-users"></i> Users</li>
-        </ol>
-    </div>
-</div>
-<!-- /.row -->
-<div class="row">
-    <div class="col-lg-12">
-        <button id="deleteMultiple" href="#"  ng-disabled="multipleDelete" class="btn btn-danger pull-right"  ng-style="{'margin-left':'25px'}"
-                title="Delete all the items selected" data-target="#deleteModal" data-toggle="modal">Delete
-        </button>
-        <button id="btn_create_nsd" href="#" class="btn btn-primary pull-right"
-                title="" data-toggle="modal"
-                data-target="#createUser">Add a new User
-        </button>
+<!-- Breadcrum container -->
+<section class="breadcrumb-container clearfix" ng-show="!createFormViewIsVisible">
 
-    </div>
-</div>
-<div class="row top-buffer">
-    <div class="col-lg-12">
-        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">
-            <div ng-bind-html="alert.msg"></div>
-        </alert>
-        <div class="table-responsive" ng-show="users.length>0">
+  <div class="row">
 
-            <table
-                    class="table table-bordered table-striped table-hover tablesorter">
-                <thead>
-                <tr>
-                    <th><input type="checkbox" ng-model="main.checkbox"></th>
-                    <th ng-click="predicate = 'username'; reverse = !reverse">username <i class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'email'; reverse = !reverse">email <i class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'enabled'; reverse = !reverse">enabled <i class="fa fa-sort"></i></th>
-                    <th ng-click="predicate = 'roles'; reverse = !reverse">roles <i class="fa fa-sort"></i></th>
-                    <th>Actions <i class="fa"></i></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="data in users| filter:search|orderBy:predicate:reverse">
-                    <td><input type="checkbox" ng-init="selection.ids[data.username] = false" ng-model="selection.ids[data.username]" name="group" id="{{data.id}}" /></td>
-                    <td><a href="#users/{{data.username}}">{{data.username}} </a></td>
-                    <td>{{data.email}}</td>
-                    <td>{{data.enabled}}</td>
-                    <td><span ng-repeat="role in data.roles"><b>project</b>: {{role.project}}, <b>role</b>: {{role.role}}<span ng-if="!$last">; </span></span></td>
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Action
-                                <span class="caret"></span></button>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="" data-toggle="modal" ng-click="update(data)" data-target="#updateUser">Edit</a></li>
-                                <li><a href="" ng-click="deleteuser(data)">Delete</a></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+    <div class="col-xs-12 col-md-7">
+      <!-- Breadcrum -->
+      <ul class="c-breadcrumb">
+
+        <li class="c-breadcrumb__item" >
+          <a href="/" ng-click="resetCreateFormView()">Overview</a>
+        </li>
+
+        <li class="c-breadcrumb__item is-active">
+          <a href="#/users" ng-click="resetCreateFormView()">Users</a>
+        </li>
+
+      </ul><!-- Breadcrum -->
+    </div><!-- /col -->
+
+    <div class="col-xs-12 col-md-5 text-right">
+
+      <button
+        id="btn_create_nsd"
+        href="#"
+        class="btn btn--white"
+        title="Add new user"
+        ng-click="toggleCreateFormView()">
+        <span class="glyphicon glyphicon-plus-sign text-primary"></span>
+        Add new User
+      </button>
+
+
+      <button
+        id="deleteMultiple"
+        href="#"
+        ng-disabled="multipleDelete"
+        class="btn btn-danger"
+        title="Delete all the items selected"
+        data-target="#deleteModal"
+        data-toggle="modal">
+        Delete
+      </button>
+
+    </div><!-- /col -->
+
+  </div><!-- /row -->
+
+</section><!-- /Breadcrum container -->
+
+
+
+
+<!-- Breadcrum container -->
+<section class="breadcrumb-container clearfix" ng-show="createFormViewIsVisible">
+  <ul class="c-breadcrumb">
+
+    <li class="c-breadcrumb__item">
+      <a href="#/" ng-click="resetCreateFormView()">Overview</a>
+    </li>
+
+    <li class="c-breadcrumb__item">
+      <a href="#/users" ng-click="resetCreateFormView()">Users</a>
+    </li>
+
+    <li class="c-breadcrumb__item">
+      <span>Add new user<span>
+    </li>
+
+  </ul><!-- Breadcrum -->
+</section><!-- /Breadcrum container -->
+
+
+
+<alert
+  ng-repeat="alert in alerts"
+  type="alert.type"
+  close="closeAlert($index)">
+  <div ng-bind-html="alert.msg"></div>
+</alert>
+<button
+  class="btn btn--white btn--clear-alert"
+  ng-if="alerts.length > 1"
+  ng-click="clearAlerts(alerts)">Clear alerts
+</button>
+
+
+
+
+<!-- Users -->
+<section class="users" ng-show="!createFormViewIsVisible">
+
+  <section class="table-responsive" ng-show="users.length>0">
+
+    <form class="search-form search-form--table">
+      <span class="btn glyphicon glyphicon-search"></span>
+      <div class="form-group">
+        <input
+          type="text"
+          class="form-control"
+          ng-model="searchInput"
+          placeholder="Search for a user">
+      </div>
+    </form>
+
+    <table class="table table-striped tablesorter c-table simple-table">
+
+      <thead>
+        <tr>
+
+          <th>
+            <label class="control control--no-text control control--checkbox">
+              <input type="checkbox" ng-model="main.checkbox">
+              <div class="control__indicator"></div>
+            </label>
+          </th>
+
+
+          <th ng-click="predicate = 'username'; reverse = !reverse">
+            Username <i class="fa fa-sort"></i>
+          </th>
+
+          <th ng-click="predicate = 'id'; reverse = !reverse">
+            Id <i class="fa fa-sort"></i>
+          </th>
+
+          <th ng-click="predicate = 'enabled'; reverse = !reverse">
+            Enabled <i class="fa fa-sort"></i>
+          </th>
+
+          <th ng-click="predicate = 'roles'; reverse = !reverse">
+            Roles <i class="fa fa-sort"></i>
+          </th>
+
+          <th>Actions <i class="fa"></i></th>
+
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr
+          ng-repeat="data in users| filter:search|orderBy:predicate:reverse | filter: searchInput">
+
+          <td>
+            <label
+              class="control control--no-text control control--checkbox">
+              <input
+                type="checkbox"
+                ng-init="selection.ids[data.username] = false"
+                ng-model="selection.ids[data.username]"
+                name="group"
+                id="{{data.id}}">
+              <div class="control__indicator"></div>
+            </label>
+          </td>
+
+          <td><a href="#users/{{data.username}}">{{data.username}}</a></td>
+
+          <td>{{data.id}}</td>
+
+          <td>{{data.enabled}}</td>
+
+          <td>
+            <span ng-repeat="role in data.roles">
+              <strong>Project: </strong>{{role.project}},
+              <strong>Role: </strong>{{role.role}}
+              <span ng-if="!$last">/</span>
+            </span>
+          </td>
+
+          <td>
+
+            <!-- Dropdown -->
+            <div class="list-btn dropdown c-dropdown">
+
+              <button
+                class="btn dropdown-toggle c-dropdown__toggle"
+                type="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="true">
+                Actions
+              </button>
+
+              <ul class="dropdown-menu c-dropdown__menu">
+                <li  class="c-dropdown__item">
+                  <a href="#users/{{data.username}}">View</a>
+                </li>
+                <li  class="c-dropdown__item">
+                  <span ng-click="changeUserPassModal(data.username)">Change password</span>
+                </li>
+                <li  class="c-dropdown__item">
+                  <span ng-click="deleteUserModal(data)" class="text-danger">Delete</span>
+                </li>
+              </ul>
+
+            </div><!-- /Dropdown -->
+
+          </td>
+
+        </tr>
+      </tbody>
+
+    </table>
+  </section>
+
+</section><!-- Users -->
+
+
+
+<!-- Form create new user -->
+<form
+  role="form"
+  class="form form-horizontal form-new-user"
+  ng-show="createFormViewIsVisible">
+
+  <!-- Form section -->
+  <section class="form__section">
+
+    <h3 class="form__section-title">General</h3>
+
+    <!-- Username -->
+    <div class="form-group input">
+      <label for="username" class="col-sm-4 control-label input__label">
+        Username
+      </label>
+      <div class="col-sm-8">
+        <input
+          type="text"
+          class="form-control input__field"
+          id="username"
+          name="username"
+          ng-model="userObj.username"/>
+      </div>
+    </div><!-- /Username -->
+
+    <!-- Password -->
+    <div class="form-group input">
+      <label for="pass" class="col-sm-4 control-label input__label">
+        Password
+      </label>
+
+      <div class="col-sm-8">
+        <input
+          type="{{userPassInputType}}"
+          class="form-control input__field"
+          id="pass"
+          name="pass"
+         ng-model="userObj.password"/>
+         <span
+           class="show-pass glyphicon"
+           ng-class="userPassInputToggle ? 'glyphicon-eye-close' : 'glyphicon-eye-open'"
+           title="{{userPassInputAlt}}"
+           ng-click="togglePassInputType()"></span>
+      </div>
+    </div><!-- Password -->
+
+    <!-- ng repeat -->
+    <div
+      class="form-group input"
+      ng-repeat="(key,value) in userObj"
+      ng-if="key!=='username' && key!=='password' && key!=='roles'">
+        <label for="{{key}}" class="col-sm-4 control-label input__label">
+          {{key}}
+        </label>
+
+        <div class="col-sm-8">
+          <input
+            type="text"
+            class="form-control input__field"
+            id="{{key}}"
+            name="{{key}}"
+            ng-model="userObj[key]"/>
         </div>
+    </div><!-- /ng repeat -->
+
+  </section><!-- Form section -->
+
+  <!-- Form section -->
+  <section class="form__section">
+
+    <h3 class="form__section-title">Roles</h3>
+
+    <div class="form-group input" ng-repeat="role in userObj.roles track by $index">
+
+      <label for="action" class="col-sm-2 control-label input__label">
+        Project
+      </label>
+
+      <div class="col-sm-4">
+        <!-- Select -->
+        <div class="select">
+          <select
+            name="typeSelect"
+            class="form-control modal-select"
+            id="action"
+            ng-model="userObj.roles[$index].project"
+            ng-options="project.name as project.name for project in projects"
+            ng-change="">
+          </select>
+          <div class="select__arrow"></div>
+        </div>
+      </div><!-- /col -->
+
+      <label for="action" class="col-sm-1 control-label input__label">
+        Role
+      </label>
+
+      <div class="col-sm-4">
+        <!-- Select -->
+        <div class="select">
+          <select
+            name="typeSelect"
+            class="form-control modal-select"
+            id="action"
+            ng-model="userObj.roles[$index].role"
+            ng-options="role for role in roles"
+            ng-change="">
+          </select>
+          <div class="select__arrow"></div>
+        </div>
+      </div><!-- /col -->
+
+      <div class="col-sm-1">
+        <a href="" ng-click="userObj.roles.splice($index, 1)">
+          <h4><li class="fa fa-trash"></li></h4>
+        </a>
+      </div>
+
+    </div><!-- /form group -->
+
+    <div class="form-group">
+      <button
+        class="btn btn--white u-ml-15"
+        ng-click="userObj.roles.push(roleAdd)">
+        Add more roles
+      </button>
     </div>
 
-</div>
+  </section><!-- /Roles -->
+
+  <button
+    type="button"
+    class="btn btn-primary form__submit pull-right"
+    ng-click="save()">
+    Save
+  </button>
+
+</form><!-- /Form create new user -->
 
 
-<div class="modal fade" tabindex="-1" role="dialog" id="createUser">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Create a new User</h4>
-            </div>
-            <div class="modal-body">
-                <form role="form" class="form-horizontal">
 
-                    <div class="form-group">
-                        <label for="username" class="col-sm-4 control-label">username</label>
 
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="username" name="username"
-                                   ng-model="userObj.username"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="pass" class="col-sm-4 control-label">password</label>
-
-                        <div class="col-sm-6">
-                            <input type="password" class="form-control" id="pass" name="pass"
-                                   ng-model="userObj.password"/>
-                        </div>
-                    </div>
-                    <div class="form-group" ng-repeat="(key,value) in userObj" ng-if="key!=='username' && key!=='password' && key!=='roles'">
-                        <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
-
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="{{key}}" name="{{key}}"
-                                   ng-model="userObj[key]"/>
-                        </div>
-                    </div>
-                    <hr>
-                    <h3>Role <a title="Add a new Role to this user" href="" ng-click="addRole()"><li class="fa fa-plus-square"></li></a></h3>
-                    <div class="form-group" ng-repeat="role in userObj.roles track by $index">
-
-                            <label for="action" class="col-sm-2 control-label">project</label>
-                            <div class="col-sm-3">
-                                <select name="typeSelect" class="form-control modal-select" id="action"
-                                        ng-model="userObj.roles[$index].project"
-                                        ng-options="project.name as project.name for project in projects"
-                                        ng-change="">
-                                </select>
-                            </div>
-
-                        <label for="action" class="col-sm-1 control-label">role</label>
-                        <div class="col-sm-3">
-                            <select name="typeSelect" class="form-control modal-select" id="action"
-                                    ng-model="userObj.roles[$index].role"
-                                    ng-options="role for role in roles"
-                                    ng-change="">
-                            </select>
-                        </div>
-                        <div class="col-sm-1">
-                            <a href="" ng-click="userObj.roles.splice($index, 1)"><h4><li class="fa fa-trash"></li></h4></a>
-                        </div>
-
-                    </div>
-
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="save()">Save</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<div class="modal fade" tabindex="-1" role="dialog" id="updateUser">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Update user</h4>
-            </div>
-            <div class="modal-body">
-                <form role="form" class="form-horizontal">
-                    <div class="form-group">
-                        <label for="id" class="col-sm-4 control-label">id</label>
-                        <div class="col-sm-6">
-                            <input type="text" ng-disabled="true" class="form-control" id="id" name="id"
-                                   ng-model="userUpdate.id"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="username" class="col-sm-4 control-label">username</label>
-                        <div class="col-sm-6">
-                           <input type="text" ng-disabled="true" class="form-control" id="username" name="username"
-                                  ng-model="userUpdate.username"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="email" class="col-sm-4 control-label">email</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control" id="email" name="email"
-                                   ng-model="userUpdate.email"/>
-                        </div>
-                    </div>
-                  <!--div class="form-group" ng-repeat="(key,value) in userUpdate" ng-if="key!=='username' && key!=='password' && key!=='roles'">
-                   <label for="{{key}}" class="col-sm-4 control-label">{{key}}</label>
-
-                   <div class="col-sm-6">
-                       <input type="text" class="form-control" id="{{key}}" name="{{key}}"
-                              ng-model="userUpdate[key]"/>
-                   </div>
-               </div-->
-                    <hr>
-                    <h3>Role <a title="Add a new Role to this user" href="" ng-click="addRoleUpdate()"><li class="fa fa-plus-square"></li></a></h3>
-                    <div class="form-group" ng-repeat="role in userUpdate.roles track by $index">
-                        <label for="action" class="col-sm-2 control-label">project</label>
-                        <div class="col-sm-3">
-                            <select name="typeSelect" class="form-control modal-select" id="action"
-                                    ng-model="userUpdate.roles[$index].project"
-                                    ng-options="project.name as project.name for project in projects"
-                                    ng-change="">
-                            </select>
-                        </div>
-                        <label for="action" class="col-sm-1 control-label">role</label>
-                        <div class="col-sm-3">
-                            <select name="typeSelect" class="form-control modal-select" id="action"
-                                    ng-model="userUpdate.roles[$index].role"
-                                    ng-options="role for role in roles"
-                                    ng-change="">
-
-                            </select>
-                        </div>
-                        <div class="col-sm-1">
-                            <a href="" ng-click="userUpdate.roles.splice($index, 1)"><h4><li class="fa fa-trash"></li></h4></a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="updateSave()">Save</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-<div class="modal fade" tabindex="-1" role="dialog" id="deleteModal">
+<!-- Modal delete user -->
+<section class="modal fade" tabindex="-1" role="dialog" id="deleteModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -252,4 +391,75 @@
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div>
+</section><!-- /Modal delete user -->
+
+
+
+
+<!-- Modal change user password -->
+<section class="modal modal--change-pass fade" tabindex="-1" role="dialog" id="changeUserPassModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <header class="modal-header">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">
+          Change <strong>{{selectedUsername}}</strong>'s password!
+        </h4>
+      </header>
+
+      <div class="modal-body">
+        <form class="form form-change-pass">
+
+          <div class="form-group input">
+            <label for="username" class="control-label input__label">
+              Enter a new password
+            </label>
+            <input
+              type="{{userPassInputType}}"
+              class="form-control input__field"
+              ng-model="userNewPassword"/>
+              <span
+                class="show-pass glyphicon"
+                ng-class="userPassInputToggle ? 'glyphicon-eye-close' : 'glyphicon-eye-open'"
+                title="{{userPassInputAlt}}"
+                ng-click="togglePassInputType()"></span>
+          </div><!-- /Username -->
+
+        </form>
+      </div>
+
+      <footer class="modal-footer">
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal">
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="btn btn--white"
+          ng-click="adminChangeUserPass(selectedUsername, userNewPassword)"
+          data-dismiss="modal">
+          Change password
+        </button>
+
+      </footer>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</section><!-- /Modal delete user -->
+
+
+
+
+<!-- Delete single user modal -->
+<div ng-include src="'./templates/delete-user-modal.html'"></div>
