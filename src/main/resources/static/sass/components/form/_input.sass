@@ -97,6 +97,9 @@ $color--secondary: $color--primary - 10
   border-radius: 50%
   background: #fff
 
+.control--radio[disabled]
+  cursor: not-allowed
+
 .control--radio input:disabled ~ .control__indicator:after
   background: #7b7b7b
 
@@ -162,9 +165,22 @@ $color--secondary: $color--primary - 10
 //  @Input
 // --------------------------------------------------------------------------
 .input
+  position: relative
   margin-bottom: 20px
 
   +clearfix
+
+  .show-pass
+    position: absolute
+    top: auto
+    right: 10px
+    bottom: 8px
+    left: auto
+    cursor: pointer
+
+  [class^="col"] .show-pass
+    right: 25px
+
 
   &:last-of-type
     margin-bottom: 0
@@ -172,7 +188,11 @@ $color--secondary: $color--primary - 10
   &__label
     font-size: 17px
     font-weight: 400
+    padding-top: 0 !important
     color: $main-color
+
+    &:first-letter
+      text-transform: uppercase
 
   &__field
     height: 35px
@@ -190,7 +210,28 @@ $color--secondary: $color--primary - 10
     font-size: 14px
     font-weight: 300
     display: block
+    margin-top: -2px
     color: $color-gray + 30
+
+    &--inline
+      display: inline-block
+
+    [popover]
+      font-style: normal
+      cursor: pointer
+
+    .popover
+      width: 100% !important
+      max-width: 300px !important
+      border-color: $color-gray--secondary
+      border-radius: 0
+      box-shadow: none
+
+    .popover > .arrow
+      top: -12px
+      margin-left: -6px
+      border-width: 6px
+      border-bottom-color: $color-gray--secondary
 
 // --------------------------------------------------------------------------
 //  @Input inline
@@ -199,15 +240,21 @@ $color--secondary: $color--primary - 10
   display: inline-block
   width: auto
   margin-right: 25px
+  margin-bottom: 0
+
+  &:last-of-type
+    margin-right: 0
 
   .input
     &__label,
     &__field
       display: inline-block
       width: auto
+      vertical-align: middle
 
     &__label
-      margin-right: 5px
+      font-size: 16px
+      margin-right: 8px
 
     &__field[type='number']
       max-width: 56px

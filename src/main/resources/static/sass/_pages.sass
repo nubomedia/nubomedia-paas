@@ -1,6 +1,30 @@
 // --------------------------------------------------------------------------
 //  @Page new application
 // --------------------------------------------------------------------------
+.form-new-app,
+.form-new-project
+  +centerElement(800px)
 
-.form-new-app
-  +centerElement(780px)
+.form-new-user
+  +centerElement(650px)
+
+.form-change-pass
+  +centerElement(400px)
+
+.modal--change-pass .modal-dialog
+  max-width: 500px
+
+.panel--dashboard
+  *
+    color: $color-gray - 20
+
+  .huge
+    font-weight: 700
+    color: $color-gray - 40
+
+  a *
+    color: $color-blue!important
+    font-weight: 400
+
+.app-tabs .tab-pane:nth-child(3)
+  max-width: 100%

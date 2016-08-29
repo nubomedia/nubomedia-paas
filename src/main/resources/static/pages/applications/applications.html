@@ -83,10 +83,27 @@
 
 
 
+<alert
+  ng-repeat="alert in alerts"
+  type="alert.type"
+  close="closeAlert($index)">
+  <div ng-bind-html="alert.msg"></div>
+</alert>
+<button
+  class="btn btn--white btn--clear-alert"
+  ng-if="alerts.length > 1"
+  ng-click="clearAlerts(alerts)">Clear alerts
+</button>
+
+
+
+
 <!-- Applications -->
 <section class="applications-container" ng-show="!createFormViewIsVisible">
 
-  <table class="table tablesorter aplications-table c-table" id="topoTabletable">
+  <table
+    class="table tablesorter aplications-table c-table"
+    id="topoTabletable">
 
     <thead>
       <tr>
@@ -99,6 +116,7 @@
         </th>
 
         <th>
+
           <!-- Dropdown -->
           <div class="list-btn dropdown c-dropdown">
 
@@ -124,13 +142,25 @@
             </ul>
 
           </div><!-- /Dropdown -->
+
+          <form class="search-form">
+            <span class="btn glyphicon glyphicon-search"></span>
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control"
+                ng-model="searchInput"
+                placeholder="Search for an applicaiton">
+            </div>
+          </form>
+
         </th>
 
       </tr>
     </thead>
 
     <tbody>
-      <tr ng-repeat="data in applications| orderBy:predicate:reverse">
+      <tr ng-repeat="data in applications | orderBy:predicate:reverse | filter: searchInput">
 
         <td>
           <label class="control control--no-text control control--checkbox">
@@ -198,7 +228,7 @@
                     <a href="#applications/{{data.id}}">View</a>
                   </li>
                   <li class="c-dropdown__item">
-                    <span class="text-danger" ng-click="deleteData(data.id)">Delete</span>
+                    <span class="text-danger" ng-click="deleteAppModal(data)">Delete</span>
                   </li>
                 </ul>
 
@@ -225,19 +255,53 @@
 
   <!-- Form tab -->
   <tab heading="Create Application">
+
     <!-- Form new app -->
-    <form class="form form-horizontal form-new-app">
+    <form class="form form-horizontal form-new-app" name="formNewApp">
 
       <!-- Form section -->
       <section class="form__section">
 
         <h3 class="form__section-title">General Information</h3>
 
+        <div class="form-group input">
+
+          <!-- Label -->
+          <label
+            for="{{name}}"
+            class="col-md-4 control-label input__label">
+            Application name
+            <span class="input__subtitle">
+              <i
+                popover="{{textInfo}}"
+                popover-placement="bottom"
+                popover-trigger="mouseenter"
+                ng-mouseover="getInfos('name')">Tip: Hover me</i>
+            </span>
+          </label><!-- /Label -->
+
+          <!-- Column -->
+          <div class="col-md-8">
+            <input
+              class="form-control input__field"
+              type="text"
+              id="name"
+              name="name"
+              ng-model="appCreate.name"
+              required>
+
+            <p ng-show="formNewApp.name.$error.required" class="text-danger form__message">
+              Application name is required!
+            </p>
+          </div><!-- /Column -->
+
+        </div><!-- /URL, NAME, REPLICAS_NUMBER -->
+
         <!-- URL, NAME, REPLICAS_NUMBER -->
         <div
           class="form-group input"
           ng-repeat="(key,value) in appCreate"
-          ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut'">
+          ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut' && key!='name'">
 
           <!-- Label -->
           <label
@@ -266,8 +330,7 @@
         </div><!-- /URL, NAME, REPLICAS_NUMBER -->
 
         <!-- Flavour -->
-        <div
-          class="form-group input">
+        <div class="form-group input">
 
           <!-- Label -->
           <label
@@ -362,7 +425,7 @@
           <div class="col-md-8">
 
             <label class="control control--inline control--checkbox">
-              <input type="checkbox" ng-model="toggle.threshold">
+              <input type="checkbox" ng-model="toggle.threshold" id="inOutThreshold" name="inOutThreshold">
               <div class="control__indicator"></div>
               Enable
             </label>
@@ -378,7 +441,12 @@
                     ng-mouseover="getInfos(key)">Tip: Hover me</i>
                 </span>
               </label>
-              <input type="number" class="form-control input__field" ng-disabled="!toggle.threshold">
+              <input
+                type="number"
+                id="{{_threshold[key]}}"
+                class="form-control input__field"
+                ng-disabled="!toggle.threshold"
+                ng-model="_threshold[key]">
             </div>
 
           </div>
@@ -588,7 +656,7 @@
                <div class="col-xs-6 col-md-3">
                  <input
                   class="form-control input__field"
-                  type="test"
+                  type="text"
                   ng-model="appCreate.ports[$index][['protocol']]">
                </div><!-- /Column -->
 
@@ -634,6 +702,7 @@
             <div class="addon addon--checkbox">
               <label class="control control--inline control--checkbox addon__container">
                 <input
+                  id="cloudRepository"
                   type="checkbox"
                   name="togglecloudRepository"
                   ng-model="appCreate.cloudRepository"
@@ -655,7 +724,7 @@
             id="sendTemplate"
             class="btn btn-primary form__submit"
             ng-class="{'disabled': disableButton}"
-            ng-click="sendApp()">
+            ng-click="sendApp('', 'applications')">
             Create
           </button>
         </div>
@@ -702,9 +771,6 @@
   <div ng-include src="'./templates/modal-private-key.html'"></div>
 </section><!-- /Modal -->
 
-
-
-
 <!-- Modal -->
 <div class="modal fade" tabindex="-1" role="dialog" id="deleteModal">
   <div class="modal-dialog">
@@ -717,15 +783,15 @@
           data-dismiss="modal"
           aria-label="Close">
           <span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Delete all the Apps from <b>{{projectSelected.name}}</b> project</h4>
+        <h4 class="modal-title">Delete multiple apps from <b>{{projectSelected.name}}</b> project</h4>
       </header>
 
       <div class="modal-body">
         <p>You are going to delete these applications:</p>
-        <ul ng-repeat="data in applications">
-          <li>{{data.name}</li>
+        <ul ng-repeat="(k,v) in selection.ids" ng-if="v">
+          <li>{{k}}</li>
         </ul>
-        <p>Please confirm your selection.</p>
+        <strong>Please confirm your selection!</strong>
       </div>
 
       <footer class="modal-footer">
@@ -750,3 +816,6 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /Modal -->
+
+<!-- Delete single app modal -->
+<div ng-include src="'./templates/delete-app-modal.html'"></div>

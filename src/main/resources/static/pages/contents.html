@@ -18,29 +18,29 @@
 
 <section class="page-hero">
   <h3 class="page-hero__text">
-    Welcome to the Elastic Media Manager Overview Admin by
-    <a class="page-hero__link" href="http://www.nubomedia.eu/" target="_blank"> the ElasticMediaManager team </a>!
+    Welcome to the NUBOMEDIA Platform as a Service Dashboard
   </h3>
 </section>
 
 
 
 <!-- /.row -->
-<div class="row">
+<div class="row" ng-if="userIsAdmin">
+
   <div class="col-md-6 col-lg-4">
-    <div class="panel panel-primary panel--special">
+    <div class="panel panel-default panel--dashboard">
       <div class="panel-heading">
         <div class="row">
             <div class="col-xs-3">
                 <i class="fa fa-list-alt fa-5x"></i>
             </div>
             <div class="col-xs-9 text-right">
-                <div class="huge">{{numberApp}}</div>
-                <div>Applications</div>
+                <div class="huge">{{userList.length}}</div>
+                <div>Users</div>
             </div>
         </div>
       </div>
-      <a  href="#applications" ng-click="resetCreateFormView()">
+      <a  href="#users" ng-click="resetCreateFormView()">
         <div class="panel-footer">
             <span class="pull-left">View Details</span>
             <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -49,4 +49,51 @@
       </a>
     </div>
   </div>
+
+  <div class="col-md-6 col-lg-4">
+    <div class="panel panel-default panel--dashboard">
+      <div class="panel-heading">
+        <div class="row">
+            <div class="col-xs-3">
+                <i class="fa fa-list-alt fa-5x"></i>
+            </div>
+            <div class="col-xs-9 text-right">
+                <div class="huge">{{projects.length}}</div>
+                <div>Projects</div>
+            </div>
+        </div>
+      </div>
+      <a  href="#projects" ng-click="resetCreateFormView()">
+        <div class="panel-footer">
+            <span class="pull-left">View Details</span>
+            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+            <div class="clearfix"></div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-lg-4">
+    <div class="panel panel-default panel--dashboard">
+      <div class="panel-heading">
+        <div class="row">
+            <div class="col-xs-3">
+                <i class="fa fa-list-alt fa-5x"></i>
+            </div>
+            <div class="col-xs-9 text-right">
+                <div class="huge">{{numberApp}}</div>
+                <div><strong>{{projectSelected.name}}</strong>'s applications</div>
+            </div>
+        </div>
+      </div>
+      <a  href="#users" ng-click="resetCreateFormView()">
+        <div class="panel-footer">
+            <span class="pull-left">View Details</span>
+            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+            <div class="clearfix"></div>
+        </div>
+      </a>
+    </div>
+  </div>
+
 </div>
