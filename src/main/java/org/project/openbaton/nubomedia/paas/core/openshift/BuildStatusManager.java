@@ -63,7 +63,7 @@ public class BuildStatusManager {
 
     for (Build b : buildList.getItems()) {
       if (b.getStatus().getConfig().getName().equals(osName + "-bc")) {
-          logger.trace("build is " + mapper.toJson(b, Build.class));
+        logger.trace("build is " + mapper.toJson(b, Build.class));
         status = b.getStatus();
       }
     }
@@ -146,7 +146,7 @@ public class BuildStatusManager {
     for (Build bd : buildList.getItems()) {
 
       if (bd.getStatus().getConfig().getName().equals(osName + "-bc")) {
-          logger.trace("build is " + mapper.toJson(bd, Build.class));
+        logger.trace("build is " + mapper.toJson(bd, Build.class));
         res = bd;
       }
     }
