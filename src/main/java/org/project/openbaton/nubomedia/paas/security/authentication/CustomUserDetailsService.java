@@ -133,7 +133,7 @@ public class CustomUserDetailsService
         }
         UserDetails userDetails =
             new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
+                user.getUsername().toLowerCase(),
                 user.getPassword(),
                 user.isEnabled(),
                 true,
