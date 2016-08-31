@@ -1,19 +1,17 @@
 /*
+ * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
- *  * Copyright (c) 2016 Open Baton
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *     http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.project.openbaton.nubomedia.paas.core.openshift;
@@ -65,7 +63,7 @@ public class BuildStatusManager {
 
     for (Build b : buildList.getItems()) {
       if (b.getStatus().getConfig().getName().equals(osName + "-bc")) {
-        logger.debug("build is " + mapper.toJson(b, Build.class));
+          logger.trace("build is " + mapper.toJson(b, Build.class));
         status = b.getStatus();
       }
     }
@@ -148,7 +146,7 @@ public class BuildStatusManager {
     for (Build bd : buildList.getItems()) {
 
       if (bd.getStatus().getConfig().getName().equals(osName + "-bc")) {
-        logger.debug("build is " + mapper.toJson(bd, Build.class));
+          logger.trace("build is " + mapper.toJson(bd, Build.class));
         res = bd;
       }
     }
