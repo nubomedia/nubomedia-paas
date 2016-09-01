@@ -314,7 +314,7 @@ public class DeploymentManager {
 
     ResponseEntity<String> pods =
         template.exchange(podsURL, HttpMethod.GET, requestEntity, String.class);
-    logger.debug(pods.getBody());
+    logger.trace(pods.getBody());
     return mapper.fromJson(pods.getBody(), Pods.class);
   }
 

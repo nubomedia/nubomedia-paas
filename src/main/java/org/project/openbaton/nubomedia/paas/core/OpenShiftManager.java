@@ -164,7 +164,7 @@ public class OpenShiftManager {
     RouteConfig route = mapper.fromJson(appBuilEntity.getBody(), RouteConfig.class);
     logger.debug("Created Route " + route.getSpec().getHost());
 
-    return route.getSpec().getHost();
+    return routeConfig.getSpec().getHost();
   }
 
   public HttpStatus deleteApplication(String token, String osName) throws UnauthorizedException {

@@ -159,7 +159,7 @@ public class BuildStatusManager {
     HttpEntity<String> buildEntity = new HttpEntity<>(authHeader);
     ResponseEntity<String> builds =
         template.exchange(URL, HttpMethod.GET, buildEntity, String.class);
-    logger.debug("BuildsList " + builds.getStatusCode() + " response " + builds.toString());
+    logger.trace("BuildsList " + builds.getStatusCode() + " response " + builds.toString());
 
     if (builds.getStatusCode() != HttpStatus.OK) {
       logger.debug(
