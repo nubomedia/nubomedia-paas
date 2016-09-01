@@ -613,7 +613,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       }
     });
     //console.log(ids);
-    http.post(url + 'multipledelete', ids)
+    http.post(urlPK + 'multipledelete', ids)
       .success(function(response) {
         showOk('Applications: ' + ids.toString() + ' deleted.');
         loadTable();
