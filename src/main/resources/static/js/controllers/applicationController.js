@@ -148,7 +148,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     http.get(marketurl + $routeParams.appId)
       .success(function(data) {
         console.log('jsonApp appId: ', data);
-        debugger;
         $scope.application = data;
         $scope.applicationJSON = JSON.stringify(data, undefined, 4);
         mergeMediaServer(data.mediaServerGroup);
@@ -166,24 +165,22 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         $scope.applicationJSON = JSON.stringify(data, undefined, 4);
         loadMediaManeger();
         $scope.mediaServerProgress = function() {
-          return $scope.application.mediaServerGroup.floatingIPs.length * 100 / $scope.application.scaleInOut + '%';
+          var value = $scope.application.mediaServerGroup.floatingIPs.length * 100 / $scope.application.scaleInOut;
+
+          if (value % 1 !== 0) {
+            value = (value).toFixed(2);
+          }
+
+          return value + '%';
         };
 
-        // TODO
-        // Need to check how this chart works
-        // $rootScope.myMediaServer.hostname throws error sometimes
-        if (!$rootScope.googleCharIsLoaded) {
-          google.charts.load('current', {
-            'packages': ['corechart']
-          });
-          $rootScope.googleCharIsLoaded = !$rootScope.googleCharIsLoaded;
-        }
+        google.charts.load('current', {
+          'packages': ['corechart']
+        });
 
-        google.charts.setOnLoadCallback(drawGraphMediaServer);
         mergeMediaServer(data.mediaServerGroup);
         $rootScope.myMediaServer = $rootScope.mediaServers[0]; // first floatingIps
         getDataFromMediaServer($rootScope.myMediaServer.hostname);
-        renderGraphMediaServer();
       });
   } else {
     loadTable();
@@ -778,6 +775,8 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     if ($('#numberFlot').find('div.vis-timeline').length == 0) {
       drawGraph('numberFlot');
       drawGraph('capacityFlot');
+      google.charts.setOnLoadCallback(drawGraphMediaServer);
+      renderGraphMediaServer();
     }
   };
 

@@ -134,6 +134,36 @@ app.controller('IndexCtrl', function($scope, $cookieStore, $location, AuthServic
     }
   });
 
+  $scope.alerts = [];
+
+  $scope.closeAlert = function(index) {
+    $scope.alerts.splice(index, 1);
+  };
+
+  var showOk = function showOk(msg) {
+    $scope.alerts.push({
+      type: 'success',
+      msg: msg
+    });
+    $('#modalSend').modal('hide');
+  };
+
+  var showError = function showError(data, status) {
+    var message = '';
+
+    if (typeof data === 'string') {
+      message = data;
+    } else {
+      message = data.message;
+    }
+    $scope.alerts.push({
+      type: 'danger',
+      msg: message
+    });
+
+    $('#modalSend').modal('hide');
+  };
+
   /**
    * Checks if the user is logged
    * @returns {unresolved}
@@ -218,13 +248,10 @@ app.controller('IndexCtrl', function($scope, $cookieStore, $location, AuthServic
       $scope.passwordData.new_pwd = $scope.newPassword;
       http.put(url + '/users/changepwd', JSON.stringify($scope.passwordData))
         .success(function(response) {
-          alert("The password has been successfully changed")
-          AuthService.logout()
+          showOk('The passwrod was changed successfully!');
         })
         .error(function(data, status) {
-          console.error('STATUS: ' + status + ' DATA: ' + JSON.stringify(data));
-          alert('STATUS: ' + status + ' DATA: ' + JSON.stringify(data));
-          //  ? "" : location.reload();
+          showError(data, 'danger');
         });
     } else {
       alert("The new passwords are not the same");

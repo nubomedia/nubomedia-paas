@@ -94,7 +94,7 @@
                       </a>
                     </li>
 
-                    <li class="c-menu-aside__item" ng-if="userIsAdmin">
+                    <li class="c-menu-aside__item">
                       <a href="#projects" class="c-menu-aside__link js-menu-link" ng-click="resetCreateFormView()" ng-class="setActiveLink('/projects')">
                         <span class="c-menu-aside__icon c-icon-project"></span>
                         <span class="c-menu-aside__link-text">Projects</span>
@@ -129,6 +129,12 @@
         <header class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
           <h4 class="modal-title" id="serviceFormLabel">Change Password</h4>
+          <alert
+            ng-repeat="alert in alerts"
+            type="alert.type"
+            close="closeAlert($index)">
+            <div ng-bind-html="alert.msg"></div>
+          </alert>
         </header>
 
         <form class="form-horizontal form" role="form" id="formChangePassword">
