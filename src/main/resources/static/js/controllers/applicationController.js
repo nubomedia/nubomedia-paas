@@ -119,7 +119,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     });
 
   $scope.getInfos = function(key) {
-    // debugger;
     console.log($scope.infosObj[key]);
     console.log(key);
     $scope.textInfo = $scope.infosObj[key];

@@ -22,15 +22,17 @@
 
       <button
         id="btn_create_nsd"
+        ng-if="userIsAdmin"
         href="#"
         class="btn btn--white"
         title="Add new user"
-        ng-click="toggleCreateFormView()">
+        ng-click="toggleCreateFormView(); getUsers()">
         <span class="glyphicon glyphicon-plus-sign text-primary"></span>
         Add new project
       </button>
 
       <button
+        ng-if="userIsAdmin"
         id="deleteMultiple"
         href="#"
         ng-disabled="multipleDelete"
@@ -146,7 +148,7 @@
 
             <td>
               <!-- Dropdown -->
-              <div class="list-btn dropdown c-dropdown">
+              <div class="list-btn dropdown c-dropdown" ng-if="userIsAdmin">
 
                 <button
                   class="btn dropdown-toggle c-dropdown__toggle"

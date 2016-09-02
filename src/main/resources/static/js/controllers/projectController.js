@@ -50,21 +50,23 @@ app.controller('ProjectCtrl', function($scope, serviceAPI, $routeParams, http, $
   $scope.users = [];
 
   $scope.projectUpd = {};
-  http.get(urlUsers)
-    .success(function(response) {
-      console.log('users');
-      usersObj = JSON.parse(JSON.stringify(response));
-      console.log(usersObj);
-      for (i = 0; i < usersObj.length; i++) {
-        $scope.users.push(usersObj[i].username);
 
-      }
-      console.log($scope.users);
-      //$scope.projects.push({name: ''});
-    })
-    .error(function(response, status) {
-      showError(response, status);
-    });
+  $scope.getUsers = function() {
+    http.get(urlUsers)
+      .success(function(response) {
+        console.log('users');
+        usersObj = JSON.parse(JSON.stringify(response));
+        console.log(usersObj);
+        for (i = 0; i < usersObj.length; i++) {
+          $scope.users.push(usersObj[i].username);
+
+        }
+      })
+      .error(function(response, status) {
+        showError(response, status);
+      });
+    };
+
   /* -- multiple delete functions Start -- */
 
   $scope.multipleDeleteReq = function() {
@@ -203,6 +205,7 @@ app.controller('ProjectCtrl', function($scope, serviceAPI, $routeParams, http, $
     $('.modal').modal('hide');
     if (status === 401) {
       console.error(status + ' Status unauthorized');
+      debugger;
       AuthService.logout();
     }
   }
