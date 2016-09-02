@@ -141,10 +141,6 @@ app.controller('ProjectCtrl', function($scope, serviceAPI, $routeParams, http, $
       });
   };
 
-  $scope.closeAlert = function(index) {
-    $scope.alerts.splice(index, 1);
-  };
-
   $scope.addUserCreate = function() {
     var newUser = {
       name: "",
@@ -205,7 +201,6 @@ app.controller('ProjectCtrl', function($scope, serviceAPI, $routeParams, http, $
     $('.modal').modal('hide');
     if (status === 401) {
       console.error(status + ' Status unauthorized');
-      debugger;
       AuthService.logout();
     }
   }
