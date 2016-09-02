@@ -24,6 +24,8 @@ import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
+import org.openbaton.catalogue.nfvo.Configuration;
+import org.openbaton.catalogue.nfvo.ConfigurationParameter;
 import org.openbaton.catalogue.nfvo.VimInstance;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
@@ -182,11 +184,12 @@ public class OpenbatonManager {
     }
     ArrayList<String> keys = new ArrayList<>();
     //    keys.add(vimProperties.getKeypair());
+    HashMap<String, Configuration> configurations = new HashMap();
 
     NetworkServiceRecord nsr =
         nfvoRequestor
             .getNetworkServiceRecordAgent()
-            .create(targetNSD.getId(), vduVimInstances, keys);
+            .create(targetNSD.getId(), vduVimInstances, keys, configurations);
     logger.debug("NSR " + nsr.toString());
     mediaServerGroup.setNsrID(nsr.getId());
     logger.debug("Result " + mediaServerGroup.toString());

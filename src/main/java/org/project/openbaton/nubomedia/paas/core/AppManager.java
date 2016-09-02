@@ -36,6 +36,7 @@ import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
 import org.project.openbaton.nubomedia.paas.properties.PaaSProperties;
+import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.project.openbaton.nubomedia.paas.properties.VnfmProperties;
 import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
 import org.slf4j.Logger;
@@ -62,6 +63,7 @@ public class AppManager {
   @Autowired private OpenShiftManager osmanager;
   @Autowired private OpenbatonManager obmanager;
   @Autowired private PaaSProperties paaSProperties;
+  @Autowired private OpenShiftProperties openShiftProperties;
 
   @Autowired private VnfmProperties vnfmProperties;
 
@@ -151,7 +153,8 @@ public class AppManager {
     app.setProjectName(openshiftProject);
     app.setProjectId(projectId);
     app.setMediaServerGroup(mediaServerGroup);
-    app.setRoute("");
+    //app.setRoute("");
+    app.setRoute(osName + "." + openShiftProperties.getDomainName());
     app.setGitURL(request.getGitURL());
     app.setTargetPorts(targetPorts);
     app.setPorts(ports);
@@ -285,7 +288,7 @@ public class AppManager {
         appRepo.save(app);
         return;
       }
-      app.setRoute(route);
+      //app.setRoute(route);
       appRepo.save(app);
     } else if (evt.getAction().equals(Action.ERROR)) {
       obmanager.deleteDescriptor(mediaServerGroup.getNsdID());

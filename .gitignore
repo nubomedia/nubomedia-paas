@@ -1,6 +1,6 @@
 src/main/resources/application.properties
 *.class
-
+classes/
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
 !plugins/*
