@@ -165,7 +165,13 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         $scope.applicationJSON = JSON.stringify(data, undefined, 4);
         loadMediaManeger();
         $scope.mediaServerProgress = function() {
-          return $scope.application.mediaServerGroup.floatingIPs.length * 100 / $scope.application.scaleInOut + '%';
+          var value = $scope.application.mediaServerGroup.floatingIPs.length * 100 / $scope.application.scaleInOut;
+
+          if (value % 1 !== 0) {
+            value = (value).toFixed(2);
+          }
+
+          return value + '%';
         };
 
         // TODO
