@@ -174,21 +174,13 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
           return value + '%';
         };
 
-        // TODO
-        // Need to check how this chart works
-        // $rootScope.myMediaServer.hostname throws error sometimes
-        if (!$rootScope.googleCharIsLoaded) {
-          google.charts.load('current', {
-            'packages': ['corechart']
-          });
-          $rootScope.googleCharIsLoaded = !$rootScope.googleCharIsLoaded;
-        }
+        google.charts.load('current', {
+          'packages': ['corechart']
+        });
 
-        google.charts.setOnLoadCallback(drawGraphMediaServer);
         mergeMediaServer(data.mediaServerGroup);
         $rootScope.myMediaServer = $rootScope.mediaServers[0]; // first floatingIps
         getDataFromMediaServer($rootScope.myMediaServer.hostname);
-        renderGraphMediaServer();
       });
   } else {
     loadTable();
@@ -783,6 +775,8 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     if ($('#numberFlot').find('div.vis-timeline').length == 0) {
       drawGraph('numberFlot');
       drawGraph('capacityFlot');
+      google.charts.setOnLoadCallback(drawGraphMediaServer);
+      renderGraphMediaServer();
     }
   };
 
