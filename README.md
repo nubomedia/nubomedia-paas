@@ -220,6 +220,38 @@ The marketplace for NUBOMEDIA applications serves a store where the full configu
 The marketplace itself is an centralized component that might be used by several PaaS Managers. In order to use it you need to define the IP and port in the configuration file.
 
 
+### Front end setup
+* Install nodejs, follow the link
+```
+  https://nodejs.org/en/download/package-manager/
+```
+* Install npm
+```
+  npm install npm -g
+```
+* Install gulp globally
+```
+  npm install --global gulp-cli
+```
+* In nubomedia-paas/src/main/resources/static run the followings:
+```
+  npm install
+```
+```
+  bower install
+```
+* To compile sass run the following in .../nubomedia-paas/src/main/resources/static
+
+**for normal css run**
+```
+  gulp
+```
+**for minified css run**
+```
+  gulp --production
+```
+the sass is compiled in nubomedia-paas/src/main/resources/static/assets/app.css
+
 Support and Contribution
 -------------------------
 

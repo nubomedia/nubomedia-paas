@@ -1,7 +1,7 @@
 {
-  "name": "internship-lunch-prototype",
+  "name": "nubomedia",
   "version": "0.0.1",
-  "description": "Internship lunch application prototype.",
+  "description": "NUBOMEDIA Platform as a Service Dashboard",
   "main": "gulpfile.js",
   "scripts": {
     "start": "gulp",

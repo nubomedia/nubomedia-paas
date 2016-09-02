@@ -1,16 +1,7 @@
 {
-  "name": "startbootstrap-sb-admin-2",
-  "version": "1.0.4",
-  "homepage": "http://startbootstrap.com/template-overviews/sb-admin-2/",
-  "authors": [
-    "David Miller"
-  ],
-  "description": "A free, open source, Bootstrap admin theme created by Start Bootstrap",
-  "keywords": [
-    "bootstrap",
-    "theme"
-  ],
-  "license": "Apache",
+  "name": "nubomedia",
+  "version": "0.0.1",
+  "description": "NUBOMEDIA Platform as a Service Dashboard",
   "ignore": [
     "**/.*",
     "node_modules",
