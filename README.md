@@ -20,7 +20,7 @@ The PaaS Manager is implemented in java using the [spring.io] framework. This ma
 You can install the NUBOMEDIA PaaS manager either automatically by downloading and executing the bootstrap or manually.
 Both options are described below.
 
-### Automatic installation and start
+### Option 1) Automatic installation and start
 
 The [bootstrap] repository contains the script to install and start the NUBOMEDIA PaaS Manager automatically.
 In order to do it you can run the following command:
@@ -34,9 +34,44 @@ At the end of the installation process the NUBOMEDIA PaaS Manager dashboard is r
 Afterwards the source code of the NUBOMEDIA PaaS Manager is located in `/opt/nubomedia/nubomedia-paas`.
 Check if the NFVO and/or the MS-VNFM is not installed and started, otherwise the NUBOMEDIA PaaS Manager start will fail and you need to start it manually when the NFVO and the MS-VNFM are up and running.
 
+
+### Front end setup
+* Install nodejs, follow the link
+```
+  https://nodejs.org/en/download/package-manager/
+```
+* Install npm
+```
+  npm install npm -g
+```
+* Install gulp globally
+```
+  npm install --global gulp-cli
+```
+* In nubomedia-paas/src/main/resources/static run the followings:
+```
+  npm install
+```
+```
+  bower install
+```
+* To compile sass run the following in .../nubomedia-paas/src/main/resources/static
+
+**for normal css run**
+```
+  gulp
+```
+**for minified css run**
+```
+  gulp --production
+```
+the sass is compiled in nubomedia-paas/src/main/resources/static/assets/app.css
+
+### Start the PaaS after the frontend installation
+
 In case the NUBOMEDIA PaaS Manager are already installed you can start them manually using the provided script as described [here](#start-the-nubomedia-paas-manager-manually)
 
-### Install the NUBOMEDIA PaaS Manager manually
+### Option 2) Install the NUBOMEDIA PaaS Manager manually
 
 1. Download the source code from git:
 
@@ -220,37 +255,6 @@ The marketplace for NUBOMEDIA applications serves a store where the full configu
 The marketplace itself is an centralized component that might be used by several PaaS Managers. In order to use it you need to define the IP and port in the configuration file.
 
 
-### Front end setup
-* Install nodejs, follow the link
-```
-  https://nodejs.org/en/download/package-manager/
-```
-* Install npm
-```
-  npm install npm -g
-```
-* Install gulp globally
-```
-  npm install --global gulp-cli
-```
-* In nubomedia-paas/src/main/resources/static run the followings:
-```
-  npm install
-```
-```
-  bower install
-```
-* To compile sass run the following in .../nubomedia-paas/src/main/resources/static
-
-**for normal css run**
-```
-  gulp
-```
-**for minified css run**
-```
-  gulp --production
-```
-the sass is compiled in nubomedia-paas/src/main/resources/static/assets/app.css
 
 Support and Contribution
 -------------------------
