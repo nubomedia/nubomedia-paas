@@ -602,15 +602,23 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   };
 
   /* -- multiple delete functions Start -- */
-  $scope.multipleDeleteReq = function() {
+  $scope.multipleDeleteReq = function(url) {
+    var urlToUse = '';
     var ids = [];
+
+    if (url === 'market') {
+      urlToUse = marketurl;
+    } else {
+      urlToUse = urlPK;
+    }
+
     angular.forEach($scope.selection.ids, function(value, k) {
       if (value) {
         ids.push(k);
       }
     });
-    //console.log(ids);
-    http.post(urlPK + 'multipledelete', ids)
+
+    http.post(urlToUse + 'multipledelete', ids)
       .success(function(response) {
         showOk('Applications: ' + ids.toString() + ' deleted.');
         loadTable();
