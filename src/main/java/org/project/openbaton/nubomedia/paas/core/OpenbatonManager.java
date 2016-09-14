@@ -56,8 +56,6 @@ public class OpenbatonManager {
 
   @Autowired private VimInstance vimInstance;
 
-  @Autowired private VirtualNetworkFunctionDescriptor cloudRepository;
-
   @Autowired private NSDUtil nsdUtil;
 
   @Autowired private NFVORequestor nfvoRequestor;
@@ -147,12 +145,12 @@ public class OpenbatonManager {
             scale_out_threshold);
     if (cloudRepositorySet && !cdnConnectorSet) {
       Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
-      vnfds.add(cloudRepository);
+      vnfds.add(nsdUtil.getCloudRepoVnfd());
       logger.debug("VNFDS " + vnfds.toString());
       targetNSD.setVnfd(vnfds);
     } else if (cdnConnectorSet) {
       Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
-      VirtualNetworkFunctionDescriptor cdnConnectorVnfd = cloudRepository;
+      VirtualNetworkFunctionDescriptor cdnConnectorVnfd = nsdUtil.getCloudRepoVnfd();
       Set<LifecycleEvent> lifecycleEvents = new HashSet<>();
       for (LifecycleEvent lce : cdnConnectorVnfd.getLifecycle_event()) {
         if (lce.getEvent().name().equals("START")) {

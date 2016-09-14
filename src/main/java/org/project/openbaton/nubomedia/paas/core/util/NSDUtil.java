@@ -21,6 +21,7 @@ package org.project.openbaton.nubomedia.paas.core.util;
 
 import org.openbaton.catalogue.mano.common.*;
 import org.openbaton.catalogue.mano.descriptor.*;
+import org.openbaton.catalogue.nfvo.Configuration;
 import org.openbaton.catalogue.nfvo.ConfigurationParameter;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
@@ -386,4 +387,93 @@ public class NSDUtil {
 
     return vdu;
   }
+
+  public VirtualNetworkFunctionDescriptor getCloudRepoVnfd() {
+    VirtualNetworkFunctionDescriptor vnfd = new VirtualNetworkFunctionDescriptor();
+    vnfd.setVendor("TUB");
+    vnfd.setVersion("1.0");
+    vnfd.setName("mongodb");
+    vnfd.setType("mongodb");
+    vnfd.setEndpoint("generic");
+
+    Set<VirtualDeploymentUnit> vdus = new HashSet<>();
+    vdus.add(getCloudRepoVdu());
+    vnfd.setVdu(vdus);
+
+    Set<InternalVirtualLink> vls = new HashSet<>();
+    InternalVirtualLink ivl = new InternalVirtualLink();
+    ivl.setName("internal_nubomedia");
+    vls.add(ivl);
+    vnfd.setVirtual_link(vls);
+
+    Set<VNFDeploymentFlavour> dfs = new HashSet<>();
+    VNFDeploymentFlavour df = new VNFDeploymentFlavour();
+    df.setFlavour_key("m3.medium");
+    dfs.add(df);
+    vnfd.setDeployment_flavour(dfs);
+
+    vnfd.setVnfPackageLocation("https://github.com/tub-nubomedia/cloud-repository-scripts.git");
+
+    Configuration configuration = new Configuration();
+    configuration.setName("config_config");
+    Set<ConfigurationParameter> configurationParameters = new HashSet<>();
+    ConfigurationParameter configurationParameterPort = new ConfigurationParameter();
+    configurationParameterPort.setConfKey("PORT");
+    configurationParameterPort.setValue("27018");
+    configurationParameters.add(configurationParameterPort);
+    ConfigurationParameter configurationParameterSmallFiles = new ConfigurationParameter();
+    configurationParameterSmallFiles.setConfKey("SMALLFILES");
+    configurationParameterSmallFiles.setValue("true");
+    configurationParameters.add(configurationParameterSmallFiles);
+    configuration.setConfigurationParameters(configurationParameters);
+    vnfd.setConfigurations(configuration);
+
+    Set<LifecycleEvent> lifecycleEvents = new HashSet<>();
+    LifecycleEvent lifecycleEventInstantiate = new LifecycleEvent();
+    lifecycleEventInstantiate.setEvent(Event.INSTANTIATE);
+    List<String> lifecycleEventsInstantiate = new ArrayList<>();
+    lifecycleEventsInstantiate.add("install.sh");
+    lifecycleEventInstantiate.setLifecycle_events(lifecycleEventsInstantiate);
+    lifecycleEvents.add(lifecycleEventInstantiate);
+
+    LifecycleEvent lifecycleEventStart = new LifecycleEvent();
+    lifecycleEventStart.setEvent(Event.START);
+    List<String> lifecycleEventsStart = new ArrayList<>();
+    lifecycleEventsStart.add("start-single-mongo.sh");
+    lifecycleEventsStart.add("start-kurento-repo-server.sh");
+    lifecycleEventStart.setLifecycle_events(lifecycleEventsStart);
+    lifecycleEvents.add(lifecycleEventStart);
+
+    vnfd.setLifecycle_event(lifecycleEvents);
+
+    return vnfd;
+  }
+
+  private VirtualDeploymentUnit getCloudRepoVdu() {
+    VirtualDeploymentUnit vdu = new VirtualDeploymentUnit();
+
+    Set<String> images = new HashSet<>();
+    images.add("cloud-repo-cdn");
+    vdu.setVm_image(images);
+
+    List<String> vimInstanceNames = new ArrayList<>();
+    vimInstanceNames.add("nubomedia-vim");
+    vdu.setVimInstanceName(vimInstanceNames);
+
+    vdu.setScale_in_out(4);
+
+    Set<VNFComponent> vnfcs = new HashSet<>();
+    VNFComponent vnfc = new VNFComponent();
+    Set<VNFDConnectionPoint> cps = new HashSet<>();
+    VNFDConnectionPoint cp = new VNFDConnectionPoint();
+    cp.setFloatingIp("random");
+    cp.setVirtual_link_reference("internal_nubomedia");
+    cps.add(cp);
+    vnfc.setConnection_point(cps);
+    vnfcs.add(vnfc);
+    vdu.setVnfc(vnfcs);
+
+    return vdu;
+  }
+
 }
