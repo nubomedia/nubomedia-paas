@@ -117,37 +117,37 @@ public class OpenbatonConfiguration {
     return vim;
   }
 
-  @Bean
-  public VirtualNetworkFunctionDescriptor getCloudRepository() {
-    VirtualNetworkFunctionDescriptor vnfd = null;
-    Gson mapper = new GsonBuilder().create();
-    try {
-      logger.debug("Reading cloud repository descriptor");
-      FileReader vnfdFile = new FileReader("/etc/nubomedia/cloudrepo-vnfd.json");
-      vnfd = mapper.fromJson(vnfdFile, VirtualNetworkFunctionDescriptor.class);
-      logger.debug("CLOUD REPOSITORY IS " + vnfd.toString());
-
-    } catch (FileNotFoundException e) {
-      logger.debug(
-          "DO NOT REMOVE OR RENAME THE FILE /etc/nubomedia/cloudrepo-vnfd.json!!!!\nexiting");
-    }
-    return vnfd;
-  }
-
-  @Bean
-  public NetworkServiceDescriptor networkServiceDescriptorNubo() {
-    logger.debug("Reading descriptor");
-    NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
-    Gson mapper = new GsonBuilder().create();
-    try {
-      logger.debug("Trying to read the descriptor");
-      FileReader nsdFile = new FileReader("/etc/nubomedia/nubomedia-nsd.json");
-      nsd = mapper.fromJson(nsdFile, NetworkServiceDescriptor.class);
-      logger.debug("DESCRIPTOR " + nsd.toString());
-    } catch (FileNotFoundException e) {
-      logger.error(
-          "DO NOT REMOVE OR RENAME THE FILE /etc/nubomedia/nubomedia-nsd.json!!!!\nexiting", e);
-    }
-    return nsd;
-  }
+//  @Bean
+//  public VirtualNetworkFunctionDescriptor getCloudRepository() {
+//    VirtualNetworkFunctionDescriptor vnfd = null;
+//    Gson mapper = new GsonBuilder().create();
+//    try {
+//      logger.debug("Reading cloud repository descriptor");
+//      FileReader vnfdFile = new FileReader("/etc/nubomedia/cloudrepo-vnfd.json");
+//      vnfd = mapper.fromJson(vnfdFile, VirtualNetworkFunctionDescriptor.class);
+//      logger.debug("CLOUD REPOSITORY IS " + vnfd.toString());
+//
+//    } catch (FileNotFoundException e) {
+//      logger.debug(
+//          "DO NOT REMOVE OR RENAME THE FILE /etc/nubomedia/cloudrepo-vnfd.json!!!!\nexiting");
+//    }
+//    return vnfd;
+//  }
+//
+//  @Bean
+//  public NetworkServiceDescriptor networkServiceDescriptorNubo() {
+//    logger.debug("Reading descriptor");
+//    NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
+//    Gson mapper = new GsonBuilder().create();
+//    try {
+//      logger.debug("Trying to read the descriptor");
+//      FileReader nsdFile = new FileReader("/etc/nubomedia/nubomedia-nsd.json");
+//      nsd = mapper.fromJson(nsdFile, NetworkServiceDescriptor.class);
+//      logger.debug("DESCRIPTOR " + nsd.toString());
+//    } catch (FileNotFoundException e) {
+//      logger.error(
+//          "DO NOT REMOVE OR RENAME THE FILE /etc/nubomedia/nubomedia-nsd.json!!!!\nexiting", e);
+//    }
+//    return nsd;
+//  }
 }
