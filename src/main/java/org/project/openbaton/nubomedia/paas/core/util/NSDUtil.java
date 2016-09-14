@@ -475,5 +475,4 @@ public class NSDUtil {
 
     return vdu;
   }
-
 }
