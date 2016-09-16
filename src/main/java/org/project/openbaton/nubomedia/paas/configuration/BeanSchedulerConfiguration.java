@@ -16,7 +16,7 @@
  *
  */
 
-package org.project.openbaton.nubomedia.paas.main.utils;
+package org.project.openbaton.nubomedia.paas.configuration;
 
 import org.project.openbaton.nubomedia.paas.core.scheduler.AppStatusManager;
 import org.springframework.context.annotation.Bean;

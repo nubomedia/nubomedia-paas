@@ -76,10 +76,10 @@ public class RestAPI {
   @Value("${openshift.keystore}")
   private String openshiftKeystore;
 
-  @PostConstruct
-  private void init() {
-    System.setProperty("javax.net.ssl.trustStore", openshiftKeystore);
-  }
+  //  @PostConstruct
+  //  private void init() {
+  //    System.setProperty("javax.net.ssl.trustStore", openshiftKeystore);
+  //  }
 
   /**
    * @param request
@@ -299,20 +299,20 @@ public class RestAPI {
     return new NubomediaDeleteSecretResponse(secretName, projectName, deleteStatus.value());
   }
 
-  @RequestMapping(value = "/auth", method = RequestMethod.POST)
-  @ResponseBody
-  public NubomediaAuthorizationResponse authorize(
-      @RequestBody NubomediaAuthorizationRequest request) throws UnauthorizedException {
-    String token = osmanager.authenticate(request.getUsername(), request.getPassword());
-    switch (token) {
-      case "Unauthorized":
-        return new NubomediaAuthorizationResponse(token, 401);
-      case "PaaS Missing":
-        return new NubomediaAuthorizationResponse(token, 404);
-      default:
-        return new NubomediaAuthorizationResponse(token, 200);
-    }
-  }
+  //  @RequestMapping(value = "/auth", method = RequestMethod.POST)
+  //  @ResponseBody
+  //  public NubomediaAuthorizationResponse authorize(
+  //      @RequestBody NubomediaAuthorizationRequest request) throws UnauthorizedException {
+  //    String token = osmanager.authenticate(request.getUsername(), request.getPassword());
+  //    switch (token) {
+  //      case "Unauthorized":
+  //        return new NubomediaAuthorizationResponse(token, 401);
+  //      case "PaaS Missing":
+  //        return new NubomediaAuthorizationResponse(token, 404);
+  //      default:
+  //        return new NubomediaAuthorizationResponse(token, 200);
+  //    }
+  //  }
 
   @RequestMapping(value = "/server-ip/", method = RequestMethod.GET)
   @ResponseStatus(HttpStatus.OK)

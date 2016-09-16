@@ -28,6 +28,7 @@ import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerExcep
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.QoS;
 import org.project.openbaton.nubomedia.paas.properties.KmsProperties;
+import org.project.openbaton.nubomedia.paas.properties.VimProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +42,11 @@ import java.util.Set;
 /**
  * Created by gca on 27/05/16.
  */
-@Service
 public class NSDUtil {
 
-  @Autowired private KmsProperties kmsProperties;
+  private static Logger logger = LoggerFactory.getLogger(NSDUtil.class);
 
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-  public NetworkServiceDescriptor getNSD(
+  public static NetworkServiceDescriptor getNSD(
       Flavor flavor,
       QoS Qos,
       boolean turnServerActivate,
@@ -59,22 +57,24 @@ public class NSDUtil {
       String stunServerAddress,
       String stunServerPort,
       int scaleInOut,
-      double scale_out_threshold)
+      double scale_out_threshold,
+      KmsProperties kmsProperties,
+      VimProperties vimProperties)
       throws turnServerException, StunServerException {
-    NetworkServiceDescriptor nsd = createInitialNSD();
+    NetworkServiceDescriptor nsd = createInitialNSD(kmsProperties, vimProperties);
     logger.debug("Start configuring network service descriptor");
-    nsd = this.injectFlavor(flavor.getValue(), kmsProperties.getImage(), nsd);
+    nsd = injectFlavor(flavor.getValue(), kmsProperties.getImage(), nsd);
     logger.debug("After flavor the nsd is\n" + nsd.toString() + "\n****************************");
 
     if (Qos != null) {
       logger.debug("\nSetting QoS");
-      nsd = this.injectQoS(Qos.toString(), nsd);
+      nsd = injectQoS(Qos.toString(), nsd);
       logger.debug("After QOS the nsd is\n" + nsd.toString() + "\n############################");
     }
 
     logger.debug("Setting Configuration parameters for mediaserver");
     nsd =
-        this.setConfigurationParameters(
+        setConfigurationParameters(
             turnServerActivate,
             mediaServerTurnIP,
             mediaServerTurnUsername,
@@ -88,13 +88,13 @@ public class NSDUtil {
 
     if (scaleInOut > 1) {
       logger.debug("Setting autoscaling policies");
-      nsd = this.enableAutoscaling(scaleInOut, scale_out_threshold, nsd);
+      nsd = enableAutoscaling(scaleInOut, scale_out_threshold, nsd);
     }
 
     return nsd;
   }
 
-  private NetworkServiceDescriptor setConfigurationParameters(
+  private static NetworkServiceDescriptor setConfigurationParameters(
       boolean turnServerActivate,
       String mediaServerTurnIP,
       String mediaServerTurnUsername,
@@ -186,7 +186,7 @@ public class NSDUtil {
     return nsd;
   }
 
-  private NetworkServiceDescriptor injectQoS(String qos, NetworkServiceDescriptor nsd) {
+  private static NetworkServiceDescriptor injectQoS(String qos, NetworkServiceDescriptor nsd) {
 
     Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
 
@@ -207,7 +207,7 @@ public class NSDUtil {
     return nsd;
   }
 
-  private NetworkServiceDescriptor injectFlavor(
+  private static NetworkServiceDescriptor injectFlavor(
       String flavour, String imageName, NetworkServiceDescriptor networkServiceDescriptor) {
 
     Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
@@ -235,7 +235,7 @@ public class NSDUtil {
     return networkServiceDescriptor;
   }
 
-  private NetworkServiceDescriptor enableAutoscaling(
+  private static NetworkServiceDescriptor enableAutoscaling(
       int scaleInOut, double scale_out_threshold, NetworkServiceDescriptor nsd) {
 
     AutoScalePolicy scaleOutPolicy = new AutoScalePolicy();
@@ -313,13 +313,14 @@ public class NSDUtil {
     return nsd;
   }
 
-  private NetworkServiceDescriptor createInitialNSD() {
+  private static NetworkServiceDescriptor createInitialNSD(
+      KmsProperties kmsProperties, VimProperties vimProperties) {
     NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
     nsd.setVendor("TUB");
     nsd.setVersion("1.0");
 
     Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
-    vnfds.add(createMsVnfd());
+    vnfds.add(createMsVnfd(kmsProperties, vimProperties));
 
     nsd.setVnfd(vnfds);
 
@@ -332,7 +333,8 @@ public class NSDUtil {
     return nsd;
   }
 
-  private VirtualNetworkFunctionDescriptor createMsVnfd() {
+  private static VirtualNetworkFunctionDescriptor createMsVnfd(
+      KmsProperties kmsProperties, VimProperties vimProperties) {
     VirtualNetworkFunctionDescriptor vnfd = new VirtualNetworkFunctionDescriptor();
     vnfd.setVendor("TUB");
     vnfd.setVersion("1.0");
@@ -341,7 +343,7 @@ public class NSDUtil {
     vnfd.setEndpoint("media-server");
 
     Set<VirtualDeploymentUnit> vdus = new HashSet<>();
-    vdus.add(createMsVdu());
+    vdus.add(createMsVdu(kmsProperties, vimProperties));
     vnfd.setVdu(vdus);
 
     Set<InternalVirtualLink> vls = new HashSet<>();
@@ -361,15 +363,16 @@ public class NSDUtil {
     return vnfd;
   }
 
-  private VirtualDeploymentUnit createMsVdu() {
+  private static VirtualDeploymentUnit createMsVdu(
+      KmsProperties kmsProperties, VimProperties vimProperties) {
     VirtualDeploymentUnit vdu = new VirtualDeploymentUnit();
 
     Set<String> images = new HashSet<>();
-    images.add("nubomedia/kurento-media-server");
+    images.add(kmsProperties.getImage());
     vdu.setVm_image(images);
 
     List<String> vimInstanceNames = new ArrayList<>();
-    vimInstanceNames.add("nubomedia-vim");
+    vimInstanceNames.add(vimProperties.getName());
     vdu.setVimInstanceName(vimInstanceNames);
 
     vdu.setScale_in_out(1);
@@ -388,7 +391,7 @@ public class NSDUtil {
     return vdu;
   }
 
-  public VirtualNetworkFunctionDescriptor getCloudRepoVnfd() {
+  public static VirtualNetworkFunctionDescriptor getCloudRepoVnfd() {
     VirtualNetworkFunctionDescriptor vnfd = new VirtualNetworkFunctionDescriptor();
     vnfd.setVendor("TUB");
     vnfd.setVersion("1.0");
@@ -449,7 +452,7 @@ public class NSDUtil {
     return vnfd;
   }
 
-  private VirtualDeploymentUnit getCloudRepoVdu() {
+  private static VirtualDeploymentUnit getCloudRepoVdu() {
     VirtualDeploymentUnit vdu = new VirtualDeploymentUnit();
 
     Set<String> images = new HashSet<>();

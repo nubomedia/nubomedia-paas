@@ -17,6 +17,11 @@
 package org.project.openbaton.nubomedia.paas.core;
 
 import com.google.gson.Gson;
+import com.openshift.restclient.ClientBuilder;
+import com.openshift.restclient.IClient;
+import com.openshift.restclient.ResourceKind;
+import com.openshift.restclient.model.IList;
+import com.openshift.restclient.model.IResource;
 import org.project.openbaton.nubomedia.paas.core.openshift.*;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
@@ -29,6 +34,7 @@ import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,6 +43,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.security.cert.CertificateException;
 import java.util.List;
 
 /**
@@ -52,26 +59,61 @@ public class OpenShiftManager {
   @Autowired private DeploymentManager deploymentManager;
   @Autowired private ServiceManager serviceManager;
   @Autowired private RouteManager routeManager;
-  @Autowired private AuthenticationManager authManager;
+  //  @Autowired private AuthenticationManager authManager;
   @Autowired private OpenShiftProperties properties;
 
-  private Logger logger;
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
   private String openshiftBaseURL;
   private String kubernetesBaseURL;
   private String project;
 
+  @Value("${openshift.keystore}")
+  private String openshiftKeystore;
+
   @PostConstruct
   private void init() throws IOException {
-    this.logger = LoggerFactory.getLogger(this.getClass());
+
     this.openshiftBaseURL = properties.getBaseURL() + "/oapi/v1/namespaces/";
     this.kubernetesBaseURL = properties.getBaseURL() + "/api/v1/namespaces/";
     this.project = properties.getProject();
+
+    //    System.setProperty("javax.net.ssl.trustStore", openshiftKeystore);
+
+    logger.info(properties.getToken());
+    logger.info(properties.getBaseURL());
+    logger.info(openshiftKeystore);
+
+    //    try {
+    //      KeyStore ks = KeyStore.getInstance("JKS");
+    //      ks.load(new FileInputStream(openshiftKeystore), null);
+    //      Enumeration<String> aliases = ks.aliases();
+    //      while (aliases.hasMoreElements()) {
+    //        logger.info(aliases.nextElement());
+    //      }
+    //      logger.info(String.valueOf(ks.aliases()));
+    //    } catch (KeyStoreException e) {
+    //      e.printStackTrace();
+    //    } catch (NoSuchAlgorithmException e) {
+    //      e.printStackTrace();
+    //    }
+
+    IClient client =
+        new ClientBuilder(properties.getBaseURL())
+            .usingToken(properties.getToken())
+            //              .sslCertificate("nubomedia", null)
+            //                              (X509Certificate) javax.security.cert.X509Certificate.getInstance(new FileInputStream(new File(openshiftKeystore))))
+            .build();
+
+    IList list = client.get(ResourceKind.SERVICE, properties.getProject());
+    for (IResource resource : list.getItems()) {
+      logger.info(resource.toJson());
+    }
   }
 
-  public String authenticate(String username, String password) throws UnauthorizedException {
-
-    return this.authManager.authenticate(properties.getBaseURL(), username, password);
-  }
+  //  public String authenticate(String username, String password) throws UnauthorizedException {
+  //
+  //    return this.authManager.authenticate(properties.getBaseURL(), username, password);
+  //  }
 
   public String buildApplication(
       String token,

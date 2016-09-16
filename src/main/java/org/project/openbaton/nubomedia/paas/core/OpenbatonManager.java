@@ -31,6 +31,7 @@ import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.util.NSDUtil;
 import org.project.openbaton.nubomedia.paas.core.util.NSRUtil;
+import org.project.openbaton.nubomedia.paas.core.util.VIMUtil;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
@@ -38,6 +39,8 @@ import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.QoS;
+import org.project.openbaton.nubomedia.paas.properties.KmsProperties;
+import org.project.openbaton.nubomedia.paas.properties.VimProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,18 +57,18 @@ import java.util.*;
 @Service
 public class OpenbatonManager {
 
-  @Autowired private VimInstance vimInstance;
-
-  @Autowired private NSDUtil nsdUtil;
-
   @Autowired private NFVORequestor nfvoRequestor;
 
-  private Logger logger;
+  @Autowired private VimProperties vimProperties;
+
+  @Autowired private KmsProperties kmsProperties;
+
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @PostConstruct
   private void init() throws IOException, SDKException {
 
-    this.logger = LoggerFactory.getLogger(this.getClass());
+    VimInstance vimInstance = VIMUtil.getVimInstance(vimProperties);
 
     try {
       this.logger.debug("Trying to create the VIM Instance " + vimInstance.getName());
@@ -131,7 +134,7 @@ public class OpenbatonManager {
     MediaServerGroup mediaServerGroup = new MediaServerGroup();
     // building network service descriptor
     NetworkServiceDescriptor targetNSD =
-        nsdUtil.getNSD(
+        NSDUtil.getNSD(
             flavorID,
             qos,
             turnServerActivate,
@@ -142,15 +145,17 @@ public class OpenbatonManager {
             stunServerIp,
             stunServerPort,
             scaleInOut,
-            scale_out_threshold);
+            scale_out_threshold,
+            kmsProperties,
+            vimProperties);
     if (cloudRepositorySet && !cdnConnectorSet) {
       Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
-      vnfds.add(nsdUtil.getCloudRepoVnfd());
+      vnfds.add(NSDUtil.getCloudRepoVnfd());
       logger.debug("VNFDS " + vnfds.toString());
       targetNSD.setVnfd(vnfds);
     } else if (cdnConnectorSet) {
       Set<VirtualNetworkFunctionDescriptor> vnfds = targetNSD.getVnfd();
-      VirtualNetworkFunctionDescriptor cdnConnectorVnfd = nsdUtil.getCloudRepoVnfd();
+      VirtualNetworkFunctionDescriptor cdnConnectorVnfd = NSDUtil.getCloudRepoVnfd();
       Set<LifecycleEvent> lifecycleEvents = new HashSet<>();
       for (LifecycleEvent lce : cdnConnectorVnfd.getLifecycle_event()) {
         if (lce.getEvent().name().equals("START")) {
