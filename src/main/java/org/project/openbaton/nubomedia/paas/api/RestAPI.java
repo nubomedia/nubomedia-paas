@@ -76,10 +76,10 @@ public class RestAPI {
   @Value("${openshift.keystore}")
   private String openshiftKeystore;
 
-  //  @PostConstruct
-  //  private void init() {
-  //    System.setProperty("javax.net.ssl.trustStore", openshiftKeystore);
-  //  }
+  @PostConstruct
+  private void init() {
+    System.setProperty("javax.net.ssl.trustStore", openshiftKeystore);
+  }
 
   /**
    * @param request

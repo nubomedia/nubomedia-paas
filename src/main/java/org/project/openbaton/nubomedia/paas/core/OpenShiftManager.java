@@ -20,8 +20,10 @@ import com.google.gson.Gson;
 import com.openshift.restclient.ClientBuilder;
 import com.openshift.restclient.IClient;
 import com.openshift.restclient.ResourceKind;
+import com.openshift.restclient.model.IImageStream;
 import com.openshift.restclient.model.IList;
 import com.openshift.restclient.model.IResource;
+import com.openshift.restclient.model.build.IBuildConfigBuilder;
 import org.project.openbaton.nubomedia.paas.core.openshift.*;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
@@ -78,10 +80,10 @@ public class OpenShiftManager {
     this.project = properties.getProject();
 
     //    System.setProperty("javax.net.ssl.trustStore", openshiftKeystore);
-
-    logger.info(properties.getToken());
-    logger.info(properties.getBaseURL());
-    logger.info(openshiftKeystore);
+    //
+    //    logger.info(properties.getToken());
+    //    logger.info(properties.getBaseURL());
+    //    logger.info(openshiftKeystore);
 
     //    try {
     //      KeyStore ks = KeyStore.getInstance("JKS");
@@ -96,18 +98,18 @@ public class OpenShiftManager {
     //    } catch (NoSuchAlgorithmException e) {
     //      e.printStackTrace();
     //    }
+    //
+    //    IClient client =
+    //        new ClientBuilder(properties.getBaseURL())
+    //            .usingToken(properties.getToken())
+    //            //              .sslCertificate("nubomedia", null)
+    //            //                              (X509Certificate) javax.security.cert.X509Certificate.getInstance(new FileInputStream(new File(openshiftKeystore))))
+    //            .build();
 
-    IClient client =
-        new ClientBuilder(properties.getBaseURL())
-            .usingToken(properties.getToken())
-            //              .sslCertificate("nubomedia", null)
-            //                              (X509Certificate) javax.security.cert.X509Certificate.getInstance(new FileInputStream(new File(openshiftKeystore))))
-            .build();
-
-    IList list = client.get(ResourceKind.SERVICE, properties.getProject());
-    for (IResource resource : list.getItems()) {
-      logger.info(resource.toJson());
-    }
+    //    IList list = client.get(ResourceKind.SERVICE, properties.getProject());
+    //    for (IResource resource : list.getItems()) {
+    //      logger.info(resource.toJson());
+    //    }
   }
 
   //  public String authenticate(String username, String password) throws UnauthorizedException {
@@ -139,6 +141,29 @@ public class OpenShiftManager {
     creationHeader.add("Content-type", "application/json");
 
     logger.info("Starting build app " + name + " in project " + this.project);
+
+    //    IImageStream is = client.getResourceFactory().stub(ResourceKind.IMAGE_STREAM, "ruby-hello-world", project.getName());
+    //    LOG.debug("Creating imagestream {}", is);
+    //    is = client.create(is);
+    //    LOG.debug("Generated imagestream {}", is);
+    //
+    //    //a buildconfig
+    //    IBuildConfigBuilder builder = client.adapt(IBuildConfigBuilder.class);
+    //    assertNotNull("Exp. the client to be able to use a buildconfigbuilder", builder);
+    //    config = builder.named("hello-openshift")
+    //            .inNamespace(project.getName())
+    //            .fromGitSource()
+    //            .fromGitUrl("https://github.com/openshift/ruby-hello-world.git")
+    //            .end()
+    //            .usingSourceStrategy()
+    //            .fromDockerImage("centos/ruby-22-centos7:latest")
+    //            .end()
+    //            .toImageStreamTag("ruby-hello-world:latest")
+    //            .build();
+    //    LOG.debug("Creating BuildConfig {}", config);
+    //    config = client.create(config);
+    //    LOG.debug("Created BuildConfig {}", config);
+    //    assertNotNull(config);
 
     ResponseEntity<String> appBuilEntity =
         imageStreamManager.makeImageStream(openshiftBaseURL, osName, this.project, creationHeader);
