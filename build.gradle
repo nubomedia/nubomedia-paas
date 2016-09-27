@@ -81,7 +81,7 @@ configurations.all {
 }
 
 dependencies {
-    compile 'org.openbaton:sdk:2.1.3'
+    compile 'org.openbaton:sdk:2.2.0'
 
     // https://mvnrepository.com/artifact/com.openshift/openshift-restclient-java
     compile (group: 'com.openshift', name: 'openshift-restclient-java', version: '5.1.0.Final')
