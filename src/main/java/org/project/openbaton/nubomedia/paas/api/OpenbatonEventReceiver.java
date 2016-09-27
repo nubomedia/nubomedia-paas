@@ -16,7 +16,7 @@
  *
  */
 
-package org.project.openbaton.nubomedia.paas.events;
+package org.project.openbaton.nubomedia.paas.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,6 +26,7 @@ import org.openbaton.catalogue.nfvo.EndpointType;
 import org.openbaton.catalogue.nfvo.EventEndpoint;
 import org.openbaton.sdk.NFVORequestor;
 import org.openbaton.sdk.api.exception.SDKException;
+import org.project.openbaton.nubomedia.paas.configuration.OpenbatonConfiguration;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
 import org.project.openbaton.nubomedia.paas.properties.NfvoProperties;
@@ -46,7 +47,6 @@ public class OpenbatonEventReceiver implements CommandLineRunner {
 
   private Gson mapper = new GsonBuilder().serializeNulls().create();
   private EventEndpoint eventEndpointCreation, eventEndpointError;
-  @Autowired private NfvoProperties nfvoProperties;
 
   @Autowired private AppManager appManager;
 
@@ -108,7 +108,7 @@ public class OpenbatonEventReceiver implements CommandLineRunner {
             "paas-nsr-instantiate-finish",
             EndpointType.RABBIT,
             Action.INSTANTIATE_FINISH,
-            ConfigurationBeans.queueName_eventInstatiateFinish);
+            OpenbatonConfiguration.queueName_eventInstatiateFinish);
     try {
       logger.info("creating endpoint creation event");
       eventEndpointCreation = this.nfvoRequestor.getEventAgent().create(eventEndpointCreation);
@@ -123,7 +123,7 @@ public class OpenbatonEventReceiver implements CommandLineRunner {
             "paas-nsr-error",
             EndpointType.RABBIT,
             Action.ERROR,
-            ConfigurationBeans.queueName_error);
+            OpenbatonConfiguration.queueName_error);
     try {
       logger.info("creating endpoint error event");
       eventEndpointError = this.nfvoRequestor.getEventAgent().create(eventEndpointError);

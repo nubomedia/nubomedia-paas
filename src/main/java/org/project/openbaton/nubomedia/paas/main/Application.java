@@ -18,35 +18,35 @@
 
 package org.project.openbaton.nubomedia.paas.main;
 
-import org.project.openbaton.nubomedia.paas.core.openshift.OpenshiftConfiguration;
-import org.project.openbaton.nubomedia.paas.events.ConfigurationBeans;
-import org.project.openbaton.nubomedia.paas.main.utils.BeanSchedulerConfiguration;
-import org.project.openbaton.nubomedia.paas.main.utils.OpenbatonConfiguration;
+import org.project.openbaton.nubomedia.paas.main.utils.Utils;
+import org.project.openbaton.nubomedia.paas.properties.NfvoProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.orm.jpa.EntityScan;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
- * Created by lto on 24/09/15.
+ * Created by mpa on 15.09.16.
  */
 @SpringBootApplication
-@ContextConfiguration(
-  classes = {
-    OpenshiftConfiguration.class,
-    OpenbatonConfiguration.class,
-    BeanSchedulerConfiguration.class,
-    ConfigurationBeans.class,
-  }
-)
 @EnableJpaRepositories("org.project.openbaton.nubomedia.paas")
 @EntityScan(basePackages = "org.project.openbaton")
 @ComponentScan(basePackages = "org.project.openbaton")
-public class Main {
+public class Application {
+
+  private static Logger log = LoggerFactory.getLogger(Application.class);
+
   public static void main(String[] args) {
-    ApplicationContext context = SpringApplication.run(Main.class, args);
+    SpringApplication application = new SpringApplication(Application.class);
+    application.addListeners(new ApplicationListener());
+    ConfigurableApplicationContext context = application.run(args);
+    context.registerShutdownHook();
   }
 }

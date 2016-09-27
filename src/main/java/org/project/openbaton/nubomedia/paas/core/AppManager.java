@@ -345,8 +345,8 @@ public class AppManager {
     // check that the app has been instantiated on openshift
     if (!app.isResourceOK() || app.getStatus().equals(AppStatus.PAAS_RESOURCE_MISSING)) {
       try {
-        obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
         obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
+        obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
       } catch (Exception e) {
         logger.error(e.getMessage());
       } finally {
@@ -365,8 +365,8 @@ public class AppManager {
       logger.warn(e.getMessage());
     }
     try {
-      obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
       obmanager.deleteDescriptor(app.getMediaServerGroup().getNsdID());
+      obmanager.deleteRecord(app.getMediaServerGroup().getNsrID());
     } catch (Exception e) {
       logger.error(e.getMessage());
     } finally {

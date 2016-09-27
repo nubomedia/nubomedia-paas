@@ -60,7 +60,7 @@ project.ext {
     /**
      * gradle Related Vars
      */
-    mainClass = 'org.project.openbaton.nubomedia.api.core.Main'
+    mainClass = 'org.project.openbaton.nubomedia.api.core.Application'
     //------------------------------------------------//
 }
 
@@ -75,8 +75,19 @@ bootRun {
     addResources = true
 }
 
+configurations.all {
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+    exclude group: "log4j", module: "log4j"
+}
+
 dependencies {
-    compile 'org.openbaton:sdk:2.1.3'
+    compile 'org.openbaton:sdk:2.2.0'
+
+    // https://mvnrepository.com/artifact/com.openshift/openshift-restclient-java
+    compile (group: 'com.openshift', name: 'openshift-restclient-java', version: '5.1.0.Final')
+//            {
+//        exclude module: 'log4j'
+//    }
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'mysql:mysql-connector-java:5.1.35'
     compile 'org.springframework.boot:spring-boot-starter-test:' + springBootVersion
@@ -101,3 +112,5 @@ dependencies {
 
 apply from: 'gradle/gradle/packaging.project.debian.gradle'
 apply from: 'gradle/gradle/git.release.gradle'
+
+compileJava.dependsOn tasks.googleJavaFormat
