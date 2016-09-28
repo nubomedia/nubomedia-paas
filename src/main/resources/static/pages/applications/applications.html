@@ -430,9 +430,16 @@
               Enable
             </label>
 
-            <div class="input input--inline" ng-repeat="(key,value) in _threshold">
+            <div class="input input--inline" ng-repeat="(key,value) in _threshold" ">
               <label for="app-scalling-in" class="input__label">
-                {{key}}
+                <span ng-if="key == 'scaleInOut'">
+                   Scale out limit
+                </span>
+
+                <span ng-if="key == 'scale_out_threshold'">
+                   Scale out trigger
+                </span>
+
                 <span class="input__subtitle">
                   <i
                     popover="{{textInfo}}"

@@ -89,7 +89,17 @@
 
       <div ng-if="key !== 'protocols'">
         <label class="col-md-4 control-label input__label">
-          {{key}}
+          <span ng-if="key == 'scaleInOut'">
+             Scale out limit
+          </span>
+
+          <span ng-if="key == 'scaleOutThreshold'">
+             Scale out trigger
+          </span>
+
+          <span ng-if="key != 'scaleOutThreshold' && key != 'scaleInOut'">
+             {{key}}
+          </span>
         </label>
 
         <div class="col-md-8">
