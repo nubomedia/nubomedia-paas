@@ -4,8 +4,6 @@ Copyright © 2016 [NUBOMEDIA]. Licensed under [Apache 2.0 License].
 
 # NUBOMEDIA PaaS Manager
 
-This project is part of the [NUBOMEDIA](http://www.nubomedia.eu/) research initiative.
-
 The NUBOMEDIA PaaS manager is the manager for PaaS Platform that exposes REST API to allow NUBOMEDIA users to build and deploy applications on the NUBOMEDIA Platform.
 This is a short guide to deploy and install the NUBOMEDIA PaaS Manager.
 
