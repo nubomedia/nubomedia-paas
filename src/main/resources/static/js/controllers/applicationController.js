@@ -881,8 +881,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       dataAxis: {
         left: {
           range: {
-            min: 0,
-            max: 10
+            min: 0
           }
         }
       },
