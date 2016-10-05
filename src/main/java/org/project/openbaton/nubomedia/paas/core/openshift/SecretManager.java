@@ -19,11 +19,19 @@
 package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import com.google.gson.Gson;
+import com.openshift.internal.restclient.model.Secret;
+import com.openshift.internal.restclient.model.ServiceAccount;
+import com.openshift.restclient.ClientBuilder;
+import com.openshift.restclient.IClient;
+import com.openshift.restclient.ResourceKind;
+import com.openshift.restclient.model.IList;
+import com.openshift.restclient.model.IResource;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.openshift.SecretConfig;
 import org.project.openbaton.nubomedia.paas.model.openshift.SecretID;
-import org.project.openbaton.nubomedia.paas.model.openshift.ServiceAccount;
+import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +41,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -47,144 +56,176 @@ public class SecretManager {
   private String secretSuffix;
   private String saSuffix;
 
+  private IClient client;
+
+  @Autowired private OpenShiftProperties openShiftProperties;
+
   @PostConstruct
   private void init() {
     this.logger = LoggerFactory.getLogger(this.getClass());
     this.secretSuffix = "/secrets";
     this.saSuffix = "/serviceaccounts/builder";
+    client =
+        new ClientBuilder(openShiftProperties.getBaseURL())
+            .usingToken(openShiftProperties.getToken())
+            //              .sslCertificate("nubomedia", null)
+            //                              (X509Certificate) javax.security.cert.X509Certificate.getInstance(new FileInputStream(new File(openshiftKeystore))))
+            .build();
   }
 
-  public String createSecret(
-      String baseURL, String namespace, String privateKey, HttpHeaders authHeader)
-      throws UnauthorizedException {
+  public String createSecret(String privateKey) {
+    //      throws UnauthorizedException {
 
-    SecretConfig message = MessageBuilderFactory.getSecretMessage(namespace, privateKey);
-    logger.debug("message " + mapper.toJson(message, SecretConfig.class));
-    HttpEntity<String> secretEntity =
-        new HttpEntity<>(mapper.toJson(message, SecretConfig.class), authHeader);
-    ResponseEntity<String> responseEntity =
-        template.exchange(
-            baseURL + namespace + secretSuffix, HttpMethod.POST, secretEntity, String.class);
+    SecretConfig message =
+        MessageBuilderFactory.getSecretMessage(openShiftProperties.getProject(), privateKey);
+    String secretJson = mapper.toJson(message, Secret.class);
+    Secret secretConfig = client.getResourceFactory().create(secretJson);
 
-    logger.debug("response entity " + responseEntity.toString());
-    SecretConfig response = mapper.fromJson(responseEntity.getBody(), SecretConfig.class);
-    String secretName = response.getMetadata().getName();
+    logger.debug("Creating secret {}", secretConfig);
+    secretConfig = client.create(secretConfig);
+    logger.debug("Created secret {}", secretConfig);
+    //    logger.debug("message " + mapper.toJson(message, SecretConfig.class));
+    //    HttpEntity<String> secretEntity =
+    //        new HttpEntity<>(mapper.toJson(message, SecretConfig.class), authHeader);
+    //    ResponseEntity<String> responseEntity =
+    //        template.exchange(
+    //            baseURL + namespace + secretSuffix, HttpMethod.POST, secretEntity, String.class);
 
-    responseEntity = this.updateBuilder(baseURL, secretName, authHeader, namespace, true);
-    if (responseEntity.getStatusCode() != HttpStatus.OK)
-      logger.debug("Error updating builder account " + response.toString());
+    //    logger.debug("response entity " + responseEntity.toString());
+    //    SecretConfig response = mapper.fromJson(responseEntity.getBody(), SecretConfig.class);
+    //    String secretName = response.getMetadata().getName();
+    //
+    //    responseEntity = this.updateBuilder(baseURL, secretName, authHeader, namespace, true);
+    //    if (responseEntity.getStatusCode() != HttpStatus.OK)
+    //      logger.debug("Error updating builder account " + response.toString());
+    //
+    //    if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    //
+    //      throw new UnauthorizedException("Invalid or expired token");
+    //    }
 
-    if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
-      throw new UnauthorizedException("Invalid or expired token");
-    }
-
-    return secretName;
+    return secretConfig.getName();
   }
 
-  public HttpStatus deleteSecret(
-      String baseURL, String secretName, String namespace, HttpHeaders authHeader)
-      throws UnauthorizedException {
-    HttpEntity<String> deleteEntity = new HttpEntity<>("", authHeader);
-    ResponseEntity<String> entity =
-        template.exchange(
-            baseURL + namespace + secretSuffix + "/" + secretName,
-            HttpMethod.DELETE,
-            deleteEntity,
-            String.class);
+  public void deleteSecret(String secretName) {
 
-    if (entity.getStatusCode() != HttpStatus.OK)
-      logger.debug("Error deleting secret " + secretName + " response " + entity.toString());
+    logger.info("Deleting secret " + secretName);
+    IResource build =
+        client
+            .getResourceFactory()
+            .stub(ResourceKind.SECRET, secretName, openShiftProperties.getProject());
+    client.delete(build);
+    logger.info("Deleted secret " + secretName);
 
-    if (entity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
-      throw new UnauthorizedException("Invalid or expired token");
-    }
-
-    entity = this.updateBuilder(baseURL, secretName, authHeader, namespace, false);
-
-    if (entity.getStatusCode() != HttpStatus.OK)
-      logger.debug("Error updating builder account " + entity.toString());
-
-    if (entity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
-      throw new UnauthorizedException("Invalid or expired token");
-    }
-
-    return entity.getStatusCode();
+    //      throws UnauthorizedException {
+    //    HttpEntity<String> deleteEntity = new HttpEntity<>("", authHeader);
+    //    ResponseEntity<String> entity =
+    //        template.exchange(
+    //            baseURL + namespace + secretSuffix + "/" + secretName,
+    //            HttpMethod.DELETE,
+    //            deleteEntity,
+    //            String.class);
+    //
+    //    if (entity.getStatusCode() != HttpStatus.OK)
+    //      logger.debug("Error deleting secret " + secretName + " response " + entity.toString());
+    //
+    //    if (entity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    //
+    //      throw new UnauthorizedException("Invalid or expired token");
+    //    }
+    //
+    //    entity = this.updateBuilder(baseURL, secretName, authHeader, namespace, false);
+    //
+    //    if (entity.getStatusCode() != HttpStatus.OK)
+    //      logger.debug("Error updating builder account " + entity.toString());
+    //
+    //    if (entity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    //
+    //      throw new UnauthorizedException("Invalid or expired token");
+    //    }
+    //
+    //    return entity.getStatusCode();
   }
 
   //BETA!!!!
-  public List<String> getSecretList(String baseURL, String namespace, HttpHeaders authHeader)
-      throws UnauthorizedException {
-
+  public List<String> getSecretList() throws NotFoundException {
+    //      throws UnauthorizedException {
     List<String> res = new ArrayList<>();
-    String url = baseURL + namespace + saSuffix;
-    HttpEntity<String> builderEntity = new HttpEntity<>(authHeader);
-    ResponseEntity<String> serviceAccountBuilder =
-        template.exchange(url, HttpMethod.GET, builderEntity, String.class);
 
-    if (serviceAccountBuilder.getStatusCode() != HttpStatus.OK)
-      logger.debug("Error updating builder account " + serviceAccountBuilder.toString());
+    ServiceAccount serviceAccount = null;
 
-    if (serviceAccountBuilder.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    IList list = client.get(ResourceKind.SERVICE_ACCOUNT, openShiftProperties.getProject());
+    for (IResource resource : list.getItems()) {
+      logger.trace(resource.toJson());
+      if (resource.getName().equals("builder")) {
+        serviceAccount = (ServiceAccount) resource;
+      }
 
-      throw new UnauthorizedException("Invalid or expired token");
+      //    String url = baseURL + namespace + saSuffix;
+      //    HttpEntity<String> builderEntity = new HttpEntity<>(authHeader);
+      //    ResponseEntity<String> serviceAccountBuilder =
+      //        template.exchange(url, HttpMethod.GET, builderEntity, String.class);
+
+      //    if (serviceAccountBuilder.getStatusCode() != HttpStatus.OK)
+      //      logger.debug("Error updating builder account " + serviceAccountBuilder.toString());
+
+      //    if (serviceAccountBuilder.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+      //      throw new UnauthorizedException("Invalid or expired token");
     }
 
-    ServiceAccount serviceAccount =
-        mapper.fromJson(serviceAccountBuilder.getBody(), ServiceAccount.class);
-    for (SecretID secretID : serviceAccount.getSecrets()) {
-      if (secretID.getName().contains(namespace)) {
-        res.add(secretID.getName());
+    //    ServiceAccount serviceAccount =
+    //        mapper.fromJson(serviceAccountBuilder.getBody(), ServiceAccount.class);
+    if (serviceAccount == null) {
+      throw new NotFoundException("Not found ServiceAccount builder");
+    }
+    for (String secret : serviceAccount.getSecrets()) {
+      if (secret.contains(openShiftProperties.getProject())) {
+        res.add(secret);
       }
     }
 
     return res;
   }
 
-  private ResponseEntity<String> updateBuilder(
-      String baseURL, String secretName, HttpHeaders authHeader, String namespace, boolean add) {
-    String URL = baseURL + namespace + saSuffix;
-    HttpEntity<String> builderEntity = new HttpEntity<>(authHeader);
-    ResponseEntity<String> serviceAccount =
-        template.exchange(URL, HttpMethod.GET, builderEntity, String.class);
+  private String updateBuilder(String secretName, boolean add) throws NotFoundException {
+    //    String URL = baseURL + namespace + saSuffix;
+    //    HttpEntity<String> builderEntity = new HttpEntity<>(authHeader);
+    //    ResponseEntity<String> serviceAccount =
+    //        template.exchange(URL, HttpMethod.GET, builderEntity, String.class);
 
-    logger.debug("Builder account " + serviceAccount.getBody());
+    ServiceAccount serviceAccount = null;
 
-    ServiceAccount builder = mapper.fromJson(serviceAccount.getBody(), ServiceAccount.class);
-    List<SecretID> secrets = builder.getSecrets();
-    List<SecretID> newSecrets;
+    IList list = client.get(ResourceKind.SERVICE_ACCOUNT, openShiftProperties.getProject());
+    for (IResource resource : list.getItems()) {
+      logger.trace(resource.toJson());
+      if (resource.getName().equals("builder")) {
+        serviceAccount = (ServiceAccount) resource;
+      }
+    }
+    if (serviceAccount == null) {
+      throw new NotFoundException("Not found ServiceAccount builder");
+    }
+
+    logger.debug("Builder account " + serviceAccount.toJson());
+
+    //    ServiceAccount builder = mapper.fromJson(serviceAccount.getBody(), ServiceAccount.class);
+    Collection<String> secrets = serviceAccount.getSecrets();
+    Collection<String> newSecrets = new ArrayList<>();
 
     if (add) {
-      newSecrets = this.addSecret(secrets, secretName);
+      serviceAccount.addSecret(secretName);
 
     } else {
-      newSecrets = this.removeSecret(secrets, secretName);
+      serviceAccount.getSecrets().remove(secretName);
     }
 
-    builder.setSecrets(newSecrets);
-    builderEntity = new HttpEntity<>(mapper.toJson(builder, ServiceAccount.class), authHeader);
-    serviceAccount = template.exchange(URL, HttpMethod.PUT, builderEntity, String.class);
+    serviceAccount = client.update(serviceAccount);
+    //    builderEntity = new HttpEntity<>(mapper.toJson(builder, ServiceAccount.class), authHeader);
+    //    serviceAccount = template.exchange(URL, HttpMethod.PUT, builderEntity, String.class);
 
-    logger.debug("New builder account " + serviceAccount.getBody());
+    logger.debug("New builder account " + serviceAccount.toJson());
 
-    return serviceAccount;
-  }
-
-  private List<SecretID> removeSecret(List<SecretID> secrets, String secretName) {
-
-    for (SecretID sec : secrets) {
-      if (sec.getName().equals(secretName)) secrets.remove(sec);
-    }
-
-    return secrets;
-  }
-
-  private List<SecretID> addSecret(List<SecretID> secrets, String secretName) {
-
-    secrets.add(new SecretID(secretName));
-
-    return secrets;
+    return serviceAccount.toJson();
   }
 }

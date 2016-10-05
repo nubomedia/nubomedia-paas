@@ -19,11 +19,19 @@
 package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import com.google.gson.Gson;
+import com.openshift.internal.restclient.model.properties.ResourcePropertiesRegistry;
+import com.openshift.restclient.ClientBuilder;
+import com.openshift.restclient.IClient;
+import com.openshift.restclient.ResourceKind;
+import com.openshift.restclient.model.IResource;
+import com.openshift.restclient.model.IService;
+import org.jboss.dmr.ModelNode;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.model.openshift.ServiceConfig;
+import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +40,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by maa on 08.10.15.
@@ -42,72 +52,97 @@ public class ServiceManager {
   @Autowired private RestTemplate template;
   @Autowired private Gson mapper;
   private Logger logger;
-  private String suffix;
+  //  private String suffix;
+
+  private IClient client;
+
+  @Autowired private OpenShiftProperties openShiftProperties;
 
   @PostConstruct
   private void init() {
     this.logger = LoggerFactory.getLogger(this.getClass());
-    this.suffix = "/services/";
+    //    this.suffix = "/services/";
+    client =
+        new ClientBuilder(openShiftProperties.getBaseURL())
+            .usingToken(openShiftProperties.getToken())
+            .build();
   }
 
-  public ResponseEntity<String> makeService(
-      String kubernetesBaseURL,
-      String osName,
-      String namespace,
-      int[] ports,
-      int[] targetPorts,
-      String[] protocols,
-      HttpHeaders authHeader)
-      throws DuplicatedException, UnauthorizedException, BadRequestException {
-    ServiceConfig message =
-        MessageBuilderFactory.getServiceMessage(osName, ports, targetPorts, protocols);
+  public IService makeService(
+      String osName, List<Integer> ports, List<Integer> targetPorts, List<String> protocols) {
 
-    logger.debug("Writing service creation " + mapper.toJson(message, ServiceConfig.class));
+    ModelNode serivceNode =
+        ModelNode.fromJSONString(
+            mapper.toJson(
+                MessageBuilderFactory.getServiceMessage(
+                    openShiftProperties.getProject(), osName, ports, targetPorts, protocols),
+                ServiceConfig.class));
+    Map propertyServiceKeys =
+        ResourcePropertiesRegistry.getInstance().get("v1", ResourceKind.SERVICE);
+    IService service =
+        new com.openshift.internal.restclient.model.Service(
+            serivceNode, client, propertyServiceKeys);
+    logger.debug("Created SerivceConfig {}", service);
+    service = client.create(service);
+    logger.debug("Triggered Serivce creation {}", service);
 
-    String URL = kubernetesBaseURL + namespace + suffix;
-    ResponseEntity response = null;
-    try {
-      HttpEntity<String> serviceEntity =
-          new HttpEntity<>(mapper.toJson(message, ServiceConfig.class), authHeader);
-      response = template.exchange(URL, HttpMethod.POST, serviceEntity, String.class);
-    } catch (Exception e) {
-      logger.error(e.getMessage(), e);
-    }
+    //    ServiceConfig message =
+    //        MessageBuilderFactory.getServiceMessage(namespace, osName, ports, targetPorts, protocols);
+    //
+    //    logger.debug("Writing service creation " + mapper.toJson(message, ServiceConfig.class));
+    //
+    //    String URL = kubernetesBaseURL + namespace + suffix;
+    //    ResponseEntity response = null;
+    //    try {
+    //      HttpEntity<String> serviceEntity =
+    //          new HttpEntity<>(mapper.toJson(message, ServiceConfig.class), authHeader);
+    //      response = template.exchange(URL, HttpMethod.POST, serviceEntity, String.class);
+    //    } catch (Exception e) {
+    //      logger.error(e.getMessage(), e);
+    //    }
+    //
+    //    if (response == null) {
+    //      throw new BadRequestException(
+    //          "Bad request towards OpenShift: " + mapper.toJson(message, ServiceConfig.class));
+    //    }
+    //
+    //    if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
+    //      throw new DuplicatedException("Application with " + osName + " is already present");
+    //    }
+    //
+    //    if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    //
+    //      throw new UnauthorizedException("Invalid or expired token");
+    //    }
 
-    if (response == null) {
-      throw new BadRequestException(
-          "Bad request towards OpenShift: " + mapper.toJson(message, ServiceConfig.class));
-    }
-
-    if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
-      throw new DuplicatedException("Application with " + osName + " is already present");
-    }
-
-    if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
-      throw new UnauthorizedException("Invalid or expired token");
-    }
-
-    return response;
+    return service;
   }
 
-  public HttpStatus deleteService(
-      String kubernetesBaseURL, String osName, String namespace, HttpHeaders authHeader)
-      throws UnauthorizedException {
-    String URL = kubernetesBaseURL + namespace + suffix + osName + "-svc";
-    HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
-    ResponseEntity<String> deleteResponse =
-        template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
+  public void deleteService(String osName) {
+    logger.debug("Deleting Serivce {}", osName + "-svc");
 
-    if (deleteResponse.getStatusCode() != HttpStatus.OK)
-      logger.debug(
-          "Error deleting service " + osName + "-svc response " + deleteResponse.toString());
+    IResource build =
+        client
+            .getResourceFactory()
+            .stub(ResourceKind.SERVICE, osName + "-svc", openShiftProperties.getProject());
+    client.delete(build);
+    logger.debug("Deleted Serivce {}", osName + "-svc");
 
-    if (deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    //      throws UnauthorizedException {
+    //    String URL = kubernetesBaseURL + namespace + suffix + osName + "-svc";
+    //    HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
+    //    ResponseEntity<String> deleteResponse =
+    //        template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
 
-      throw new UnauthorizedException("Invalid or expired token");
-    }
+    //    if (deleteResponse.getStatusCode() != HttpStatus.OK)
+    //      logger.debug(
+    //          "Error deleting service " + osName + "-svc response " + deleteResponse.toString());
 
-    return deleteResponse.getStatusCode();
+    //    if (deleteResponse.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+
+    //      throw new UnauthorizedException("Invalid or expired token");
+    //    }
+
+    //    return deleteResponse.getStatusCode();
   }
 }

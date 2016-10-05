@@ -31,15 +31,18 @@ public class BuildMessageBuilder {
   private String gitURL;
   private ConfigChangeTrigger[] triggers;
   private Source.SourceSecret secret;
+  private String namespace;
 
   public BuildMessageBuilder(
       String osName,
+      String namespace,
       BuildStrategy bs,
       BuildElements be,
       String gitURL,
       ConfigChangeTrigger[] triggers,
       Source.SourceSecret secret) {
     this.osName = osName;
+    this.namespace = namespace;
     this.bs = bs;
     this.be = be;
     this.gitURL = gitURL;
@@ -53,6 +56,6 @@ public class BuildMessageBuilder {
     Output output = new Output(be, null);
     BuildConfig.Spec spec = new BuildConfig.Spec(triggers, src, bs, output, new Resources());
 
-    return new BuildConfig(new Metadata(osName + "-bc", "", ""), spec);
+    return new BuildConfig(new Metadata(osName + "-bc", "", "", namespace), spec);
   }
 }

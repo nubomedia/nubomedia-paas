@@ -32,17 +32,21 @@ public class MetadataTypeAdapter extends TypeAdapter<Metadata> {
   @Override
   public void write(JsonWriter out, Metadata value) throws IOException {
     out.beginObject();
-    if (!value.getName().isEmpty() || value.getName() != null) {
+    if (!value.getName().isEmpty() && value.getName() != null) {
       out.name("name");
       out.value(value.getName());
     }
-    if (!value.getSelfLink().isEmpty() || value.getName() != null) {
+    if (!value.getSelfLink().isEmpty() && value.getName() != null) {
       out.name("selfLink");
       out.value(value.getSelfLink());
     }
-    if (!value.getResourceVersion().isEmpty() || value.getResourceVersion() != null) {
+    if (!value.getResourceVersion().isEmpty() && value.getResourceVersion() != null) {
       out.name("resourceVersion");
       out.value(value.getResourceVersion());
+    }
+    if (value.getNamespace() != null && !value.getNamespace().isEmpty()) {
+      out.name("namespace");
+      out.value(value.getNamespace());
     }
     out.endObject();
   }
@@ -50,7 +54,7 @@ public class MetadataTypeAdapter extends TypeAdapter<Metadata> {
   @Override
   public Metadata read(JsonReader in) throws IOException {
 
-    String name = "", selfLink = "", resourceVersion = "";
+    String name = "", selfLink = "", resourceVersion = "", namespace = "";
     in.beginObject();
 
     while (in.hasNext()) {
@@ -66,6 +70,9 @@ public class MetadataTypeAdapter extends TypeAdapter<Metadata> {
         case "resourceVersion":
           resourceVersion = in.nextString();
           break;
+        case "namespace":
+          namespace = in.nextString();
+          break;
         default:
           in.skipValue();
           break;
@@ -74,6 +81,6 @@ public class MetadataTypeAdapter extends TypeAdapter<Metadata> {
 
     in.endObject();
 
-    return new Metadata(name, selfLink, resourceVersion);
+    return new Metadata(name, selfLink, resourceVersion, namespace);
   }
 }

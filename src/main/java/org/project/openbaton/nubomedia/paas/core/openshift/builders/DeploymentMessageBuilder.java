@@ -30,23 +30,26 @@ public class DeploymentMessageBuilder {
   private int replicaNumber;
   private ImageChangeTrigger[] triggers;
   private String strategyType;
+  private String namespace;
 
   public DeploymentMessageBuilder(
       String osName,
       Container[] containers,
       int replicaNumber,
       ImageChangeTrigger[] triggers,
-      String strategyType) {
+      String strategyType,
+      String namespace) {
     this.osName = osName;
     this.containers = containers;
     this.replicaNumber = replicaNumber;
     this.triggers = triggers;
     this.strategyType = strategyType;
+    this.namespace = namespace;
   }
 
   public DeploymentConfig buildMessage() {
 
-    Metadata metadata = new Metadata(osName + "-dc", "", "");
+    Metadata metadata = new Metadata(osName + "-dc", "", "", namespace);
     MetadataDeploy metadeploy = new MetadataDeploy(new MetadataDeploy.Labels(osName));
     Selector selector = new Selector(osName);
     DeploymentConfigSpec.Strategy strategy = new DeploymentConfigSpec.Strategy(strategyType);

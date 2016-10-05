@@ -23,17 +23,26 @@ import org.project.openbaton.nubomedia.paas.model.openshift.Selector;
 import org.project.openbaton.nubomedia.paas.model.openshift.ServiceConfig;
 import org.project.openbaton.nubomedia.paas.model.openshift.ServiceSpec;
 
+import java.util.List;
+
 /**
  * Created by maa on 25/09/2015.
  */
 public class ServiceMessageBuilder {
 
+  private String namespace;
   private String osName;
-  private String[] protocols;
-  private int[] targetPorts;
-  private int[] ports;
+  private List<String> protocols;
+  private List<Integer> targetPorts;
+  private List<Integer> ports;
 
-  public ServiceMessageBuilder(String osName, String[] protocols, int[] ports, int[] targetPorts) {
+  public ServiceMessageBuilder(
+      String namespace,
+      String osName,
+      List<String> protocols,
+      List<Integer> ports,
+      List<Integer> targetPorts) {
+    this.namespace = namespace;
     this.osName = osName;
     this.protocols = protocols;
     this.targetPorts = targetPorts;
@@ -41,38 +50,38 @@ public class ServiceMessageBuilder {
   }
 
   public ServiceConfig buildMessage() {
-    ServiceSpec.ServicePort[] sPorts = new ServiceSpec.ServicePort[targetPorts.length];
+    ServiceSpec.ServicePort[] sPorts = new ServiceSpec.ServicePort[targetPorts.size()];
 
     if (ports == null) {
-      for (int i = 0; i < targetPorts.length; i++) {
+      for (int i = 0; i < targetPorts.size(); i++) {
         sPorts[i] =
             new ServiceSpec.ServicePort(
-                protocols[i],
-                targetPorts[i],
-                targetPorts[i],
-                protocols[i].toLowerCase() + "-" + targetPorts[i]);
+                protocols.get(i),
+                targetPorts.get(i),
+                targetPorts.get(i),
+                protocols.get(i).toLowerCase() + "-" + targetPorts.get(i));
       }
     } else {
-      for (int i = 0; i < targetPorts.length; i++) {
+      for (int i = 0; i < targetPorts.size(); i++) {
 
-        if (ports[i] == 0) {
+        if (ports.get(i) == 0) {
           sPorts[i] =
               new ServiceSpec.ServicePort(
-                  protocols[i],
-                  targetPorts[i],
-                  targetPorts[i],
-                  protocols[i].toLowerCase() + "-" + targetPorts[i]);
+                  protocols.get(i),
+                  targetPorts.get(i),
+                  targetPorts.get(i),
+                  protocols.get(i).toLowerCase() + "-" + targetPorts.get(i));
         }
 
         sPorts[i] =
             new ServiceSpec.ServicePort(
-                protocols[i],
-                ports[i],
-                targetPorts[i],
-                protocols[i].toLowerCase() + "-" + targetPorts[i]);
+                protocols.get(i),
+                ports.get(i),
+                targetPorts.get(i),
+                protocols.get(i).toLowerCase() + "-" + targetPorts.get(i));
       }
     }
-    Metadata metadata = new Metadata(osName + "-svc", "", "");
+    Metadata metadata = new Metadata(osName + "-svc", "", "", namespace);
     Selector selector = new Selector(osName);
     ServiceSpec spec = new ServiceSpec(selector, sPorts);
 

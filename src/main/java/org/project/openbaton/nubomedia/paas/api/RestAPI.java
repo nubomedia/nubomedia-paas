@@ -67,8 +67,8 @@ public class RestAPI {
 
   @Autowired private ProjectManagement projectManagement;
 
-  @Value("${openshift.token}")
-  private String token;
+  //  @Value("${openshift.token}")
+  //  private String token;
 
   @Value("${vnfm.ip}")
   private String vnfmIP;
@@ -76,10 +76,10 @@ public class RestAPI {
   @Value("${openshift.keystore}")
   private String openshiftKeystore;
 
-  @PostConstruct
-  private void init() {
-    System.setProperty("javax.net.ssl.trustStore", openshiftKeystore);
-  }
+  //  @PostConstruct
+  //  private void init() {
+  //    System.setProperty("javax.net.ssl.trustStore", openshiftKeystore);
+  //  }
 
   /**
    * @param request
@@ -100,7 +100,7 @@ public class RestAPI {
       throws SDKException, UnauthorizedException, DuplicatedException, NameStructureException,
           turnServerException, StunServerException, NotFoundException {
     Application app =
-        appManager.createApplication(request, getCurrentUser().getUsername(), projectId, token);
+        appManager.createApplication(request, getCurrentUser().getUsername(), projectId);
     return new NubomediaCreateAppResponse(app, 200);
   }
 
@@ -220,9 +220,9 @@ public class RestAPI {
       @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId)
       throws UnauthorizedException, ApplicationNotFoundException, NotFoundException {
     logger.debug("Requested build log of Application " + id + " of project " + projectId);
-    if (token == null) {
-      throw new UnauthorizedException("no auth-token header");
-    }
+    //    if (token == null) {
+    //      throw new UnauthorizedException("no auth-token header");
+    //    }
     NubomediaBuildLogs logs = null;
     if (isAdminProject(projectId)) {
       logs = appManager.getBuildLogs(id);
@@ -256,9 +256,9 @@ public class RestAPI {
             + podName
             + " of project "
             + projectId);
-    if (token == null) {
-      throw new UnauthorizedException("no auth-token header");
-    }
+    //    if (token == null) {
+    //      throw new UnauthorizedException("no auth-token header");
+    //    }
     String logs = "";
     if (isAdminProject(projectId)) {
       logs = appManager.getApplicationLogs(id, podName);
@@ -279,10 +279,10 @@ public class RestAPI {
             + ncsr.getProjectName()
             + " with key "
             + ncsr.getPrivateKey());
-    if (token == null) {
-      throw new UnauthorizedException("no auth-token header");
-    }
-    return osmanager.createSecret(token, ncsr.getPrivateKey());
+    //    if (token == null) {
+    //      throw new UnauthorizedException("no auth-token header");
+    //    }
+    return osmanager.createSecret(ncsr.getPrivateKey());
   }
 
   @RequestMapping(value = "/secret/{projectName}/{secretName}", method = RequestMethod.DELETE)
@@ -292,11 +292,11 @@ public class RestAPI {
       @PathVariable("projectName") String projectName)
       throws UnauthorizedException {
     logger.debug("Requested deletion of secret " + secretName);
-    if (token == null) {
-      throw new UnauthorizedException("no auth-token header");
-    }
-    HttpStatus deleteStatus = osmanager.deleteSecret(token, secretName);
-    return new NubomediaDeleteSecretResponse(secretName, projectName, deleteStatus.value());
+    //    if (token == null) {
+    //      throw new UnauthorizedException("no auth-token header");
+    //    }
+    osmanager.deleteSecret(secretName);
+    return new NubomediaDeleteSecretResponse(secretName, projectName, 200);
   }
 
   //  @RequestMapping(value = "/auth", method = RequestMethod.POST)
