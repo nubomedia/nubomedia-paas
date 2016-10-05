@@ -65,8 +65,6 @@ public class AppManager {
   @Autowired private PaaSProperties paaSProperties;
   @Autowired private OpenShiftProperties openShiftProperties;
 
-  @Autowired private VnfmProperties vnfmProperties;
-
   @Value("${openshift.project}")
   private String openshiftProject;
 
@@ -74,12 +72,12 @@ public class AppManager {
   private String token;
 
   public Application createApplication(
-      NubomediaCreateAppRequest request, String user, String projectId, String token)
+      NubomediaCreateAppRequest request, String user, String projectId)
       throws turnServerException, StunServerException, SDKException, DuplicatedException,
           NameStructureException, UnauthorizedException {
-    if (token == null) {
-      throw new UnauthorizedException("No auth-token header");
-    }
+    //    if (token == null) {
+    //      throw new UnauthorizedException("No auth-token header");
+    //    }
     //    if (request.getName().length() > 18) {
     //      throw new NameStructureException("Name is too long");
     //    }
@@ -87,13 +85,13 @@ public class AppManager {
       throw new NameStructureException("Name can't contains dots");
     }
 
-    if (request.getName().contains("_")) {
-      throw new NameStructureException("Name can't contain underscore");
-    }
+    //    if (request.getName().contains("_")) {
+    //      throw new NameStructureException("Name can't contain underscore");
+    //    }
 
-    if (!request.getName().matches("[a-z0-9]+(?:[._-][a-z0-9]+)*")) {
-      throw new NameStructureException("Name must match [a-z0-9]+(?:[._-][a-z0-9]+)*");
-    }
+    //    if (!request.getName().matches("[a-z0-9]+(?:[._-][a-z0-9]+)*")) {
+    //      throw new NameStructureException("Name must match [a-z0-9]+(?:[._-][a-z0-9]+)*");
+    //    }
 
     //    if (!appRepo.findByName(request.getName()).isEmpty()) {
     //      throw new DuplicatedException("Application with " + request.getName() + " already exist");
@@ -257,37 +255,21 @@ public class AppManager {
         logger.info("[PAAS]: CREATE_APP_OS " + new Date().getTime());
         logger.debug("cloudRepositoryPort " + cloudRepositoryPort + " IP " + cloudRepositoryIp);
 
-        try {
-          route =
-              osmanager.buildApplication(
-                  token,
-                  app.getId(),
-                  app.getName(),
-                  app.getOsName(),
-                  app.getGitURL(),
-                  ports,
-                  targetPorts,
-                  app.getProtocols().toArray(new String[0]),
-                  app.getReplicasNumber(),
-                  app.getSecretName(),
-                  vnfrID,
-                  vnfmProperties.getIp(),
-                  vnfmProperties.getPort(),
-                  cloudRepositoryIp,
-                  cloudRepositoryPort,
-                  cdnServerIp);
+        //        try {
+        route =
+            osmanager.buildApplication(app, cloudRepositoryIp, cloudRepositoryPort, cdnServerIp);
 
-        } catch (ResourceAccessException e) {
-          app.setStatus(AppStatus.FAILED);
-          appRepo.save(app);
-        }
-        logger.info("[PAAS]: SCHEDULED_APP_OS " + new Date().getTime());
-      } catch (DuplicatedException e) {
-        app.setRoute(e.getMessage());
-        app.setStatus(AppStatus.DUPLICATED);
+      } catch (ResourceAccessException e) {
+        app.setStatus(AppStatus.FAILED);
         appRepo.save(app);
-        return;
       }
+      logger.info("[PAAS]: SCHEDULED_APP_OS " + new Date().getTime());
+      //      } catch (DuplicatedException e) {
+      //        app.setRoute(e.getMessage());
+      //        app.setStatus(AppStatus.DUPLICATED);
+      //        appRepo.save(app);
+      //        return;
+      //      }
       //app.setRoute(route);
       appRepo.save(app);
     } else if (evt.getAction().equals(Action.ERROR)) {
@@ -356,9 +338,9 @@ public class AppManager {
           id, app.getName(), app.getOsName(), app.getProjectName(), 200);
     }
 
-    HttpStatus resDelete = HttpStatus.BAD_REQUEST;
+    //    HttpStatus resDelete = HttpStatus.BAD_REQUEST;
     try {
-      resDelete = osmanager.deleteApplication(token, app.getOsName());
+      osmanager.deleteApplication(app.getOsName());
     } catch (ResourceAccessException e) {
       logger.info("Application does not exist on the PaaS");
     } catch (Exception e) {
@@ -373,7 +355,7 @@ public class AppManager {
       appRepo.delete(app);
     }
     return new NubomediaDeleteAppResponse(
-        id, app.getName(), app.getOsName(), app.getProjectName(), resDelete.value());
+        id, app.getName(), app.getOsName(), app.getProjectName(), 200);
   }
 
   public NubomediaDeleteAppsProjectResponse deleteApps(String projectId)
@@ -451,7 +433,7 @@ public class AppManager {
       res.setName(app.getName());
       res.setProjectName(app.getProjectName());
       try {
-        res.setLog(osmanager.getBuildLogs(token, app.getName(), app.getOsName()));
+        res.setLog(osmanager.getBuildLogs(app.getOsName()));
       } catch (ResourceAccessException e) {
         app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
         appRepo.save(app);
@@ -460,6 +442,11 @@ public class AppManager {
                 + app.getName()
                 + app.getOsName()
                 + " is not anymore available");
+      } catch (NotFoundException e) {
+        logger.warn("Not found Pod of " + app.getName() + " with name " + app.getOsName());
+        res.setLog("Not found Pod of " + app.getName() + " with name " + app.getOsName());
+        app.setStatus(AppStatus.PAAS_RESOURCE_MISSING);
+        appRepo.save(app);
       }
     }
     return res;
@@ -478,7 +465,7 @@ public class AppManager {
           + app.getStatus()
           + ", logs are not available until the status is RUNNING";
     }
-    return osmanager.getApplicationLog(token, app.getOsName(), podName);
+    return osmanager.getApplicationLog(app.getOsName(), podName);
   }
 
   public String getApplicationLogs(String id, String podName)

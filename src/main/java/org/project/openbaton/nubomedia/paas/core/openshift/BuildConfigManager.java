@@ -19,11 +19,16 @@
 package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import com.google.gson.Gson;
+import com.openshift.internal.restclient.model.BuildConfig;
+import com.openshift.restclient.ClientBuilder;
+import com.openshift.restclient.IClient;
+import com.openshift.restclient.ResourceKind;
+import com.openshift.restclient.model.IResource;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
-import org.project.openbaton.nubomedia.paas.model.openshift.BuildConfig;
 import org.project.openbaton.nubomedia.paas.model.openshift.RouteConfig;
+import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,21 +47,27 @@ public class BuildConfigManager {
   @Autowired private RestTemplate template;
   @Autowired private Gson mapper;
   private Logger logger;
-  private String suffix;
+  //  private String suffix;
+
+  private IClient client;
+
+  @Autowired private OpenShiftProperties openShiftProperties;
 
   @PostConstruct
   public void init() {
     this.logger = LoggerFactory.getLogger(this.getClass());
-    this.suffix = "/buildconfigs/";
+    //    this.suffix = "/buildconfigs/";
+    client =
+        new ClientBuilder(openShiftProperties.getBaseURL())
+            .usingToken(openShiftProperties.getToken())
+            .build();
   }
 
-  public ResponseEntity<String> createBuildConfig(
-      String baseURL,
+  public BuildConfig createBuildConfig(
       String osName,
       String namespace,
       String dockerRepo,
       String gitURL,
-      HttpHeaders authHeader,
       String secretName,
       String mediaServerGID,
       String mediaServerIP,
@@ -64,54 +75,65 @@ public class BuildConfigManager {
       String cloudRepositoryIp,
       String cloudRepoPort,
       String cdnServerIp,
-      RouteConfig routeConfig)
-      throws DuplicatedException, UnauthorizedException {
+      RouteConfig routeConfig) {
 
-    BuildConfig message =
-        MessageBuilderFactory.getBuilderMessage(
-            osName,
-            dockerRepo,
-            gitURL,
-            secretName,
-            mediaServerGID,
-            mediaServerIP,
-            mediaServerPort,
-            cloudRepositoryIp,
-            cloudRepoPort,
-            cdnServerIp,
-            routeConfig);
-    logger.debug("writing message " + mapper.toJson(message, BuildConfig.class));
-    String URL = baseURL + namespace + suffix;
-    HttpEntity<String> buildEntity =
-        new HttpEntity<>(mapper.toJson(message, BuildConfig.class), authHeader);
-    ResponseEntity response = template.exchange(URL, HttpMethod.POST, buildEntity, String.class);
-    logger.debug("Build response: " + response.toString());
+    String buildJson =
+        mapper.toJson(
+            MessageBuilderFactory.getBuilderMessage(
+                osName,
+                namespace,
+                dockerRepo,
+                gitURL,
+                secretName,
+                mediaServerGID,
+                mediaServerIP,
+                mediaServerPort,
+                cloudRepositoryIp,
+                cloudRepoPort,
+                cdnServerIp,
+                routeConfig),
+            org.project.openbaton.nubomedia.paas.model.openshift.BuildConfig.class);
+    BuildConfig buildConfig = client.getResourceFactory().create(buildJson);
 
-    if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
-      throw new DuplicatedException("Application with " + osName + " is already present");
-    }
-    if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    logger.debug("Creating BuildConfig {}", buildConfig);
+    buildConfig = client.create(buildConfig);
+    logger.debug("Created BuildConfig {}", buildConfig);
+    //    logger.debug("writing message " + mapper.toJson(message, BuildConfig.class));
+    //    String URL = baseURL + namespace + suffix;
+    //    HttpEntity<String> buildEntity =
+    //        new HttpEntity<>(mapper.toJson(message, BuildConfig.class), authHeader);
+    //    ResponseEntity response = template.exchange(URL, HttpMethod.POST, buildEntity, String.class);
+    //    logger.debug("Build response: " + response.toString());
+    //
+    //    if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
+    //      throw new DuplicatedException("Application with " + osName + " is already present");
+    //    }
+    //    if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    //
+    //      throw new UnauthorizedException("Invalid or expired token");
+    //    }
 
-      throw new UnauthorizedException("Invalid or expired token");
-    }
-
-    return response;
+    return buildConfig;
   }
 
-  public HttpStatus deleteBuildConfig(
-      String baseURL, String osName, String namespace, HttpHeaders authHeader)
-      throws UnauthorizedException {
-
-    String URL = baseURL + namespace + suffix + osName + "-bc";
-    HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
-    ResponseEntity<String> responseEntity =
-        template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
-
-    if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
-      throw new UnauthorizedException("Invalid or expired token");
-    }
-
-    return responseEntity.getStatusCode();
+  public void deleteBuildConfig(String osName) {
+    logger.debug("Deleting BuildConfig for {}", osName);
+    IResource buildConfig =
+        client
+            .getResourceFactory()
+            .stub(ResourceKind.BUILD_CONFIG, osName + "-bc", openShiftProperties.getProject());
+    client.delete(buildConfig);
+    logger.debug("Deleted BuildConfig for {}", osName);
+    //    String URL = baseURL + namespace + suffix + osName + "-bc";
+    //    HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
+    //    ResponseEntity<String> responseEntity =
+    //        template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
+    //
+    //    if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+    //
+    //      throw new UnauthorizedException("Invalid or expired token");
+    //    }
+    //
+    //    return responseEntity.getStatusCode();
   }
 }

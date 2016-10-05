@@ -26,6 +26,14 @@ public class Metadata {
   private String name;
   private String selfLink;
   private String resourceVersion;
+  private String namespace;
+
+  public Metadata(String name, String selfLink, String resourceVersion, String namespace) {
+    this.name = name;
+    this.selfLink = selfLink;
+    this.resourceVersion = resourceVersion;
+    this.namespace = namespace;
+  }
 
   public Metadata(String name, String selfLink, String resourceVersion) {
     this.name = name;
@@ -57,5 +65,13 @@ public class Metadata {
 
   public void setResourceVersion(String resourceVersion) {
     this.resourceVersion = resourceVersion;
+  }
+
+  public String getNamespace() {
+    return namespace;
+  }
+
+  public void setNamespace(String namespace) {
+    this.namespace = namespace;
   }
 }

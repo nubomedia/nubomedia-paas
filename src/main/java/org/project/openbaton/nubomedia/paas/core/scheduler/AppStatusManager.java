@@ -20,6 +20,7 @@ package org.project.openbaton.nubomedia.paas.core.scheduler;
 
 import org.project.openbaton.nubomedia.paas.core.OpenShiftManager;
 import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
+import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
@@ -64,13 +65,8 @@ public class AppStatusManager {
     for (Application app : applications) {
       if (!app.getStatus().equals(AppStatus.RUNNING))
         logger.trace("Updating Application status of " + app.getName() + " while building");
-      try {
-        app.setStatus(this.getStatus(this.token, app));
-        logger.trace("Updated Application status: " + app);
-      } catch (UnauthorizedException e) {
-        logger.error("There were issues in connecting to OpenShift ");
-        e.printStackTrace();
-      }
+      app.setStatus(this.getStatus(app));
+      logger.trace("Updated Application status: " + app);
       try {
         this.refreshMediaServerGroup(app);
       } catch (Exception e) {
@@ -94,19 +90,18 @@ public class AppStatusManager {
               + app.getOsName()
               + " while running");
       try {
-        app.setStatus(this.getStatus(this.token, app));
+        app.setStatus(this.getStatus(app));
         logger.trace("Updated Application status: " + app);
-        app.setPodList(osmanager.getPodList(this.token, app.getOsName()));
-      } catch (UnauthorizedException e) {
-        logger.error("There were issues in connecting to OpenShift ");
-        e.printStackTrace();
+        app.setPodList(osmanager.getPodList(app.getOsName()));
+      } catch (NotFoundException e) {
+        logger.warn("Not found Pod of " + app.getName() + " with name " + app.getOsName());
       }
     }
     this.appRepo.save(applications);
   }
 
-  private AppStatus getStatus(String token, Application app) throws UnauthorizedException {
-    AppStatus res;
+  private AppStatus getStatus(Application app) {
+    AppStatus res = AppStatus.PAAS_RESOURCE_MISSING;
     logger.debug(
         "application ("
             + app.getId()
@@ -131,17 +126,21 @@ public class AppStatusManager {
           break;
         } else {
           try {
-            res = osmanager.getStatus(token, app.getOsName());
+            res = osmanager.getStatus(app.getOsName());
           } catch (ResourceAccessException e) {
             res = AppStatus.PAAS_RESOURCE_MISSING;
+          } catch (NotFoundException e) {
+            logger.warn("Not found Pod of " + app.getName() + " with name " + app.getOsName());
           }
         }
         break;
       default:
         try {
-          res = osmanager.getStatus(token, app.getOsName());
+          res = osmanager.getStatus(app.getOsName());
         } catch (ResourceAccessException e) {
           res = AppStatus.PAAS_RESOURCE_MISSING;
+        } catch (NotFoundException e) {
+          logger.warn("Not found Pod of " + app.getName() + " with name " + app.getOsName());
         }
         break;
     }

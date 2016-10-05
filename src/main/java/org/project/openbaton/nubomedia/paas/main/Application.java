@@ -47,6 +47,6 @@ public class Application {
     SpringApplication application = new SpringApplication(Application.class);
     application.addListeners(new ApplicationListener());
     ConfigurableApplicationContext context = application.run(args);
-    context.registerShutdownHook();
+    //    context.registerShutdownHook();
   }
 }
