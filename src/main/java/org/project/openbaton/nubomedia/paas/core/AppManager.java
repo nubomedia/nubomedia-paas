@@ -35,21 +35,18 @@ import org.project.openbaton.nubomedia.paas.messages.*;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
-import org.project.openbaton.nubomedia.paas.properties.PaaSProperties;
 import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
-import org.project.openbaton.nubomedia.paas.properties.VnfmProperties;
+import org.project.openbaton.nubomedia.paas.properties.PaaSProperties;
 import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by gca on 24/05/16.
@@ -75,12 +72,7 @@ public class AppManager {
       NubomediaCreateAppRequest request, String user, String projectId)
       throws turnServerException, StunServerException, SDKException, DuplicatedException,
           NameStructureException, UnauthorizedException {
-    //    if (token == null) {
-    //      throw new UnauthorizedException("No auth-token header");
-    //    }
-    //    if (request.getName().length() > 18) {
-    //      throw new NameStructureException("Name is too long");
-    //    }
+
     if (request.getName().contains(".")) {
       throw new NameStructureException("Name can't contains dots");
     }
@@ -241,7 +233,6 @@ public class AppManager {
         }
       }
 
-      String route = null;
       try {
 
         int[] ports = new int[app.getPorts().size()];
@@ -255,22 +246,14 @@ public class AppManager {
         logger.info("[PAAS]: CREATE_APP_OS " + new Date().getTime());
         logger.debug("cloudRepositoryPort " + cloudRepositoryPort + " IP " + cloudRepositoryIp);
 
-        //        try {
-        route =
-            osmanager.buildApplication(app, cloudRepositoryIp, cloudRepositoryPort, cdnServerIp);
+        osmanager.buildApplication(app, cloudRepositoryIp, cloudRepositoryPort, cdnServerIp);
 
       } catch (ResourceAccessException e) {
         app.setStatus(AppStatus.FAILED);
         appRepo.save(app);
       }
       logger.info("[PAAS]: SCHEDULED_APP_OS " + new Date().getTime());
-      //      } catch (DuplicatedException e) {
-      //        app.setRoute(e.getMessage());
-      //        app.setStatus(AppStatus.DUPLICATED);
-      //        appRepo.save(app);
-      //        return;
-      //      }
-      //app.setRoute(route);
+
       appRepo.save(app);
     } else if (evt.getAction().equals(Action.ERROR)) {
       obmanager.deleteDescriptor(mediaServerGroup.getNsdID());
