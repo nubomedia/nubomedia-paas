@@ -57,9 +57,7 @@ public class DeploymentManager {
   @Autowired private RestTemplate template;
   @Autowired private Gson mapper;
   private Logger logger;
-  private String suffix;
   private String podSuffix;
-  private String rcSuffix;
 
   private String kubernetesBaseURL;
 
@@ -70,9 +68,7 @@ public class DeploymentManager {
   @PostConstruct
   private void init() {
     this.logger = LoggerFactory.getLogger(this.getClass());
-    this.suffix = "/deploymentconfigs/";
     this.podSuffix = "/pods/";
-    this.rcSuffix = "/replicationcontrollers/";
     this.kubernetesBaseURL = openShiftProperties.getBaseURL() + "/api/v1/namespaces/";
     client =
         new ClientBuilder(openShiftProperties.getBaseURL())
@@ -86,7 +82,7 @@ public class DeploymentManager {
       List<Integer> ports,
       List<String> protocols,
       int repnumbers) {
-
+    logger.debug("Creating DeploymentConfig ...");
     logger.debug(
         "params arg: "
             + osName
@@ -98,8 +94,6 @@ public class DeploymentManager {
             + protocols
             + " "
             + repnumbers);
-
-    logger.debug("Creating DeploymentConfig ...");
     ModelNode deployNode =
         ModelNode.fromJSONString(
             mapper.toJson(
@@ -120,55 +114,17 @@ public class DeploymentManager {
     logger.debug("Created DeploymentConfig {}", deploymentConfig);
     deploymentConfig = client.create(deploymentConfig);
     logger.debug("Triggered deployment {}", deploymentConfig.getName());
-
-    //    DeploymentConfig message =
-    //        MessageBuilderFactory.getDeployMessage(
-    //            osName, dockerRepo, ports, protocols, repnumbers, namespace);
-    //    logger.debug(mapper.toJson(message, DeploymentConfig.class));
-    //    String URL = baseURL + namespace + suffix;
-    //    HttpEntity<String> deployEntity =
-    //        new HttpEntity<>(mapper.toJson(message, DeploymentConfig.class), authHeader);
-    //    ResponseEntity<String> response =
-    //        template.exchange(URL, HttpMethod.POST, deployEntity, String.class);
-    //    logger.debug("Deployment response: " + response);
-    //
-    //    if (response.getStatusCode().equals(HttpStatus.CONFLICT)) {
-    //      throw new DuplicatedException("Application with " + osName + " is already present");
-    //    }
-    //
-    //    if (response.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-    //
-    //      throw new UnauthorizedException("Invalid or expired token");
-    //    }
-
     return deploymentConfig;
   }
 
   public void deleteDeploymentConfig(String osName) {
-    //      throws UnauthorizedException {
-
-    logger.debug("Deleting deployment config " + osName);
-
+    logger.debug("Deleting deployment config of " + osName);
     IResource deplyoment =
         client
             .getResourceFactory()
             .stub(ResourceKind.DEPLOYMENT_CONFIG, osName + "-dc", openShiftProperties.getProject());
     client.delete(deplyoment);
-    //    String URL = baseURL + namespace + suffix + osName + "-dc";
-    //    HttpEntity<String> deleteEntity = new HttpEntity<>(authHeader);
-    //    ResponseEntity<String> res =
-    //        template.exchange(URL, HttpMethod.DELETE, deleteEntity, String.class);
-
-    //    if (res.getStatusCode() != HttpStatus.OK) {
-    //      logger.debug(res.toString());
-    //    }
-    //
-    //    if (res.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-    //
-    //      throw new UnauthorizedException("Invalid or expired token");
-    //    }
-
-    //    return res.getStatusCode();
+    logger.debug("Deleted deployment config of " + osName);
   }
 
   public void deleteReplicationController(String osName) {
@@ -192,18 +148,7 @@ public class DeploymentManager {
   }
 
   public void deletePods(String osName) {
-    //      throws UnauthorizedException {
-
-    //    HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
-    //    String rcURL = kubernetesBaseURL + namespace + rcSuffix + osName + "-dc-1";
-
-    //    if (!this.existRC(requestEntity, rcURL)) {
-    //      return HttpStatus.OK;
-    //    }
-
     logger.debug("Deleting pods of " + osName);
-    //    ResponseEntity<String> deleteEntity =
-    //        template.exchange(rcURL, HttpMethod.DELETE, requestEntity, String.class);
 
     IList pods = client.get(ResourceKind.POD, openShiftProperties.getProject());
     logger.trace("Pod list: " + pods.toJson());
@@ -216,57 +161,16 @@ public class DeploymentManager {
       }
     }
     logger.debug("Deleted Pods of " + osName);
-    //    if (deleteEntity.getStatusCode() == HttpStatus.OK) {
-    //      String podsURL = kubernetesBaseURL + namespace + podSuffix;
-    //      Pods pods = this.getPodsList(podsURL, requestEntity);
-    //      for (String pod : pods.getPodNames()) {
-    //
-    //        if (pod.contains(osName)) {
-    //          deleteEntity =
-    //              template.exchange(podsURL + pod, HttpMethod.DELETE, requestEntity, String.class);
-    //          if (deleteEntity.getStatusCode() != HttpStatus.OK) {
-    //            logger.debug(
-    //                "Error HTTP:"
-    //                    + deleteEntity.getStatusCode()
-    //                    + " for POD "
-    //                    + pod
-    //                    + " response "
-    //                    + deleteEntity.toString());
-    //            break;
-    //          }
-    //        }
-    //      }
-    //    } else if (deleteEntity
-    //        .getStatusCode()
-    //        .equals(
-    //            HttpStatus
-    //                .NOT_FOUND)) { //means that you are deleting an application before the build was complete
-    //      logger.debug("Status code " + deleteEntity.getStatusCode());
-    //      return HttpStatus.OK;
-    //    }
-
-    //    if (deleteEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-    //
-    //      throw new UnauthorizedException("Invalid or expired token");
-    //    }
-    //
-    //    return deleteEntity.getStatusCode();
   }
 
   public AppStatus getDeployStatus(String osName) {
-
     AppStatus res =
         AppStatus
             .RUNNING; //if deploy pod will not exist is because the application is already deployed or the build is already failed :P
-    //    String podsURL = kubernetesBaseURL + namespace + podSuffix;
-    //    HttpEntity<String> podEntity = new HttpEntity<>(authHeader);
     List<Pod> podList = this.getPodsList();
 
     for (Pod pod : podList) {
       if (pod.getName().equals(osName + "-dc-1-deploy")) {
-        //        ResponseEntity<String> deployPod =
-        //            template.exchange(podsURL + podName, HttpMethod.GET, podEntity, String.class);
-        //        Pod targetPod = mapper.fromJson(deployPod.getBody(), Pod.class);
         switch (pod.getStatus()) {
           case "Running":
             res = AppStatus.DEPLOYNG;
@@ -280,17 +184,12 @@ public class DeploymentManager {
         }
       }
     }
-
     return res;
   }
 
   public List<String> getPodNameList(String osName) {
-    //      throws UnauthorizedException {
-    //    String podsURL = kubernatesBaseURL + namespace + podSuffix;
     List<Pod> podList = this.getPodsList();
-    logger.debug("POD LIST is " + podList.toString());
     List<String> res = new ArrayList<>();
-
     for (Pod pod : podList) {
       logger.trace("Current pod is " + pod.getName());
       CharSequence sequence = osName + "-dc-1";
@@ -302,8 +201,7 @@ public class DeploymentManager {
         }
       }
     }
-
-    logger.trace("RES is " + res.toString());
+    logger.trace("Pod names of " + osName + " are " + res.toString());
     return res;
   }
 
@@ -313,21 +211,6 @@ public class DeploymentManager {
     HttpHeaders authHeader = new HttpHeaders();
     authHeader.add("Authorization", "Bearer " + openShiftProperties.getToken());
     HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
-    /*        String targetPod = null;
-    Pods podList = this.getPodsList(podsURL,requestEntity);
-    logger.debug("POD LIST IS " + podList.toString());
-
-    for(String pod : podList.getPodNames()){
-        logger.debug("CURRENT POD IS " + pod);
-        CharSequence sequence = appName + "-dc-1";
-        if (pod.contains(sequence)) {
-            logger.debug("Running with pod " + pod);
-            if (!pod.contains("bc-1-build") || !pod.contains("-deploy")) {
-                targetPod = pod;
-                logger.debug("Target pod is " + targetPod);
-            }
-        }
-    }*/
 
     String targetUrl = podsURL + podName + "/log";
     ResponseEntity<String> logEntity = null;
@@ -373,29 +256,24 @@ public class DeploymentManager {
     }
 
     if (createHpa.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
       throw new UnauthorizedException("Invalid or expired token");
     }
-
     return mapper.fromJson(createHpa.getBody(), HorizontalPodAutoscaler.class);
   }
 
   private List<Pod> getPodsList() {
+    logger.debug("Requesting list of all pods ...");
     IList pods = client.get(ResourceKind.POD, openShiftProperties.getProject());
     List<Pod> podList = new ArrayList<>();
     for (IResource pod : pods.getItems()) {
       logger.info(pod.toJson());
       podList.add((Pod) pod);
     }
-    //    ResponseEntity<String> pods =
-    //        template.exchange(podsURL, HttpMethod.GET, requestEntity, String.class);
-    //    logger.trace(pods.getBody());
-    //    return mapper.fromJson(pods.getBody(), Pods.class);
+    logger.debug("Got list of all pods:" + podList.toString());
     return podList;
   }
 
   private boolean existRC(HttpEntity<String> reqEntity, String rcURL) throws UnauthorizedException {
-
     try {
       ResponseEntity<String> rcEntity =
           template.exchange(rcURL, HttpMethod.GET, reqEntity, String.class);

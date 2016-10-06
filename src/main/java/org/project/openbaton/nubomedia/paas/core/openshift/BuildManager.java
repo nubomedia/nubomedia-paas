@@ -25,6 +25,7 @@ import com.openshift.restclient.IClient;
 import com.openshift.restclient.ResourceKind;
 import com.openshift.restclient.model.IList;
 import com.openshift.restclient.model.IResource;
+import com.openshift.restclient.model.build.IBuildStatus;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
@@ -50,7 +51,6 @@ import java.util.Collection;
 public class BuildManager {
 
   @Autowired private BuildConfigManager buildConfigManager;
-  @Autowired private BuildStatusManager statusManager;
 
   @Autowired private RestTemplate template;
 
@@ -98,22 +98,6 @@ public class BuildManager {
             + gitURL
             + " with secret "
             + secretName);
-    //    return buildConfigManager.createBuildConfig(
-    //        baseURL,
-    //        osName,
-    //        namespace,
-    //        dockerRepo,
-    //        gitURL,
-    //        authHeader,
-    //        secretName,
-    //        mediaServerGID,
-    //        mediaServerIP,
-    //        mediaServerPort,
-    //        cloudRepositoryIp,
-    //        cloudRepoPort,
-    //        cdnServerIp,
-    //        routeConfig);
-
     return buildConfigManager.createBuildConfig(
         osName,
         openShiftProperties.getProject(),
@@ -131,11 +115,6 @@ public class BuildManager {
 
   public void deleteBuilds(String osName) throws UnauthorizedException {
     logger.info("Deleting all builds of " + osName + "-bc");
-    //    buildConfigManager.deleteBuildConfig(osName);
-
-    //    if (!res.is2xxSuccessful()) {
-    //      logger.debug("Error deleting bc");
-    //    }
     Collection<Build> buildsToRemove = new ArrayList<>();
     Collection<Build> builds = getBuilds();
     for (Build build : builds) {
@@ -149,27 +128,16 @@ public class BuildManager {
       client.delete(buildToRemove);
       logger.debug("Deleted build: " + buildToRemove);
     }
-    //    IResource build =
-    //        client
-    //            .getResourceFactory()
-    //            .stub(ResourceKind.BUILD, osName + "-bc", openShiftProperties.getProject());
     logger.info("Deleted all builds of " + osName + "-bc");
   }
 
   public AppStatus getApplicationStatus(String osName) throws NotFoundException {
-    AppStatus status = statusManager.getBuildStatus(osName);
-    logger.info("Status:" + status);
+    AppStatus status = getBuildStatus(osName);
+    logger.debug("Got status of " + osName + ":" + status);
     return status;
   }
 
   public String getBuildLogs(String osName) throws NotFoundException, UnauthorizedException {
-    String logs = retrieveLogs(osName);
-    logger.info("Build for " + osName + " logs are " + logs);
-    return logs;
-  }
-
-  public String retrieveLogs(String osName) throws NotFoundException, UnauthorizedException {
-
     Build target = this.retrieveBuild(osName);
     HttpHeaders authHeader = new HttpHeaders();
     authHeader.add("Authorization", "Bearer " + openShiftProperties.getToken());
@@ -191,15 +159,14 @@ public class BuildManager {
       logger.debug("Error retrieving logs " + res.getStatusCode() + " response " + res.toString());
     }
     if (res.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-
       throw new UnauthorizedException("Invalid or expired token");
     }
 
+    logger.debug("Build logs of " + osName + " are " + res.getBody());
     return res.getBody();
   }
 
   public Build retrieveBuild(String osName) throws NotFoundException {
-    //    Build res = client.get(ResourceKind.BUILD, osName + "-bc", openShiftProperties.getProject());
     Build res = null;
     Collection<Build> buildList = this.getBuilds();
 
@@ -225,5 +192,29 @@ public class BuildManager {
       buildList.add((Build) resource);
     }
     return buildList;
+  }
+
+  public AppStatus getBuildStatus(String osName)
+      throws org.project.openbaton.nubomedia.paas.exceptions.NotFoundException {
+
+    AppStatus res = null;
+    IBuildStatus status = retrieveBuild(osName).getBuildStatus();
+    if (status != null) {
+      switch (status.getPhase()) {
+        case "Running":
+          res = AppStatus.BUILDING;
+          break;
+        case "Failed":
+          res = AppStatus.FAILED;
+          break;
+        case "Complete":
+          res = AppStatus.BUILD_OK;
+          break;
+      }
+    } else {
+      res = AppStatus.PAAS_RESOURCE_MISSING;
+    }
+
+    return res;
   }
 }

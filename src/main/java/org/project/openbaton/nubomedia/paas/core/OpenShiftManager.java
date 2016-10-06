@@ -17,25 +17,13 @@
 package org.project.openbaton.nubomedia.paas.core;
 
 import com.google.gson.Gson;
-import com.openshift.internal.restclient.model.BuildConfig;
-import com.openshift.internal.restclient.model.DeploymentConfig;
-import com.openshift.internal.restclient.model.Route;
-import com.openshift.internal.restclient.model.properties.ResourcePropertiesRegistry;
-import com.openshift.restclient.ClientBuilder;
-import com.openshift.restclient.IClient;
-import com.openshift.restclient.ResourceKind;
-import com.openshift.restclient.model.*;
-import com.openshift.restclient.model.route.IRoute;
-import org.jboss.dmr.ModelNode;
+import com.openshift.restclient.model.IImageStream;
 import org.project.openbaton.nubomedia.paas.core.openshift.*;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
-import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
-import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.openshift.RouteConfig;
-import org.project.openbaton.nubomedia.paas.model.openshift.ServiceConfig;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.project.openbaton.nubomedia.paas.properties.VnfmProperties;
@@ -43,15 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by maa on 27/09/2015.
@@ -72,8 +56,6 @@ public class OpenShiftManager {
 
   @Autowired private VnfmProperties vnfmProperties;
 
-  private IClient client;
-
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @Value("${openshift.keystore}")
@@ -83,11 +65,6 @@ public class OpenShiftManager {
   private void init() throws IOException {
 
     System.setProperty("javax.net.ssl.trustStore", openshiftKeystore);
-    //
-    //    logger.info(openShiftProperties.getToken());
-    //    logger.info(openShiftProperties.getBaseURL());
-    //    logger.info(openshiftKeystore);
-
     //    try {
     //      KeyStore ks = KeyStore.getInstance("JKS");
     //      ks.load(new FileInputStream(openshiftKeystore), null);
@@ -103,33 +80,13 @@ public class OpenShiftManager {
     //    }
     //
 
-    client =
-        new ClientBuilder(openShiftProperties.getBaseURL())
-            .usingToken(openShiftProperties.getToken())
-            //              .sslCertificate("nubomedia", null)
-            //                              (X509Certificate) javax.security.cert.X509Certificate.getInstance(new FileInputStream(new File(openshiftKeystore))))
-            .build();
-
-    IList list = client.get(ResourceKind.SERVICE, openShiftProperties.getProject());
-    for (IResource resource : list.getItems()) {
-      logger.info(resource.toJson());
-    }
-    IList list1 = client.get(ResourceKind.BUILD, openShiftProperties.getProject());
-    logger.info(list1.toJson());
-    for (IResource resource : list.getItems()) {
-      logger.trace(resource.toJson());
-    }
-    IList list2 = client.get(ResourceKind.REPLICATION_CONTROLLER, openShiftProperties.getProject());
-    logger.info(list2.toJson());
-    for (IResource resource : list.getItems()) {
-      logger.trace(resource.toJson());
-    }
+    //    client =
+    //        new ClientBuilder(openShiftProperties.getBaseURL())
+    //            .usingToken(openShiftProperties.getToken())
+    //            //              .sslCertificate("nubomedia", null)
+    //            //                              (X509Certificate) javax.security.cert.X509Certificate.getInstance(new FileInputStream(new File(openshiftKeystore))))
+    //            .build();
   }
-
-  //  public String authenticate(String username, String password) throws UnauthorizedException {
-  //
-  //    return this.authManager.authenticate(openShiftProperties.getBaseURL(), username, password);
-  //  }
 
   public String buildApplication(
       Application application,
@@ -144,8 +101,6 @@ public class OpenShiftManager {
             + openShiftProperties.getProject());
 
     IImageStream imageStream = imageStreamManager.crateImageStream(application.getOsName());
-
-    logger.info(imageStream.toJson());
 
     RouteConfig routeConfig =
         MessageBuilderFactory.getRouteMessage(
@@ -174,8 +129,6 @@ public class OpenShiftManager {
         application.getProtocols(),
         application.getReplicasNumber());
 
-    //    IService service = client.getResourceFactory().stub(ResourceKind.SERVICE, osName, openShiftProperties.getProject());
-
     serviceManager.makeService(
         application.getOsName(),
         application.getPorts(),
@@ -184,134 +137,37 @@ public class OpenShiftManager {
 
     routeManager.makeRoute(routeConfig);
 
-    //    ResponseEntity<String> appBuilEntity =
-    //        imageStreamManager.makeImageStream(
-    //            openshiftBaseURL, osName, openShiftProperties.getProject(), creationHeader);
-    //    if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
-    //      logger.debug("Failed creation of imagestream " + appBuilEntity.toString());
-    //      return appBuilEntity.getBody();
-    //    }
-
-    //    ImageStreamConfig isConfig = mapper.fromJson(appBuilEntity.getBody(), ImageStreamConfig.class);
-    //
-
-    //    appBuilEntity =
-    //            buildManager.createBuild(
-    //            openshiftBaseURL,
-    //            osName,
-    //            openShiftProperties.getProject(),
-    //            gitURL,
-    //            isConfig.getStatus().getDockerImageRepository(),
-    //            creationHeader,
-    //            secretName,
-    //            mediaServerGID,
-    //            vnfmIp,
-    //            vnfmPort,
-    //            cloudRepositoryIp,
-    //            cloudRepositoryPort,
-    //            cdnServerIp,
-    //            routeConfig);
-    //    if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
-    //      logger.debug("Failed creation of buildconfig " + appBuilEntity.toString());
-    //      return appBuilEntity.getBody();
-    //    }
-    //
-    //    appBuilEntity =
-    //        deploymentManager.makeDeployment(
-    //            openshiftBaseURL,
-    //            osName,
-    //            isConfig.getStatus().getDockerImageRepository(),
-    //            targetPorts,
-    //            protocols,
-    //            replicasnumber,
-    //            openShiftProperties.getProject(),
-    //            creationHeader);
-    //    if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
-    //      logger.debug("Failed creation of deploymentconfig " + appBuilEntity.toString());
-    //      return appBuilEntity.getBody();
-    //    }
-    //
-    //    appBuilEntity =
-    //        serviceManager.makeService(
-    //            kubernetesBaseURL,
-    //            osName,
-    //            openShiftProperties.getProject(),
-    //            ports,
-    //            targetPorts,
-    //            protocols,
-    //            creationHeader);
-    //    if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
-    //      logger.debug("Failed creation of service " + appBuilEntity.toString());
-    //      return appBuilEntity.getBody();
-    //    }
-    //
-    //    appBuilEntity =
-    //        routeManager.makeRoute(
-    //            openshiftBaseURL,
-    //            osName,
-    //            openShiftProperties.getProject(),
-    //            creationHeader,
-    //            routeConfig);
-    //    if (!appBuilEntity.getStatusCode().is2xxSuccessful()) {
-    //      logger.debug("Failed creation of route " + appBuilEntity.toString());
-    //      return appBuilEntity.getBody();
-    //    }
-    //    RouteConfig route = mapper.fromJson(appBuilEntity.getBody(), RouteConfig.class);
-    //    logger.debug("Created Route " + route.getSpec().getHost());
-    //
     return routeConfig.getSpec().getHost();
   }
 
   public void deleteApplication(String osName) throws UnauthorizedException {
-
-    //    HttpHeaders deleteHeader = new HttpHeaders();
-    //    deleteHeader.add("Authorization", "Bearer " + token);
-
     imageStreamManager.deleteImageStream(osName);
 
     buildManager.deleteBuilds(osName);
 
     buildConfigManager.deleteBuildConfig(osName);
 
-    //    HttpStatus res =
     deploymentManager.deleteDeploymentConfig(osName);
-    //    if (!res.is2xxSuccessful()) return res;
 
     deploymentManager.deleteReplicationController(osName);
 
-    //    res =
     deploymentManager.deletePods(osName);
-    //    if (!res.is2xxSuccessful() && !res.equals(HttpStatus.NOT_FOUND)) return res;
-    //    if (res.equals(HttpStatus.NOT_FOUND))
-    //      logger.debug("No Replication controller, build probably failed");
 
-    //    res =
     serviceManager.deleteService(osName);
-    //    if (!res.is2xxSuccessful()) return res;
 
-    //    res =
     routeManager.deleteRoute(osName);
-
-    //    return res;
   }
 
   public String createSecret(String privateKey) {
-    //    HttpHeaders authHeader = new HttpHeaders();
-    //    authHeader.add("Authorization", "Bearer " + token);
     return secretManager.createSecret(privateKey);
   }
 
   public void deleteSecret(String secretName) {
-    //    HttpHeaders authHeader = new HttpHeaders();
-    //    authHeader.add("Authorization", "Bearer " + token);
     secretManager.deleteSecret(secretName);
   }
 
   public AppStatus getStatus(String osName) throws NotFoundException {
     AppStatus res = AppStatus.INITIALISED;
-    //    HttpHeaders authHeader = new HttpHeaders();
-    //    authHeader.add("Authorization", "Bearer " + token);
-
     AppStatus status = buildManager.getApplicationStatus(osName);
     try {
       switch (status) {
@@ -343,9 +199,6 @@ public class OpenShiftManager {
   }
 
   public List<String> getPodList(String osName) throws NotFoundException {
-    //    HttpHeaders authHeader = new HttpHeaders();
-    //    authHeader.add("Authorization", "Bearer " + token);
-    //    HttpEntity<String> requestEntity = new HttpEntity<>(authHeader);
     return deploymentManager.getPodNameList(osName);
   }
 }
