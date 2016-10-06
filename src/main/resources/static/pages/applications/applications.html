@@ -440,12 +440,20 @@
                    Scale out trigger
                 </span>
 
-                <span class="input__subtitle">
+                <span class="input__subtitle" ng-if="key == 'scaleInOut'">
                   <i
                     popover="{{textInfo}}"
                     popover-placement="bottom"
                     popover-trigger="mouseenter"
                     ng-mouseover="getInfos(key)">Tip: Hover me</i>
+                </span>
+
+                <span class="input__subtitle" ng-if="key == 'scale_out_threshold'">
+                  <i
+                    class="popover-custom"
+                    data-toggle="popover"
+                    popover-trigger="click"
+                    ng-mouseover="getInfos(key)">Tip: Toggle me</i>
                 </span>
               </label>
               <input
@@ -458,6 +466,8 @@
 
           </div>
         </div><!-- /In/OUT scale -->
+
+
 
         <!-- QoS -->
         <div class="form-group input">
