@@ -118,12 +118,26 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       $scope.infosObj = angular.copy(res.data);
     });
 
+  function createCustomPopover() {
+    $(".popover-custom[data-toggle=popover]").popover({
+      html: true,
+      placement: 'bottom',
+      content: function() {
+        return '<a href="http://nubomedia.readthedocs.io/en/latest/paas/autoscaling/" target="_blank">http://nubomedia.readthedocs.io/en/latest/paas/autoscaling/</a>';
+      }
+    });
+  }
+
   $scope.getInfos = function(key) {
     console.log($scope.infosObj[key]);
     console.log(key);
     $scope.textInfo = $scope.infosObj[key];
+    if (key === 'scale_out_threshold') {
+      createCustomPopover();
+    }
     return $scope.textInfo;
   };
+
   $scope.privateKeyReq = {
     projectName: 'nubomedia',
     privateKey: ''
