@@ -59,7 +59,7 @@ public class Application {
   private boolean cdnConnector;
   private boolean cloudRepository;
 
-  private int scaleInOut;
+  private int scaleOutLimit;
 
   private double scaleOutThreshold;
 
@@ -69,17 +69,26 @@ public class Application {
 
   @JsonIgnore private boolean resourceOK;
 
-  @ElementCollection(fetch = FetchType.EAGER)
-  private List<Integer> targetPorts;
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  private List<Port> ports;
 
-  @ElementCollection(fetch = FetchType.EAGER)
-  private List<Integer> ports;
-
-  @ElementCollection(fetch = FetchType.EAGER)
-  private List<String> protocols;
+  //  @ElementCollection(fetch = FetchType.EAGER)
+  //  private List<Integer> targetPorts;
+  //
+  //  @ElementCollection(fetch = FetchType.EAGER)
+  //  private List<Integer> ports;
+  //
+  //  @ElementCollection(fetch = FetchType.EAGER)
+  //  private List<String> protocols;
 
   @ElementCollection(fetch = FetchType.EAGER)
   private List<String> podList;
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  private List<SupportingService> services;
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  private List<EnvironmentVariable> envVars;
 
   @OneToOne(cascade = CascadeType.ALL)
   private MediaServerGroup mediaServerGroup;
@@ -94,13 +103,10 @@ public class Application {
       String gitURL,
       boolean cdnConnector,
       boolean cloudRepository,
-      int scaleInOut,
+      int scaleOutLimit,
       double scaleOutThreshold,
       String createdBy,
       Date createdAt,
-      List<Integer> targetPorts,
-      List<Integer> ports,
-      List<String> protocols,
       List<String> podList,
       int replicasNumber,
       String secretName,
@@ -114,20 +120,20 @@ public class Application {
     this.gitURL = gitURL;
     this.cdnConnector = cdnConnector;
     this.cloudRepository = cloudRepository;
-    this.scaleInOut = scaleInOut;
+    this.scaleOutLimit = scaleOutLimit;
     this.scaleOutThreshold = scaleOutThreshold;
     this.createdBy = createdBy;
     this.createdAt = createdAt;
-    this.targetPorts = targetPorts;
+    //    this.targetPorts = targetPorts;
 
-    if (ports == null) {
-      this.ports = targetPorts;
-    } else {
-      this.ports = ports;
-    }
+    //    if (ports == null) {
+    //      this.ports = targetPorts;
+    //    } else {
+    //      this.ports = ports;
+    //    }
 
     this.podList = podList;
-    this.protocols = protocols;
+    //    this.protocols = protocols;
     this.replicasNumber = replicasNumber;
     this.secretName = secretName;
     this.status = AppStatus.CREATED;
@@ -233,29 +239,29 @@ public class Application {
     this.resourceOK = resourceOK;
   }
 
-  public List<Integer> getTargetPorts() {
-    return targetPorts;
-  }
-
-  public void setTargetPorts(List<Integer> targetPorts) {
-    this.targetPorts = targetPorts;
-  }
-
-  public List<Integer> getPorts() {
-    return ports;
-  }
-
-  public void setPorts(List<Integer> ports) {
-    this.ports = ports;
-  }
-
-  public List<String> getProtocols() {
-    return protocols;
-  }
-
-  public void setProtocols(List<String> protocols) {
-    this.protocols = protocols;
-  }
+  //  public List<Integer> getTargetPorts() {
+  //    return targetPorts;
+  //  }
+  //
+  //  public void setTargetPorts(List<Integer> targetPorts) {
+  //    this.targetPorts = targetPorts;
+  //  }
+  //
+  //  public List<Integer> getPorts() {
+  //    return ports;
+  //  }
+  //
+  //  public void setPorts(List<Integer> ports) {
+  //    this.ports = ports;
+  //  }
+  //
+  //  public List<String> getProtocols() {
+  //    return protocols;
+  //  }
+  //
+  //  public void setProtocols(List<String> protocols) {
+  //    this.protocols = protocols;
+  //  }
 
   public List<String> getPodList() {
     return podList;
@@ -297,12 +303,12 @@ public class Application {
     this.cloudRepository = cloudRepository;
   }
 
-  public int getScaleInOut() {
-    return scaleInOut;
+  public int getScaleOutLimit() {
+    return scaleOutLimit;
   }
 
-  public void setScaleInOut(int scaleInOut) {
-    this.scaleInOut = scaleInOut;
+  public void setScaleOutLimit(int scaleOutLimit) {
+    this.scaleOutLimit = scaleOutLimit;
   }
 
   public double getScaleOutThreshold() {
@@ -377,6 +383,30 @@ public class Application {
     this.stunServerPort = stunServerPort;
   }
 
+  public List<SupportingService> getServices() {
+    return services;
+  }
+
+  public void setServices(List<SupportingService> services) {
+    this.services = services;
+  }
+
+  public List<EnvironmentVariable> getEnvVars() {
+    return envVars;
+  }
+
+  public void setEnvVars(List<EnvironmentVariable> envVars) {
+    this.envVars = envVars;
+  }
+
+  public List<Port> getPorts() {
+    return ports;
+  }
+
+  public void setPorts(List<Port> ports) {
+    this.ports = ports;
+  }
+
   @Override
   public String toString() {
     return "Application{"
@@ -435,8 +465,8 @@ public class Application {
         + cdnConnector
         + ", cloudRepository="
         + cloudRepository
-        + ", scaleInOut="
-        + scaleInOut
+        + ", scaleOutLimit="
+        + scaleOutLimit
         + ", scaleOutThreshold="
         + scaleOutThreshold
         + ", createdBy='"
@@ -446,14 +476,14 @@ public class Application {
         + createdAt
         + ", resourceOK="
         + resourceOK
-        + ", targetPorts="
-        + targetPorts
         + ", ports="
         + ports
-        + ", protocols="
-        + protocols
         + ", podList="
         + podList
+        + ", services="
+        + services
+        + ", envVars="
+        + envVars
         + ", mediaServerGroup="
         + mediaServerGroup
         + '}';

@@ -27,7 +27,7 @@ public class Container {
 
   private String name;
   private String image;
-  private Port[] ports;
+  private List<Port> ports;
   private List<ContainerVolume> volumeMounts;
 
   public static class Port {
@@ -58,14 +58,15 @@ public class Container {
     }
   }
 
-  public Container(String name, String image, Port[] ports, List<ContainerVolume> volumeMounts) {
+  public Container(
+      String name, String image, List<Port> ports, List<ContainerVolume> volumeMounts) {
     this.name = name;
     this.image = image;
     this.ports = ports;
     this.volumeMounts = volumeMounts;
   }
 
-  public Container(String name, String image, Port[] ports) {
+  public Container(String name, String image, List<Port> ports) {
     this.name = name;
     this.image = image;
     this.ports = ports;
@@ -89,11 +90,11 @@ public class Container {
     this.image = image;
   }
 
-  public Port[] getPorts() {
+  public List<Port> getPorts() {
     return ports;
   }
 
-  public void setPorts(Port[] ports) {
+  public void setPorts(List<Port> ports) {
     this.ports = ports;
   }
 

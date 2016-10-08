@@ -20,6 +20,7 @@ package org.project.openbaton.nubomedia.paas.core.openshift;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.project.openbaton.nubomedia.paas.model.persistence.EnvironmentVariable;
 import org.project.openbaton.nubomedia.paas.model.openshift.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,7 +47,7 @@ public class OpenshiftConfiguration {
         .registerTypeAdapter(Status.class, new StatusDeserializer())
         .registerTypeAdapter(Pod.class, new PodDeserializer())
         .registerTypeAdapter(Pods.class, new PodsDeserializer())
-        .registerTypeAdapter(EnviromentVariable.class, new EnvironmentVariableSerializer())
+        .registerTypeAdapter(EnvironmentVariable.class, new EnvironmentVariableSerializer())
         .disableHtmlEscaping()
         .create();
   }

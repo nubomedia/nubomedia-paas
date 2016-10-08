@@ -18,6 +18,8 @@
 
 package org.project.openbaton.nubomedia.paas.model.openshift;
 
+import java.util.List;
+
 /**
  * Created by maa on 25/09/2015.
  */
@@ -25,7 +27,7 @@ public class ServiceSpec {
 
   private Selector selector;
 
-  private ServicePort[] ports;
+  private List<ServicePort> ports;
 
   public static class ServicePort {
     String protocol;
@@ -77,7 +79,7 @@ public class ServiceSpec {
 
   public ServiceSpec() {}
 
-  public ServiceSpec(Selector selector, ServicePort[] ports) {
+  public ServiceSpec(Selector selector, List<ServicePort> ports) {
     this.selector = selector;
     this.ports = ports;
   }
@@ -90,11 +92,11 @@ public class ServiceSpec {
     this.selector = selector;
   }
 
-  public ServicePort[] getPorts() {
+  public List<ServicePort> getPorts() {
     return ports;
   }
 
-  public void setPorts(ServicePort[] ports) {
+  public void setPorts(List<ServicePort> ports) {
     this.ports = ports;
   }
 }

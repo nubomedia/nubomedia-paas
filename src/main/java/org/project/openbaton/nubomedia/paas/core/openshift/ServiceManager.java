@@ -28,6 +28,7 @@ import com.openshift.restclient.model.IService;
 import org.jboss.dmr.ModelNode;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.model.openshift.ServiceConfig;
+import org.project.openbaton.nubomedia.paas.model.persistence.Port;
 import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,20 +63,19 @@ public class ServiceManager {
             .build();
   }
 
-  public IService makeService(
-      String osName, List<Integer> ports, List<Integer> targetPorts, List<String> protocols) {
+  public IService makeService(String osName, List<Port> ports) {
 
-    ModelNode serivceNode =
+    ModelNode serviceNode =
         ModelNode.fromJSONString(
             mapper.toJson(
                 MessageBuilderFactory.getServiceMessage(
-                    openShiftProperties.getProject(), osName, ports, targetPorts, protocols),
+                    openShiftProperties.getProject(), osName, ports),
                 ServiceConfig.class));
     Map propertyServiceKeys =
         ResourcePropertiesRegistry.getInstance().get("v1", ResourceKind.SERVICE);
     IService service =
         new com.openshift.internal.restclient.model.Service(
-            serivceNode, client, propertyServiceKeys);
+            serviceNode, client, propertyServiceKeys);
     logger.debug("Created SerivceConfig {}", service);
     service = client.create(service);
     logger.debug("Triggered Serivce creation {}", service);

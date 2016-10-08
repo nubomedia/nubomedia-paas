@@ -18,6 +18,8 @@
 
 package org.project.openbaton.nubomedia.paas.model.openshift;
 
+import org.project.openbaton.nubomedia.paas.model.persistence.EnvironmentVariable;
+
 /**
  * Created by maa on 25/09/2015.
  */
@@ -27,10 +29,10 @@ public class DockerBuildStrategy implements BuildStrategy {
   private DockerStrategy dockerStrategy;
 
   public static class DockerStrategy {
-    EnviromentVariable[] env;
+    EnvironmentVariable[] env;
     BuildElements from;
 
-    public DockerStrategy(EnviromentVariable[] variables, BuildElements from) {
+    public DockerStrategy(EnvironmentVariable[] variables, BuildElements from) {
       this.env = variables;
       this.from = from;
     }
@@ -45,11 +47,11 @@ public class DockerBuildStrategy implements BuildStrategy {
       this.from = from;
     }
 
-    public EnviromentVariable[] getVariables() {
+    public EnvironmentVariable[] getVariables() {
       return env;
     }
 
-    public void setVariables(EnviromentVariable[] variables) {
+    public void setVariables(EnvironmentVariable[] variables) {
       this.env = variables;
     }
   }
