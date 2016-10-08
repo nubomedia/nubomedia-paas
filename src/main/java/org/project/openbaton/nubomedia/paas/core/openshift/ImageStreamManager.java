@@ -55,11 +55,23 @@ public class ImageStreamManager {
             .build();
   }
 
-  public IImageStream crateImageStream(String osName) {
+  public IImageStream createImageStream(String osName) {
     IImageStream is =
         client
             .getResourceFactory()
             .stub(ResourceKind.IMAGE_STREAM, osName, openShiftProperties.getProject());
+    logger.debug("Creating imagestream {}", is);
+    is = client.create(is);
+    logger.debug("Generated imagestream {}", is);
+    return is;
+  }
+
+  public IImageStream createImageStream(String osName, String dockerUrl) {
+    IImageStream is =
+        client
+            .getResourceFactory()
+            .stub(ResourceKind.IMAGE_STREAM, osName, openShiftProperties.getProject());
+    is.setDockerImageRepository(dockerUrl);
     logger.debug("Creating imagestream {}", is);
     is = client.create(is);
     logger.debug("Generated imagestream {}", is);

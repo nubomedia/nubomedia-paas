@@ -21,16 +21,17 @@ package org.project.openbaton.nubomedia.paas.model.openshift;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import org.project.openbaton.nubomedia.paas.model.persistence.EnvironmentVariable;
 
 import java.io.IOException;
 
 /**
  * Created by maa on 26.01.16.
  */
-public class EnvironmentVariableSerializer extends TypeAdapter<EnviromentVariable> {
+public class EnvironmentVariableSerializer extends TypeAdapter<EnvironmentVariable> {
 
   @Override
-  public void write(JsonWriter out, EnviromentVariable value) throws IOException {
+  public void write(JsonWriter out, EnvironmentVariable value) throws IOException {
     if (value.getValue() == null) {
       return;
     } else {
@@ -44,9 +45,9 @@ public class EnvironmentVariableSerializer extends TypeAdapter<EnviromentVariabl
   }
 
   @Override
-  public EnviromentVariable read(JsonReader in) throws IOException {
+  public EnvironmentVariable read(JsonReader in) throws IOException {
 
-    EnviromentVariable env = new EnviromentVariable();
+    EnvironmentVariable env = new EnvironmentVariable();
 
     in.beginObject();
     while (in.hasNext()) {

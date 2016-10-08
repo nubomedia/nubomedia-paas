@@ -16,36 +16,15 @@
  *
  */
 
-package org.project.openbaton.nubomedia.paas.model.openshift;
+package org.project.openbaton.nubomedia.paas.repository.service;
+
+import org.project.openbaton.nubomedia.paas.model.persistence.Application;
+import org.project.openbaton.nubomedia.paas.model.persistence.SupportingService;
 
 /**
- * Created by maa on 08.10.15.
+ * Created by mob on 04.09.15.
  */
-public class EnviromentVariable {
+public interface ServiceRepositoryCustom {
 
-  private String name;
-  private String value;
-
-  public EnviromentVariable(String name, String value) {
-    this.name = name;
-    this.value = value;
-  }
-
-  public EnviromentVariable() {}
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
+  SupportingService findFirstByServiceIdAndProjectId(String id, String projectId);
 }

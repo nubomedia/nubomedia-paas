@@ -28,10 +28,13 @@ import com.openshift.restclient.model.IList;
 import com.openshift.restclient.model.IResource;
 import org.jboss.dmr.ModelNode;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
+import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.openshift.HorizontalPodAutoscaler;
+import org.project.openbaton.nubomedia.paas.model.persistence.EnvironmentVariable;
+import org.project.openbaton.nubomedia.paas.model.persistence.Port;
 import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,37 +82,25 @@ public class DeploymentManager {
   public IDeploymentConfig makeDeployment(
       String osName,
       String dockerRepo,
-      List<Integer> ports,
-      List<String> protocols,
-      int repnumbers) {
+      List<Port> ports,
+      int repnumbers,
+      List<EnvironmentVariable> envVars) {
     logger.debug("Creating DeploymentConfig ...");
-    logger.debug(
-        "params arg: "
-            + osName
-            + " "
-            + dockerRepo
-            + " "
-            + ports
-            + " "
-            + protocols
-            + " "
-            + repnumbers);
+    logger.debug("params arg: " + osName + " " + dockerRepo + " " + ports + " " + repnumbers);
     ModelNode deployNode =
         ModelNode.fromJSONString(
             mapper.toJson(
                 MessageBuilderFactory.getDeployMessage(
-                    osName,
-                    dockerRepo,
-                    ports,
-                    protocols,
-                    repnumbers,
-                    openShiftProperties.getProject()),
+                    osName, dockerRepo, ports, repnumbers, openShiftProperties.getProject()),
                 org.project.openbaton.nubomedia.paas.model.openshift.DeploymentConfig.class));
     Map propertyKeys =
         ResourcePropertiesRegistry.getInstance().get("v1", ResourceKind.DEPLOYMENT_CONFIG);
     IDeploymentConfig deploymentConfig =
         new com.openshift.internal.restclient.model.DeploymentConfig(
             deployNode, client, propertyKeys);
+    for (EnvironmentVariable envVar : envVars) {
+      deploymentConfig.setEnvironmentVariable(envVar.getName(), envVar.getValue());
+    }
 
     logger.debug("Created DeploymentConfig {}", deploymentConfig);
     deploymentConfig = client.create(deploymentConfig);
@@ -261,7 +252,7 @@ public class DeploymentManager {
     return mapper.fromJson(createHpa.getBody(), HorizontalPodAutoscaler.class);
   }
 
-  private List<Pod> getPodsList() {
+  public List<Pod> getPodsList() {
     logger.debug("Requesting list of all pods ...");
     IList pods = client.get(ResourceKind.POD, openShiftProperties.getProject());
     List<Pod> podList = new ArrayList<>();
@@ -271,6 +262,14 @@ public class DeploymentManager {
     }
     logger.debug("Got list of all pods:" + podList.toString());
     return podList;
+  }
+
+  public Pod getPod(String osName) throws NotFoundException {
+    List<Pod> pods = getPodsList();
+    for (Pod pod : pods) {
+      if (pod.getName().startsWith(osName + "-dc-")) return pod;
+    }
+    throw new NotFoundException("Not found Pod that starts with name " + osName + "-dc-");
   }
 
   private boolean existRC(HttpEntity<String> reqEntity, String rcURL) throws UnauthorizedException {
