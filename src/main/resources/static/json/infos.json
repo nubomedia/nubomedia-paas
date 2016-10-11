@@ -16,6 +16,6 @@
   "stunServerAddress": "the stun server ip, if is settled also the stunServerPort has to be settled;",
   "stunServerIp": "the stun server ip, if is settled also the stunServerPort has to be settled;",
   "stunServerPort": "the stun server port (as string), is mandatory if the stunServerAddress is settled",
-  "scaleInOut": "the maximum number of KMS instances which will be instantiated runtime by the autoscaling system",
-  "scale_out_threshold": "the threshold (in terms of averaged number of points) which will be used for the policy of the autoscaling system. CHECK which flavor you are going to use before define this threshold, and don't put a value lower than the total capacity of your flavor"
+  "scaleOutLimit": "the maximum number of KMS instances which will be instantiated runtime by the autoscaling system",
+  "scaleOutThreshold": "the threshold (in terms of averaged number of points) which will be used for the policy of the autoscaling system. CHECK which flavor you are going to use before define this threshold, and don't put a value lower than the total capacity of your flavor"
 }
