@@ -26,6 +26,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   var marketurl = $cookieStore.get('marketplaceIP');
   $scope.file = '';
   $scope.appJson = '';
+  $scope.appNewService = {};
 
   //var marketurl = 'http://localhost:8082/api/v1/app/';
   //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
@@ -84,11 +85,48 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.createApp = function() {
     $http.get('json/request.json')
       .then(function(res) {
-        console.log(res.data);
+        $scope.appNewService = angular.copy(res.data.services[0]);
         $scope.appCreate = angular.copy(res.data);
+        $scope.appCreate.services = [];
       });
     // $('#modalT').modal('show');
   };
+
+  // Start new app services
+  // -------------------------------------------------------------------------
+  $scope.addNewService = function addNewService() {
+    $scope.appCreate.services.push($scope.appNewService);
+  };
+
+  $scope.removeNewService = function addNewService(index) {
+    $scope.appCreate.services.splice(index, 1);
+  };
+
+  $scope.addServicePort = function(item) {
+    item.push({
+      "port": 8080,
+      "targetPort": 8080,
+      "protocol": "TCP"
+    });
+  };
+
+  $scope.deleteServicePort = function(item, index) {
+    item.splice(index, 1);
+  };
+
+  $scope.addServiceEnvVar = function(item) {
+    item.push({
+      "name": "",
+      "value": 0
+    });
+  };
+
+  $scope.deleteServiceEnvVar = function(item, index) {
+    item.splice(index, 1);
+  };
+
+  // END new app services
+  // -------------------------------------------------------------------------
 
   $scope.resize = function() {
     $timeout(function() {
@@ -913,6 +951,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
 
     if (id === 'numberFlot') {
       delete options.shaded;
+
       dataset = new vis.DataSet($scope.numbersHistory);
 
     }
@@ -932,6 +971,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
           console.log(value + 50.0);
           graph2d.setOptions(options);
         }
+
         return value;
 
       } else {
