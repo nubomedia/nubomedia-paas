@@ -1,18 +1,19 @@
 /*
  *
- *  * Copyright (c) 2016 Open Baton
+ *  * (C) Copyright 2016 NUBOMEDIA (http://www.nubomedia.eu)
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
  *  *
- *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *   http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
  *  * distributed under the License is distributed on an "AS IS" BASIS,
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
+ *  *
  *
  */
 
@@ -27,7 +28,7 @@ public class Container {
 
   private String name;
   private String image;
-  private Port[] ports;
+  private List<Port> ports;
   private List<ContainerVolume> volumeMounts;
 
   public static class Port {
@@ -58,14 +59,15 @@ public class Container {
     }
   }
 
-  public Container(String name, String image, Port[] ports, List<ContainerVolume> volumeMounts) {
+  public Container(
+      String name, String image, List<Port> ports, List<ContainerVolume> volumeMounts) {
     this.name = name;
     this.image = image;
     this.ports = ports;
     this.volumeMounts = volumeMounts;
   }
 
-  public Container(String name, String image, Port[] ports) {
+  public Container(String name, String image, List<Port> ports) {
     this.name = name;
     this.image = image;
     this.ports = ports;
@@ -89,11 +91,11 @@ public class Container {
     this.image = image;
   }
 
-  public Port[] getPorts() {
+  public List<Port> getPorts() {
     return ports;
   }
 
-  public void setPorts(Port[] ports) {
+  public void setPorts(List<Port> ports) {
     this.ports = ports;
   }
 

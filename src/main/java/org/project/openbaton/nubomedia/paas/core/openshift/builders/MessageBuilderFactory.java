@@ -1,24 +1,27 @@
 /*
  *
- *  * Copyright (c) 2016 Open Baton
+ *  * (C) Copyright 2016 NUBOMEDIA (http://www.nubomedia.eu)
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
  *  *
- *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *   http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
  *  * distributed under the License is distributed on an "AS IS" BASIS,
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
+ *  *
  *
  */
 
 package org.project.openbaton.nubomedia.paas.core.openshift.builders;
 
 import org.project.openbaton.nubomedia.paas.model.openshift.*;
+import org.project.openbaton.nubomedia.paas.model.persistence.EnvironmentVariable;
+import org.project.openbaton.nubomedia.paas.model.persistence.Port;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,15 +51,15 @@ public class MessageBuilderFactory {
       RouteConfig routeConfig) {
     DockerBuildStrategy.DockerStrategy ds =
         new DockerBuildStrategy.DockerStrategy(
-            new EnviromentVariable[] {
-              new EnviromentVariable("BUILD_LOGLEVEL", "5"),
-              new EnviromentVariable("VNFR_ID", mediaServerGID),
-              new EnviromentVariable("VNFM_IP", mediaServerIP),
-              new EnviromentVariable("VNFM_PORT", mediaServerPort),
-              new EnviromentVariable("CLOUDREPO_IP", cloudRepositoryIp),
-              new EnviromentVariable("CLOUDREPO_PORT", cloudRepoPort),
-              new EnviromentVariable("CDN_SERVER_IP", cdnServerIp),
-              new EnviromentVariable("ROUTE", routeConfig.getSpec().getHost())
+            new EnvironmentVariable[] {
+              new EnvironmentVariable("BUILD_LOGLEVEL", "5"),
+              new EnvironmentVariable("VNFR_ID", mediaServerGID),
+              new EnvironmentVariable("VNFM_IP", mediaServerIP),
+              new EnvironmentVariable("VNFM_PORT", mediaServerPort),
+              new EnvironmentVariable("CLOUDREPO_IP", cloudRepositoryIp),
+              new EnvironmentVariable("CLOUDREPO_PORT", cloudRepoPort),
+              new EnvironmentVariable("CDN_SERVER_IP", cdnServerIp),
+              new EnvironmentVariable("ROUTE", routeConfig.getSpec().getHost())
             },
             null);
     DockerBuildStrategy strategy = new DockerBuildStrategy(ds);
@@ -85,14 +88,17 @@ public class MessageBuilderFactory {
   public static DeploymentConfig getDeployMessage(
       String osName,
       String dockerRepo,
-      List<Integer> ports,
-      List<String> protocols,
+      List<Port> ports,
+      //      List<Integer> ports,
+      //      List<String> protocols,
       int replicasNumber,
       String namespace) {
-    Container.Port[] cports = new Container.Port[ports.size()];
-    for (int i = 0; i < ports.size(); i++) {
-      cports[i] = new Container.Port(protocols.get(i), ports.get(i));
+    List<Container.Port> cports = new ArrayList<>();
+    //    for (int i = 0; i < ports.size(); i++) {
+    for (Port port : ports) {
+      cports.add(new Container.Port(port.getProtocol(), port.getTargetPort()));
     }
+    //    }
     List<ContainerVolume> volumes = new ArrayList<>();
     ContainerVolume sharedMemory = new ContainerVolume("dshm", false, "/dev/shm");
     volumes.add(sharedMemory);
@@ -119,14 +125,8 @@ public class MessageBuilderFactory {
     return builder.buildMessage();
   }
 
-  public static ServiceConfig getServiceMessage(
-      String namespace,
-      String osName,
-      List<Integer> ports,
-      List<Integer> targetPorts,
-      List<String> protocols) {
-    ServiceMessageBuilder smb =
-        new ServiceMessageBuilder(namespace, osName, protocols, ports, targetPorts);
+  public static ServiceConfig getServiceMessage(String namespace, String osName, List<Port> ports) {
+    ServiceMessageBuilder smb = new ServiceMessageBuilder(namespace, osName, ports);
     return smb.buildMessage();
   }
 

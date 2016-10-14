@@ -1,18 +1,19 @@
 /*
  *
- *  * Copyright (c) 2016 Open Baton
+ *  * (C) Copyright 2016 NUBOMEDIA (http://www.nubomedia.eu)
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
  *  *
- *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *   http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
  *  * distributed under the License is distributed on an "AS IS" BASIS,
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
+ *  *
  *
  */
 
@@ -33,6 +34,8 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.NameStructureEx
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.*;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
+import org.project.openbaton.nubomedia.paas.model.persistence.EnvironmentVariable;
+import org.project.openbaton.nubomedia.paas.model.persistence.SupportingService;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
 import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
@@ -91,15 +94,15 @@ public class AppManager {
 
     logger.debug("REQUEST" + request.toString());
 
-    List<String> protocols = new ArrayList<>();
-    List<Integer> targetPorts = new ArrayList<>();
-    List<Integer> ports = new ArrayList<>();
+    //    List<String> protocols = new ArrayList<>();
+    //    List<Integer> targetPorts = new ArrayList<>();
+    //    List<Integer> ports = new ArrayList<>();
 
-    for (NubomediaPort port : request.getPorts()) {
-      protocols.add(port.getProtocol());
-      targetPorts.add(port.getTargetPort());
-      ports.add(port.getPort());
-    }
+    //    for (NubomediaPort port : request.getPorts()) {
+    //      protocols.add(port.getProtocol());
+    //      targetPorts.add(port.getTargetPort());
+    //      ports.add(port.getPort());
+    //    }
 
     logger.debug(
         "request params "
@@ -107,14 +110,18 @@ public class AppManager {
             + " "
             + request.getGitURL()
             + " "
-            + ports
-            + " "
-            + protocols
+            + request.getPorts()
             + " "
             + request.getReplicasNumber());
     Random r = new Random();
     char c = (char) (r.nextInt(26) + 'a');
     String osName = c + UUID.randomUUID().toString().substring(0, 8);
+    for (SupportingService supportingService : request.getServices()) {
+      char cSS = (char) (r.nextInt(26) + 'a');
+      String osNameSS = c + UUID.randomUUID().toString().substring(0, 8);
+      supportingService.setOsName(osNameSS + "-" + osName);
+      supportingService.setProjectId(projectId);
+    }
     //Openbaton MediaServer Request
     logger.info("[PAAS]: EVENT_APP_CREATE " + new Date().getTime());
     MediaServerGroup mediaServerGroup =
@@ -133,8 +140,8 @@ public class AppManager {
             request.isStunServerActivate(),
             request.getStunServerIp(),
             request.getStunServerPort(),
-            request.getScaleInOut(),
-            request.getScale_out_threshold());
+            request.getScaleOutLimit(),
+            request.getScaleOutThreshold());
 
     // Creating the application
     Application app = new Application();
@@ -143,12 +150,13 @@ public class AppManager {
     app.setProjectName(openshiftProject);
     app.setProjectId(projectId);
     app.setMediaServerGroup(mediaServerGroup);
+    app.setEnvVars(new ArrayList<EnvironmentVariable>());
     //app.setRoute("");
     app.setRoute(osName + "." + openShiftProperties.getDomainName());
     app.setGitURL(request.getGitURL());
-    app.setTargetPorts(targetPorts);
-    app.setPorts(ports);
-    app.setProtocols(protocols);
+    //    app.setTargetPorts(targetPorts);
+    app.setPorts(request.getPorts());
+    //    app.setProtocols(protocols);
     app.setReplicasNumber(request.getReplicasNumber());
     app.setSecretName(request.getSecretName());
     app.setResourceOK(false);
@@ -157,8 +165,8 @@ public class AppManager {
     app.setCdnConnector(request.isCdnConnector());
     app.setCloudRepository(request.isCloudRepository());
     app.setQualityOfService(request.getQualityOfService());
-    app.setScaleInOut(request.getScaleInOut());
-    app.setScaleOutThreshold(request.getScale_out_threshold());
+    app.setScaleOutLimit(request.getScaleOutLimit());
+    app.setScaleOutThreshold(request.getScaleOutThreshold());
     app.setCreatedBy(user);
     app.setCreatedAt(new Date());
     app.setStunServerActivate(request.isStunServerActivate());
@@ -168,6 +176,8 @@ public class AppManager {
     app.setTurnServerUrl(request.getTurnServerUrl());
     app.setTurnServerUsername(request.getTurnServerUsername());
     app.setTurnServerPassword(request.getTurnServerPassword());
+
+    app.setServices(request.getServices());
 
     appRepo.save(app);
     return app;
@@ -233,15 +243,33 @@ public class AppManager {
         }
       }
 
+      for (SupportingService supportingService : app.getServices()) {
+        EnvironmentVariable serviceHost = new EnvironmentVariable();
+        serviceHost.setName(supportingService.getName().toUpperCase() + "_HOST");
+        serviceHost.setValue(
+            supportingService.getOsName()
+                + "-svc."
+                + openShiftProperties.getProject()
+                + ".svc.cluster.local");
+        app.getEnvVars().add(serviceHost);
+        for (EnvironmentVariable envVar : supportingService.getEnvVars()) {
+          EnvironmentVariable appEnvVar = new EnvironmentVariable();
+          appEnvVar.setName(
+              supportingService.getName().toUpperCase() + "_" + envVar.getName().toUpperCase());
+          appEnvVar.setValue(envVar.getValue());
+          app.getEnvVars().add(appEnvVar);
+        }
+      }
+
       try {
 
-        int[] ports = new int[app.getPorts().size()];
-        int[] targetPorts = new int[app.getTargetPorts().size()];
-
-        for (int i = 0; i < ports.length; i++) {
-          ports[i] = app.getPorts().get(i);
-          targetPorts[i] = app.getTargetPorts().get(i);
-        }
+        //        int[] ports = new int[app.getPorts().size()];
+        //        int[] targetPorts = new int[app.getTargetPorts().size()];
+        //
+        //        for (int i = 0; i < ports.length; i++) {
+        //          ports[i] = app.getPorts().get(i);
+        //          targetPorts[i] = app.getTargetPorts().get(i);
+        //        }
 
         logger.info("[PAAS]: CREATE_APP_OS " + new Date().getTime());
         logger.debug("cloudRepositoryPort " + cloudRepositoryPort + " IP " + cloudRepositoryIp);
@@ -323,7 +351,7 @@ public class AppManager {
 
     //    HttpStatus resDelete = HttpStatus.BAD_REQUEST;
     try {
-      osmanager.deleteApplication(app.getOsName());
+      osmanager.deleteApplication(app);
     } catch (ResourceAccessException e) {
       logger.info("Application does not exist on the PaaS");
     } catch (Exception e) {

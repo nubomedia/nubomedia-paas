@@ -1,27 +1,30 @@
 /*
  *
- *  * Copyright (c) 2016 Open Baton
+ *  * (C) Copyright 2016 NUBOMEDIA (http://www.nubomedia.eu)
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
  *  *
- *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *   http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
  *  * distributed under the License is distributed on an "AS IS" BASIS,
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
+ *  *
  *
  */
 
 package org.project.openbaton.nubomedia.paas.messages;
 
+import org.project.openbaton.nubomedia.paas.model.persistence.Port;
+import org.project.openbaton.nubomedia.paas.model.persistence.SupportingService;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Flavor;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.QoS;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by maa on 28.09.15.
@@ -30,7 +33,7 @@ public class NubomediaCreateAppRequest {
 
   private String gitURL;
   private String name;
-  private NubomediaPort[] ports;
+  private List<Port> ports;
   private Flavor flavor;
   private int replicasNumber;
   private String secretName;
@@ -44,8 +47,9 @@ public class NubomediaCreateAppRequest {
   private boolean stunServerActivate;
   private String stunServerIp;
   private String stunServerPort;
-  private int scaleInOut;
-  private double scale_out_threshold;
+  private int scaleOutLimit;
+  private double scaleOutThreshold;
+  private List<SupportingService> services;
 
   public NubomediaCreateAppRequest() {}
 
@@ -65,11 +69,11 @@ public class NubomediaCreateAppRequest {
     this.name = name;
   }
 
-  public NubomediaPort[] getPorts() {
+  public List<Port> getPorts() {
     return ports;
   }
 
-  public void setPorts(NubomediaPort[] ports) {
+  public void setPorts(List<Port> ports) {
     this.ports = ports;
   }
 
@@ -169,20 +173,20 @@ public class NubomediaCreateAppRequest {
     this.stunServerPort = stunServerPort;
   }
 
-  public int getScaleInOut() {
-    return scaleInOut;
+  public int getScaleOutLimit() {
+    return scaleOutLimit;
   }
 
-  public void setScaleInOut(int scaleInOut) {
-    this.scaleInOut = scaleInOut;
+  public void setScaleOutLimit(int scaleOutLimit) {
+    this.scaleOutLimit = scaleOutLimit;
   }
 
-  public double getScale_out_threshold() {
-    return scale_out_threshold;
+  public double getScaleOutThreshold() {
+    return scaleOutThreshold;
   }
 
-  public void setScale_out_threshold(double scale_out_threshold) {
-    this.scale_out_threshold = scale_out_threshold;
+  public void setScaleOutThreshold(double scaleOutThreshold) {
+    this.scaleOutThreshold = scaleOutThreshold;
   }
 
   public boolean isCdnConnector() {
@@ -191,6 +195,14 @@ public class NubomediaCreateAppRequest {
 
   public void setCdnConnector(boolean cdnConnector) {
     this.cdnConnector = cdnConnector;
+  }
+
+  public List<SupportingService> getServices() {
+    return services;
+  }
+
+  public void setServices(List<SupportingService> services) {
+    this.services = services;
   }
 
   @Override
@@ -203,7 +215,8 @@ public class NubomediaCreateAppRequest {
         + name
         + '\''
         + ", ports="
-        + Arrays.toString(ports)
+        + ports
+        + '\''
         + ", flavor="
         + flavor
         + ", replicasNumber="
@@ -215,7 +228,11 @@ public class NubomediaCreateAppRequest {
         + qualityOfService
         + ", cloudRepository="
         + cloudRepository
-        + ", turnServerIp='"
+        + ", cdnConnector="
+        + cdnConnector
+        + ", turnServerActivate="
+        + turnServerActivate
+        + ", turnServerUrl='"
         + turnServerUrl
         + '\''
         + ", turnServerUsername='"
@@ -224,10 +241,20 @@ public class NubomediaCreateAppRequest {
         + ", turnServerPassword='"
         + turnServerPassword
         + '\''
-        + ", scaleInOut="
-        + scaleInOut
-        + ", scale_out_threshold="
-        + scale_out_threshold
+        + ", stunServerActivate="
+        + stunServerActivate
+        + ", stunServerIp='"
+        + stunServerIp
+        + '\''
+        + ", stunServerPort='"
+        + stunServerPort
+        + '\''
+        + ", scaleOutLimit="
+        + scaleOutLimit
+        + ", scaleOutThreshold="
+        + scaleOutThreshold
+        + ", services="
+        + services
         + '}';
   }
 }

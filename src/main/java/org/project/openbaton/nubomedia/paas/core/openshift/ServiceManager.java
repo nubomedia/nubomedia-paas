@@ -1,18 +1,19 @@
 /*
  *
- *  * Copyright (c) 2016 Open Baton
+ *  * (C) Copyright 2016 NUBOMEDIA (http://www.nubomedia.eu)
  *  *
  *  * Licensed under the Apache License, Version 2.0 (the "License");
  *  * you may not use this file except in compliance with the License.
  *  * You may obtain a copy of the License at
  *  *
- *  *     http://www.apache.org/licenses/LICENSE-2.0
+ *  *   http://www.apache.org/licenses/LICENSE-2.0
  *  *
  *  * Unless required by applicable law or agreed to in writing, software
  *  * distributed under the License is distributed on an "AS IS" BASIS,
  *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
+ *  *
  *
  */
 
@@ -28,6 +29,7 @@ import com.openshift.restclient.model.IService;
 import org.jboss.dmr.ModelNode;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.model.openshift.ServiceConfig;
+import org.project.openbaton.nubomedia.paas.model.persistence.Port;
 import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,20 +64,19 @@ public class ServiceManager {
             .build();
   }
 
-  public IService makeService(
-      String osName, List<Integer> ports, List<Integer> targetPorts, List<String> protocols) {
+  public IService makeService(String osName, List<Port> ports) {
 
-    ModelNode serivceNode =
+    ModelNode serviceNode =
         ModelNode.fromJSONString(
             mapper.toJson(
                 MessageBuilderFactory.getServiceMessage(
-                    openShiftProperties.getProject(), osName, ports, targetPorts, protocols),
+                    openShiftProperties.getProject(), osName, ports),
                 ServiceConfig.class));
     Map propertyServiceKeys =
         ResourcePropertiesRegistry.getInstance().get("v1", ResourceKind.SERVICE);
     IService service =
         new com.openshift.internal.restclient.model.Service(
-            serivceNode, client, propertyServiceKeys);
+            serviceNode, client, propertyServiceKeys);
     logger.debug("Created SerivceConfig {}", service);
     service = client.create(service);
     logger.debug("Triggered Serivce creation {}", service);

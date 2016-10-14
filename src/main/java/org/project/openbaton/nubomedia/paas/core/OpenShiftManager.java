@@ -1,23 +1,31 @@
 /*
- * Copyright (c) 2015-2016 Fraunhofer FOKUS
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  * (C) Copyright 2016 NUBOMEDIA (http://www.nubomedia.eu)
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *   http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *  *
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.project.openbaton.nubomedia.paas.core;
 
 import com.google.gson.Gson;
+import com.openshift.internal.restclient.model.Pod;
+import com.openshift.restclient.ClientBuilder;
+import com.openshift.restclient.IClient;
+import com.openshift.restclient.model.IDeploymentConfig;
 import com.openshift.restclient.model.IImageStream;
+import com.openshift.restclient.model.IService;
 import org.project.openbaton.nubomedia.paas.core.openshift.*;
 import org.project.openbaton.nubomedia.paas.core.openshift.builders.MessageBuilderFactory;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
@@ -25,8 +33,11 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedExc
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.openshift.RouteConfig;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
+import org.project.openbaton.nubomedia.paas.model.persistence.EnvironmentVariable;
+import org.project.openbaton.nubomedia.paas.model.persistence.SupportingService;
 import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.project.openbaton.nubomedia.paas.properties.VnfmProperties;
+import org.project.openbaton.nubomedia.paas.repository.service.ServiceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +46,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,6 +63,7 @@ public class OpenShiftManager {
   @Autowired private DeploymentManager deploymentManager;
   @Autowired private ServiceManager serviceManager;
   @Autowired private RouteManager routeManager;
+  @Autowired private ServiceRepository serviceRepository;
 
   @Autowired private OpenShiftProperties openShiftProperties;
 
@@ -80,12 +93,25 @@ public class OpenShiftManager {
     //    }
     //
 
-    //    client =
+    //    IClient client =
     //        new ClientBuilder(openShiftProperties.getBaseURL())
     //            .usingToken(openShiftProperties.getToken())
     //            //              .sslCertificate("nubomedia", null)
     //            //                              (X509Certificate) javax.security.cert.X509Certificate.getInstance(new FileInputStream(new File(openshiftKeystore))))
     //            .build();
+    //    imageStreamManager.createImageStream(
+    //        "mysql-image3", "registry.access.redhat.com/openshift3/mysql-55-rhel7");
+    //
+    //    List<Integer> ports = new ArrayList<>();
+    //    List<Integer> targetPorts = new ArrayList<>();
+    //    List<String> protocols = new ArrayList<>();
+    //    ports.add(3306);
+    //    protocols.add("TCP");
+    //    targetPorts.add(3306);
+    //    IDeploymentConfig dc =
+    //        deploymentManager.makeDeployment(
+    //            "mysql-image3", "nubomedia/mysql-image3:latest", ports, protocols, 1);
+    //    IService service = serviceManager.makeService("mysql-image3", ports, targetPorts, protocols);
   }
 
   public String buildApplication(
@@ -94,13 +120,37 @@ public class OpenShiftManager {
       String cloudRepositoryPort,
       String cdnServerIp) {
 
+    logger.debug("Deploying supporting services of application " + application.getName());
+    for (SupportingService supportingService : application.getServices()) {
+      IImageStream imageStream =
+          imageStreamManager.createImageStream(
+              supportingService.getOsName(), supportingService.getDockerURL());
+      IDeploymentConfig deploymentConfig =
+          deploymentManager.makeDeployment(
+              supportingService.getOsName(),
+              openShiftProperties.getProject() + "/" + supportingService.getOsName() + ":latest",
+              supportingService.getPorts(),
+              supportingService.getReplicasNumber(),
+              supportingService.getEnvVars());
+      IService service =
+          serviceManager.makeService(supportingService.getOsName(), supportingService.getPorts());
+      RouteConfig routeConfig =
+          MessageBuilderFactory.getRouteMessage(
+              openShiftProperties.getProject(),
+              supportingService.getOsName(),
+              openShiftProperties.getDomainName());
+      supportingService.setRoute(routeConfig.getSpec().getHost());
+      serviceRepository.save(supportingService);
+      routeManager.makeRoute(routeConfig);
+    }
+
     logger.info(
         "Starting build app "
             + application.getName()
             + " in project "
             + openShiftProperties.getProject());
 
-    IImageStream imageStream = imageStreamManager.crateImageStream(application.getOsName());
+    IImageStream imageStream = imageStreamManager.createImageStream(application.getOsName());
 
     RouteConfig routeConfig =
         MessageBuilderFactory.getRouteMessage(
@@ -125,22 +175,29 @@ public class OpenShiftManager {
     deploymentManager.makeDeployment(
         application.getOsName(),
         imageStream.getDockerImageRepository().getAbsoluteUri(),
-        application.getTargetPorts(),
-        application.getProtocols(),
-        application.getReplicasNumber());
-
-    serviceManager.makeService(
-        application.getOsName(),
         application.getPorts(),
-        application.getTargetPorts(),
-        application.getProtocols());
+        application.getReplicasNumber(),
+        application.getEnvVars());
+
+    serviceManager.makeService(application.getOsName(), application.getPorts());
 
     routeManager.makeRoute(routeConfig);
 
     return routeConfig.getSpec().getHost();
   }
 
-  public void deleteApplication(String osName) throws UnauthorizedException {
+  public void deleteApplication(Application application) throws UnauthorizedException {
+    String osName = application.getOsName();
+
+    for (SupportingService supportingService : application.getServices()) {
+      imageStreamManager.deleteImageStream(supportingService.getOsName());
+      deploymentManager.deleteDeploymentConfig(supportingService.getOsName());
+      deploymentManager.deleteReplicationController(supportingService.getOsName());
+      deploymentManager.deletePods(supportingService.getOsName());
+      serviceManager.deleteService(supportingService.getOsName());
+      routeManager.deleteRoute(supportingService.getOsName());
+    }
+
     imageStreamManager.deleteImageStream(osName);
 
     buildManager.deleteBuilds(osName);
@@ -188,6 +245,12 @@ public class OpenShiftManager {
       res = AppStatus.BUILDING;
     }
     return res;
+  }
+
+  public String getOsStatus(String osName) throws NotFoundException {
+    AppStatus res = AppStatus.INITIALISED;
+    Pod pod = deploymentManager.getPod(osName);
+    return pod.getStatus();
   }
 
   public String getApplicationLog(String osName, String podName) throws UnauthorizedException {

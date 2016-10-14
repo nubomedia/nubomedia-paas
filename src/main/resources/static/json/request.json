@@ -17,8 +17,27 @@
   ],
   "replicasNumber":1,
   "secretName":"",
-  "scaleInOut":1,
+  "scaleOutLimit":1,
+  "scaleOutThreshold":100,
   "turnServerActivate":false,
   "stunServerActivate":false,
-  "cdnConnector":false
+  "cdnConnector":false,
+  "services": [{
+    "name": "",
+    "dockerURL": "",
+    "replicasNumber": 1,
+    "ports": [{
+      "port": 0,
+      "targetPort": 0,
+      "protocol": ""
+    }
+    ],
+    "envVars": [
+      {
+        "name": "",
+        "value": ""
+      }
+    ]
+
+  }]
 }
