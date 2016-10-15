@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <div ng-repeat="(key, value) in application" ng-if="key!='name' && key!='projectName' && key!='route' && key!='targetPorts' && key!='mediaServerGroup'" class="form-group input">
+    <div ng-repeat="(key, value) in application" ng-if="key!='name' && key!='projectName' && key!='route' && key!='targetPorts' && key!='mediaServerGroup' && key!='services' && key!='ports'" class="form-group input">
 
       <div ng-if="key === 'protocols'">
 
@@ -131,6 +131,235 @@
 
 
 
+
+  <!-- Services section -->
+  <section class="form__section" ng-if="application.services.length > 0">
+
+    <h3 class="form__section-title">
+      Services
+    </h3>
+
+    <!-- Services fields -->
+    <section class="u-mt-45" ng-repeat="item in application.services track by $index">
+
+      <h3 class="form__section-title form__section-title--secondary">
+        Service {{$index + 1}}
+        <a href="" ng-click="removeNewService($index)" ng-if="$index > 0">
+          <span class="fa fa-trash text-danger"></span>
+        </a>
+      </h3>
+
+      <div class="form-group input clearfix"
+        ng-repeat="(key,value) in item" ng-if="key != 'ports' && key !='envVars'">
+
+        <!-- Label -->
+        <label
+          for="{{key}}"
+          class="col-md-4 control-label input__label">
+          {{key}}
+        </label><!-- /Label -->
+
+        <!-- Column -->
+        <div class="col-md-8">
+          <input
+            class="form-control input__field"
+            type="text"
+            id="{{key}}"
+            name="{{key}}"
+            ng-model="item[key]"
+            readonly>
+        </div><!-- /Column -->
+
+      </div><!-- /Services fields -->
+
+      <!-- Ports -->
+      <div class="form-group input">
+        <label for="" class="col-md-4 control-label input__label">
+          Ports
+        </label>
+
+        <div class="col-md-8">
+
+          <div class="row">
+            <label class="input__label col-xs-6 col-md-4">
+                Port
+            </label>
+
+            <label class="input__label col-xs-6 col-md-4">
+            Port Target
+            </label>
+
+            <label class="input__label col-xs-6 col-md-4">
+                Protocol
+            </label>
+          </div><!-- /row -->
+
+          <!-- Input -->
+           <div
+            class="form-group input"
+            ng-repeat="port in item.ports track by $index">
+
+             <!-- Column -->
+             <div class="col-xs-6 col-md-4">
+               <input
+                class="form-control input__field"
+                type="number"
+                ng-model="item.ports[$index]['port']"/
+                readonly>
+             </div><!-- /Column -->
+
+             <!-- Column -->
+             <div class="col-xs-6 col-md-4">
+               <input
+                class="form-control input__field"
+                type="number"
+                ng-model="item.ports[$index]['targetPort']"
+                readonly>
+             </div><!-- /Column -->
+
+             <!-- Column -->
+             <div class="col-xs-6 col-md-4">
+               <input
+                class="form-control input__field"
+                type="text"
+                ng-model="item.ports[$index][['protocol']]"
+                readonly>
+             </div><!-- /Column -->
+
+           </div><!-- /Input -->
+
+        </div><!-- /col -->
+
+      </div><!-- /Ports -->
+
+      <!-- Env Vars -->
+      <div class="form-group input">
+        <label for="" class="col-md-4 control-label input__label">
+          Env vars
+        </label>
+
+        <div class="col-md-8">
+
+          <div class="row">
+            <label class="input__label col-xs-6">
+              Name
+            </label>
+
+            <label class="input__label col-xs-6 col-md-6">
+              Value
+            </label>
+
+          </div><!-- /row -->
+
+          <!-- Input -->
+           <div
+            class="form-group input"
+            ng-repeat="var in item.envVars track by $index">
+
+             <!-- Column -->
+             <div class="col-xs-6 col-md-6">
+               <input
+                class="form-control input__field"
+                type="text"
+                ng-model="item.envVars[$index]['name']"
+                readonly>
+             </div><!-- /Column -->
+
+             <!-- Column -->
+             <div class="col-xs-6 col-md-6">
+               <input
+                class="form-control input__field"
+                type="text"
+                ng-model="item.envVars[$index]['value']"
+                readonly>
+             </div><!-- /Column -->
+
+
+           </div><!-- /Input -->
+
+        </div><!-- /col -->
+
+      </div><!-- /Ports -->
+
+    </section><!-- /ng-repeat -->
+
+
+  </section><!-- /Services section -->
+
+
+
+
+  <!-- Ports section -->
+  <section class="form__section" ng-if="application.ports.length > 0">
+
+    <h3 class="form__section-title">
+      Ports
+    </h3>
+
+    <!-- Ports Section -->
+    <div class="form-group input">
+      <label for="" class="col-md-4 control-label input__label">
+      </label>
+
+      <div class="col-md-8">
+
+        <div class="row">
+          <label class="input__label col-xs-6 col-md-4">
+              Port
+          </label>
+
+          <label class="input__label col-xs-6 col-md-4">
+          Port Target
+          </label>
+
+          <label class="input__label col-xs-6 col-md-4">
+              Protocol
+          </label>
+        </div><!-- /row -->
+
+        <!-- Input -->
+         <div
+          class="form-group input"
+          ng-repeat="port in application.ports track by $index">
+
+           <!-- Column -->
+           <div class="col-xs-6 col-md-4">
+             <input
+              class="form-control input__field"
+              type="number"
+              ng-model="port.port"
+              readonly>
+           </div><!-- /Column -->
+
+           <!-- Column -->
+           <div class="col-xs-6 col-md-4">
+             <input
+              class="form-control input__field"
+              type="number"
+              ng-model="port.targetPort"
+              readonly>
+           </div><!-- /Column -->
+
+           <!-- Column -->
+           <div class="col-xs-6 col-md-4">
+             <input
+              class="form-control input__field"
+              type="text"
+              ng-model="port.protocol"
+              readonly>
+           </div><!-- /Column -->
+
+         </div><!-- /Input -->
+
+      </div><!-- /col -->
+
+    </div><!-- /Ports -->
+
+
+  </section><!-- /Ports Section -->
+
+
+
   <!-- Media Server Group -->
   <section class="form__section">
 
@@ -182,6 +411,9 @@
     </div><!-- /input -->
 
   </section><!-- /Media Server Group -->
+
+
+
 
   <!-- Actions -->
   <section class="form__section">
