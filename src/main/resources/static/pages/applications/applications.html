@@ -423,20 +423,20 @@
 
           <h3 class="form__section-title form__section-title--secondary">
             Service {{$index + 1}}
-            <a href="" ng-click="removeNewService($index)" ng-if="$index > 0">
+            <a href="" ng-click="removeNewService($index)">
               <span class="fa fa-trash text-danger"></span>
             </a>
           </h3>
 
           <div class="form-group input clearfix"
-            ng-repeat="(key,value) in item" ng-if="key != 'ports' && key !='envVars'">
+            ng-repeat="(key,value) in item" ng-if="key!='ports' && key !='envVars'">
 
             <!-- Label -->
             <label
               for="{{key}}"
               class="col-md-4 control-label input__label">
               {{key}}
-              <span class="input__subtitle">
+              <span class="input__subtitle" ng-if="key!='dockerURL'">
                 <i
                   popover="{{textInfo}}"
                   popover-placement="bottom"
@@ -513,7 +513,7 @@
 
                  <!-- Column -->
                  <div class="col-xs-6 col-md-1 text-right">
-                   <a href="" ng-click="deletePort(port, $index)">
+                   <a href="" ng-click="deleteServicePort(item.ports, $index)">
                       <span class="fa fa-trash text-danger"></span>
                   </a>
                  </div><!-- /Column -->
@@ -569,7 +569,7 @@
 
                  <!-- Column -->
                  <div class="col-xs-6 col-md-1 text-right">
-                   <a href="" ng-click="deleteServiceEnvVar(var, $index)">
+                   <a href="" ng-click="deleteServiceEnvVar(item.envVars, $index)">
                       <span class="fa fa-trash text-danger"></span>
                   </a>
                  </div><!-- /Column -->
@@ -613,22 +613,23 @@
               Enable
             </label>
 
-            <div class="input input--inline" ng-repeat="(key,value) in _threshold" ">
+            <div class="input input--inline" ng-repeat="(key,value) in _threshold">
+
               <label for="app-scalling-in" class="input__label">
-                <span ng-if="key == 'scaleInOut'">
+                <span ng-if="key=='scaleInOut'">
                    Scale out limit
                 </span>
 
-                <span ng-if="key == 'scale_out_threshold'">
+                <span ng-if="key=='scale_out_threshold'">
                    Scale out trigger
                 </span>
 
-                <span class="input__subtitle" ng-if="key == 'scaleInOut'">
+                <span class="input__subtitle" ng-if="key=='scaleInOut'">
                   <i
                     popover="{{textInfo}}"
                     popover-placement="bottom"
                     popover-trigger="mouseenter"
-                    ng-mouseover="getInfos(key)">Tip: Hover me</i>
+                    ng-mouseover="getInfos('scaleOutLimit')">Tip: Hover me</i>
                 </span>
 
                 <span class="input__subtitle" ng-if="key == 'scale_out_threshold'">
