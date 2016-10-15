@@ -47,8 +47,10 @@
       data-toggle="dropdown"
       aria-haspopup="true"
       aria-expanded="true"
-      id="get_log_app" >
-      Server
+      ng-model="dropdownText"
+      id="get_log_app">
+      <span ng-show="!dropdownText">Server</span>
+      <span ng-show="dropdownText">{{dropdownText}}</span>
     </button>
 
     <ul class="dropdown-menu c-dropdown__menu">
@@ -58,6 +60,22 @@
     </ul>
 
   </div><!-- /Dropdown -->
+
+  <button
+    id="get_log"
+    class="btn btn-primary log-button"
+    title="Loads the build logs"
+    ng-click="toggleMediaServer('start')">
+    Start
+  </button>
+
+  <button
+    id="get_log"
+    class="btn btn-danger log-button"
+    title="Loads the build logs"
+    ng-click="toggleMediaServer('stop')">
+    Stop
+  </button>
 
 </section>
 

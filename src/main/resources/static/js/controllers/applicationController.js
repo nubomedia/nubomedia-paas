@@ -70,6 +70,34 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     'scale_out_threshold': 0
   };
 
+  $scope.dropdownTextChange = function dropdownTextChange(text) {
+    $scope.dropdownText = text;
+  };
+
+  $scope.toggleMediaServer = function toggleMediaServer(state) {
+    var url = ip + '/api/v2/nubomedia/paas/app/' + $scope.application.id + '/media-server/' + $scope.application + '/';
+    switch (state) {
+      case 'start':
+        url = url + 'start';
+        http.put(url)
+          .success(function(response, status) {
+            console.log(response);
+          }).error(function(data, status) {
+            console.log(data);
+          });
+        break;
+      case 'stop':
+        url = url + 'start';
+        http.put(url)
+          .success(function(response, status) {
+            console.log(response);
+          }).error(function(data, status) {
+            console.log(data);
+          });
+        break;
+    }
+  };
+
   $rootScope.mediaServers = [];
   $rootScope.bigDataMediaServer = [];
 
