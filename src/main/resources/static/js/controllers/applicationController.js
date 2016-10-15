@@ -14,7 +14,7 @@
  *  * See the License for the specific language governing permissions and
  *  * limitations under the License.
  *  *
- *  
+ *
  */
 
 angular.module('app').controller('applicationsCtrl', function($scope, http, $routeParams, serviceAPI, $window, $cookieStore, $http, $sce, $timeout, $location, $rootScope, $q) {
@@ -118,7 +118,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.addServiceEnvVar = function(item) {
     item.push({
       "name": "",
-      "value": 0
+      "value": ""
     });
   };
 
