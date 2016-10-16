@@ -55,29 +55,30 @@
 
     <ul class="dropdown-menu c-dropdown__menu">
       <li ng-repeat="pod in application.podList" class="c-dropdown__item">
-        <span ng-click="loadAppLog(pod)">{{pod}}</span>
+        <span ng-click="loadAppLog(podm, $index); dropdownTextChange(pod)">{{pod}}</span>
       </li>
     </ul>
 
   </div><!-- /Dropdown -->
-
-  <button
-    id="get_log"
-    class="btn btn-primary log-button"
-    title="Loads the build logs"
-    ng-click="toggleMediaServer('start')">
-    Start
-  </button>
-
-  <button
-    id="get_log"
-    class="btn btn-danger log-button"
-    title="Loads the build logs"
-    ng-click="toggleMediaServer('stop')">
-    Stop
-  </button>
-
 </section>
+
+<section class="u-mt-25 clearfix">
+    <button
+      id="get_log"
+      class="btn btn-primary log-button"
+      title="Loads the build logs"
+      ng-click="toggleMediaServer('start')">
+      Start
+    </button>
+
+    <button
+      id="get_log"
+      class="btn btn-danger log-button"
+      title="Loads the build logs"
+      ng-click="toggleMediaServer('stop')">
+      Stop
+    </button>
+  </section>
 
 <section ng-show="log">
   <pre id="log" ng-bind-html="log"></pre>

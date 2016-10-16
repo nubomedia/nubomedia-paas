@@ -27,12 +27,11 @@
 <!-- Media servers -->
 <section class="form__section">
   <h3 class="form__section-title">Media Servers</h3>
-
   <!-- Progress container -->
   <div class="progress-container">
     <span class="progress-server"></span>
     <p class="progress-info progress-info--right">
-      Max: {{application.scaleInOut}}
+      Max: {{application.scaleOutLimit}}
     </p>
     <p class="progress-info progress-notification progress-info--left">Information</p>
     <div class="progress">
@@ -42,7 +41,7 @@
         ng-style="{'width': mediaServerProgress()}"
         aria-valuenow="11"
         aria-valuemin="0"
-        aria-valuemax="{{application.scaleInOut}}">
+        aria-valuemax="{{application.scaleOutLimit}}">
         <span class="progress-label">
           {{mediaServerProgress()}}
         </span>

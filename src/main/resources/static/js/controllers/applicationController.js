@@ -28,6 +28,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.file = '';
   $scope.appJson = '';
   $scope.appNewService = {};
+  $scope.mediaServeHostName = '';
 
   //var marketurl = 'http://localhost:8082/api/v1/app/';
   //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
@@ -75,7 +76,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   };
 
   $scope.toggleMediaServer = function toggleMediaServer(state) {
-    var url = ip + '/api/v2/nubomedia/paas/app/' + $scope.application.id + '/media-server/' + $scope.application + '/';
+    var url = ip + '/api/v2/nubomedia/paas/app/' + $scope.application.mediaServerGroup.id + '/media-server/' + $scope.mediaServeHostName + '/';
     switch (state) {
       case 'start':
         url = url + 'start';
@@ -87,7 +88,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
           });
         break;
       case 'stop':
-        url = url + 'start';
+        url = url + 'stop';
         http.put(url)
           .success(function(response, status) {
             console.log(response);
@@ -246,7 +247,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         $scope.applicationJSON = JSON.stringify(data, undefined, 4);
         loadMediaManeger();
         $scope.mediaServerProgress = function() {
-          var value = $scope.application.mediaServerGroup.floatingIPs.length * 100 / $scope.application.scaleInOut;
+          var value = $scope.application.mediaServerGroup.floatingIPs.length * 100 / $scope.application.scaleOutLimit;
 
           if (value % 1 !== 0) {
             value = (value).toFixed(2);
@@ -641,11 +642,12 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     numberRows: 35
   };
 
-  $scope.loadAppLog = function(podName) {
+  $scope.loadAppLog = function(podName, index) {
     console.log(podName);
     http.get(url + $routeParams.applicationId + '/logs/' + podName)
       .success(function(response) {
         var stringArray = response.split('\\n');
+        $scope.mediaServeHostName = $scope.application.mediaServerGroup.hostnames[index];
 
         var subLog = stringArray.slice(stringArray.length - $scope.input.numberRows, -1);
         var string = subLog.join('\\n');
