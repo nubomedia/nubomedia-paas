@@ -22,9 +22,11 @@ package org.project.openbaton.nubomedia.paas.api;
 import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.core.OpenShiftManager;
+import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
+import org.project.openbaton.nubomedia.paas.exceptions.StateException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
@@ -35,7 +37,6 @@ import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
-import org.project.openbaton.nubomedia.paas.properties.NfvoProperties;
 import org.project.openbaton.nubomedia.paas.security.interfaces.ProjectManagement;
 import org.project.openbaton.nubomedia.paas.security.interfaces.UserManagement;
 import org.slf4j.Logger;
@@ -48,7 +49,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -56,9 +56,9 @@ import java.util.List;
  * Created by maa on 28.09.15.
  */
 @RestController
-@RequestMapping("/api/v1/nubomedia/paas")
-public class RestAPI {
-  private static final Logger logger = LoggerFactory.getLogger(RestAPI.class);
+@RequestMapping("/api/v2/nubomedia/paas")
+public class RestAPIv2 {
+  private static final Logger logger = LoggerFactory.getLogger(RestAPIv2.class);
 
   @Autowired private OpenShiftManager osmanager;
 
@@ -125,6 +125,56 @@ public class RestAPI {
       app = appManager.getApp(projectId, id);
     }
     return app;
+  }
+
+  /**
+   * @param id
+   * @param projectId
+   * @return
+   * @throws ApplicationNotFoundException
+   * @throws UnauthorizedException
+   */
+  @RequestMapping(value = "/app/{id}/media-server/{hostname}/start", method = RequestMethod.PUT)
+  @ResponseBody
+  public void startMediaServer(
+      @PathVariable("id") String id,
+      @PathVariable("hostname") String hostname,
+      @RequestHeader(value = "project-id") String projectId)
+      throws ApplicationNotFoundException, UnauthorizedException, NotFoundException, SDKException,
+          StateException {
+    logger.info("Request start of media server " + hostname);
+    Application app = null;
+    if (isAdminProject(projectId)) {
+      app = appManager.getApp(id);
+    } else {
+      app = appManager.getApp(projectId, id);
+    }
+    appManager.startKMS(app, hostname);
+  }
+
+  /**
+   * @param id
+   * @param projectId
+   * @return
+   * @throws ApplicationNotFoundException
+   * @throws UnauthorizedException
+   */
+  @RequestMapping(value = "/app/{id}/media-server/{hostname}/stop", method = RequestMethod.PUT)
+  @ResponseBody
+  public void stopMediaServer(
+      @PathVariable("id") String id,
+      @PathVariable("hostname") String hostname,
+      @RequestHeader(value = "project-id") String projectId)
+      throws ApplicationNotFoundException, UnauthorizedException, NotFoundException, SDKException,
+          StateException {
+    logger.info("Request stop of media server " + hostname);
+    Application app = null;
+    if (isAdminProject(projectId)) {
+      app = appManager.getApp(id);
+    } else {
+      app = appManager.getApp(projectId, id);
+    }
+    appManager.stopKMS(app, hostname);
   }
 
   /**
