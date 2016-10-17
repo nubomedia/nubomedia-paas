@@ -19,6 +19,7 @@
 
 package org.project.openbaton.nubomedia.paas.core;
 
+import javafx.animation.Animation;
 import org.openbaton.catalogue.mano.common.LifecycleEvent;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
@@ -27,6 +28,7 @@ import org.project.openbaton.nubomedia.paas.core.util.NSRUtil;
 import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
 import org.project.openbaton.nubomedia.paas.exceptions.BadRequestException;
 import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
+import org.project.openbaton.nubomedia.paas.exceptions.StateException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
@@ -485,4 +487,21 @@ public class AppManager {
     if (app == null) throw new NotFoundException("Not found Application with ID " + id);
     return getApplicationLogs(app.getProjectId(), id, podName);
   }
+
+  public void stopKMS(Application app, String hostname) throws StateException, NotFoundException, SDKException {
+    if (app.getStatus().ordinal() == Animation.Status.RUNNING.ordinal()) {
+      obmanager.stopVnfcInstance(app, hostname);
+    } else {
+      throw new StateException("Application must be in state RUNNING in order to stop KMS");
+    }
+  }
+
+  public void startKMS(Application app, String hostname) throws StateException, NotFoundException, SDKException {
+    if (app.getStatus().ordinal() == Animation.Status.RUNNING.ordinal()) {
+      obmanager.startVnfcInstance(app, hostname);
+    } else {
+      throw new StateException("Application must be in state RUNNING in order to stop KMS");
+    }
+  }
+
 }

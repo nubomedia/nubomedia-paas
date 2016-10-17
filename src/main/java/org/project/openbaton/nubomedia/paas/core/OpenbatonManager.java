@@ -24,6 +24,7 @@ import org.openbaton.catalogue.mano.descriptor.NetworkServiceDescriptor;
 import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.descriptor.VirtualNetworkFunctionDescriptor;
 import org.openbaton.catalogue.mano.record.NetworkServiceRecord;
+import org.openbaton.catalogue.mano.record.VNFCInstance;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Configuration;
 import org.openbaton.catalogue.nfvo.VimInstance;
@@ -32,6 +33,8 @@ import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.util.NSDUtil;
 import org.project.openbaton.nubomedia.paas.core.util.NSRUtil;
 import org.project.openbaton.nubomedia.paas.core.util.VIMUtil;
+import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
+import org.project.openbaton.nubomedia.paas.exceptions.StateException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
@@ -68,31 +71,34 @@ public class OpenbatonManager {
   private void init() throws IOException, SDKException {
 
     VimInstance vimInstance = VIMUtil.getVimInstance(vimProperties);
-
     try {
-      this.logger.debug("Trying to create the VIM Instance " + vimInstance.getName());
-      vimInstance = this.nfvoRequestor.getVimInstanceAgent().create(vimInstance);
-    } catch (SDKException e) {
-      try {
-        this.logger.warn(
-            "The VIM Instance " + vimInstance.getName() + " already exists, updating it");
-        List<VimInstance> instances = nfvoRequestor.getVimInstanceAgent().findAll();
-        for (VimInstance instance : instances) {
-          if (vimInstance.getName().equals(instance.getName())) {
-            if (!vimInstance.getAuthUrl().equals(instance.getAuthUrl())
-                && !vimInstance.getUsername().equals(instance.getUsername())
-                && !vimInstance.getPassword().equals(instance.getPassword())) {
-              nfvoRequestor.getVimInstanceAgent().update(vimInstance, instance.getId());
-            } else {
-              vimInstance = instance;
-            }
+      this.logger.warn("Check if VIM Instance " + vimInstance.getName() + " exists already");
+      List<VimInstance> instances = nfvoRequestor.getVimInstanceAgent().findAll();
+      boolean foundVIM = false;
+      for (VimInstance instance : instances) {
+        if (vimInstance.getName().equals(instance.getName())) {
+          foundVIM = true;
+          logger.info("Found VIM Instance " + vimInstance.getName() + ". Updating ...");
+          if (!vimInstance.getAuthUrl().equals(instance.getAuthUrl())
+              && !vimInstance.getUsername().equals(instance.getUsername())
+              && !vimInstance.getPassword().equals(instance.getPassword())) {
+            nfvoRequestor.getVimInstanceAgent().update(vimInstance, instance.getId());
+            logger.info("VIM Instance " + vimInstance.getName() + " updated.");
+          } else {
+            vimInstance = instance;
+            logger.info("VIM Instance already up-to-date");
           }
+          break;
         }
-      } catch (SDKException | ClassNotFoundException e1) {
-        e1.printStackTrace();
       }
+      if (foundVIM == false) {
+        this.logger.debug("Not found VIM Instance. Adding VIM Instance " + vimInstance.getName());
+        vimInstance = this.nfvoRequestor.getVimInstanceAgent().create(vimInstance);
+        logger.info("VIM instance created");
+      }
+    } catch (SDKException | ClassNotFoundException e1) {
+      e1.printStackTrace();
     }
-    logger.debug("VIM instance created");
   }
 
   public MediaServerGroup createMediaServerGroup(
@@ -280,6 +286,84 @@ public class OpenbatonManager {
       this.nfvoRequestor.getNetworkServiceDescriptorAgent().delete(nsdID);
     } catch (SDKException e) {
       e.printStackTrace();
+    }
+  }
+
+  public void startVnfcInstance(Application app, String hostname)
+      throws SDKException, NotFoundException, StateException {
+    NetworkServiceRecord nsr = null;
+    try {
+      nsr =
+          nfvoRequestor
+              .getNetworkServiceRecordAgent()
+              .findById(app.getMediaServerGroup().getNsrID());
+    } catch (ClassNotFoundException e) {
+      throw new NotFoundException("Not found NSR " + app.getMediaServerGroup().getNsrID());
+    }
+    boolean foundKMS = false;
+    for (VirtualNetworkFunctionRecord vnfr : nsr.getVnfr()) {
+      if (vnfr.getType().equals("media-server")) {
+        for (VirtualDeploymentUnit msVdu : vnfr.getVdu()) {
+          for (VNFCInstance mediaServer : msVdu.getVnfc_instance()) {
+            if (mediaServer.getHostname().equals(hostname)) {
+              foundKMS = true;
+              if (mediaServer.getState().equals("INACTIVE")) {
+                nfvoRequestor
+                    .getNetworkServiceRecordAgent()
+                    .startVNFCInstance(
+                        nsr.getId(), vnfr.getId(), msVdu.getId(), mediaServer.getId());
+              } else {
+                throw new StateException(
+                    "Bad request: media server "
+                        + hostname
+                        + " is in wrong state. Must be INACTIVE to start KMS again");
+              }
+            }
+          }
+        }
+      }
+    }
+    if (foundKMS == false) {
+      throw new NotFoundException("Not found media server " + hostname);
+    }
+  }
+
+  public void stopVnfcInstance(Application app, String hostname)
+      throws SDKException, NotFoundException, StateException {
+    NetworkServiceRecord nsr = null;
+    try {
+      nsr =
+          nfvoRequestor
+              .getNetworkServiceRecordAgent()
+              .findById(app.getMediaServerGroup().getNsrID());
+    } catch (ClassNotFoundException e) {
+      throw new NotFoundException("Not found NSR " + app.getMediaServerGroup().getNsrID());
+    }
+    boolean foundKMS = false;
+    for (VirtualNetworkFunctionRecord vnfr : nsr.getVnfr()) {
+      if (vnfr.getType().equals("media-server")) {
+        for (VirtualDeploymentUnit msVdu : vnfr.getVdu()) {
+          for (VNFCInstance mediaServer : msVdu.getVnfc_instance()) {
+            if (mediaServer.getHostname().equals(hostname)) {
+              foundKMS = true;
+              if (mediaServer.getState().equals("ACTIVE")) {
+                nfvoRequestor
+                    .getNetworkServiceRecordAgent()
+                    .stopVNFCInstance(
+                        nsr.getId(), vnfr.getId(), msVdu.getId(), mediaServer.getId());
+              } else {
+                throw new StateException(
+                    "Bad request: media server "
+                        + hostname
+                        + " is in wrong state. Must be ACTIVE to stop the KMS");
+              }
+            }
+          }
+        }
+      }
+    }
+    if (foundKMS == false) {
+      throw new NotFoundException("Not found media server " + hostname);
     }
   }
 }
