@@ -1,0 +1,2 @@
+DROP TABLE media_server_group_floatingips;
+DROP TABLE media_server_group_hostnames;
