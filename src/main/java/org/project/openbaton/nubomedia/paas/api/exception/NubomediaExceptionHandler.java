@@ -88,6 +88,7 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   protected ResponseEntity<Object> handleNameToLong(Exception e, WebRequest request) {
     logger.info("Handling to long name from " + request.getDescription(true));
+    logger.info("Exception thrown " + e.getMessage(), e);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     String body = e.getMessage();
@@ -97,7 +98,8 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler({turnServerException.class})
   @ResponseStatus(HttpStatus.PRECONDITION_REQUIRED)
   protected ResponseEntity<Object> handleTurnParametersException(Exception e, WebRequest request) {
-    logger.info("Handling parameters from" + request.getDescription(true));
+    logger.info("Handling parameters from " + request.getDescription(true));
+    logger.info("Exception thrown " + e.getMessage(), e);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     String body = "Turn server requires authentication parameters";
@@ -107,7 +109,8 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler({ForbiddenException.class})
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   protected ResponseEntity<Object> handleForbiddenException(Exception e, WebRequest request) {
-    logger.info("Handling parameters from" + request.getDescription(true));
+    logger.info("Handling parameters from " + request.getDescription(true));
+    logger.info("Exception thrown " + e.getMessage(), e);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     String body = e.getMessage();
@@ -117,7 +120,8 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler({BadRequestException.class, NotFoundException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   protected ResponseEntity<Object> handleBadRequestException(Exception e, WebRequest request) {
-    logger.info("Handling parameters from" + request.getDescription(true));
+    logger.info("Handling parameters from " + request.getDescription(true));
+    logger.info("Exception thrown " + e.getMessage(), e);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     String body = e.getMessage();
@@ -127,7 +131,8 @@ public class NubomediaExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler({Exception.class})
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   protected ResponseEntity<Object> handleAllExceptions(Exception e, WebRequest request) {
-    logger.info("Handling parameters from" + request.getDescription(true));
+    logger.info("Handling parameters from " + request.getDescription(true));
+    logger.info("Exception thrown " + e.getMessage(), e);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     String body = e.getMessage();
