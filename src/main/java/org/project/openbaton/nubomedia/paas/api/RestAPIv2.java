@@ -23,10 +23,7 @@ import org.openbaton.sdk.api.exception.SDKException;
 import org.project.openbaton.nubomedia.paas.core.AppManager;
 import org.project.openbaton.nubomedia.paas.core.OpenShiftManager;
 import org.project.openbaton.nubomedia.paas.core.OpenbatonManager;
-import org.project.openbaton.nubomedia.paas.exceptions.ApplicationNotFoundException;
-import org.project.openbaton.nubomedia.paas.exceptions.ForbiddenException;
-import org.project.openbaton.nubomedia.paas.exceptions.NotFoundException;
-import org.project.openbaton.nubomedia.paas.exceptions.StateException;
+import org.project.openbaton.nubomedia.paas.exceptions.*;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.StunServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openbaton.turnServerException;
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.DuplicatedException;
@@ -34,6 +31,7 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.NameStructureEx
 import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedException;
 import org.project.openbaton.nubomedia.paas.messages.*;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Host;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Project;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.Role;
 import org.project.openbaton.nubomedia.paas.model.persistence.security.User;
@@ -51,6 +49,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by maa on 28.09.15.
@@ -113,6 +112,7 @@ public class RestAPIv2 {
    * @throws UnauthorizedException
    */
   @RequestMapping(value = "/app/{id}", method = RequestMethod.GET)
+  @ResponseStatus(value = HttpStatus.OK)
   @ResponseBody
   public Application getApp(
       @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId)
@@ -135,13 +135,14 @@ public class RestAPIv2 {
    * @throws UnauthorizedException
    */
   @RequestMapping(value = "/app/{id}/media-server/{hostname}/start", method = RequestMethod.PUT)
+  @ResponseStatus(value = HttpStatus.ACCEPTED)
   @ResponseBody
   public void startMediaServer(
       @PathVariable("id") String id,
       @PathVariable("hostname") String hostname,
       @RequestHeader(value = "project-id") String projectId)
       throws ApplicationNotFoundException, UnauthorizedException, NotFoundException, SDKException,
-          StateException {
+          StateException, BadRequestException {
     logger.info("Request start of media server " + hostname);
     Application app = null;
     if (isAdminProject(projectId)) {
@@ -159,14 +160,139 @@ public class RestAPIv2 {
    * @throws ApplicationNotFoundException
    * @throws UnauthorizedException
    */
+  @RequestMapping(value = "/app/{id}/media-server", method = RequestMethod.POST)
+  @ResponseStatus(value = HttpStatus.ACCEPTED)
+  @ResponseBody
+  public void scaleoutMediaServer(
+      @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId)
+      throws ApplicationNotFoundException, UnauthorizedException, NotFoundException, SDKException,
+          StateException, ClassNotFoundException, BadRequestException {
+    logger.info("Request scaling out application " + id);
+    Application app = null;
+    if (isAdminProject(projectId)) {
+      app = appManager.getApp(id);
+    } else {
+      app = appManager.getApp(projectId, id);
+    }
+    appManager.scaleOutKms(app);
+  }
+
+  /**
+   * @param id
+   * @param projectId
+   * @return
+   * @throws ApplicationNotFoundException
+   * @throws UnauthorizedException
+   */
+  @RequestMapping(value = "/app/{id}/media-server/{hostname}", method = RequestMethod.GET)
+  @ResponseStatus(value = HttpStatus.OK)
+  @ResponseBody
+  public Host getMediaServer(
+      @PathVariable("id") String id,
+      @PathVariable("hostname") String hostname,
+      @RequestHeader(value = "project-id") String projectId)
+      throws ApplicationNotFoundException, UnauthorizedException, NotFoundException, SDKException,
+          StateException {
+    logger.info("Request media server " + hostname + " of application " + id);
+    Application app = null;
+    if (isAdminProject(projectId)) {
+      app = appManager.getApp(id);
+    } else {
+      app = appManager.getApp(projectId, id);
+    }
+    return appManager.getKMS(app, hostname);
+  }
+
+  /**
+   * @param id
+   * @param projectId
+   * @return
+   * @throws ApplicationNotFoundException
+   * @throws UnauthorizedException
+   */
+  @RequestMapping(value = "/app/{id}/media-server", method = RequestMethod.GET)
+  @ResponseStatus(value = HttpStatus.OK)
+  @ResponseBody
+  public Set<Host> getMediaServers(
+      @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId)
+      throws ApplicationNotFoundException, UnauthorizedException, NotFoundException, SDKException,
+          StateException {
+    logger.info("Request list of all media servers of application " + id);
+    Application app = null;
+    if (isAdminProject(projectId)) {
+      app = appManager.getApp(id);
+    } else {
+      app = appManager.getApp(projectId, id);
+    }
+    return app.getMediaServerGroup().getHosts();
+  }
+
+  /**
+   * @param id
+   * @param projectId
+   * @return
+   * @throws ApplicationNotFoundException
+   * @throws UnauthorizedException
+   */
+  @RequestMapping(value = "/app/{id}/media-server/{hostname}", method = RequestMethod.DELETE)
+  @ResponseStatus(value = HttpStatus.ACCEPTED)
+  @ResponseBody
+  public void scaleinMediaServer(
+      @PathVariable("id") String id,
+      @PathVariable("hostname") String hostname,
+      @RequestHeader(value = "project-id") String projectId)
+      throws ApplicationNotFoundException, UnauthorizedException, NotFoundException, SDKException,
+          StateException, ClassNotFoundException, BadRequestException {
+    logger.info("Request scaling in application " + id + " and media server " + hostname);
+    Application app = null;
+    if (isAdminProject(projectId)) {
+      app = appManager.getApp(id);
+    } else {
+      app = appManager.getApp(projectId, id);
+    }
+    appManager.scaleInKms(app, hostname);
+  }
+
+  /**
+   * @param id
+   * @param projectId
+   * @return
+   * @throws ApplicationNotFoundException
+   * @throws UnauthorizedException
+   */
+  @RequestMapping(value = "/app/{id}/media-server", method = RequestMethod.DELETE)
+  @ResponseStatus(value = HttpStatus.ACCEPTED)
+  @ResponseBody
+  public void scaleinAnyMediaServer(
+      @PathVariable("id") String id, @RequestHeader(value = "project-id") String projectId)
+      throws ApplicationNotFoundException, UnauthorizedException, NotFoundException, SDKException,
+          StateException, ClassNotFoundException, BadRequestException {
+    logger.info("Request scaling in application " + id + " and any media server");
+    Application app = null;
+    if (isAdminProject(projectId)) {
+      app = appManager.getApp(id);
+    } else {
+      app = appManager.getApp(projectId, id);
+    }
+    appManager.scaleInKms(app);
+  }
+
+  /**
+   * @param id
+   * @param projectId
+   * @return
+   * @throws ApplicationNotFoundException
+   * @throws UnauthorizedException
+   */
   @RequestMapping(value = "/app/{id}/media-server/{hostname}/stop", method = RequestMethod.PUT)
+  @ResponseStatus(value = HttpStatus.ACCEPTED)
   @ResponseBody
   public void stopMediaServer(
       @PathVariable("id") String id,
       @PathVariable("hostname") String hostname,
       @RequestHeader(value = "project-id") String projectId)
       throws ApplicationNotFoundException, UnauthorizedException, NotFoundException, SDKException,
-          StateException {
+          StateException, BadRequestException {
     logger.info("Request stop of media server " + hostname);
     Application app = null;
     if (isAdminProject(projectId)) {
