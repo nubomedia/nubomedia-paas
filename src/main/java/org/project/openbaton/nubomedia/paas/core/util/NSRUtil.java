@@ -23,6 +23,7 @@ import org.openbaton.catalogue.mano.common.Ip;
 import org.openbaton.catalogue.mano.descriptor.VirtualDeploymentUnit;
 import org.openbaton.catalogue.mano.record.VNFCInstance;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Host;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,5 +76,22 @@ public class NSRUtil {
       }
     }
     throw new Exception("IP was not found");
+  }
+
+  public static Set<Host> getHosts(VirtualNetworkFunctionRecord record) {
+    Set<Host> hosts = new HashSet<>();
+    for (VirtualDeploymentUnit vdu : record.getVdu()) {
+      for (VNFCInstance instance : vdu.getVnfc_instance()) {
+        logger.debug("found instance " + instance.getHostname());
+        Host kms = new Host();
+        for (Ip ip : instance.getFloatingIps()) {
+          kms.setFloatingIp(ip.getIp());
+        }
+        kms.setHostname(instance.getHostname());
+        kms.setStatus(instance.getState());
+        hosts.add(kms);
+      }
+    }
+    return hosts;
   }
 }
