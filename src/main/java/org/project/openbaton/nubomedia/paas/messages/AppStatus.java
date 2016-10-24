@@ -31,6 +31,7 @@ public enum AppStatus {
   BUILD_OK, //internal state not visible from outside, used to redirect requests to deploymentManager
   DEPLOYNG,
   RUNNING,
+  SCALING,
   FAILED,
   PAAS_RESOURCE_MISSING
 }
