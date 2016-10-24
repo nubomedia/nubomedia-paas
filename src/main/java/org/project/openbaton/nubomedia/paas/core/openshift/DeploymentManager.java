@@ -260,10 +260,10 @@ public class DeploymentManager {
     IList pods = client.get(ResourceKind.POD, openShiftProperties.getProject());
     List<Pod> podList = new ArrayList<>();
     for (IResource pod : pods.getItems()) {
-      logger.info(pod.toJson());
+      //      logger.info(pod.toJson());
       podList.add((Pod) pod);
     }
-    logger.debug("Got list of all pods:" + podList.toString());
+    logger.trace("Got list of all pods:" + podList.toString());
     return podList;
   }
 
