@@ -19,6 +19,7 @@
 
 package org.project.openbaton.nubomedia.paas.model.persistence.openbaton;
 
+import org.openbaton.catalogue.mano.record.Status;
 import org.openbaton.catalogue.util.IdGenerator;
 
 import javax.persistence.*;
@@ -34,11 +35,13 @@ public class MediaServerGroup {
   private String nsdID;
   private String nsrID;
 
-  @ElementCollection(fetch = FetchType.EAGER)
-  private Set<String> floatingIPs;
+  private Status status;
 
-  @ElementCollection(fetch = FetchType.EAGER)
-  private Set<String> hostnames;
+  //  @ElementCollection(fetch = FetchType.EAGER)
+  //  private Set<String> floatingIPs;
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  private Set<Host> hosts;
 
   public MediaServerGroup() {}
 
@@ -67,21 +70,37 @@ public class MediaServerGroup {
     this.nsrID = nsrID;
   }
 
-  public Set<String> getFloatingIPs() {
-    return floatingIPs;
+  public Status getStatus() {
+    return status;
   }
 
-  public void setFloatingIPs(Set<String> floatingIPs) {
-    this.floatingIPs = floatingIPs;
+  public void setStatus(Status status) {
+    this.status = status;
   }
 
-  public Set<String> getHostnames() {
-    return hostnames;
+  public Set<Host> getHosts() {
+    return hosts;
   }
 
-  public void setHostnames(Set<String> hostnames) {
-    this.hostnames = hostnames;
+  public void setHosts(Set<Host> hosts) {
+    this.hosts = hosts;
   }
+
+  //  public Set<String> getFloatingIPs() {
+  //    return floatingIPs;
+  //  }
+  //
+  //  public void setFloatingIPs(Set<String> floatingIPs) {
+  //    this.floatingIPs = floatingIPs;
+  //  }
+  //
+  //  public Set<String> getHostnames() {
+  //    return hostnames;
+  //  }
+  //
+  //  public void setHostnames(Set<String> hostnames) {
+  //    this.hostnames = hostnames;
+  //  }
 
   @Override
   public String toString() {
@@ -95,10 +114,10 @@ public class MediaServerGroup {
         + ", nsrID='"
         + nsrID
         + '\''
-        + ", floatingIPs="
-        + floatingIPs
-        + ", hostnames="
-        + hostnames
+        + ", status="
+        + status
+        + ", hosts="
+        + hosts
         + '}';
   }
 }
