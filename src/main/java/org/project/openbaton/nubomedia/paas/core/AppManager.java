@@ -38,6 +38,7 @@ import org.project.openbaton.nubomedia.paas.messages.*;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.EnvironmentVariable;
 import org.project.openbaton.nubomedia.paas.model.persistence.SupportingService;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.Host;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.OpenBatonEvent;
 import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
@@ -130,6 +131,7 @@ public class AppManager {
         this.obmanager.createMediaServerGroup(
             request.getName(),
             osName,
+            request.getNumberOfInstances(),
             request.getFlavor(),
             this.paaSProperties.getPort(),
             request.isCloudRepository(),
@@ -151,6 +153,7 @@ public class AppManager {
     app.setOsName(osName);
     app.setProjectName(openshiftProject);
     app.setProjectId(projectId);
+    app.setNumberOfInstances(request.getNumberOfInstances());
     app.setMediaServerGroup(mediaServerGroup);
     app.setEnvVars(new ArrayList<EnvironmentVariable>());
     //app.setRoute("");
@@ -218,8 +221,9 @@ public class AppManager {
         if (record.getEndpoint().equals("media-server")) {
           logger.debug("found record media-server");
           vnfrID = record.getId();
-          mediaServerGroup.setFloatingIPs(NSRUtil.getFloatingIPs(record));
-          mediaServerGroup.setHostnames(NSRUtil.getHostnames(record));
+          mediaServerGroup.setHosts(NSRUtil.getHosts(record));
+          //          mediaServerGroup.setFloatingIPs(NSRUtil.getFloatingIPs(record));
+          //          mediaServerGroup.setHostnames(NSRUtil.getHostnames(record));
         }
         if (record.getName().contains("mongodb")) {
           try {
@@ -488,20 +492,64 @@ public class AppManager {
     return getApplicationLogs(app.getProjectId(), id, podName);
   }
 
-  public void stopKMS(Application app, String hostname) throws StateException, NotFoundException, SDKException {
-    if (app.getStatus().ordinal() == Animation.Status.RUNNING.ordinal()) {
+  public void stopKMS(Application app, String hostname)
+      throws StateException, NotFoundException, SDKException, BadRequestException {
+    if (app.getStatus().ordinal() == AppStatus.RUNNING.ordinal()) {
       obmanager.stopVnfcInstance(app, hostname);
     } else {
       throw new StateException("Application must be in state RUNNING in order to stop KMS");
     }
   }
 
-  public void startKMS(Application app, String hostname) throws StateException, NotFoundException, SDKException {
-    if (app.getStatus().ordinal() == Animation.Status.RUNNING.ordinal()) {
+  public void startKMS(Application app, String hostname)
+      throws StateException, NotFoundException, SDKException, BadRequestException {
+    if (app.getStatus().ordinal() == AppStatus.RUNNING.ordinal()) {
       obmanager.startVnfcInstance(app, hostname);
     } else {
-      throw new StateException("Application must be in state RUNNING in order to stop KMS");
+      throw new StateException("Application must be in state RUNNING in order to start KMS");
     }
   }
 
+  public void scaleInKms(Application app)
+      throws StateException, NotFoundException, SDKException, ClassNotFoundException,
+          BadRequestException {
+    if (app.getStatus().ordinal() == AppStatus.RUNNING.ordinal()) {
+      for (Host hostToRemove : app.getMediaServerGroup().getHosts()) {
+        obmanager.scaleInVnfcInstance(app, hostToRemove.getHostname());
+        break;
+      }
+    } else {
+      throw new StateException("Application must be in state RUNNING in order to scale in a KMS");
+    }
+  }
+
+  public void scaleInKms(Application app, String hostname)
+      throws StateException, NotFoundException, SDKException, ClassNotFoundException,
+          BadRequestException {
+    if (app.getStatus().ordinal() == AppStatus.RUNNING.ordinal()) {
+      obmanager.scaleInVnfcInstance(app, hostname);
+    } else {
+      throw new StateException("Application must be in state RUNNING in order to scale in a KMS");
+    }
+  }
+
+  public void scaleOutKms(Application app)
+      throws StateException, NotFoundException, SDKException, ClassNotFoundException,
+          BadRequestException {
+    if (app.getStatus().ordinal() == AppStatus.RUNNING.ordinal()) {
+      obmanager.scaleOutVnfcInstance(app);
+    } else {
+      throw new StateException(
+          "Application must be in state RUNNING in order to scale out new KMSs");
+    }
+  }
+
+  public Host getKMS(Application app, String hostname) throws NotFoundException {
+    for (Host host : app.getMediaServerGroup().getHosts()) {
+      if (host.getHostname().equals(hostname)) {
+        return host;
+      }
+    }
+    throw new NotFoundException("Not found KMS " + hostname + " of application " + app.getName());
+  }
 }
