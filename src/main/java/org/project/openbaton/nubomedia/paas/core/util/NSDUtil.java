@@ -40,6 +40,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static java.lang.System.in;
+
 /**
  * Created by gca on 27/05/16.
  */
@@ -48,6 +50,7 @@ public class NSDUtil {
   private static Logger logger = LoggerFactory.getLogger(NSDUtil.class);
 
   public static NetworkServiceDescriptor getNSD(
+      int numberOfInstances,
       Flavor flavor,
       QoS Qos,
       boolean turnServerActivate,
@@ -62,7 +65,8 @@ public class NSDUtil {
       KmsProperties kmsProperties,
       VimProperties vimProperties)
       throws turnServerException, StunServerException {
-    NetworkServiceDescriptor nsd = createInitialNSD(kmsProperties, vimProperties);
+    NetworkServiceDescriptor nsd =
+        createInitialNSD(numberOfInstances, kmsProperties, vimProperties);
     logger.debug("Start configuring network service descriptor");
     nsd = injectFlavor(flavor.getValue(), kmsProperties.getImage(), nsd);
     logger.debug("After flavor the nsd is\n" + nsd.toString() + "\n****************************");
@@ -87,10 +91,27 @@ public class NSDUtil {
     logger.debug(
         "Settled Configuration parameters for mediaserver, the new NSD is " + nsd.toString());
 
-    if (scaleInOut > 1) {
+    if (scaleInOut > 0) {
       logger.debug("Setting autoscaling policies");
       nsd = enableAutoscaling(scaleInOut, scale_out_threshold, nsd);
     }
+
+    VirtualNetworkFunctionDescriptor msVnfd = null;
+    for (VirtualNetworkFunctionDescriptor vnfd : nsd.getVnfd()) {
+      if (vnfd.getType().equals("media-server")) {
+        msVnfd = vnfd;
+      }
+    }
+
+    Set<VNFDependency> vnfDependencies = new HashSet<>();
+    VNFDependency vnfDependency = new VNFDependency();
+    vnfDependency.setSource(msVnfd);
+    vnfDependency.setTarget(msVnfd);
+    Set<String> parameters = new HashSet<>();
+    parameters.add("internal_nubomedia_ip");
+    vnfDependency.setParameters(parameters);
+    vnfDependencies.add(vnfDependency);
+    nsd.setVnf_dependency(vnfDependencies);
 
     return nsd;
   }
@@ -315,13 +336,13 @@ public class NSDUtil {
   }
 
   private static NetworkServiceDescriptor createInitialNSD(
-      KmsProperties kmsProperties, VimProperties vimProperties) {
+      int numberOfInstances, KmsProperties kmsProperties, VimProperties vimProperties) {
     NetworkServiceDescriptor nsd = new NetworkServiceDescriptor();
     nsd.setVendor("TUB");
     nsd.setVersion("1.0");
 
     Set<VirtualNetworkFunctionDescriptor> vnfds = new HashSet<>();
-    vnfds.add(createMsVnfd(kmsProperties, vimProperties));
+    vnfds.add(createMsVnfd(numberOfInstances, kmsProperties, vimProperties));
 
     nsd.setVnfd(vnfds);
 
@@ -335,7 +356,7 @@ public class NSDUtil {
   }
 
   private static VirtualNetworkFunctionDescriptor createMsVnfd(
-      KmsProperties kmsProperties, VimProperties vimProperties) {
+      int numberOfInstances, KmsProperties kmsProperties, VimProperties vimProperties) {
     VirtualNetworkFunctionDescriptor vnfd = new VirtualNetworkFunctionDescriptor();
     vnfd.setVendor("TUB");
     vnfd.setVersion("1.0");
@@ -344,7 +365,7 @@ public class NSDUtil {
     vnfd.setEndpoint("media-server");
 
     Set<VirtualDeploymentUnit> vdus = new HashSet<>();
-    vdus.add(createMsVdu(kmsProperties, vimProperties));
+    vdus.add(createMsVdu(numberOfInstances, kmsProperties, vimProperties));
     vnfd.setVdu(vdus);
 
     Set<InternalVirtualLink> vls = new HashSet<>();
@@ -365,7 +386,7 @@ public class NSDUtil {
   }
 
   private static VirtualDeploymentUnit createMsVdu(
-      KmsProperties kmsProperties, VimProperties vimProperties) {
+      int numberOfInstances, KmsProperties kmsProperties, VimProperties vimProperties) {
     VirtualDeploymentUnit vdu = new VirtualDeploymentUnit();
 
     Set<String> images = new HashSet<>();
@@ -376,19 +397,20 @@ public class NSDUtil {
     vimInstanceNames.add(vimProperties.getName());
     vdu.setVimInstanceName(vimInstanceNames);
 
-    vdu.setScale_in_out(1);
+    vdu.setScale_in_out(numberOfInstances);
 
     Set<VNFComponent> vnfcs = new HashSet<>();
-    VNFComponent vnfc = new VNFComponent();
-    Set<VNFDConnectionPoint> cps = new HashSet<>();
-    VNFDConnectionPoint cp = new VNFDConnectionPoint();
-    cp.setFloatingIp("random");
-    cp.setVirtual_link_reference("internal_nubomedia");
-    cps.add(cp);
-    vnfc.setConnection_point(cps);
-    vnfcs.add(vnfc);
+    for (int i = 1; i <= numberOfInstances; i++) {
+      VNFComponent vnfc = new VNFComponent();
+      Set<VNFDConnectionPoint> cps = new HashSet<>();
+      VNFDConnectionPoint cp = new VNFDConnectionPoint();
+      cp.setFloatingIp("random");
+      cp.setVirtual_link_reference("internal_nubomedia");
+      cps.add(cp);
+      vnfc.setConnection_point(cps);
+      vnfcs.add(vnfc);
+    }
     vdu.setVnfc(vnfcs);
-
     return vdu;
   }
 
