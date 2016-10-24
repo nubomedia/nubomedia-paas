@@ -50,11 +50,17 @@ public class FlywayConfig {
     Flyway flyway = new Flyway();
     flyway.setDataSource(dataSource);
     flyway.setLocations("classpath:/flyway");
-    flyway.setBaselineVersion(MigrationVersion.fromVersion("1.3.1.1"));
+    flyway.setBaselineVersion(MigrationVersion.fromVersion("1.3.1.2"));
     try {
       flyway.baseline();
     } catch (FlywayException e) {
       log.warn("Database is already baselined with flyway");
+    }
+    try {
+      flyway.validate();
+    } catch (FlywayException e) {
+      log.warn(e.getMessage());
+      flyway.repair();
     }
     return flyway;
   }
