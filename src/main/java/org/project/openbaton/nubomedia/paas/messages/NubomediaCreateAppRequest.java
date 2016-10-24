@@ -47,6 +47,7 @@ public class NubomediaCreateAppRequest {
   private boolean stunServerActivate;
   private String stunServerIp;
   private String stunServerPort;
+  private int numberOfInstances;
   private int scaleOutLimit;
   private double scaleOutThreshold;
   private List<SupportingService> services;
@@ -205,6 +206,14 @@ public class NubomediaCreateAppRequest {
     this.services = services;
   }
 
+  public int getNumberOfInstances() {
+    return numberOfInstances;
+  }
+
+  public void setNumberOfInstances(int numberOfInstances) {
+    this.numberOfInstances = numberOfInstances;
+  }
+
   @Override
   public String toString() {
     return "NubomediaCreateAppRequest{"
@@ -216,7 +225,6 @@ public class NubomediaCreateAppRequest {
         + '\''
         + ", ports="
         + ports
-        + '\''
         + ", flavor="
         + flavor
         + ", replicasNumber="
@@ -249,6 +257,8 @@ public class NubomediaCreateAppRequest {
         + ", stunServerPort='"
         + stunServerPort
         + '\''
+        + ", numberOfInstances="
+        + numberOfInstances
         + ", scaleOutLimit="
         + scaleOutLimit
         + ", scaleOutThreshold="
