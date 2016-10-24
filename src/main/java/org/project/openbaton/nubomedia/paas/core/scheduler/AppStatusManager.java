@@ -26,6 +26,7 @@ import org.project.openbaton.nubomedia.paas.exceptions.openshift.UnauthorizedExc
 import org.project.openbaton.nubomedia.paas.messages.AppStatus;
 import org.project.openbaton.nubomedia.paas.model.persistence.Application;
 import org.project.openbaton.nubomedia.paas.model.persistence.SupportingService;
+import org.project.openbaton.nubomedia.paas.model.persistence.openbaton.MediaServerGroup;
 import org.project.openbaton.nubomedia.paas.properties.OpenShiftProperties;
 import org.project.openbaton.nubomedia.paas.repository.application.ApplicationRepository;
 import org.project.openbaton.nubomedia.paas.repository.service.ServiceRepository;
@@ -199,6 +200,9 @@ public class AppStatusManager {
   }
 
   private void refreshMediaServerGroup(Application app) throws Exception {
-    obmanager.updateMediaServerGroup(app);
+    MediaServerGroup mediaServerGroup = obmanager.updateMediaServerGroup(app);
+    app.setMediaServerGroup(mediaServerGroup);
+    app.setNumberOfInstances(mediaServerGroup.getHosts().size());
+    appRepo.save(app);
   }
 }
