@@ -60,6 +60,7 @@ public class Application {
   private boolean cdnConnector;
   private boolean cloudRepository;
 
+  private int numberOfInstances;
   private int scaleOutLimit;
 
   private double scaleOutThreshold;
@@ -408,6 +409,14 @@ public class Application {
     this.ports = ports;
   }
 
+  public int getNumberOfInstances() {
+    return numberOfInstances;
+  }
+
+  public void setNumberOfInstances(int numberOfInstances) {
+    this.numberOfInstances = numberOfInstances;
+  }
+
   @Override
   public String toString() {
     return "Application{"
@@ -466,6 +475,8 @@ public class Application {
         + cdnConnector
         + ", cloudRepository="
         + cloudRepository
+        + ", numberOfInstances="
+        + numberOfInstances
         + ", scaleOutLimit="
         + scaleOutLimit
         + ", scaleOutThreshold="
