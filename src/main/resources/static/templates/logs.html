@@ -62,23 +62,7 @@
   </div><!-- /Dropdown -->
 </section>
 
-<section class="u-mt-25 clearfix">
-    <button
-      id="get_log"
-      class="btn btn-primary log-button"
-      title="Loads the build logs"
-      ng-click="toggleMediaServer('start')">
-      Start
-    </button>
 
-    <button
-      id="get_log"
-      class="btn btn-danger log-button"
-      title="Loads the build logs"
-      ng-click="toggleMediaServer('stop')">
-      Stop
-    </button>
-  </section>
 
 <section ng-show="log">
   <pre id="log" ng-bind-html="log"></pre>
