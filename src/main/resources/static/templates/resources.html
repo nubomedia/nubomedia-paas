@@ -19,7 +19,7 @@
 
 <!-- Route-->
 <section class="form__section">
-  <h3 class="form__section-title">Application route</h3>
+  <h3 class="form__section-title">Application route!!</h3>
   <a ng-href="{{'https://' + application.route}}" target="_blank">{{'https://' + application.route}}</a>
 </section><!-- /Media servers -->
 
@@ -73,8 +73,7 @@
     </div>
 
   </section><!-- /Section scale -->
-</section>
-<!-- /Scale -->
+</section><!-- /Scale -->
 
 
 
@@ -112,4 +111,57 @@
 
   </section><!-- /Addons -->
 </section>
+
+
+
+<!-- Toggle Media Server -->
+<section class="form__section">
+  <h3 class="form__section-title">Media Servers</h3>
+  <section class="u-mt-25 clearfix">
+
+    <div class="row">
+
+      <div class="col-xs-12 col-md-4">
+        <div class="select u-mt-10">
+          <select
+            ng-model="currentSelectedMediaServer"
+            ng-options="option.hostname for option in allMediaServers"
+            ng-change="selectMediaServer(currentSelectedMediaServer.hostname)"
+            class="ng-pristine ng-valid">
+            <option value="?" selected="selected"></option>
+          </select>
+          <div class="select__arrow"></div>
+        </div>
+      </div>
+
+      <div class="col-xs-12 col-md-8">
+        <button
+          id="get_log"
+          class="btn btn-primary log-button u-mt-10"
+          title="Loads the build logs"
+          ng-click="toggleMediaServer('start', currentSelectedMediaServer.hostname)"
+          ng-disabled="!actions.start">
+          Start
+        </button>
+
+        <button
+          id="get_log"
+          class="btn btn-danger log-button u-mt-10"
+          title="Loads the build logs"
+          ng-click="toggleMediaServer('stop', currentSelectedMediaServer.hostname)"
+          ng-disabled="!actions.stop">
+          Stop
+        </button>
+      </div>
+    </div>
+
+
+
+  </section>
+</section><!-- /Toggle Media Server -->
+
+
+
+
+
 

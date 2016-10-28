@@ -29,6 +29,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.appJson = '';
   $scope.appNewService = {};
   $scope.mediaServeHostName = '';
+  $scope.actions = {};
 
   //var marketurl = 'http://localhost:8082/api/v1/app/';
   //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
@@ -75,29 +76,62 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     $scope.dropdownText = text;
   };
 
-  $scope.toggleMediaServer = function toggleMediaServer(state) {
-    var url = ip + '/api/v2/nubomedia/paas/app/' + $scope.application.mediaServerGroup.id + '/media-server/' + $scope.mediaServeHostName + '/';
+  // START/STOP MEDIA SERVER
+  $scope.selectMediaServer = function selectMediaServer(hostname) {
+    var url = ip + '/api/v2/nubomedia/paas/app/' + $routeParams.applicationId + '/media-server/' + hostname + '/';
+    http.get(url)
+      .success(function(response, status) {
+        if (response.status === 'INACTIVE') {
+          $scope.actions.start = true;
+          $scope.actions.stop = !$scope.actions.start;
+        } else if (response.status === 'ACTIVE') {
+          $scope.actions.start = false;
+          $scope.actions.stop = !$scope.actions.start;
+        }
+      }).error(function(data, status) {
+        console.log(data);
+      });
+  };
+
+  $scope.toggleMediaServer = function toggleMediaServer(state, hostname) {
+    var url = ip + '/api/v2/nubomedia/paas/app/' + $routeParams.applicationId + '/media-server/' + hostname + '/';
     switch (state) {
       case 'start':
         url = url + 'start';
         http.put(url)
           .success(function(response, status) {
-            console.log(response);
+            showOk(hostname + ' media server started!');
+            $scope.actions.start = false;
+            $scope.actions.stop = !$scope.actions.start;
           }).error(function(data, status) {
-            console.log(data);
+            showError(status, data);
           });
         break;
       case 'stop':
         url = url + 'stop';
         http.put(url)
           .success(function(response, status) {
-            console.log(response);
+            showOk(hostname + ' media server stoped!');
+            $scope.actions.start = true;
+            $scope.actions.stop = !$scope.actions.start;
           }).error(function(data, status) {
-            console.log(data);
+            showError(status, data);
           });
         break;
     }
   };
+  // END START/STOP MEDIA SERVER
+
+  function getAllMediaServers() {
+    var url = ip + '/api/v2/nubomedia/paas/app/' + $routeParams.applicationId + '/media-server';
+    http.get(url)
+      .success(function(response, status) {
+        $scope.allMediaServers = response;
+        console.log('get all media servers success');
+      }).error(function(data, status) {
+        console.log('get all media servers error');
+      });
+  }
 
   $rootScope.mediaServers = [];
   $rootScope.bigDataMediaServer = [];
@@ -239,15 +273,16 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       });
   }
 
+  //  GET APPLICATION INFO
   if (!angular.isUndefined($routeParams.applicationId)) {
     http.get(url + $routeParams.applicationId)
       .success(function(data) {
-        console.log('jsonApp applicationId: ', data);
         $scope.application = data;
         $scope.applicationJSON = JSON.stringify(data, undefined, 4);
         loadMediaManeger();
+        getAllMediaServers();
         $scope.mediaServerProgress = function() {
-          var value = $scope.application.mediaServerGroup.floatingIPs.length * 100 / $scope.application.scaleOutLimit;
+          var value = $scope.application.mediaServerGroup.hosts.length * 100 / $scope.application.scaleOutLimit;
 
           if (value % 1 !== 0) {
             value = (value).toFixed(2);
@@ -423,9 +458,9 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
 
   function mergeMediaServer(mediaServerGroup) {
     var mergedServer;
-    for (var i = 0; i < mediaServerGroup.floatingIPs.length; i++) {
+    for (var i = 0; i < mediaServerGroup.hosts.length; i++) {
       mergedServer = {
-        floatingIPs: mediaServerGroup.floatingIPs[i],
+        floatingIPs: mediaServerGroup.hosts[i],
         hostname: mediaServerGroup.hostnames[i]
       };
       $rootScope.mediaServers.push(mergedServer);
@@ -878,17 +913,12 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.loadValue = 0;
 
   function loadMediaManeger() {
-    console.log($scope.vnfrId);
-    console.log(urlMediaManager);
-
     http.get(urlMediaManager)
       .success(function(data) {
         //console.log(data);
         $scope.vnfrs = data;
-        console.log($scope.vnfrs);
         angular.forEach($scope.vnfrs, function(vnfr, index) {
           if ($scope.application.mediaServerGroup.nsrID == vnfr.nsrId) {
-            console.log(vnfr);
             $scope.vnfrId = vnfr.vnfrId;
             loadCapacityHistory();
             loadNumberHistory();
