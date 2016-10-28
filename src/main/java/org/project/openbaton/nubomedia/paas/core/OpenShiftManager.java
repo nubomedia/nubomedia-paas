@@ -164,7 +164,7 @@ public class OpenShiftManager {
         application.getGitURL(),
         imageStream.getDockerImageRepository().getAbsoluteUri(),
         application.getSecretName(),
-        application.getMediaServerGroup().getId(),
+        application.getMediaServerGroup().getMsVnfrId(),
         vnfmProperties.getIp(),
         vnfmProperties.getPort(),
         cloudRepositoryIp,

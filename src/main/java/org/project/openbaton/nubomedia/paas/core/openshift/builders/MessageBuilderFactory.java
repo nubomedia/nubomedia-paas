@@ -42,7 +42,7 @@ public class MessageBuilderFactory {
       String dockerRepo,
       String gitURL,
       String secretName,
-      String mediaServerGID,
+      String mediaServerVnfrId,
       String mediaServerIP,
       String mediaServerPort,
       String cloudRepositoryIp,
@@ -53,7 +53,7 @@ public class MessageBuilderFactory {
         new DockerBuildStrategy.DockerStrategy(
             new EnvironmentVariable[] {
               new EnvironmentVariable("BUILD_LOGLEVEL", "5"),
-              new EnvironmentVariable("VNFR_ID", mediaServerGID),
+              new EnvironmentVariable("VNFR_ID", mediaServerVnfrId),
               new EnvironmentVariable("VNFM_IP", mediaServerIP),
               new EnvironmentVariable("VNFM_PORT", mediaServerPort),
               new EnvironmentVariable("CLOUDREPO_IP", cloudRepositoryIp),

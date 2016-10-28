@@ -221,6 +221,7 @@ public class AppManager {
         if (record.getEndpoint().equals("media-server")) {
           logger.debug("found record media-server");
           vnfrID = record.getId();
+          mediaServerGroup.setMsVnfrId(vnfrID);
           mediaServerGroup.setHosts(NSRUtil.getHosts(record));
           //          mediaServerGroup.setFloatingIPs(NSRUtil.getFloatingIPs(record));
           //          mediaServerGroup.setHostnames(NSRUtil.getHostnames(record));
