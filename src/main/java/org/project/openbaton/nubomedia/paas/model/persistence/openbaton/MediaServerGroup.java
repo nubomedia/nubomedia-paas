@@ -34,6 +34,7 @@ public class MediaServerGroup {
   @Id private String id;
   private String nsdID;
   private String nsrID;
+  private String msVnfrId;
 
   private Status status;
 
@@ -104,20 +105,21 @@ public class MediaServerGroup {
 
   @Override
   public String toString() {
-    return "MediaServerGroup{"
-        + "id='"
-        + id
-        + '\''
-        + ", nsdID='"
-        + nsdID
-        + '\''
-        + ", nsrID='"
-        + nsrID
-        + '\''
-        + ", status="
-        + status
-        + ", hosts="
-        + hosts
-        + '}';
+    return "MediaServerGroup{" +
+            "id='" + id + '\'' +
+            ", nsdID='" + nsdID + '\'' +
+            ", nsrID='" + nsrID + '\'' +
+            ", msVnfrId='" + msVnfrId + '\'' +
+            ", status=" + status +
+            ", hosts=" + hosts +
+            '}';
+  }
+
+  public String getMsVnfrId() {
+    return msVnfrId;
+  }
+
+  public void setMsVnfrId(String msVnfrId) {
+    this.msVnfrId = msVnfrId;
   }
 }
