@@ -19,9 +19,25 @@
 
 <!-- Route-->
 <section class="form__section">
-  <h3 class="form__section-title">Application route!!</h3>
-  <a ng-href="{{'https://' + application.route}}" target="_blank">{{'https://' + application.route}}</a>
+
+  <h3 class="form__section-title">Application route</h3>
+
+  <div>
+    <span class="c-application__icon" ng-class="application.status"></span>
+    <span
+      class="c-application__status"
+      ng-class="application.status">
+      {{application.status}}
+    </span>
+  </div>
+
+  <div class="u-mt-20">
+    <a ng-href="{{'https://' + application.route}}" target="_blank" >{{'https://' + application.route}}</a>
+  </div>
+
 </section><!-- /Media servers -->
+
+
 
 
 <!-- Media servers -->
@@ -33,7 +49,9 @@
     <p class="progress-info progress-info--right">
       Max: {{application.scaleOutLimit}}
     </p>
-    <p class="progress-info progress-notification progress-info--left">Information</p>
+    <p class="progress-info progress-notification progress-info--left">
+      Active servers: {{allActiveMediaServers.length}}/{{allMediaServers.length}}
+    </p>
     <div class="progress">
       <div
         class="progress-bar"
@@ -60,11 +78,18 @@
 
   <!-- Section scale -->
   <section class="section-scale">
+
     <div class="section-scale__column section-scale__in">
       <span class="nm-icon icon-arrow-right"></span>
       Scale out limit
       <span class="section-scale__number-in">{{application.scaleOutLimit}}</span>
     </div>
+
+    <button
+      class="btn btn--white u-mr-30"
+      ng-click="toggleMediaServer('scale', currentSelectedMediaServer.hostname)">
+      Add scale out limit
+    </button>
 
     <div class="section-scale__column section-scale__out">
       <span class="nm-icon icon-arrow-left"></span>
@@ -121,7 +146,7 @@
 
     <div class="row">
 
-      <div class="col-xs-12 col-md-4">
+      <div class="col-xs-12 col-md-5">
         <div class="select u-mt-10">
           <select
             ng-model="currentSelectedMediaServer"
@@ -134,24 +159,32 @@
         </div>
       </div>
 
-      <div class="col-xs-12 col-md-8">
+      <div class="col-xs-12 col-md-7">
+
         <button
-          id="get_log"
-          class="btn btn-primary log-button u-mt-10"
-          title="Loads the build logs"
+          class="btn btn-primary u-mt-10"
+          title="Start media selected media server"
           ng-click="toggleMediaServer('start', currentSelectedMediaServer.hostname)"
           ng-disabled="!actions.start">
           Start
         </button>
 
         <button
-          id="get_log"
-          class="btn btn-danger log-button u-mt-10"
-          title="Loads the build logs"
+          class="btn btn-danger u-mt-10"
+          title="Stop media selected media server"
           ng-click="toggleMediaServer('stop', currentSelectedMediaServer.hostname)"
           ng-disabled="!actions.stop">
           Stop
         </button>
+
+        <button
+          class="btn btn-danger u-mt-10"
+          title="Delete media selected media server"
+          ng-click="toggleMediaServer('delete', currentSelectedMediaServer.hostname)"
+          ng-disabled="!currentSelectedMediaServer">
+          Delete
+        </button>
+
       </div>
     </div>
 
