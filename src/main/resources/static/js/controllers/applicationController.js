@@ -101,19 +101,48 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         http.put(url)
           .success(function(response, status) {
             showOk(hostname + ' media server started!');
+            setTimeout(function() {
+              getAllMediaServers();
+            }, 6000)
             $scope.actions.start = false;
             $scope.actions.stop = !$scope.actions.start;
           }).error(function(data, status) {
             showError(status, data);
           });
         break;
+
       case 'stop':
         url = url + 'stop';
         http.put(url)
           .success(function(response, status) {
             showOk(hostname + ' media server stoped!');
+            setTimeout(function() {
+              getAllMediaServers();
+            }, 6000);
             $scope.actions.start = true;
             $scope.actions.stop = !$scope.actions.start;
+          }).error(function(data, status) {
+            showError(status, data);
+          });
+        break;
+
+      case 'delete':
+        http.delete(url)
+          .success(function(response, status) {
+            showOk(hostname + ' media server stoped!');
+            setTimeout(function() {
+              getAllMediaServers();
+            }, 6000);
+          }).error(function(data, status) {
+            showError(status, data);
+          });
+        break;
+
+      case 'scale':
+        url = ip + '/api/v2/nubomedia/paas/app/' + $routeParams.applicationId + '/media-server/';
+        http.post(url)
+          .success(function(response, status) {
+            showOk('Added scale out limit');
           }).error(function(data, status) {
             showError(status, data);
           });
@@ -122,12 +151,21 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   };
   // END START/STOP MEDIA SERVER
 
+  $scope.showMediaServeerLogs = function(mediaServer) {
+    var url = "http://80.96.122.69:5601/#/discover?_g=(time:(from:now-30d,mode:quick,to:now))&_a=(columns:!(_source),filters:!(!n,(meta:(index:'logstash-*',negate:!f),query:(match:(host:(query: " + hostname + ",type:phrase))))),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'*')),sort:!('@timestamp',desc))";
+    return url;
+  }
+
   function getAllMediaServers() {
     var url = ip + '/api/v2/nubomedia/paas/app/' + $routeParams.applicationId + '/media-server';
     http.get(url)
       .success(function(response, status) {
         $scope.allMediaServers = response;
-        console.log('get all media servers success');
+
+        $scope.allActiveMediaServers = $scope.allMediaServers.filter(function(item) {
+          return item.status === 'ACTIVE';
+        })
+
       }).error(function(data, status) {
         console.log('get all media servers error');
       });
@@ -152,6 +190,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         $scope.appNewService = angular.copy(res.data.services[0]);
         $scope.appCreate = angular.copy(res.data);
         $scope.appCreate.services = [];
+        $scope.appCreate.numberOfInstances = 1;
       });
     // $('#modalT').modal('show');
   };
@@ -294,6 +333,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         google.charts.load('current', {
           'packages': ['corechart']
         });
+        2
 
         mergeMediaServer(data.mediaServerGroup);
         $rootScope.myMediaServer = $rootScope.mediaServers[0]; // first floatingIps
@@ -460,8 +500,8 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     var mergedServer;
     for (var i = 0; i < mediaServerGroup.hosts.length; i++) {
       mergedServer = {
-        floatingIPs: mediaServerGroup.hosts[i],
-        hostname: mediaServerGroup.hostnames[i]
+        floatingIPs: mediaServerGroup.hosts[i].floatingIp,
+        hostname: mediaServerGroup.hosts[i].hostname
       };
       $rootScope.mediaServers.push(mergedServer);
     }
@@ -544,8 +584,8 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         $scope.appCreate.turnServerPassword = $scope._turnServer.turnServerPassword;
     }
     if ($scope.toggle.threshold) {
-      $scope.appCreate.scaleInOut = $scope._threshold.scaleInOut;
-      $scope.appCreate.scale_out_threshold = $scope._threshold.scale_out_threshold;
+      $scope.appCreate.scaleOutLimit = $scope._threshold.scaleInOut;
+      $scope.appCreate.scaleOutThreshold = $scope._threshold.scale_out_threshold;
     }
 
 
@@ -556,8 +596,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     if ($scope.appCreate.secretName === "")
       delete $scope.appCreate.secretName;
 
-
-    //console.log(JSON.stringify($scope.appCreate));
+    console.log('$scope.appCreate: ', JSON.stringify($scope.appCreate));
 
     if ($scope.file !== '') {
       postTopology = $scope.file;
@@ -678,11 +717,10 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   };
 
   $scope.loadAppLog = function(podName, index) {
-    console.log(podName);
     http.get(url + $routeParams.applicationId + '/logs/' + podName)
       .success(function(response) {
         var stringArray = response.split('\\n');
-        $scope.mediaServeHostName = $scope.application.mediaServerGroup.hostnames[index];
+        // $scope.mediaServeHostName = $scope.application.mediaServerGroup.hostnames[index];
 
         var subLog = stringArray.slice(stringArray.length - $scope.input.numberRows, -1);
         var string = subLog.join('\\n');

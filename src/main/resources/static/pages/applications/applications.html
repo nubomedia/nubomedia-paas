@@ -265,6 +265,7 @@
 
         <h3 class="form__section-title">General Information</h3>
 
+        <!-- APPLICATION NAME -->
         <div class="form-group input">
 
           <!-- Label -->
@@ -296,13 +297,40 @@
             </p>
           </div><!-- /Column -->
 
-        </div><!-- /URL, NAME, REPLICAS_NUMBER -->
+        </div><!-- /APPLICATION NAME -->
+
+        <!-- NUMBER OF INSTANCES -->
+        <div class="form-group input">
+
+          <!-- Label -->
+          <label
+            for="{{name}}"
+            class="col-md-4 control-label input__label">
+            Number of KMS instances
+            <span class="input__subtitle">
+              <i
+                popover="{{textInfo}}"
+                popover-placement="bottom"
+                popover-trigger="mouseenter"
+                ng-mouseover="getInfos('numberOfInstances')">Tip: Hover me</i>
+            </span>
+          </label><!-- /Label -->
+
+          <!-- Column -->
+          <div class="col-md-8">
+            <input
+              class="form-control input__field"
+              type="number"
+              ng-model="appCreate.numberOfInstances">
+          </div><!-- /Column -->
+
+        </div><!-- NUMBER OF INSTANCES -->
 
         <!-- URL, NAME, REPLICAS_NUMBER -->
         <div
           class="form-group input"
           ng-repeat="(key,value) in appCreate"
-          ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut' && key!='name' && key!='services'">
+          ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut' && key!='name' && key!='services' && key!='replicasNumber' && key!='scaleOutLimit' && key!='scaleOutThreshold' && key!='scaleOutThreshold'">
 
           <!-- Label -->
           <label
