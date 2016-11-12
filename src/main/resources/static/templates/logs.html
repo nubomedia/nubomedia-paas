@@ -21,6 +21,39 @@
 
   <h4 class="u-mb-25">In order to access the Kurento Media Servers you can ssh using their IP addresses and username <strong>root</strong> with password <strong>nub0m3d1@</strong></h4>
 
+  <p>
+    <label class="control-label input__label">Select the Media Server you wish to see logs</label>
+  </p>
+
+  <div class="row">
+
+    <div class="col-md-6">
+      <div class="form-group input">
+        <div class="select">
+          <select
+            ng-model="myMediaServer"
+            ng-options="mediaServer.hostname for mediaServer in mediaServers"
+            ng-change="showMediaServeerLogs(myMediaServer.hostname)">
+          </select>
+          <div class="select__arrow"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <button
+        id="show_kms_logs"
+        class="btn kms_logs_btn"
+        title="Show KMS logs"
+        ng-click="showMediaServeerLogsURL(myMediaServer)">
+        Show KMS Logs
+      </button>
+    </div>
+
+  </div>
+
+  <div class="clearfix u-mb-25"></div>
+
   <button
     id="get_log"
     class="btn btn-primary log-button"
