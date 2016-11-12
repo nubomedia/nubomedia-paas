@@ -30,31 +30,30 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   $scope.appNewService = {};
   $scope.mediaServeHostName = '';
   $scope.actions = {};
-
-  //var marketurl = 'http://localhost:8082/api/v1/app/';
-  //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
-  //console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
-
-  if (angular.isUndefined($cookieStore.get('server-ip'))) {
-    http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
-      .success(function(data) {
-        var serverIpString = data.replaceAll("\"", "");
-        console.log(serverIpString);
-        urlMediaManager = 'http://' + serverIpString + ':9000/vnfr/';
-        $cookieStore.put('server-ip', serverIpString);
-      });
-  } else {
-    urlMediaManager = 'http://' + $cookieStore.get('server-ip') + ':9000/vnfr/';
-  }
-
-  String.prototype.replaceAll = function(target, replacement) {
-    return this.split(target).join(replacement);
-  };
-
   $scope.alerts = [];
   $scope.applications = [];
+  $rootScope.mediaServers = [];
+  $rootScope.bigDataMediaServer = [];
+  $scope.vnfrId = '';
+  $scope.numberValue = 1;
+  $scope.loadValue = 0;
+  $scope.disableButton = false;
+  $scope.classVar = 'panel-default';
+  $scope.input = {
+    numberRows: 35
+  };
+  $scope.main = {
+    checkbox: false
+  };
+  $scope.multipleDelete = true;
+  $scope.selection = {};
+  $scope.selection.ids = {};
   $scope.flavors = ["SMALL", "MEDIUM", "LARGE"];
   $scope._qualityOfService = ["BRONZE", "SILVER", "GOLD"];
+  $scope.privateKeyReq = {
+    projectName: 'nubomedia',
+    privateKey: ''
+  };
   $scope._turnServer = {
     'turnServerUrl': '',
     'turnServerUsername': '',
@@ -71,13 +70,156 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     'scaleInOut': 0,
     'scale_out_threshold': 0
   };
+  $scope.toggle = {
+    turnServer: false,
+    threshold: false,
+    cloudRepository: false,
+    qualityOfService: false
+  };
 
-  $scope.dropdownTextChange = function dropdownTextChange(text) {
+  String.prototype.replaceAll = function(target, replacement) {
+    return this.split(target).join(replacement);
+  };
+
+  //var marketurl = 'http://localhost:8082/api/v1/app/';
+  //console.log('$cookieStore.get(\'URLNb\') ==  '+$cookieStore.get('URLNb') );
+  //console.log('$cookieStore.get(\'server-ip\') ==  '+$cookieStore.get('server-ip') );
+
+
+
+  // Public methods
+  // -------------------------------------------------------------------------
+  $scope.dropdownTextChange = dropdownTextChange;
+
+  // Media Servers
+  $scope.selectMediaServer = selectMediaServer;
+  $scope.toggleMediaServer = toggleMediaServer;
+  $scope.showMediaServeerLogs = showMediaServeerLogs;
+  $scope.showMediaServeerLogsURL = showMediaServeerLogsURL;
+
+  // Modals
+  $scope.deleteAppModal = deleteAppModal;
+  $scope.deleteMarketAppModal = deleteMarketAppModal;
+  $scope.createApp = createApp;
+
+  // Services
+  $scope.addNewService = addNewService;
+  $scope.removeNewService = removeNewService;
+  $scope.addServicePort = addServicePort;
+  $scope.deleteServicePort = deleteServicePort;
+  $scope.addServiceEnvVar = addServiceEnvVar;
+  $scope.deleteServiceEnvVar = deleteServiceEnvVar;
+
+  $scope.resize = resize;
+  $scope.createMarketApp = createMarketApp;
+  $scope.saveApp = saveApp;
+  $scope.changeCdn = changeCdn;
+
+  $scope.drawColumnMediaServer = drawColumnMediaServer;
+  $scope.updateGraphMediaServer = updateGraphMediaServer;
+  $scope.getInfos = getInfos;
+  $scope.sendPK = sendPK;
+
+  $scope.clearAlerts = clearAlerts;
+  $scope.closeAlert = closeAlert;
+  $scope.launch = launch;
+  $scope.sendApp = sendApp;
+  $scope.addPort = addPort;
+  $scope.deletePort = deletePort;
+  $scope.deleteData = deleteData;
+  $scope.deleteAppMarket = deleteAppMarket;
+  $scope.deleteAllApp = deleteAllApp;
+  $scope.changeText = changeText;
+  $scope.loadLog = loadLog;
+  $scope.loadAppLog = loadAppLog;
+  $scope.checkStatus = checkStatus;
+  $scope.setFile = setFile;
+  $scope.multipleDeleteReq = multipleDeleteReq;
+
+  $scope.changedTurnServerBool = changedTurnServerBool;
+  $scope.checkTurn = checkTurn;
+  $scope.showPlot = showPlot;
+
+
+
+  // Invoke private methods
+  // -------------------------------------------------------------------------
+
+  if (angular.isUndefined($cookieStore.get('server-ip'))) {
+    http.get($cookieStore.get('URLNb') + '/api/v1/nubomedia/paas/server-ip/')
+      .success(function(data) {
+        var serverIpString = data.replaceAll("\"", "");
+        urlMediaManager = 'http://' + serverIpString + ':9000/vnfr/';
+        $cookieStore.put('server-ip', serverIpString);
+      });
+  } else {
+    urlMediaManager = 'http://' + $cookieStore.get('server-ip') + ':9000/vnfr/';
+  }
+
+  $http.get('json/infos.json')
+    .then(function(res) {
+      $scope.infosObj = angular.copy(res.data);
+    });
+
+  if (!angular.isUndefined($routeParams.appId)) {
+    http.get(marketurl + $routeParams.appId)
+      .success(function(data) {
+        console.log('jsonApp appId: ', data);
+        $scope.application = data;
+        $scope.applicationJSON = JSON.stringify(data, undefined, 4);
+        mergeMediaServer(data.mediaServerGroup);
+        $rootScope.myMediaServer = $rootScope.mediaServers[0]; // first floatingIps
+        getDataFromMediaServer($rootScope.myMediaServer.hostname);
+        renderGraphMediaServer();
+      });
+  }
+
+  //  GET APPLICATION INFO
+  if (!angular.isUndefined($routeParams.applicationId)) {
+    http.get(url + $routeParams.applicationId)
+      .success(function(data) {
+        $scope.application = data;
+        $scope.applicationJSON = JSON.stringify(data, undefined, 4);
+        loadMediaManeger();
+        getAllMediaServers();
+        $scope.mediaServerProgress = function() {
+          var value = $scope.application.mediaServerGroup.hosts.length * 100 / $scope.application.scaleOutLimit;
+
+          if (value % 1 !== 0) {
+            value = (value).toFixed(2);
+          }
+
+          return value + '%';
+        };
+
+        if (!$rootScope.googleChartisLoaded) {
+          google.charts.load('current', {
+            'packages': ['corechart']
+          });
+          $rootScope.googleChartisLoaded = true;
+        }
+
+        mergeMediaServer(data.mediaServerGroup);
+        $rootScope.myMediaServer = $rootScope.mediaServers[0]; // first floatingIps
+        getDataFromMediaServer($rootScope.myMediaServer.hostname);
+      });
+  } else {
+    loadTable();
+  }
+
+
+
+  // !!Public methods declaration
+  // -------------------------------------------------------------------------
+  function dropdownTextChange(text) {
     $scope.dropdownText = text;
   };
 
-  // START/STOP MEDIA SERVER
-  $scope.selectMediaServer = function selectMediaServer(hostname) {
+
+  // !!Start/Stop media server
+  // Media servers
+  // -------------------------------------
+  function selectMediaServer(hostname) {
     var url = ip + '/api/v2/nubomedia/paas/app/' + $routeParams.applicationId + '/media-server/' + hostname + '/';
     http.get(url)
       .success(function(response, status) {
@@ -93,7 +235,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       });
   };
 
-  $scope.toggleMediaServer = function toggleMediaServer(state, hostname) {
+  function toggleMediaServer(state, hostname) {
     var url = ip + '/api/v2/nubomedia/paas/app/' + $routeParams.applicationId + '/media-server/' + hostname + '/';
     switch (state) {
       case 'start':
@@ -149,12 +291,466 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         break;
     }
   };
-  // END START/STOP MEDIA SERVER
 
-  $scope.showMediaServeerLogs = function(mediaServer) {
-    var url = "http://80.96.122.69:5601/#/discover?_g=(time:(from:now-30d,mode:quick,to:now))&_a=(columns:!(_source),filters:!(!n,(meta:(index:'logstash-*',negate:!f),query:(match:(host:(query: " + hostname + ",type:phrase))))),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'*')),sort:!('@timestamp',desc))";
+  function showMediaServeerLogs(mediaServer) {
+    var url = "http://80.96.122.69:5601/#/discover?_g=(time:(from:now-30d,mode:quick,to:now))&_a=(columns:!(_source),filters:!(!n,(meta:(index:'logstash-*',negate:!f),query:(match:(host:(query:" + mediaServer.hostname + ",type:phrase))))),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'*')),sort:!('@timestamp',desc))";
     return url;
   }
+
+  function showMediaServeerLogsURL(mediaServer) {
+    var index = 0;
+    var url = 'http://80.96.122.69:9200/logstash-*/_search?q=host:' + mediaServer.hostname + '&size=100&pretty=true';
+
+    http.get(url)
+      .then(function(res) {
+        $scope.log = [];
+        for (index; index < res.data.hits.hits.length; index++) {
+          $scope.log += (res.data.hits.hits[index]._source.message) + '\n';
+        }
+        debugger;
+      });
+  }
+
+  // !!Modals
+  // -------------------------------------
+  function deleteAppModal(data) {
+    $scope.application = data;
+    $('#modalDeleteApplication').modal('show');
+  };
+
+  function deleteMarketAppModal(data) {
+    $scope.application = data;
+    $('#modalDeleteMarketApplication').modal('show');
+  };
+
+  /*
+   * @name createApp
+   * @description
+   */
+  function createApp() {
+    $http.get('json/request.json')
+      .then(function(res) {
+        $scope.appNewService = angular.copy(res.data.services[0]);
+        $scope.appCreate = angular.copy(res.data);
+        $scope.appCreate.services = [];
+        $scope.appCreate.numberOfInstances = 1;
+      });
+  };
+
+  // !!Services
+  // -------------------------------------
+  function addNewService() {
+    $scope.appCreate.services.push($scope.appNewService);
+  };
+
+  function removeNewService(index) {
+    $scope.appCreate.services.splice(index, 1);
+  };
+
+  function addServicePort(item) {
+    item.push({
+      "port": 8080,
+      "targetPort": 8080,
+      "protocol": "TCP"
+    });
+  };
+
+  function deleteServicePort(item, index) {
+    item.splice(index, 1);
+  };
+
+  function addServiceEnvVar(item) {
+    item.push({
+      "name": "",
+      "value": ""
+    });
+  };
+
+  function deleteServiceEnvVar(item, index) {
+    item.splice(index, 1);
+  };
+  // !!END Services
+  // -------------------------------------
+
+  function resize() {
+    $timeout(function() {
+      $('body').resize();
+    }, 500);
+  };
+
+  function createMarketApp() {
+    $http.get('json/app.json')
+      .then(function(res) {
+        console.log(res.data);
+        $scope.appCreate = angular.copy(res.data);
+      });
+    $('#modalT').modal('show');
+  };
+
+  function saveApp(data) {
+    $scope.application = data;
+  };
+
+  function changeCdn() {
+    $scope.appCreate.cloudRepository = $scope.appCreate.cdnConnector;
+  };
+
+  function drawColumnMediaServer(nameCol) {
+    var allColumns = [0, 1, 2, 3];
+    switch (nameCol) {
+      case 'memory':
+        $rootScope.viewMediaServerGraph.setColumns([0, 1]);
+        $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
+        break;
+      case 'elements':
+        $rootScope.viewMediaServerGraph.setColumns([0, 2]);
+        $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
+        break;
+      case 'pipelines':
+        $rootScope.viewMediaServerGraph.setColumns([0, 3]);
+        $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
+        break;
+      case 'none':
+        $rootScope.viewMediaServerGraph.setColumns(allColumns);
+        $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
+        break;
+    }
+  };
+
+  function updateGraphMediaServer(urlHostnameMediaServer) {
+    getDataFromMediaServer(urlHostnameMediaServer);
+  };
+
+  function getInfos(key) {
+    console.log($scope.infosObj[key]);
+    console.log(key);
+    $scope.textInfo = $scope.infosObj[key];
+    if (key === 'scale_out_threshold') {
+      createCustomPopover();
+    }
+    return $scope.textInfo;
+  };
+
+  function sendPK(privateKeyReq) {
+    console.log(urlPK + 'secret');
+    http.post(urlPK + 'secret', privateKeyReq, 'text')
+      .success(function(data) {
+        console.log(data);
+        $scope.appCreate.secretName = data.slice(1, -1);
+        $('#modalSend').modal('hide');
+        $('#modalPrivateKey').modal('hide');
+
+      })
+      .error(function(data, status) {
+        showError(status, data);
+      });
+  };
+
+  function clearAlerts() {
+    $scope.alerts = [];
+  };
+
+  function closeAlert(index) {
+    $scope.alerts.splice(index, 1);
+  };
+
+  function launch(id) {
+    http.syncGet(marketurl + id)
+      .then(function(result) {
+        console.log(result);
+        http.post(url, result)
+          .success(function(data, status) {
+            console.log(data);
+            showOk("App launched correctly.");
+          })
+          .error(function(data, status) {
+            showError(status, data);
+          });
+      });
+  };
+
+  function sendApp(value, location) {
+    var postTopology;
+    var sendOk = true;
+
+    if ($scope.appCreate.stunServerActivate) {
+      if ($scope._stunServer.stunServerIp !== '')
+        $scope.appCreate.stunServerIp = $scope._stunServer.stunServerIp;
+      if ($scope._stunServer.stunServerPort !== '')
+        $scope.appCreate.stunServerPort = $scope._stunServer.stunServerPort;
+
+    }
+    if ($scope.appCreate.turnServerActivate) {
+      if ($scope._turnServer.turnServerUrl !== '')
+        $scope.appCreate.turnServerUrl = $scope._turnServer.turnServerUrl;
+      if ($scope._turnServer.turnServerUsername !== '')
+        $scope.appCreate.turnServerUsername = $scope._turnServer.turnServerUsername;
+      if ($scope._turnServer.turnServerPassword !== '')
+        $scope.appCreate.turnServerPassword = $scope._turnServer.turnServerPassword;
+    }
+    if ($scope.toggle.threshold) {
+      $scope.appCreate.scaleOutLimit = $scope._threshold.scaleInOut;
+      $scope.appCreate.scaleOutThreshold = $scope._threshold.scale_out_threshold;
+    }
+
+
+    if ($scope.toggle.qualityOfService) {
+      $scope.appCreate.qualityOfService = $scope.qosValue._qos;
+
+    }
+    if ($scope.appCreate.secretName === "")
+      delete $scope.appCreate.secretName;
+
+    console.log('$scope.appCreate: ', JSON.stringify($scope.appCreate));
+
+    if ($scope.file !== '') {
+      postTopology = $scope.file;
+      console.log("It's a File!");
+    } else if ($scope.appJson !== '') {
+      postTopology = $scope.appJson;
+      console.log("It's a TextArea!");
+
+    } else if (angular.isUndefined(postTopology)) {
+      postTopology = $scope.appCreate;
+      console.log("It's a Form!");
+
+    } else {
+      alert('Problem with Topology');
+      sendOk = false;
+    }
+    console.log(postTopology);
+
+    if (sendOk) {
+      console.log(JSON.stringify(postTopology));
+
+      if (value !== '')
+        http.post(marketurl, postTopology)
+        .success(function(response) {
+          showOk('App Saved!');
+          loadTable();
+          $scope.file = '';
+          $scope.appJson = '';
+          $scope.toggleCreateFormView();
+        })
+        .error(function(data, status) {
+          showError(status, data);
+        });
+      else
+        http.post(url, postTopology)
+        .success(function(response) {
+          showOk('App created!');
+          loadTable();
+          $scope.file = '';
+          $scope.appJson = '';
+          $scope.toggleCreateFormView();
+        })
+        .error(function(data, status) {
+          showError(status, data);
+        });
+    }
+  };
+
+  function addPort() {
+    $scope.appCreate.ports.push({
+      "port": 8080,
+      "targetPort": 8080,
+      "protocol": "TCP"
+    });
+  };
+
+  function deletePort(index) {
+    $scope.appCreate.ports.splice(index, 1);
+  };
+
+  function deleteData(id, location) {
+    http.delete(url + id)
+      .success(function(response) {
+        showOk('Deleted App with id: ' + id + ' done.');
+        loadTable();
+        if (location) {
+          $location.path('/' + location);
+        }
+      })
+      .error(function(data, status) {
+        showError(status, data);
+      });
+  };
+
+  function deleteAppMarket(id, location) {
+    http.delete(marketurl + id)
+      .success(function(response) {
+        showOk('Deleted App with id: ' + id + ' done.');
+        loadTable();
+        if (location) {
+          $location.path('/' + location);
+        }
+      })
+      .error(function(data, status) {
+        showError(status, data);
+      });
+  };
+
+  function deleteAllApp() {
+    http.delete(url)
+      .success(function(response) {
+        showOk('Deleted all Apps in the ' + $rootScope.projectSelected.name + ' project.');
+        loadTable();
+      })
+      .error(function(data, status) {
+        showError(status, data);
+      });
+  };
+
+  function changeText(text) {
+    $scope.appJson = text;
+    console.log($scope.appJson);
+  };
+
+  function loadLog() {
+    http.get(url + $routeParams.applicationId + '/buildlogs')
+      .success(function(response) {
+        //$scope.log = response;
+        $scope.log = $sce.trustAsHtml(n2br(response.log));
+      })
+      .error(function(data, status) {
+        showError(status, data);
+      });
+  };
+
+  function loadAppLog(podName, index) {
+    http.get(url + $routeParams.applicationId + '/logs/' + podName)
+      .success(function(response) {
+        var stringArray = response.split('\\n');
+        var subLog = stringArray.slice(stringArray.length - $scope.input.numberRows, -1);
+        var string = subLog.join('\\n');
+        $scope.log = $sce.trustAsHtml(n2br(string));
+      })
+      .error(function(data, status) {
+        showError(status, data);
+      });
+  };
+
+  function checkStatus() {
+    console.log(($scope.application.status !== 'RUNNING'));
+    if ($scope.application.status !== 'RUNNING')
+      return true;
+    else return false;
+  };
+
+  function setFile(element) {
+    $scope.$apply(function($scope) {
+
+      var f = element.files[0];
+      if (f) {
+        var r = new FileReader();
+        r.onload = function(element) {
+          var contents = element.target.result;
+          $scope.file = contents;
+        };
+        r.readAsText(f);
+      } else {
+        alert("Failed to load file");
+      }
+    });
+  };
+
+  // !!Delete multiple applications
+  // -------------------------------------
+  function multipleDeleteReq(url) {
+    var urlToUse = '';
+    var ids = [];
+
+    if (url === 'market') {
+      urlToUse = marketurl;
+    } else {
+      urlToUse = urlPK;
+    }
+
+    angular.forEach($scope.selection.ids, function(value, k) {
+      if (value) {
+        ids.push(k);
+      }
+    });
+
+    http.post(urlToUse + 'multipledelete', ids)
+      .success(function(response) {
+        showOk('Applications: ' + ids.toString() + ' deleted.');
+        loadTable();
+      })
+      .error(function(response, status) {
+        showError(response, status);
+      });
+  };
+
+  $scope.$watch('main', function(newValue, oldValue) {
+    //console.log(newValue.checkbox);
+    //console.log($scope.selection.ids);
+    angular.forEach($scope.selection.ids, function(value, k) {
+      $scope.selection.ids[k] = newValue.checkbox;
+    });
+    //console.log($scope.selection.ids);
+  }, true);
+
+  $scope.$watch('selection', function(newValue, oldValue) {
+    //console.log(newValue);
+    var keepGoing = true;
+    angular.forEach($scope.selection.ids, function(value, k) {
+      if (keepGoing) {
+        if ($scope.selection.ids[k]) {
+          $scope.multipleDelete = false;
+          keepGoing = false;
+        } else {
+          $scope.multipleDelete = true;
+        }
+      }
+    });
+
+    if (keepGoing)
+      $scope.mainCheckbox = false;
+  }, true);
+  // !!END Delete multiple applications
+  // -------------------------------------
+
+  function changedTurnServerBool() {
+    $scope.disableButton = false;
+    $scope.classVar = 'panel-default';
+  };
+
+  function checkTurn() {
+    console.log($scope._turnServer);
+    checkTURNServer({
+      url: 'turn:' + $scope._turnServer.turnServerUrl,
+      username: $scope._turnServer.turnServerUsername,
+      credential: $scope._turnServer.turnServerPassword
+    }).then(function(bool) {
+      console.log('is TURN server active? ', bool ? 'yes' : 'no');
+      if (bool) {
+        disableButton(false);
+        changeDivPane('panel-success');
+      } else {
+        disableButton(true);
+        changeDivPane('panel-danger');
+      }
+    }).catch(function(reason) {
+      console.error.bind(console);
+      console.log(reason);
+      disableButton(true);
+    });
+  };
+
+  function showPlot() {
+    if ($('#numberFlot').find('div.vis-timeline').length == 0) {
+      drawGraph('numberFlot');
+      drawGraph('capacityFlot');
+      google.charts.setOnLoadCallback(drawGraphMediaServer);
+      renderGraphMediaServer();
+    }
+  };
+
+
+
+  // !!Private methods declaration
+  // -------------------------------------------------------------------------
 
   function getAllMediaServers() {
     var url = ip + '/api/v2/nubomedia/paas/app/' + $routeParams.applicationId + '/media-server';
@@ -171,94 +767,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       });
   }
 
-  $rootScope.mediaServers = [];
-  $rootScope.bigDataMediaServer = [];
-
-  $scope.deleteAppModal = function(data) {
-    $scope.application = data;
-    $('#modalDeleteApplication').modal('show');
-  };
-
-  $scope.deleteMarketAppModal = function(data) {
-    $scope.application = data;
-    $('#modalDeleteMarketApplication').modal('show');
-  };
-
-  $scope.createApp = function() {
-    $http.get('json/request.json')
-      .then(function(res) {
-        $scope.appNewService = angular.copy(res.data.services[0]);
-        $scope.appCreate = angular.copy(res.data);
-        $scope.appCreate.services = [];
-        $scope.appCreate.numberOfInstances = 1;
-      });
-    // $('#modalT').modal('show');
-  };
-
-  // Start new app services
-  // -------------------------------------------------------------------------
-  $scope.addNewService = function addNewService() {
-    $scope.appCreate.services.push($scope.appNewService);
-  };
-
-  $scope.removeNewService = function addNewService(index) {
-    $scope.appCreate.services.splice(index, 1);
-  };
-
-  $scope.addServicePort = function(item) {
-    item.push({
-      "port": 8080,
-      "targetPort": 8080,
-      "protocol": "TCP"
-    });
-  };
-
-  $scope.deleteServicePort = function(item, index) {
-    item.splice(index, 1);
-  };
-
-  $scope.addServiceEnvVar = function(item) {
-    item.push({
-      "name": "",
-      "value": ""
-    });
-  };
-
-  $scope.deleteServiceEnvVar = function(item, index) {
-    item.splice(index, 1);
-  };
-
-  // END new app services
-  // -------------------------------------------------------------------------
-
-  $scope.resize = function() {
-    $timeout(function() {
-      $('body').resize();
-    }, 500);
-  };
-
-  $scope.createMarketApp = function() {
-    $http.get('json/app.json')
-      .then(function(res) {
-        console.log(res.data);
-        $scope.appCreate = angular.copy(res.data);
-      });
-    $('#modalT').modal('show');
-  };
-
-  $scope.saveApp = function(data) {
-    $scope.application = data;
-  };
-
-  $scope.changeCdn = function() {
-    $scope.appCreate.cloudRepository = $scope.appCreate.cdnConnector;
-  };
-  $http.get('json/infos.json')
-    .then(function(res) {
-      //console.log(res.data);
-      $scope.infosObj = angular.copy(res.data);
-    });
-
   function createCustomPopover() {
     $(".popover-custom[data-toggle=popover]").popover({
       html: true,
@@ -267,80 +775,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         return '<a href="http://nubomedia.readthedocs.io/en/latest/paas/autoscaling/" target="_blank">http://nubomedia.readthedocs.io/en/latest/paas/autoscaling/</a>';
       }
     });
-  }
-
-  $scope.getInfos = function(key) {
-    console.log($scope.infosObj[key]);
-    console.log(key);
-    $scope.textInfo = $scope.infosObj[key];
-    if (key === 'scale_out_threshold') {
-      createCustomPopover();
-    }
-    return $scope.textInfo;
-  };
-
-  $scope.privateKeyReq = {
-    projectName: 'nubomedia',
-    privateKey: ''
-  };
-
-  $scope.sendPK = function(privateKeyReq) {
-    console.log(urlPK + 'secret');
-    http.post(urlPK + 'secret', privateKeyReq, 'text')
-      .success(function(data) {
-        console.log(data);
-        $scope.appCreate.secretName = data.slice(1, -1);
-        $('#modalSend').modal('hide');
-        $('#modalPrivateKey').modal('hide');
-
-      })
-      .error(function(data, status) {
-        showError(status, data);
-      });
-  };
-
-  if (!angular.isUndefined($routeParams.appId)) {
-    http.get(marketurl + $routeParams.appId)
-      .success(function(data) {
-        console.log('jsonApp appId: ', data);
-        $scope.application = data;
-        $scope.applicationJSON = JSON.stringify(data, undefined, 4);
-        mergeMediaServer(data.mediaServerGroup);
-        $rootScope.myMediaServer = $rootScope.mediaServers[0]; // first floatingIps
-        getDataFromMediaServer($rootScope.myMediaServer.hostname);
-        renderGraphMediaServer();
-      });
-  }
-
-  //  GET APPLICATION INFO
-  if (!angular.isUndefined($routeParams.applicationId)) {
-    http.get(url + $routeParams.applicationId)
-      .success(function(data) {
-        $scope.application = data;
-        $scope.applicationJSON = JSON.stringify(data, undefined, 4);
-        loadMediaManeger();
-        getAllMediaServers();
-        $scope.mediaServerProgress = function() {
-          var value = $scope.application.mediaServerGroup.hosts.length * 100 / $scope.application.scaleOutLimit;
-
-          if (value % 1 !== 0) {
-            value = (value).toFixed(2);
-          }
-
-          return value + '%';
-        };
-
-        google.charts.load('current', {
-          'packages': ['corechart']
-        });
-        2
-
-        mergeMediaServer(data.mediaServerGroup);
-        $rootScope.myMediaServer = $rootScope.mediaServers[0]; // first floatingIps
-        getDataFromMediaServer($rootScope.myMediaServer.hostname);
-      });
-  } else {
-    loadTable();
   }
 
   function renderGraphMediaServer() {
@@ -387,32 +821,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         return resultObj;
       });
   }
-
-  $scope.drawColumnMediaServer = function(nameCol) {
-    var allColumns = [0, 1, 2, 3];
-    switch (nameCol) {
-      case 'memory':
-        $rootScope.viewMediaServerGraph.setColumns([0, 1]);
-        $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
-        break;
-      case 'elements':
-        $rootScope.viewMediaServerGraph.setColumns([0, 2]);
-        $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
-        break;
-      case 'pipelines':
-        $rootScope.viewMediaServerGraph.setColumns([0, 3]);
-        $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
-        break;
-      case 'none':
-        $rootScope.viewMediaServerGraph.setColumns(allColumns);
-        $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
-        break;
-    }
-  };
-
-  $scope.updateGraphMediaServer = function(urlHostnameMediaServer) {
-    getDataFromMediaServer(urlHostnameMediaServer);
-  };
 
   function drawGraphMediaServer() {
     var dataDemo = [
@@ -534,293 +942,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       });
   }
 
-  $scope.clearAlerts = function() {
-    $scope.alerts = [];
-  };
-
-  $scope.closeAlert = function(index) {
-    $scope.alerts.splice(index, 1);
-  };
-
-  $scope.toggle = {
-    turnServer: false,
-    threshold: false,
-    cloudRepository: false,
-    qualityOfService: false
-  };
-
-  $scope.launch = function(id) {
-    http.syncGet(marketurl + id)
-      .then(function(result) {
-        console.log(result);
-        http.post(url, result)
-          .success(function(data, status) {
-            console.log(data);
-            showOk("App launched correctly.");
-          })
-          .error(function(data, status) {
-            showError(status, data);
-          });
-      });
-  };
-
-  $scope.sendApp = function(value, location) {
-    var postTopology;
-    var sendOk = true;
-
-    if ($scope.appCreate.stunServerActivate) {
-      if ($scope._stunServer.stunServerIp !== '')
-        $scope.appCreate.stunServerIp = $scope._stunServer.stunServerIp;
-      if ($scope._stunServer.stunServerPort !== '')
-        $scope.appCreate.stunServerPort = $scope._stunServer.stunServerPort;
-
-    }
-    if ($scope.appCreate.turnServerActivate) {
-      if ($scope._turnServer.turnServerUrl !== '')
-        $scope.appCreate.turnServerUrl = $scope._turnServer.turnServerUrl;
-      if ($scope._turnServer.turnServerUsername !== '')
-        $scope.appCreate.turnServerUsername = $scope._turnServer.turnServerUsername;
-      if ($scope._turnServer.turnServerPassword !== '')
-        $scope.appCreate.turnServerPassword = $scope._turnServer.turnServerPassword;
-    }
-    if ($scope.toggle.threshold) {
-      $scope.appCreate.scaleOutLimit = $scope._threshold.scaleInOut;
-      $scope.appCreate.scaleOutThreshold = $scope._threshold.scale_out_threshold;
-    }
-
-
-    if ($scope.toggle.qualityOfService) {
-      $scope.appCreate.qualityOfService = $scope.qosValue._qos;
-
-    }
-    if ($scope.appCreate.secretName === "")
-      delete $scope.appCreate.secretName;
-
-    console.log('$scope.appCreate: ', JSON.stringify($scope.appCreate));
-
-    if ($scope.file !== '') {
-      postTopology = $scope.file;
-      console.log("It's a File!");
-    } else if ($scope.appJson !== '') {
-      postTopology = $scope.appJson;
-      console.log("It's a TextArea!");
-
-    } else if (angular.isUndefined(postTopology)) {
-      postTopology = $scope.appCreate;
-      console.log("It's a Form!");
-
-    } else {
-      alert('Problem with Topology');
-      sendOk = false;
-    }
-    console.log(postTopology);
-
-    if (sendOk) {
-      console.log(JSON.stringify(postTopology));
-
-      if (value !== '')
-        http.post(marketurl, postTopology)
-        .success(function(response) {
-          showOk('App Saved!');
-          loadTable();
-          $scope.file = '';
-          $scope.appJson = '';
-          $scope.toggleCreateFormView();
-        })
-        .error(function(data, status) {
-          showError(status, data);
-        });
-      else
-        http.post(url, postTopology)
-        .success(function(response) {
-          showOk('App created!');
-          loadTable();
-          $scope.file = '';
-          $scope.appJson = '';
-          $scope.toggleCreateFormView();
-        })
-        .error(function(data, status) {
-          showError(status, data);
-        });
-    }
-  };
-
-  $scope.addPort = function() {
-    $scope.appCreate.ports.push({
-      "port": 8080,
-      "targetPort": 8080,
-      "protocol": "TCP"
-    });
-  };
-
-  $scope.deletePort = function(index) {
-    $scope.appCreate.ports.splice(index, 1);
-  };
-
-  $scope.deleteData = function(id, location) {
-    http.delete(url + id)
-      .success(function(response) {
-        showOk('Deleted App with id: ' + id + ' done.');
-        loadTable();
-        if (location) {
-          $location.path('/' + location);
-        }
-      })
-      .error(function(data, status) {
-        showError(status, data);
-      });
-  };
-
-  $scope.deleteAppMarket = function(id, location) {
-    http.delete(marketurl + id)
-      .success(function(response) {
-        showOk('Deleted App with id: ' + id + ' done.');
-        loadTable();
-        if (location) {
-          $location.path('/' + location);
-        }
-      })
-      .error(function(data, status) {
-        showError(status, data);
-      });
-  };
-
-  $scope.deleteAllApp = function() {
-    http.delete(url)
-      .success(function(response) {
-        showOk('Deleted all Apps in the ' + $rootScope.projectSelected.name + ' project.');
-        loadTable();
-      })
-      .error(function(data, status) {
-        showError(status, data);
-      });
-  };
-
-  $scope.changeText = function(text) {
-    $scope.appJson = text;
-    console.log($scope.appJson);
-  };
-
-  $scope.loadLog = function() {
-    http.get(url + $routeParams.applicationId + '/buildlogs')
-      .success(function(response) {
-        //$scope.log = response;
-        $scope.log = $sce.trustAsHtml(n2br(response.log));
-      })
-      .error(function(data, status) {
-        showError(status, data);
-      });
-  };
-
-  $scope.input = {
-    numberRows: 35
-  };
-
-  $scope.loadAppLog = function(podName, index) {
-    http.get(url + $routeParams.applicationId + '/logs/' + podName)
-      .success(function(response) {
-        var stringArray = response.split('\\n');
-        // $scope.mediaServeHostName = $scope.application.mediaServerGroup.hostnames[index];
-
-        var subLog = stringArray.slice(stringArray.length - $scope.input.numberRows, -1);
-        var string = subLog.join('\\n');
-        //console.log(subLog);
-        //console.log($scope.input.numberRows);
-        $scope.log = $sce.trustAsHtml(n2br(string));
-      })
-      .error(function(data, status) {
-        showError(status, data);
-      });
-  };
-
-  $scope.checkStatus = function() {
-    console.log(($scope.application.status !== 'RUNNING'));
-    if ($scope.application.status !== 'RUNNING')
-      return true;
-    else return false;
-  };
-
-  $scope.setFile = function(element) {
-    $scope.$apply(function($scope) {
-
-      var f = element.files[0];
-      if (f) {
-        var r = new FileReader();
-        r.onload = function(element) {
-          var contents = element.target.result;
-          $scope.file = contents;
-        };
-        r.readAsText(f);
-      } else {
-        alert("Failed to load file");
-      }
-    });
-  };
-
-  /* -- multiple delete functions Start -- */
-  $scope.multipleDeleteReq = function(url) {
-    var urlToUse = '';
-    var ids = [];
-
-    if (url === 'market') {
-      urlToUse = marketurl;
-    } else {
-      urlToUse = urlPK;
-    }
-
-    angular.forEach($scope.selection.ids, function(value, k) {
-      if (value) {
-        ids.push(k);
-      }
-    });
-
-    http.post(urlToUse + 'multipledelete', ids)
-      .success(function(response) {
-        showOk('Applications: ' + ids.toString() + ' deleted.');
-        loadTable();
-      })
-      .error(function(response, status) {
-        showError(response, status);
-      });
-  };
-
-  $scope.main = {
-    checkbox: false
-  };
-
-  $scope.$watch('main', function(newValue, oldValue) {
-    //console.log(newValue.checkbox);
-    //console.log($scope.selection.ids);
-    angular.forEach($scope.selection.ids, function(value, k) {
-      $scope.selection.ids[k] = newValue.checkbox;
-    });
-    //console.log($scope.selection.ids);
-  }, true);
-
-  $scope.$watch('selection', function(newValue, oldValue) {
-    //console.log(newValue);
-    var keepGoing = true;
-    angular.forEach($scope.selection.ids, function(value, k) {
-      if (keepGoing) {
-        if ($scope.selection.ids[k]) {
-          $scope.multipleDelete = false;
-          keepGoing = false;
-        } else {
-          $scope.multipleDelete = true;
-        }
-      }
-    });
-
-    if (keepGoing)
-      $scope.mainCheckbox = false;
-  }, true);
-
-  $scope.multipleDelete = true;
-
-  $scope.selection = {};
-  $scope.selection.ids = {};
-  /* -- multiple delete functions END -- */
-
   function n2br(str) {
     str = str.replace(/(?:\\[rn]|[\r\n]+)+/g, "<br />");
     //return str.replace(/\r\n|\r|\n//g, "<br />");
@@ -858,34 +979,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     });
     $('.modal').modal('hide');
   }
-
-  $scope.disableButton = false;
-  $scope.classVar = 'panel-default';
-  $scope.changedTurnServerBool = function() {
-    $scope.disableButton = false;
-    $scope.classVar = 'panel-default';
-  };
-  $scope.checkTurn = function() {
-    console.log($scope._turnServer);
-    checkTURNServer({
-      url: 'turn:' + $scope._turnServer.turnServerUrl,
-      username: $scope._turnServer.turnServerUsername,
-      credential: $scope._turnServer.turnServerPassword
-    }).then(function(bool) {
-      console.log('is TURN server active? ', bool ? 'yes' : 'no');
-      if (bool) {
-        disableButton(false);
-        changeDivPane('panel-success');
-      } else {
-        disableButton(true);
-        changeDivPane('panel-danger');
-      }
-    }).catch(function(reason) {
-      console.error.bind(console);
-      console.log(reason);
-      disableButton(true);
-    });
-  };
 
   function disableButton(value) {
     if (value)
@@ -932,23 +1025,6 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       };
     });
   }
-
-
-  $scope.showPlot = function() {
-
-    if ($('#numberFlot').find('div.vis-timeline').length == 0) {
-      drawGraph('numberFlot');
-      drawGraph('capacityFlot');
-      google.charts.setOnLoadCallback(drawGraphMediaServer);
-      renderGraphMediaServer();
-    }
-  };
-
-
-  //$scope.vnfrId = 'ed5c8629-36bb-402a-8481-49b3a8d3d6a3';
-  $scope.vnfrId = '';
-  $scope.numberValue = 1;
-  $scope.loadValue = 0;
 
   function loadMediaManeger() {
     http.get(urlMediaManager)
@@ -1091,6 +1167,8 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     }
 
     renderStep();
+
+
 
     /**
      * Add a new datapoint to the graph
