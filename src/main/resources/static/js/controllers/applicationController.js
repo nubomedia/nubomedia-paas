@@ -300,14 +300,15 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   function showMediaServeerLogsURL(mediaServer) {
     var index = 0;
     var url = 'http://80.96.122.69:9200/logstash-*/_search?q=host:' + mediaServer.hostname + '&size=100&pretty=true';
+    var logs;
 
     http.get(url)
       .then(function(res) {
-        $scope.log = [];
+        logs = '';
         for (index; index < res.data.hits.hits.length; index++) {
-          $scope.log += (res.data.hits.hits[index]._source.message) + '\n';
+          logs += (res.data.hits.hits[index]._source.message) + '\n';
         }
-        debugger;
+        $scope.log = $sce.trustAsHtml(n2br(logs));
       });
   }
 
