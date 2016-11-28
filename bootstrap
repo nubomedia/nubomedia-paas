@@ -27,7 +27,7 @@ _APT_REPOSITORY="deb http://repository.nubomedia.eu/ trusty main"
 _PROJECT_REPO="https://github.com/nubomedia/nubomedia-paas.git"
 _SCRIPT_NAME="nubomedia-paas.sh"
 #_TAG="develop"
-_TAG="tags/1.3.0"
+_TAG="tags/1.3.4"
 
 _USER="$(id -un 2>/dev/null || true)"
 
