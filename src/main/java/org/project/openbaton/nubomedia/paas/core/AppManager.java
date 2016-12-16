@@ -19,7 +19,6 @@
 
 package org.project.openbaton.nubomedia.paas.core;
 
-import javafx.animation.Animation;
 import org.openbaton.catalogue.mano.common.LifecycleEvent;
 import org.openbaton.catalogue.mano.record.VirtualNetworkFunctionRecord;
 import org.openbaton.catalogue.nfvo.Action;
