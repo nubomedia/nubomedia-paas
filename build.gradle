@@ -67,9 +67,6 @@ project.ext {
 
 repositories {
     mavenCentral()
-    maven {
-        url "http://get.openbaton.org:8081/nexus/content/groups/public"
-    }
 }
 
 bootRun {
@@ -82,13 +79,9 @@ configurations.all {
 }
 
 dependencies {
-    compile 'org.openbaton:sdk:2.2.0'
+    compile 'org.openbaton:sdk:3.0.0'
 
-    // https://mvnrepository.com/artifact/com.openshift/openshift-restclient-java
     compile (group: 'com.openshift', name: 'openshift-restclient-java', version: '5.1.0.Final')
-//            {
-//        exclude module: 'log4j'
-//    }
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'mysql:mysql-connector-java:5.1.35'
     compile 'org.springframework.boot:spring-boot-starter-test:' + springBootVersion
