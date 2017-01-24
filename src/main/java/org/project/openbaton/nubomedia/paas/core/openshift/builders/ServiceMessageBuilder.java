@@ -51,7 +51,7 @@ public class ServiceMessageBuilder {
       sPorts.add(
           new ServiceSpec.ServicePort(
               port.getProtocol(),
-              port.getTargetPort(),
+              port.getPort(),
               port.getTargetPort(),
               port.getProtocol().toLowerCase() + "-" + port.getTargetPort()));
       //      for (int i = 0; i < targetPorts.size(); i++) {
