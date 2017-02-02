@@ -393,7 +393,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     $http.get('json/app.json')
       .then(function(res) {
         console.log('create Market App:', res.data);
-        if (res.data.services[0]) {
+        if (res.data.services) {
           $scope.appNewService = angular.copy(res.data.services[0]);
         }
         $scope.appCreate = angular.copy(res.data);

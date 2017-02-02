@@ -586,27 +586,50 @@
           <div class="col-md-8">
 
             <label class="control control--inline control--checkbox">
-              <input type="checkbox" ng-model="toggle.threshold">
+              <input type="checkbox" ng-model="toggle.threshold" id="inOutThreshold" name="inOutThreshold">
               <div class="control__indicator"></div>
               Enable
             </label>
 
             <div class="input input--inline" ng-repeat="(key,value) in _threshold">
+
               <label for="app-scalling-in" class="input__label">
-                {{key}}
-                <span class="input__subtitle">
+                <span ng-if="key=='scaleInOut'">
+                   Scale out limit
+                </span>
+
+                <span ng-if="key=='scale_out_threshold'">
+                   Scale out trigger
+                </span>
+
+                <span class="input__subtitle" ng-if="key=='scaleInOut'">
                   <i
                     popover="{{textInfo}}"
                     popover-placement="bottom"
                     popover-trigger="mouseenter"
-                    ng-mouseover="getInfos(key)">Tip: Hover me</i>
+                    ng-mouseover="getInfos('scaleOutLimit')">Tip: Hover me</i>
+                </span>
+
+                <span class="input__subtitle" ng-if="key == 'scale_out_threshold'">
+                  <i
+                    class="popover-custom"
+                    data-toggle="popover"
+                    popover-trigger="click"
+                    ng-mouseover="getInfos(key)">Tip: Toggle me</i>
                 </span>
               </label>
-              <input type="number" class="form-control input__field" ng-disabled="!toggle.threshold">
+              <input
+                type="number"
+                id="{{_threshold[key]}}"
+                class="form-control input__field"
+                ng-disabled="!toggle.threshold"
+                ng-model="_threshold[key]">
             </div>
 
           </div>
         </div><!-- /In/OUT scale -->
+
+
 
         <!-- QoS -->
         <div class="form-group input">
@@ -745,7 +768,7 @@
                     popover="{{textInfo}}"
                     popover-placement="bottom"
                     popover-trigger="mouseenter"
-                    ng-mouseover="getInfos('stunServerPassword')">Tip: Hover me</i>
+                    ng-mouseover="getInfos(key)">Tip: Hover me</i>
                 </span>
               </label>
 
@@ -795,7 +818,7 @@
                <!-- Column -->
                <div class="col-xs-6 col-md-4">
                  <input
-                  class="form-control input__field"
+                  class="form-control input__field input__field--inline"
                   type="number"
                   ng-model="appCreate.ports[$index]['port']"/>
                </div><!-- /Column -->
@@ -803,7 +826,7 @@
                <!-- Column -->
                <div class="col-xs-6 col-md-4">
                  <input
-                  class="form-control input__field"
+                  class="form-control input__field input__field--inline"
                   type="number"
                   ng-model="appCreate.ports[$index]['targetPort']">
                </div><!-- /Column -->
@@ -811,8 +834,8 @@
                <!-- Column -->
                <div class="col-xs-6 col-md-3">
                  <input
-                  class="form-control input__field"
-                  type="test"
+                  class="form-control input__field input__field--inline"
+                  type="text"
                   ng-model="appCreate.ports[$index][['protocol']]">
                </div><!-- /Column -->
 
@@ -858,6 +881,7 @@
             <div class="addon addon--checkbox">
               <label class="control control--inline control--checkbox addon__container">
                 <input
+                  id="cloudRepository"
                   type="checkbox"
                   name="togglecloudRepository"
                   ng-model="appCreate.cloudRepository"
@@ -879,8 +903,8 @@
             id="sendTemplate"
             class="btn btn-primary form__submit"
             ng-class="{'disabled': disableButton}"
-            ng-click="sendApp('market')">
-            Store app
+            ng-click="sendApp('', 'applications')">
+            Create
           </button>
         </div>
 
