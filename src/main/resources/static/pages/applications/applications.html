@@ -979,13 +979,21 @@
         </textarea>
       </div>
       <div class="form-group input">
-          <label for="jsonInputFile" class="input__label">Upload a file</label>
-          <input
-            type="file"
-            id="jsonInputFile"
-            onchange="angular.element(this).scope().setFile(this)">
+        <label for="jsonInputFile" class="input__label">Upload a file</label>
+        <input
+          type="file"
+          id="jsonInputFile"
+          onchange="angular.element(this).scope().setFile(this)">
 
-          <p class="help-block">Example: reqApp.json </p>
+        <p class="help-block">Example: reqApp.json </p>
+
+        <button
+          type="button"
+          class="btn btn-primary form__submit"
+          ng-class="{'disabled': disableButton}"
+          ng-click="sendApp('', 'applications')">
+          Create
+        </button>
       </div>
   </form>
   </tab>
