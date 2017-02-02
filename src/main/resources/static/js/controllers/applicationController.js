@@ -213,7 +213,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   // -------------------------------------------------------------------------
   function dropdownTextChange(text) {
     $scope.dropdownText = text;
-  };
+  }
 
 
   // !!Start/Stop media server
@@ -233,7 +233,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       }).error(function(data, status) {
         console.log(data);
       });
-  };
+  }
 
   function toggleMediaServer(state, hostname) {
     var url = ip + '/api/v2/nubomedia/paas/app/' + $routeParams.applicationId + '/media-server/' + hostname + '/';
@@ -290,7 +290,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
           });
         break;
     }
-  };
+  }
 
   function showMediaServeerLogs(mediaServer) {
     var url = "http://80.96.122.69:5601/#/discover?_g=(time:(from:now-30d,mode:quick,to:now))&_a=(columns:!(_source),filters:!(!n,(meta:(index:'logstash-*',negate:!f),query:(match:(host:(query:" + mediaServer.hostname + ",type:phrase))))),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'*')),sort:!('@timestamp',desc))";
@@ -317,12 +317,12 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   function deleteAppModal(data) {
     $scope.application = data;
     $('#modalDeleteApplication').modal('show');
-  };
+  }
 
   function deleteMarketAppModal(data) {
     $scope.application = data;
     $('#modalDeleteMarketApplication').modal('show');
-  };
+  }
 
   /*
    * @name createApp
@@ -336,7 +336,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         $scope.appCreate.services = [];
         $scope.appCreate.numberOfInstances = 1;
       });
-  };
+  }
 
   // !!Services
   // -------------------------------------
@@ -431,11 +431,11 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         $rootScope.chartMediaServerGraph.draw($rootScope.viewMediaServerGraph, $rootScope.optionsMediaServerGraph);
         break;
     }
-  };
+  }
 
   function updateGraphMediaServer(urlHostnameMediaServer) {
     getDataFromMediaServer(urlHostnameMediaServer);
-  };
+  }
 
   function getInfos(key) {
     console.log($scope.infosObj[key]);
@@ -445,7 +445,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       createCustomPopover();
     }
     return $scope.textInfo;
-  };
+  }
 
   function sendPK(privateKeyReq) {
     console.log(urlPK + 'secret');
@@ -460,15 +460,15 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       .error(function(data, status) {
         showError(status, data);
       });
-  };
+  }
 
   function clearAlerts() {
     $scope.alerts = [];
-  };
+  }
 
   function closeAlert(index) {
     $scope.alerts.splice(index, 1);
-  };
+  }
 
   function launch(id) {
     http.syncGet(marketurl + id)
@@ -483,7 +483,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
             showError(status, data);
           });
       });
-  };
+  }
 
   function sendApp(value, location) {
     var postTopology;
@@ -564,7 +564,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
           showError(status, data);
         });
     }
-  };
+  }
 
   function addPort() {
     $scope.appCreate.ports.push({
@@ -572,11 +572,11 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       "targetPort": 8080,
       "protocol": "TCP"
     });
-  };
+  }
 
   function deletePort(index) {
     $scope.appCreate.ports.splice(index, 1);
-  };
+  }
 
   function deleteData(id, location) {
     http.delete(url + id)
@@ -590,7 +590,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       .error(function(data, status) {
         showError(status, data);
       });
-  };
+  }
 
   function deleteAppMarket(id, location) {
     http.delete(marketurl + id)
@@ -604,7 +604,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       .error(function(data, status) {
         showError(status, data);
       });
-  };
+  }
 
   function deleteAllApp() {
     http.delete(url)
@@ -615,12 +615,12 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       .error(function(data, status) {
         showError(status, data);
       });
-  };
+  }
 
   function changeText(text) {
     $scope.appJson = text;
     console.log($scope.appJson);
-  };
+  }
 
   function loadLog() {
     http.get(url + $routeParams.applicationId + '/buildlogs')
@@ -631,7 +631,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       .error(function(data, status) {
         showError(status, data);
       });
-  };
+  }
 
   function loadAppLog(podName, index) {
     http.get(url + $routeParams.applicationId + '/logs/' + podName)
@@ -644,14 +644,14 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       .error(function(data, status) {
         showError(status, data);
       });
-  };
+  }
 
   function checkStatus() {
     console.log(($scope.application.status !== 'RUNNING'));
     if ($scope.application.status !== 'RUNNING')
       return true;
     else return false;
-  };
+  }
 
   function setFile(element) {
     $scope.$apply(function($scope) {
@@ -668,7 +668,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
         alert("Failed to load file");
       }
     });
-  };
+  }
 
   // !!Delete multiple applications
   // -------------------------------------
@@ -696,7 +696,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       .error(function(response, status) {
         showError(response, status);
       });
-  };
+  }
 
   $scope.$watch('main', function(newValue, oldValue) {
     //console.log(newValue.checkbox);
@@ -730,7 +730,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   function changedTurnServerBool() {
     $scope.disableButton = false;
     $scope.classVar = 'panel-default';
-  };
+  }
 
   function checkTurn() {
     console.log($scope._turnServer);
@@ -752,7 +752,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       console.log(reason);
       disableButton(true);
     });
-  };
+  }
 
   function showPlot() {
     if ($('#numberFlot').find('div.vis-timeline').length == 0) {
@@ -761,7 +761,7 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
       google.charts.setOnLoadCallback(drawGraphMediaServer);
       renderGraphMediaServer();
     }
-  };
+  }
 
 
 
