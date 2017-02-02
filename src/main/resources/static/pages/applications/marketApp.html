@@ -386,6 +386,190 @@
 
 
 
+
+     <!-- Form section -->
+      <section class="form__section">
+
+        <h3 class="form__section-title">
+          Services
+        </h3>
+
+        <!-- Services fields -->
+
+        <section class="u-mt-45" ng-repeat="item in appCreate.services track by $index">
+
+          <h3 class="form__section-title form__section-title--secondary">
+            Service {{$index + 1}}
+            <a href="" ng-click="removeNewService($index)">
+              <span class="fa fa-trash text-danger"></span>
+            </a>
+          </h3>
+
+          <div class="form-group input clearfix"
+            ng-repeat="(key,value) in item" ng-if="key!='ports' && key !='envVars'">
+
+            <!-- Label -->
+            <label
+              for="{{key}}"
+              class="col-md-4 control-label input__label">
+              {{key}}
+              <span class="input__subtitle" ng-if="key!='dockerURL'">
+                <i
+                  popover="{{textInfo}}"
+                  popover-placement="bottom"
+                  popover-trigger="mouseenter"
+                  ng-mouseover="getInfos(key)">Tip: Hover me</i>
+              </span>
+            </label><!-- /Label -->
+
+            <!-- Column -->
+            <div class="col-md-8">
+              <input
+                class="form-control input__field"
+                type="text"
+                id="{{key}}"
+                name="{{key}}"
+                ng-model="item[key]">
+            </div><!-- /Column -->
+
+          </div><!-- /Services fields -->
+
+          <!-- Ports -->
+          <div class="form-group input">
+            <label for="" class="col-md-4 control-label input__label">
+              Ports
+              <div>
+                <button class="btn btn--white u-mt-5" ng-click="addServicePort(item.ports)">Add more</button>
+              </div>
+            </label>
+
+            <div class="col-md-8">
+
+              <div class="row">
+                <label class="input__label col-xs-6 col-md-4">
+                    Port
+                </label>
+
+                <label class="input__label col-xs-6 col-md-4">
+                Port Target
+                </label>
+
+                <label class="input__label col-xs-6 col-md-3">
+                    Protocol
+                </label>
+              </div><!-- /row -->
+
+              <!-- Input -->
+               <div
+                class="form-group input"
+                ng-repeat="port in item.ports track by $index">
+
+                 <!-- Column -->
+                 <div class="col-xs-6 col-md-4">
+                   <input
+                    class="form-control input__field input__field--inline"
+                    type="number"
+                    ng-model="item.ports[$index]['port']"/>
+                 </div><!-- /Column -->
+
+                 <!-- Column -->
+                 <div class="col-xs-6 col-md-4">
+                   <input
+                    class="form-control input__field input__field--inline"
+                    type="number"
+                    ng-model="item.ports[$index]['targetPort']">
+                 </div><!-- /Column -->
+
+                 <!-- Column -->
+                 <div class="col-xs-6 col-md-3">
+                   <input
+                    class="form-control input__field input__field--inline"
+                    type="text"
+                    ng-model="item.ports[$index][['protocol']]">
+                 </div><!-- /Column -->
+
+                 <!-- Column -->
+                 <div class="col-xs-6 col-md-1 text-right">
+                   <a href="" ng-click="deleteServicePort(item.ports, $index)">
+                      <span class="fa fa-trash text-danger"></span>
+                  </a>
+                 </div><!-- /Column -->
+
+               </div><!-- /Input -->
+
+            </div><!-- /col -->
+
+          </div><!-- /Ports -->
+
+          <!-- Env Vars -->
+          <div class="form-group input">
+            <label for="" class="col-md-4 control-label input__label">
+              Env vars
+              <div>
+                <button class="btn btn--white u-mt-5" ng-click="addServiceEnvVar(item.envVars)">Add more</button>
+              </div>
+            </label>
+
+            <div class="col-md-8">
+
+              <div class="row">
+                <label class="input__label col-xs-6">
+                  Name
+                </label>
+
+                <label class="input__label col-xs-6 col-md-4">
+                  Value
+                </label>
+
+              </div><!-- /row -->
+
+              <!-- Input -->
+               <div
+                class="form-group input"
+                ng-repeat="var in item.envVars track by $index">
+
+                 <!-- Column -->
+                 <div class="col-xs-6 col-md-6">
+                   <input
+                    class="form-control input__field"
+                    type="text"
+                    ng-model="item.envVars[$index]['name']"/>
+                 </div><!-- /Column -->
+
+                 <!-- Column -->
+                 <div class="col-xs-6 col-md-5">
+                   <input
+                    class="form-control input__field"
+                    type="text"
+                    ng-model="item.envVars[$index]['value']">
+                 </div><!-- /Column -->
+
+                 <!-- Column -->
+                 <div class="col-xs-6 col-md-1 text-right">
+                   <a href="" ng-click="deleteServiceEnvVar(item.envVars, $index)">
+                      <span class="fa fa-trash text-danger"></span>
+                  </a>
+                 </div><!-- /Column -->
+
+               </div><!-- /Input -->
+
+            </div><!-- /col -->
+
+          </div><!-- /Ports -->
+
+
+        </section>
+
+        <button class="btn btn--white u-mt-15 pull-right" ng-click="addNewService()">
+          Add a service
+        </button>
+
+      </section><!-- /Form section -->
+
+
+
+
+
       <!-- Form section -->
       <section class="form__section">
 

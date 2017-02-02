@@ -341,35 +341,45 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
   // !!Services
   // -------------------------------------
   function addNewService() {
+    if (!$scope.appCreate.services) {
+      $scope.appCreate.services = [];
+    }
+
     $scope.appCreate.services.push($scope.appNewService);
-  };
+  }
 
   function removeNewService(index) {
     $scope.appCreate.services.splice(index, 1);
-  };
+  }
 
   function addServicePort(item) {
+    if (!item) {
+      item = [];
+    }
     item.push({
       "port": 8080,
       "targetPort": 8080,
       "protocol": "TCP"
     });
-  };
+  }
 
   function deleteServicePort(item, index) {
     item.splice(index, 1);
-  };
+  }
 
   function addServiceEnvVar(item) {
+    if (!item) {
+      item = [];
+    }
     item.push({
       "name": "",
       "value": ""
     });
-  };
+  }
 
   function deleteServiceEnvVar(item, index) {
     item.splice(index, 1);
-  };
+  }
   // !!END Services
   // -------------------------------------
 
@@ -377,24 +387,29 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     $timeout(function() {
       $('body').resize();
     }, 500);
-  };
+  }
 
   function createMarketApp() {
     $http.get('json/app.json')
       .then(function(res) {
-        console.log(res.data);
+        console.log('create Market App:', res.data);
+        if (res.data.services[0]) {
+          $scope.appNewService = angular.copy(res.data.services[0]);
+        }
         $scope.appCreate = angular.copy(res.data);
+        $scope.appCreate.services = [];
+        $scope.appCreate.numberOfInstances = 1;
       });
     $('#modalT').modal('show');
-  };
+  }
 
   function saveApp(data) {
     $scope.application = data;
-  };
+  }
 
   function changeCdn() {
     $scope.appCreate.cloudRepository = $scope.appCreate.cdnConnector;
-  };
+  }
 
   function drawColumnMediaServer(nameCol) {
     var allColumns = [0, 1, 2, 3];
