@@ -391,15 +391,21 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
 
   function createMarketApp() {
     $http.get('json/app.json')
-      .then(function(res) {
-        console.log('create Market App:', res.data);
-        if (res.data.services) {
-          $scope.appNewService = angular.copy(res.data.services[0]);
-        }
-        $scope.appCreate = angular.copy(res.data);
-        $scope.appCreate.services = [];
-        $scope.appCreate.numberOfInstances = 1;
+      .then(function(data) {
+
+        var response = data;
+        console.log('Create Market App:', data.data);
+
+        $http.get('json/request.json')
+          .then(function(data) {
+            $scope.appNewService = angular.copy(data.data.services[0]);
+            $scope.appCreate = angular.copy(data.data);
+            $scope.appCreate.services = [];
+            $scope.appCreate.numberOfInstances = 1;
+            $scope.appCreate = response.data;
+          });
       });
+
     $('#modalT').modal('show');
   }
 
