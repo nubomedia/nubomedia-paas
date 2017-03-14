@@ -912,11 +912,13 @@ angular.module('app').controller('applicationsCtrl', function($scope, http, $rou
     cleanDataElements = removeNull(dataElements, cleanDataElements);
     cleanDataPiepelines = removeNull(dataPipelines, cleanDataPiepelines);
 
-    zipData.push(['Time', 'Free memory', 'Media Elements', 'Media Pipelines']);
+    zipData.push(['Time', 'Free memory in Gb', 'Media Elements', 'Media Pipelines']);
 
     for (var i = 0; i < cleanDataMemory.length; i++) {
-      subVals.push(timestamp[i]);
-      subVals.push(cleanDataMemory[i]);
+      var a = new Date(timestamp[i]*1000);
+      var dateofevent = a.getHours() + ':' + a.getMinutes() + ':' +a.getSeconds();
+      subVals.push(dateofevent);
+      subVals.push(Math.round(cleanDataMemory[i]/1073741824, 1));
       subVals.push(cleanDataElements[i]);
       subVals.push(cleanDataPiepelines[i]);
       zipData.push(subVals);
