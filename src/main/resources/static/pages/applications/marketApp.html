@@ -275,7 +275,7 @@
         <div
           class="form-group input"
           ng-repeat="(key,value) in appCreate"
-          ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut' && key!='requirements' && key!='qualityOfService' && key!='stunServerIp' && key!='stunServerPort' && key!='scale_out_threshold' && key!='replicasNumber' && key!='turnServerPassword' && key!='turnServerUrl' && key!='turnServerUsername'">
+          ng-if="key!='ports' && key!='projectName' && key!='turnServerActivate' && key!='stunServerActivate' && key!='flavor' && key!='cdnConnector' && key!='secretName' && key!='cloudRepository' && key!='scaleInOut' && key!='requirements' && key!='qualityOfService' && key!='stunServerIp' && key!='stunServerPort' && key!='scale_out_threshold' && key!='replicasNumber' && key!='turnServerPassword' && key!='turnServerUrl' && key!='turnServerUsername' && key!='numberOfInstances'">
 
           <!-- Label -->
           <label
@@ -340,6 +340,34 @@
             </div><!-- /Select -->
           </div><!-- /Column -->
 
+       <!-- NUMBER OF INSTANCES -->
+        <div class="form-group input">
+
+          <!-- Label -->
+          <label
+            for="{{name}}"
+            class="col-md-4 control-label input__label">
+            Number of KMS instances
+            <span class="input__subtitle">
+              <i
+                popover="{{textInfo}}"
+                popover-placement="bottom"
+                popover-trigger="mouseenter"
+                ng-mouseover="getInfos('numberOfInstances')">Tip: Hover me</i>
+            </span>
+          </label><!-- /Label -->
+
+          <!-- Column -->
+          <div class="col-md-8">
+            <input
+              class="form-control input__field"
+              type="number"
+              ng-model="appCreate.numberOfInstances">
+          </div><!-- /Column -->
+
+        </div><!-- NUMBER OF INSTANCES -->
+
+          
         </div><!-- /Flavour -->
 
         <!-- Secret name  -->
