@@ -1,0 +1,3348 @@
+{
+  "swagger": "2.0",
+  "info": {
+      "title": "Nubomedia PaaS",
+      "version": "2"
+    },
+    "host": "localhost:8081",
+    "basePath": "/",
+    "tags": [{
+      "name": "rest-security",
+      "description": "Rest Security"
+    }, {
+      "name": "authorization-endpoint",
+      "description": "Authorization Endpoint"
+    }, {
+      "name": "check-token-endpoint",
+      "description": "Check Token Endpoint"
+    }, {
+      "name": "whitelabel-error-endpoint",
+      "description": "Whitelabel Error Endpoint"
+    }, {
+      "name": "rest-project",
+      "description": "Rest Project"
+    }, {
+      "name": "basic-error-controller",
+      "description": "Basic Error Controller"
+    }, {
+      "name": "config",
+      "description": "Config"
+    }, {
+      "name": "rest-users",
+      "description": "Rest Users"
+    }, {
+      "name": "rest-api-v1",
+      "description": "Rest API v1"
+    }, {
+      "name": "rest-api-v2",
+      "description": "Rest API v2"
+    }, {
+      "name": "rest-users-register",
+      "description": "Rest Users Register"
+    }, {
+      "name": "token-endpoint",
+      "description": "Token Endpoint"
+    }, {
+      "name": "whitelabel-approval-endpoint",
+      "description": "Whitelabel Approval Endpoint"
+    }],
+    "paths": {
+      "/api/v1/nubomedia/config": {
+        "get": {
+          "tags": ["config"],
+          "summary": "getMarketplaceUrl",
+          "operationId": "getMarketplaceUrlUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/nubomedia/paas/app": {
+        "get": {
+          "tags": ["rest-api-v1"],
+          "summary": "getApps",
+          "operationId": "getAppsUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [{
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Iterable<Application>"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "post": {
+          "tags": ["rest-api-v1"],
+          "summary": "createApp",
+          "operationId": "createAppUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "in": "body",
+            "name": "request",
+            "description": "request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NubomediaCreateAppRequest"
+            }
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/NubomediaCreateAppResponse"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["rest-api-v1"],
+          "summary": "deleteApps",
+          "operationId": "deleteAppsUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/NubomediaDeleteAppsProjectResponse"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/api/v1/nubomedia/paas/app/{id}": {
+        "get": {
+          "tags": ["rest-api-v1"],
+          "summary": "getApp",
+          "operationId": "getAppUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Application"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["rest-api-v1"],
+          "summary": "deleteApp",
+          "operationId": "deleteAppUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/NubomediaDeleteAppResponse"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/api/v1/nubomedia/paas/app/{id}/buildlogs": {
+        "get": {
+          "tags": ["rest-api-v1"],
+          "summary": "getBuildLogs",
+          "operationId": "getBuildLogsUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/NubomediaBuildLogs"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/nubomedia/paas/app/{id}/logs/{podName}": {
+        "get": {
+          "tags": ["rest-api-v1"],
+          "summary": "getApplicationLogs",
+          "operationId": "getApplicationLogsUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "podName",
+            "in": "path",
+            "description": "podName",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/nubomedia/paas/multipledelete": {
+        "post": {
+          "tags": ["rest-api-v1"],
+          "summary": "multipleDelete",
+          "operationId": "multipleDeleteUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }, {
+            "in": "body",
+            "name": "ids",
+            "description": "ids",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }],
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/nubomedia/paas/secret": {
+        "post": {
+          "tags": ["rest-api-v1"],
+          "summary": "createSecret",
+          "operationId": "createSecretUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "in": "body",
+            "name": "ncsr",
+            "description": "ncsr",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NubomediaCreateSecretRequest"
+            }
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/nubomedia/paas/secret/{projectName}/{secretName}": {
+        "delete": {
+          "tags": ["rest-api-v1"],
+          "summary": "deleteSecret",
+          "operationId": "deleteSecretUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "secretName",
+            "in": "path",
+            "description": "secretName",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "projectName",
+            "in": "path",
+            "description": "projectName",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/NubomediaDeleteSecretResponse"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/api/v1/nubomedia/paas/server-ip/": {
+        "get": {
+          "tags": ["rest-api-v1"],
+          "summary": "getMediaServerIp",
+          "operationId": "getMediaServerIpUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/projects": {
+        "get": {
+          "tags": ["rest-project"],
+          "summary": "findAll",
+          "operationId": "findAllUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Iterable«Project»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "post": {
+          "tags": ["rest-project"],
+          "summary": "create",
+          "operationId": "createUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [{
+            "in": "body",
+            "name": "project",
+            "description": "project",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/Project"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/projects/multipledelete": {
+        "post": {
+          "tags": ["rest-project"],
+          "summary": "multipleDelete",
+          "operationId": "multipleDeleteUsingPOST_2",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "in": "body",
+            "name": "ids",
+            "description": "ids",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }],
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/projects/{id}": {
+        "get": {
+          "tags": ["rest-project"],
+          "summary": "findById",
+          "operationId": "findByIdUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Project"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["rest-project"],
+          "summary": "update",
+          "operationId": "updateUsingPUT",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [{
+            "in": "body",
+            "name": "new_project",
+            "description": "new_project",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }],
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "202": {
+              "description": "Accepted",
+              "schema": {
+                "$ref": "#/definitions/Project"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["rest-project"],
+          "summary": "delete",
+          "operationId": "deleteUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/api/v1/security": {
+        "get": {
+          "tags": ["rest-security"],
+          "summary": "isSecurityEnabled",
+          "operationId": "isSecurityEnabledUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["text/plain"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/users": {
+        "get": {
+          "tags": ["rest-users"],
+          "summary": "findAll",
+          "operationId": "findAllUsingGET_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Iterable«User»"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "post": {
+          "tags": ["rest-users"],
+          "summary": "create",
+          "operationId": "createUsingPOST_1",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [{
+            "in": "body",
+            "name": "new_user",
+            "description": "new_user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/users/changepwd": {
+        "put": {
+          "tags": ["rest-users"],
+          "summary": "changePassword",
+          "operationId": "changePasswordUsingPUT",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "in": "body",
+            "name": "newPwd",
+            "description": "newPwd",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/JsonObject"
+            }
+          }],
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "202": {
+              "description": "Accepted"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/users/current": {
+        "get": {
+          "tags": ["rest-users"],
+          "summary": "findCurrentUser",
+          "operationId": "findCurrentUserUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/users/multipledelete": {
+        "post": {
+          "tags": ["rest-users"],
+          "summary": "multipleDelete",
+          "operationId": "multipleDeleteUsingPOST_3",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "in": "body",
+            "name": "ids",
+            "description": "ids",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }],
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v1/users/{username}": {
+        "get": {
+          "tags": ["rest-users"],
+          "summary": "find",
+          "operationId": "findUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "username",
+            "in": "path",
+            "description": "username",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["rest-users"],
+          "summary": "update",
+          "operationId": "updateUsingPUT_1",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [{
+            "name": "username",
+            "in": "path",
+            "description": "username",
+            "required": true,
+            "type": "string"
+          }, {
+            "in": "body",
+            "name": "new_user",
+            "description": "new_user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["rest-users"],
+          "summary": "delete",
+          "operationId": "deleteUsingDELETE_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "username",
+            "in": "path",
+            "description": "username",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/api/v1/users/{username}/reset": {
+        "put": {
+          "tags": ["rest-users"],
+          "summary": "resetPassword",
+          "operationId": "resetPasswordUsingPUT",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [{
+            "name": "username",
+            "in": "path",
+            "description": "username",
+            "required": true,
+            "type": "string"
+          }, {
+            "in": "body",
+            "name": "password",
+            "description": "password",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/JsonObject"
+            }
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/app": {
+        "get": {
+          "tags": ["rest-api-v2"],
+          "summary": "getApps",
+          "operationId": "getAppsUsingGET_1",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [{
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Iterable<Application>"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "post": {
+          "tags": ["rest-api-v2"],
+          "summary": "createApp",
+          "operationId": "createAppUsingPOST_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "in": "body",
+            "name": "request",
+            "description": "request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NubomediaCreateAppRequest"
+            }
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/NubomediaCreateAppResponse"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["rest-api-v2"],
+          "summary": "deleteApps",
+          "operationId": "deleteAppsUsingDELETE_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/NubomediaDeleteAppsProjectResponse"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/app/{id}": {
+        "get": {
+          "tags": ["rest-api-v2"],
+          "summary": "getApp",
+          "operationId": "getAppUsingGET_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Application"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["rest-api-v2"],
+          "summary": "deleteApp",
+          "operationId": "deleteAppUsingDELETE_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/NubomediaDeleteAppResponse"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/app/{id}/buildlogs": {
+        "get": {
+          "tags": ["rest-api-v2"],
+          "summary": "getBuildLogs",
+          "operationId": "getBuildLogsUsingGET_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/NubomediaBuildLogs"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/app/{id}/logs/{podName}": {
+        "get": {
+          "tags": ["rest-api-v2"],
+          "summary": "getApplicationLogs",
+          "operationId": "getApplicationLogsUsingGET_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "podName",
+            "in": "path",
+            "description": "podName",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/app/{id}/media-server": {
+        "get": {
+          "tags": ["rest-api-v2"],
+          "summary": "getMediaServers",
+          "operationId": "getMediaServersUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Host"
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "post": {
+          "tags": ["rest-api-v2"],
+          "summary": "scaleoutMediaServer",
+          "operationId": "scaleoutMediaServerUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "202": {
+              "description": "Accepted"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["rest-api-v2"],
+          "summary": "scaleinAnyMediaServer",
+          "operationId": "scaleinAnyMediaServerUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "202": {
+              "description": "Accepted"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/app/{id}/media-server/{hostname}": {
+        "get": {
+          "tags": ["rest-api-v2"],
+          "summary": "getMediaServer",
+          "operationId": "getMediaServerUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "hostname",
+            "in": "path",
+            "description": "hostname",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Host"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["rest-api-v2"],
+          "summary": "scaleinMediaServer",
+          "operationId": "scaleinMediaServerUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "hostname",
+            "in": "path",
+            "description": "hostname",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "202": {
+              "description": "Accepted"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/app/{id}/media-server/{hostname}/start": {
+        "put": {
+          "tags": ["rest-api-v2"],
+          "summary": "startMediaServer",
+          "operationId": "startMediaServerUsingPUT",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "hostname",
+            "in": "path",
+            "description": "hostname",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "202": {
+              "description": "Accepted"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/app/{id}/media-server/{hostname}/stop": {
+        "put": {
+          "tags": ["rest-api-v2"],
+          "summary": "stopMediaServer",
+          "operationId": "stopMediaServerUsingPUT",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "hostname",
+            "in": "path",
+            "description": "hostname",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "202": {
+              "description": "Accepted"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/multipledelete": {
+        "post": {
+          "tags": ["rest-api-v2"],
+          "summary": "multipleDelete",
+          "operationId": "multipleDeleteUsingPOST_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }, {
+            "in": "body",
+            "name": "ids",
+            "description": "ids",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }],
+          "responses": {
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/secret": {
+        "post": {
+          "tags": ["rest-api-v2"],
+          "summary": "createSecret",
+          "operationId": "createSecretUsingPOST_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "in": "body",
+            "name": "ncsr",
+            "description": "ncsr",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NubomediaCreateSecretRequest"
+            }
+          }, {
+            "name": "project-id",
+            "in": "header",
+            "description": "project-id",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/secret/{projectName}/{secretName}": {
+        "delete": {
+          "tags": ["rest-api-v2"],
+          "summary": "deleteSecret",
+          "operationId": "deleteSecretUsingDELETE_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "secretName",
+            "in": "path",
+            "description": "secretName",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "projectName",
+            "in": "path",
+            "description": "projectName",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/NubomediaDeleteSecretResponse"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/api/v2/nubomedia/paas/server-ip/": {
+        "get": {
+          "tags": ["rest-api-v2"],
+          "summary": "getMediaServerIp",
+          "operationId": "getMediaServerIpUsingGET_1",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "string"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/error": {
+        "get": {
+          "tags": ["basic-error-controller"],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["text/html"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "head": {
+          "tags": ["basic-error-controller"],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingHEAD",
+          "consumes": ["application/json"],
+          "produces": ["text/html"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "post": {
+          "tags": ["basic-error-controller"],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["text/html"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["basic-error-controller"],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingPUT",
+          "consumes": ["application/json"],
+          "produces": ["text/html"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["basic-error-controller"],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["text/html"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "options": {
+          "tags": ["basic-error-controller"],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingOPTIONS",
+          "consumes": ["application/json"],
+          "produces": ["text/html"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "patch": {
+          "tags": ["basic-error-controller"],
+          "summary": "errorHtml",
+          "operationId": "errorHtmlUsingPATCH",
+          "consumes": ["application/json"],
+          "produces": ["text/html"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/oauth/authorize": {
+        "get": {
+          "tags": ["authorization-endpoint"],
+          "summary": "authorize",
+          "operationId": "authorizeUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "head": {
+          "tags": ["authorization-endpoint"],
+          "summary": "authorize",
+          "operationId": "authorizeUsingHEAD",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "post": {
+          "tags": ["authorization-endpoint"],
+          "summary": "approveOrDeny",
+          "operationId": "approveOrDenyUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/View"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["authorization-endpoint"],
+          "summary": "authorize",
+          "operationId": "authorizeUsingPUT",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["authorization-endpoint"],
+          "summary": "authorize",
+          "operationId": "authorizeUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "options": {
+          "tags": ["authorization-endpoint"],
+          "summary": "authorize",
+          "operationId": "authorizeUsingOPTIONS",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "patch": {
+          "tags": ["authorization-endpoint"],
+          "summary": "authorize",
+          "operationId": "authorizeUsingPATCH",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/oauth/check_token": {
+        "get": {
+          "tags": ["check-token-endpoint"],
+          "summary": "checkToken",
+          "operationId": "checkTokenUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "token",
+            "in": "query",
+            "description": "token",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "head": {
+          "tags": ["check-token-endpoint"],
+          "summary": "checkToken",
+          "operationId": "checkTokenUsingHEAD",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "token",
+            "in": "query",
+            "description": "token",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "post": {
+          "tags": ["check-token-endpoint"],
+          "summary": "checkToken",
+          "operationId": "checkTokenUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "token",
+            "in": "query",
+            "description": "token",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["check-token-endpoint"],
+          "summary": "checkToken",
+          "operationId": "checkTokenUsingPUT",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "token",
+            "in": "query",
+            "description": "token",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["check-token-endpoint"],
+          "summary": "checkToken",
+          "operationId": "checkTokenUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "token",
+            "in": "query",
+            "description": "token",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "options": {
+          "tags": ["check-token-endpoint"],
+          "summary": "checkToken",
+          "operationId": "checkTokenUsingOPTIONS",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "token",
+            "in": "query",
+            "description": "token",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "patch": {
+          "tags": ["check-token-endpoint"],
+          "summary": "checkToken",
+          "operationId": "checkTokenUsingPATCH",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "parameters": [{
+            "name": "token",
+            "in": "query",
+            "description": "token",
+            "required": true,
+            "type": "string"
+          }],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "type": "object"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/oauth/confirm_access": {
+        "get": {
+          "tags": ["whitelabel-approval-endpoint"],
+          "summary": "getAccessConfirmation",
+          "operationId": "getAccessConfirmationUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "head": {
+          "tags": ["whitelabel-approval-endpoint"],
+          "summary": "getAccessConfirmation",
+          "operationId": "getAccessConfirmationUsingHEAD",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "post": {
+          "tags": ["whitelabel-approval-endpoint"],
+          "summary": "getAccessConfirmation",
+          "operationId": "getAccessConfirmationUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["whitelabel-approval-endpoint"],
+          "summary": "getAccessConfirmation",
+          "operationId": "getAccessConfirmationUsingPUT",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["whitelabel-approval-endpoint"],
+          "summary": "getAccessConfirmation",
+          "operationId": "getAccessConfirmationUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "options": {
+          "tags": ["whitelabel-approval-endpoint"],
+          "summary": "getAccessConfirmation",
+          "operationId": "getAccessConfirmationUsingOPTIONS",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "patch": {
+          "tags": ["whitelabel-approval-endpoint"],
+          "summary": "getAccessConfirmation",
+          "operationId": "getAccessConfirmationUsingPATCH",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/oauth/error": {
+        "get": {
+          "tags": ["whitelabel-error-endpoint"],
+          "summary": "handleError",
+          "operationId": "handleErrorUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "head": {
+          "tags": ["whitelabel-error-endpoint"],
+          "summary": "handleError",
+          "operationId": "handleErrorUsingHEAD",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "post": {
+          "tags": ["whitelabel-error-endpoint"],
+          "summary": "handleError",
+          "operationId": "handleErrorUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["whitelabel-error-endpoint"],
+          "summary": "handleError",
+          "operationId": "handleErrorUsingPUT",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["whitelabel-error-endpoint"],
+          "summary": "handleError",
+          "operationId": "handleErrorUsingDELETE",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "options": {
+          "tags": ["whitelabel-error-endpoint"],
+          "summary": "handleError",
+          "operationId": "handleErrorUsingOPTIONS",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        },
+        "patch": {
+          "tags": ["whitelabel-error-endpoint"],
+          "summary": "handleError",
+          "operationId": "handleErrorUsingPATCH",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/ModelAndView"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "204": {
+              "description": "No Content"
+            },
+            "403": {
+              "description": "Forbidden"
+            }
+          }
+        }
+      },
+      "/oauth/token": {
+        "get": {
+          "tags": ["token-endpoint"],
+          "summary": "getAccessToken",
+          "operationId": "getAccessTokenUsingGET",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/OAuth2AccessToken"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        },
+        "post": {
+          "tags": ["token-endpoint"],
+          "summary": "postAccessToken",
+          "operationId": "postAccessTokenUsingPOST",
+          "consumes": ["application/json"],
+          "produces": ["*/*"],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/OAuth2AccessToken"
+              }
+            },
+            "201": {
+              "description": "Created"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      },
+      "/register": {
+        "post": {
+          "tags": ["rest-users-register"],
+          "summary": "create",
+          "operationId": "createUsingPOST_2",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [{
+            "in": "body",
+            "name": "user",
+            "description": "user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }],
+          "responses": {
+            "201": {
+              "description": "Created",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Role"
+            }
+          },
+          "username": {
+            "type": "string"
+          }
+        }
+      },
+      "Port": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "protocol": {
+            "type": "string"
+          },
+          "targetPort": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ModelAndView": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "model": {
+            "type": "object"
+          },
+          "modelMap": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "reference": {
+            "type": "boolean"
+          },
+          "view": {
+            "$ref": "#/definitions/View"
+          },
+          "viewName": {
+            "type": "string"
+          }
+        }
+      },
+      "JsonObject": {
+        "type": "object"
+      },
+      "NubomediaDeleteSecretResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectName": {
+            "type": "string"
+          },
+          "secretName": {
+            "type": "string"
+          }
+        }
+      },
+      "SupportingService": {
+        "type": "object",
+        "properties": {
+          "dockerURL": {
+            "type": "string"
+          },
+          "envVars": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/EnvironmentVariable"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "osName": {
+            "type": "string"
+          },
+          "podList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Port"
+            }
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "replicasNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "route": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "NubomediaBuildLogs": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "log": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "projectName": {
+            "type": "string"
+          }
+        }
+      },
+      "OAuth2AccessToken": {
+        "type": "object",
+        "properties": {
+          "additionalInformation": {
+            "type": "object"
+          },
+          "expiration": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expired": {
+            "type": "boolean"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "refreshToken": {
+            "$ref": "#/definitions/OAuth2RefreshToken"
+          },
+          "scope": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tokenType": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "MediaServerGroup": {
+        "type": "object",
+        "properties": {
+          "hosts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Host"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "msVnfrId": {
+            "type": "string"
+          },
+          "nsdID": {
+            "type": "string"
+          },
+          "nsrID": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ERROR", "NULL", "INITIALIZED", "INACTIVE", "SCALING", "ACTIVE", "TERMINATED"]
+          }
+        }
+      },
+      "NubomediaCreateAppRequest": {
+        "type": "object",
+        "properties": {
+          "cdnConnector": {
+            "type": "boolean"
+          },
+          "cloudRepository": {
+            "type": "boolean"
+          },
+          "flavor": {
+            "type": "string",
+            "enum": ["SMALL", "MEDIUM", "LARGE"]
+          },
+          "gitURL": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "numberOfInstances": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Port"
+            }
+          },
+          "qualityOfService": {
+            "type": "string",
+            "enum": ["BRONZE", "SILVER", "GOLD"]
+          },
+          "replicasNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scaleOutLimit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scaleOutThreshold": {
+            "type": "number",
+            "format": "double"
+          },
+          "secretName": {
+            "type": "string"
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/SupportingService"
+            }
+          },
+          "stunServerActivate": {
+            "type": "boolean"
+          },
+          "stunServerIp": {
+            "type": "string"
+          },
+          "stunServerPort": {
+            "type": "string"
+          },
+          "turnServerActivate": {
+            "type": "boolean"
+          },
+          "turnServerPassword": {
+            "type": "string"
+          },
+          "turnServerUrl": {
+            "type": "string"
+          },
+          "turnServerUsername": {
+            "type": "string"
+          }
+        }
+      },
+      "NubomediaCreateSecretRequest": {
+        "type": "object",
+        "properties": {
+          "privateKey": {
+            "type": "string"
+          },
+          "projectName": {
+            "type": "string"
+          }
+        }
+      },
+      "Iterable«User»": {
+        "type": "object"
+      },
+      "OAuth2RefreshToken": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "NubomediaCreateAppResponse": {
+        "type": "object",
+        "properties": {
+          "app": {
+            "$ref": "#/definitions/Application"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Host": {
+        "type": "object",
+        "properties": {
+          "floatingIp": {
+            "type": "string"
+          },
+          "hostname": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "View": {
+        "type": "object",
+        "properties": {
+          "contentType": {
+            "type": "string"
+          }
+        }
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "project": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["GUEST", "USER", "ADMIN"]
+          }
+        }
+      },
+      "Iterable<Application>": {
+        "type": "object"
+      },
+      "Project": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "quota": {
+            "$ref": "#/definitions/Quota"
+          },
+          "users": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "NubomediaDeleteAppResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nameSpace": {
+            "type": "string"
+          },
+          "suffix": {
+            "type": "string"
+          }
+        }
+      },
+      "Quota": {
+        "type": "object",
+        "properties": {
+          "cores": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "floatingIps": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "id": {
+            "type": "string"
+          },
+          "instances": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keyPairs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ram": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tenant": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "EnvironmentVariable": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "Iterable«Project»": {
+        "type": "object"
+      },
+      "NubomediaDeleteAppsProjectResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "responses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/NubomediaDeleteAppResponse"
+            }
+          }
+        }
+      },
+      "Application": {
+        "type": "object",
+        "properties": {
+          "cdnConnector": {
+            "type": "boolean"
+          },
+          "cloudRepository": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "envVars": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/EnvironmentVariable"
+            }
+          },
+          "flavor": {
+            "type": "string",
+            "enum": ["SMALL", "MEDIUM", "LARGE"]
+          },
+          "gitURL": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "mediaServerGroup": {
+            "$ref": "#/definitions/MediaServerGroup"
+          },
+          "name": {
+            "type": "string"
+          },
+          "numberOfInstances": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "osName": {
+            "type": "string"
+          },
+          "podList": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Port"
+            }
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "projectName": {
+            "type": "string"
+          },
+          "qualityOfService": {
+            "type": "string",
+            "enum": ["BRONZE", "SILVER", "GOLD"]
+          },
+          "replicasNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "route": {
+            "type": "string"
+          },
+          "scaleOutLimit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scaleOutThreshold": {
+            "type": "number",
+            "format": "double"
+          },
+          "secretName": {
+            "type": "string"
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/SupportingService"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["CREATED", "INITIALIZING", "INITIALISED", "DUPLICATED", "BUILDING", "BUILD_OK", "DEPLOYNG", "RUNNING", "SCALING", "FAILED", "PAAS_RESOURCE_MISSING"]
+          },
+          "stunServerActivate": {
+            "type": "boolean"
+          },
+          "stunServerIp": {
+            "type": "string"
+          },
+          "stunServerPort": {
+            "type": "string"
+          },
+          "turnServerActivate": {
+            "type": "boolean"
+          },
+          "turnServerPassword": {
+            "type": "string"
+          },
+          "turnServerUrl": {
+            "type": "string"
+          },
+          "turnServerUsername": {
+            "type": "string"
+          }
+        }
+      }
+    }
+}
+
+
+
