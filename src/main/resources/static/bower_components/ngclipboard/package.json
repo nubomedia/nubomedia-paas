@@ -29,7 +29,7 @@
         "test": "grunt"
     },
     "dependencies": {
-        "clipboard": "~1.5.5",
+        "clipboard": "~1.7.1",
         "angular": ">=1.2.0"
     },
     "devDependencies": {
